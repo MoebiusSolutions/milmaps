@@ -15,5 +15,23 @@
         <module>mgrs-grid</module>
     </modules>
 
+	<!-- List of repositories used when deploying this software -->
+    <distributionManagement>
+		<!-- This is used by "maven deploy" (deploying a SNAPSHOT release) -->
+        <snapshotRepository>
+            <id>moesol.artifactory</id>
+            <url>http://artifactory.moesol.com/artifactory/libs-snapshots-local</url>
+        </snapshotRepository>
+		<!-- This is used by "maven deploy" (deploying a release) -->
+        <repository>
+            <id>moesol.artifactory</id>
+            <url>http://artifactory.moesol.com/artifactory/libs-releases-local</url>
+        </repository>
+		<!-- This is used by maven "site:deploy" (deploying release notes) -->
+        <site>
+            <id>moesol.docs</id>
+            <url>svn:https://svn.moesol.com/svn/opensource/software-docs/releases/${project.artifactId}/${project.version}</url>
+        </site>
+    </distributionManagement>
 
 </project>
