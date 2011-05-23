@@ -1,0 +1,13 @@
+<module>
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.http.HTTP" />
+	<inherits name="com.google.gwt.xml.XML" />
+	<inherits name="com.google.gwt.activity.Activity" />
+	<inherits name="com.google.gwt.place.Place" />
+	<inherits name="com.google.gwt.inject.Inject"/>
+	<inherits name="mil.GeotransJ" />
+	<inherits name="com.google.gwt.json.JSON"/>
+	
+	<source path="client" excludes="**/*Test.java,**/Test*.java"/>
+	<source path="shared" excludes="**/*Test.java,**/Test*.java"/>
+</module>
