@@ -25,44 +25,44 @@
 		};
 
 		var layerSets = [
-         { 
-        	  server: "http://khm1.google.com/kh/v=84", 
-        	  data: "Google Satellite maps",
-        	  urlPattern: "{server}&x={x}&y={y}&z={level}&s=Gali",
-        	  zeroTop: true,
-        	  startLevel: 1,
-        	  startLevelTileWidthInDeg:180,
-        	  startLevelTileHeightInDeg:85.05113,
-        	  pixelHeight: 256,
-		      pixelWidth: 256
-         }
-          
-        //{ 
-        //     server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
-        //     data: "I3_Imagery_Prime_World_2D",
-        //	  urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
+        // { 
+        //	  server: "http://khm1.google.com/kh/v=84", 
+        //	  data: "Google Satellite maps",
+        //	  urlPattern: "{server}&x={x}&y={y}&z={level}&s=Gali",
         //	  zeroTop: true,
+        //	  startLevel: 1,
         //	  startLevelTileWidthInDeg:180,
-        //	  startLevelTileHeightInDeg:180,
-        //	  pixelHeight: 512,
-		//      pixelWidth: 512
+        //	  startLevelTileHeightInDeg:85.05113,
+        //	  pixelHeight: 256,
+		//      pixelWidth: 256
         // }
+          
+        { 
+             server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
+             data: "I3_Imagery_Prime_World_2D",
+        	  urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
+        	  zeroTop: true,
+        	  startLevelTileWidthInDeg:180,
+        	  startLevelTileHeightInDeg:180,
+        	  pixelHeight: 512,
+		      pixelWidth: 512
+         }
           ,
-          { 
-        	  server: "http://localhost:8080/mgrs-grid", 
-        	  urlPattern: "{server}/rs/mgrstile/99999900/{epsg}/{width}/{height}/{level}/{x}/{y}.png",
-        	  epsg: 3857,
-        	  zeroTop: false,
-			  dynamic: false,
-			  alwaysDraw: true,
-			  useToScale: false,
-			  startLevel:1,
-			  priority:false,
-			  zIndex: 6,
-			  startLevelTileWidthInDeg:180,
-        	  pixelHeight: 256,
-			  pixelWidth: 256
-          }     
+        //  { 
+        //	  server: "http://localhost:8080/mgrs-grid", 
+        //	  urlPattern: "{server}/rs/mgrstile/99999900/{epsg}/{width}/{height}/{level}/{x}/{y}.png",
+        //	  epsg: 3857,
+        //	  zeroTop: false,
+		//	  dynamic: false,
+		//	  alwaysDraw: true,
+		//	  useToScale: false,
+		//	  startLevel:1,
+		//	  priority:false,
+		//	  zIndex: 6,
+		//	  startLevelTileWidthInDeg:180,
+        //	  pixelHeight: 256,
+		//	  pixelWidth: 256
+         // }     
         //  ,
         // {
 		//	   server: "https://neutron.moesol.com/pli-service",
