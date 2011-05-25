@@ -3,7 +3,7 @@ package mil.usmc.mgrs;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.AffineTransform;
+
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +22,7 @@ public class MgrsTile {
 	//private static final double TILE_DY = 512;
 
 	private MercProj m_mercProj = new MercProj();
+	private CedProj m_cedProj = new CedProj();
 	
 	private boolean m_bUseMerc = false;
 	private int m_width = 512;
@@ -54,7 +55,7 @@ public class MgrsTile {
 	mil.usmc.mgrs.objects.Point m_lngStart;
 	mil.usmc.mgrs.objects.Point m_lngEnd;
 
-	private final AffineTransform m_tx = new AffineTransform();
+	//private final AffineTransform m_tx = new AffineTransform();
 
 	/**
 	 * Constructor
@@ -74,13 +75,14 @@ public class MgrsTile {
 			m_minLat = -85.05112878;
 			m_maxLat = 85.05112878;
 		}
+		else{
+			m_cedProj.initialize(width);
+		}
 		m_width = width;
 		m_height = height;
 		m_level = level;
 		m_tileX = tileX;
 		m_tileY = tileY;
-		m_tx.translate(0, m_height);
-		m_tx.scale(1, -1);
 		updateState();
 		createTileImage();
 	}
@@ -152,21 +154,24 @@ public class MgrsTile {
 	}
 
 	protected void mercPosToTile( double lat, double lng, Point p ){
-		// get the map pixel coordinats for the lat, lng
+		// get the map pixel coordinates for the lat, lng
 		m_r2Pt.copy(m_mercProj.latLngToPixelXY(m_level, lat, lng));
 		// compute the tile's top-left map pixel value.
 		R2 topLeft = m_mercProj.tileXYToTopLeftXY( m_tileX, m_tileY );
 		// compute the xy value relative to the tile's offset
 		p.x = m_r2Pt.m_x - topLeft.m_x;
 		p.y = topLeft.m_y - m_r2Pt.m_y;
-		//m_tx.transform(m_pt,p);
 	}
 
 	private void cylPosToTile(double lat, double lng, Point p) {
 		
-		m_pt.x = (int)(((lng - m_lng)/m_dlng) * m_width);
-		m_pt.y = (int)(((lat - m_lat)/m_dlat) * m_height);
-		m_tx.transform(m_pt,p);
+		// get the map pixel coordinates for the lat, lng
+		m_r2Pt.copy(m_cedProj.latLngToPixelXY(m_level, lat, lng));
+		// compute the tile's top-left map pixel value.
+		R2 topLeft = m_cedProj.tileXYToTopLeftXY( m_tileX, m_tileY );
+		// compute the xy value relative to the tile's offset
+		p.x = m_r2Pt.m_x - topLeft.m_x;
+		p.y = topLeft.m_y - m_r2Pt.m_y;
 		return;
 	}
 	
@@ -201,7 +206,7 @@ public class MgrsTile {
 	*/
 	
 	private void updateBoundingBox(){
-		if ( m_level < 2 ){
+		if ( m_level < 4 ){
 			m_bshowLabels = false;
 			m_bbox = new BoundingBox(m_minLat, m_minLng, m_maxLat, m_maxLng);
 			m_gridName = MgrsXmlResource.ZONE_GRID;
@@ -238,6 +243,7 @@ public class MgrsTile {
 		// Create a buffered image that supports transparency
 		m_img = new BufferedImage(m_width, m_height, BufferedImage.TYPE_INT_ARGB);
 		m_g = m_img.createGraphics();
+		
 		if( m_bkgrColor.getAlpha()> 0 ){
 			m_g.setColor(m_bkgrColor);
 			m_g.fillRect(0, 0, m_width, m_height);
@@ -274,8 +280,9 @@ public class MgrsTile {
 		positToTile( p.getLat(), p.getLng(), m_p);
 		int w = m_width;
 		int h = m_height;
-		if ( 0 <= m_p.x && m_p.x <= w  ){
-			if ( 0 <= m_p.y && m_p.y <= h ){
+		int pixWidth = label.length()*8;
+		if ( -pixWidth <= m_p.x && m_p.x <= w  ){
+			if ( -10 <= m_p.y && m_p.y <= h + 10 ){
 				m_g.drawString(label, m_p.x, m_p.y);
 			}
 		}

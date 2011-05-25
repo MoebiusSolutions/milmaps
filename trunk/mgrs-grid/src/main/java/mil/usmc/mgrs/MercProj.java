@@ -27,13 +27,7 @@ public class MercProj
     private R2 m_pixel = new R2();
     private R2 m_tile = new R2();
 
-    /// <summary>
-    /// Clips a number to the specified minimum and maximum values.
-    /// </summary>
-    /// <param name="n">The number to clip.</param>
-    /// <param name="minValue">Minimum allowable value.</param>
-    /// <param name="maxValue">Maximum allowable value.</param>
-    /// <returns>The clipped value.</returns>
+
     private double clip(double n, double minValue, double maxValue)
     {
         return Math.min(Math.max(n, minValue), maxValue);
@@ -44,13 +38,6 @@ public class MercProj
 	}   
 
 
-    /// <summary>
-    /// Determines the map width and height (in pixels) at a specified level
-    /// of detail.
-    /// </summary>
-    /// <param name="levelOfDetail">Level of detail, from 1 (lowest detail)
-    /// to 23 (highest detail).</param>
-    /// <returns>The map width and height in pixels.</returns>
     public int mapSize(int levelOfDetail)
     {
         return (int) m_orgTilePixSize << levelOfDetail;
