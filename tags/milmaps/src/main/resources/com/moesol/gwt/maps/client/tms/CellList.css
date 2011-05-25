@@ -1,0 +1,9 @@
+.cellListEvenItem {
+	background-color: #EEE;	
+}
+.cellListSelectedItem {
+	background-image: none;
+	background-color: #222;	
+	height: auto;
+	overflow: visible;
+}
