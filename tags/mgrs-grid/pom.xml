@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.moesol.maps</groupId>
+        <artifactId>milmaps-parent</artifactId>
+        <version>1.2.7</version>
+    </parent>
+    
+    <artifactId>mgrs-grid</artifactId>
+    <packaging>war</packaging>
+    <name>MGRS Grid KML</name>
+    <url>http://maven.apache.org</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+			<version>4.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mil.geotransj</groupId>
+            <artifactId>geotransJ</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>2.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>XmlSchema</artifactId>
+                    <groupId>org.apache.ws.commons.schema</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>aopalliance</artifactId>
+                    <groupId>aopalliance</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-api</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-bindings-xml</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-core</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-databinding-aegis</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-transports-http</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jettison</artifactId>
+                    <groupId>org.codehaus.jettison</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-asm</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xmlbeans</artifactId>
+                    <groupId>org.apache.xmlbeans</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.moesol.servlet</groupId>
+            <artifactId>ServletUtils</artifactId>
+			<version>1.4.2-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-codec</artifactId>
+                    <groupId>commons-codec</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-httpclient</artifactId>
+                    <groupId>commons-httpclient</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-io</artifactId>
+                    <groupId>commons-io</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jersey-multipart</artifactId>
+                    <groupId>com.sun.jersey.contribs</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <finalName>mgrs-grid</finalName>
+    </build>
+
+</project>
+
