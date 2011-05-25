@@ -29,10 +29,10 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	private final FocusPanel m_focusPanel = new FocusPanel();
 	private final MapController m_mapEventListener = new MapController(this);
 
-	//private final IProjection m_projection = new CylEquiDistProj(512,180,180);
-	//private final IProjection m_tempProj = new CylEquiDistProj(512,180,180);
-	private final IProjection m_projection = new Mercator(256,180,85.05113);
-	private final IProjection m_tempProj = new Mercator(256,180,85.05113);
+	private final IProjection m_projection = new CylEquiDistProj(512,180,180);
+	private final IProjection m_tempProj = new CylEquiDistProj(512,180,180);
+	//private final IProjection m_projection = new Mercator(256,180,85.05113);
+	//private final IProjection m_tempProj = new Mercator(256,180,85.05113);
 	private final ViewPort m_viewPort = new ViewPort(m_projection);
 	private final ViewCoords m_vc = new ViewCoords();
 	private final AnimationEngine m_animateEngine = new AnimationEngine(this);
@@ -286,7 +286,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	// This will change when we add tile coords for each layer set
 
 	private void placeTiles(int level, TiledImageLayer layer) {
-		LayerSet ls = layer.getLayerSet();
+		//LayerSet ls = layer.getLayerSet();
 		TileCoords[] tileCoords = m_viewPort.arrangeTiles(layer, level);
 		if (layer.getLayerSet().isAlwaysDraw() || layer.isPriority()) {
 			layer.setTileCoords(tileCoords);
@@ -302,7 +302,6 @@ public class MapView extends Composite implements SourcesChangeEvents {
 			for (TiledImageLayer layer : m_tiledImageLayers) {
 				LayerSet ls = layer.getLayerSet();
 				if (ls.isAlwaysDraw() || layer.isPriority()) {
-					// double bs = ls.findScale(dpi, projScale);
 					int level = layer.findLevel(dpi, projScale);
 					placeTiles(level, layer);
 				}

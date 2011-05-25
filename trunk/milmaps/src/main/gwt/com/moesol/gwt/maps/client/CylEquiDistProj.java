@@ -23,27 +23,33 @@ public class CylEquiDistProj extends AbstractProjection {
 	@Override
 	public int lngDegToPixX( double deg ){
 		deg = clip(deg,m_minLng,m_maxLng);
-		return (int)( (m_scale * (( 180 + deg) * MeterPerDeg) / m_scrnMpp) + 0.5 );
+		double x = (deg + 180)/360;
+		return (int)((x * mapSize())+0.5);
+		//return (int)( (m_scale * (( 180 + deg) * MeterPerDeg) / m_scrnMpp) + 0.5 );
 	}
 	
 	@Override
 	public double xPixToDegLng( double pix  )
 	{
-		double dLng = (pix * m_scrnMpp / m_scale) / MeterPerDeg;
-		return (-180.0 + dLng);                   
+        double mapSize = mapSize();
+        double x = (pix / mapSize) - 0.5;   
+        return (x*360);                 
 	} 
 	
 	@Override
 	public int latDegToPixY( double deg ){
 		deg = clip(deg,m_minLat,m_maxLat);
-		return (int)( (m_scale * ( (90 + deg) * MeterPerDeg) / m_scrnMpp) + 0.5 );
+		double y = (deg + 90)/180;
+		double mapHeightSize = mapSize()/2.0;
+		return (int)((y * mapHeightSize)+0.5);
 	}
 	
 	@Override
 	public double yPixToDegLat( double pix  )
 	{
-		double dLat = (pix * m_scrnMpp / m_scale) / MeterPerDeg;
-		return ( -90 + dLat);              
+		double mapSize =  mapSize()/2.0;
+        double x = (pix / mapSize) - 0.5;   
+        return (x*180);               
 	} 
 	
 	public CylEquiDistProj(IProjection orig) {
