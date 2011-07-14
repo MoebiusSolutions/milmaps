@@ -75,8 +75,10 @@ public class MgrsGridTileResource {
 
 	private Image createMgrsTile( Color color, int epsg, int width, int height,
 								  int zoomLevel, int xTileCoord, int yTileCoord ) {
-		MgrsTile tile = new MgrsTile( color, epsg, width, height, 
-									  zoomLevel, xTileCoord, yTileCoord );
+		//MgrsTile tile = new MgrsTile( color, epsg, width, height, 
+		//							  zoomLevel, xTileCoord, yTileCoord );
+		MilgridTile tile = new MilgridTile( color, epsg, width, height, 
+		 						  			zoomLevel, xTileCoord, yTileCoord );
 		tile.drawGrid();
 		return tile.getImage();
 	}
