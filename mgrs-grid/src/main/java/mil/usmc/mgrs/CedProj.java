@@ -13,7 +13,7 @@ import mil.usmc.mgrs.objects.R2;
  * @author Moebius Solutions, Inc.
  */
 // Cylindrical Equal Distance projection (CedProj)
-public class CedProj {
+public class CedProj implements IProjection {
     private static final double MinLatitude = -90;
     private static final double MaxLatitude = 90;
     private static final double MinLongitude = -180;
@@ -31,6 +31,7 @@ public class CedProj {
 	public CedProj() {
 	}
 	
+	@Override
 	public void initialize( int tileSize ){	
 		m_orgTilePixSize = tileSize;
 	}   
@@ -42,7 +43,7 @@ public class CedProj {
 	
     public int mapWidthSize(int levelOfDetail)
     {
-        return (int) m_orgTilePixSize << levelOfDetail + 1;
+        return (int) m_orgTilePixSize << (levelOfDetail + 1);
     }
     
     public int mapHeightSize(int levelOfDetail)
@@ -50,13 +51,20 @@ public class CedProj {
         return mapWidthSize(levelOfDetail)/2;
     }
 
+    @Override
+    public int mapSize( int level )
+    {
+    	return m_orgTilePixSize << (level+1);
+    }
+    
+    @Override
 	public int lngDegToPixX( int level, double deg ){
 		deg = clip(deg, MinLongitude, MaxLongitude);
 		double x = (deg + 180)/360;
 		return (int)((x * mapWidthSize(level))+0.5);
 	}
 	
-
+    @Override
 	public double xPixToDegLng( int level, double pix  )
 	{
         double mapSize = mapWidthSize(level);
@@ -64,14 +72,14 @@ public class CedProj {
         return (x*360);             
 	} 
 	
-
+    @Override
 	public int latDegToPixY( int level, double deg ){
 		deg = clip(deg, MinLatitude, MaxLatitude);
 		double y = (deg + 90)/180;
 		return (int)((y * mapHeightSize(level))+0.5);
 	}
 	
-
+    @Override
 	public double yPixToDegLat( int level, double pix  )
 	{
         double mapSize = mapHeightSize(level);
@@ -79,8 +87,7 @@ public class CedProj {
         return (x*180);             
 	} 
 	
-	
-
+    @Override
     public R2 latLngToPixelXY( int levelOfDetail, double lat, double lng )
     {
         m_pixel.m_x = (int) lngDegToPixX(levelOfDetail,lng);
@@ -88,6 +95,7 @@ public class CedProj {
         return m_pixel;
     }
     
+    @Override
 	public Point xyPixelToLatLng( int levelOfDetail, int x, int y) {
 		// we have to mod by world size in case we had
 		// to extend the whole world
@@ -96,9 +104,7 @@ public class CedProj {
 		return m_geoPt;
 	}
 
-
-
-    
+    @Override
 	public R2 geoPosToTileXY( int level, double lat, double lng ){
 
         double x = (lng + 180) / 360; 
@@ -113,6 +119,7 @@ public class CedProj {
 		return m_tile;
 	}
 	
+    @Override
     public R2 tileXYToTopLeftXY( int tileX, int tileY  ){
     	m_pixel.m_x = tileX*m_orgTilePixSize;
     	m_pixel.m_y = (tileY+1)*m_orgTilePixSize;

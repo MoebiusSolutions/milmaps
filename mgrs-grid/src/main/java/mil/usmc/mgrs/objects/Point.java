@@ -5,7 +5,7 @@ public class Point {
 
     public double m_lat;
     public double m_lng;
-    public boolean flag;
+    public boolean flag = false;
 
     public Point(double lat, double lon) {
         super();

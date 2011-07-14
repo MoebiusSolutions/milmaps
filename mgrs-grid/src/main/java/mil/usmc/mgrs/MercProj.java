@@ -11,7 +11,7 @@ import mil.usmc.mgrs.objects.R2;
 //------------------------------------------------------------------------------
 
 
-public class MercProj
+public class MercProj implements IProjection
 {	
     private static final double MinLatitude = -85.05112878;
     private static final double MaxLatitude = 85.05112878;
@@ -33,16 +33,16 @@ public class MercProj
         return Math.min(Math.max(n, minValue), maxValue);
     }
     
+    @Override
 	public void initialize( int tileSize ){	
 		m_orgTilePixSize = tileSize;
 	}   
-
-
-    public int mapSize(int levelOfDetail)
+    
+    @Override
+    public int mapSize( int level )
     {
-        return (int) m_orgTilePixSize << levelOfDetail;
+        return (int) m_orgTilePixSize << level;
     }
-
 
 	/**
 	 * This routine finds the whole world pixel value, based on zero pixel at 
@@ -51,6 +51,7 @@ public class MercProj
 	 * @param dPhi : Geodetic Coordinate
 	 * @return a double (the y value).
 	 */
+
 	protected double lat2PixY( int level, double dLat ){
 		dLat = clip(dLat, MinLatitude, MaxLatitude);
         double sinLat = Math.sin(DegToRad*dLat);
@@ -63,6 +64,7 @@ public class MercProj
 	 * @param dLng : Geodetic longitude Coordinate
 	 * @return a double (the x pixel value).
 	 */
+
 	protected double lng2PixX( int level, double dLng )
 	{
 		dLng = clip(dLng, MinLongitude, MaxLongitude);
@@ -75,6 +77,7 @@ public class MercProj
 	 * @param dX : World pixel coordinate x value
 	 * @return a double (longitude)
 	 */
+
 	protected double pixX2Lng( int level, double dX )
 	{
         double mapSize = mapSize(level);
@@ -88,6 +91,7 @@ public class MercProj
 	 * @param dY : word coordinate y value
 	 * @return a double, the y value. If an error occurs it returns DEG_ERROR
 	 */
+ 
 	protected double  pixY2Lat( int level, double dY )
 	{
         double mapSize = mapSize(level);
@@ -96,17 +100,17 @@ public class MercProj
         return lat;
 	}
 
-
+    @Override
 	public int lngDegToPixX( int level, double deg ){
 		return (int)(lng2PixX(level,deg)+0.5);
 	}
 	
-
+    @Override
 	public double xPixToDegLng( int level, double pix ){
 		return pixX2Lng(level,pix);
 	}
 	
-
+    @Override
 	public int latDegToPixY( int level, double deg ){
 		// First we find the whole world pixel value based on the 
 		// top of the map having y value equal to zero.
@@ -121,7 +125,7 @@ public class MercProj
 	 * This routine converts pixY to a latitude with whole world pixel zero
 	 * at the bottom of the map (not the top)
 	 */
-
+    @Override
 	public double yPixToDegLat( int level, double pix ){
 		// First we need to translate the pixel since the y direction is reversed
 		double mapSize = mapSize(level);
@@ -130,7 +134,7 @@ public class MercProj
 	}
 
 
-
+    @Override
     public R2 latLngToPixelXY( int levelOfDetail, double lat, double lng )
     {
         m_pixel.m_x = (int) lngDegToPixX(levelOfDetail,lng);
@@ -138,6 +142,7 @@ public class MercProj
         return m_pixel;
     }
     
+    @Override
 	public Point xyPixelToLatLng( int levelOfDetail, int x, int y) {
 		// we have to mod by world size in case we had
 		// to extend the whole world
@@ -146,9 +151,8 @@ public class MercProj
 		return m_geoPt;
 	}
 
-
-
     
+    @Override
 	public R2 geoPosToTileXY( int level, double lat, double lng ){
 
         double x = (lng + 180) / 360; 
@@ -166,6 +170,7 @@ public class MercProj
 		return m_tile;
 	}
 	
+    @Override
     public R2 tileXYToTopLeftXY( int tileX, int tileY  ){
     	m_pixel.m_x = tileX*m_orgTilePixSize;
     	m_pixel.m_y = (tileY+1)*m_orgTilePixSize;
@@ -174,15 +179,6 @@ public class MercProj
     }
     
 
-
-    /// <summary>
-    /// Converts tile XY coordinates into a QuadKey at a specified level of detail.
-    /// </summary>
-    /// <param name="tileX">Tile X coordinate.</param>
-    /// <param name="tileY">Tile Y coordinate.</param>
-    /// <param name="levelOfDetail">Level of detail, from 1 (lowest detail)
-    /// to 23 (highest detail).</param>
-    /// <returns>A string containing the QuadKey.</returns>
     public String tileXYToQuadKey( int tileX, int tileY, int levelOfDetail )
     {
     	StringBuilder quadKey = new StringBuilder();
