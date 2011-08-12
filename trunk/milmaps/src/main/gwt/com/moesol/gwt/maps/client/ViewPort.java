@@ -1,6 +1,14 @@
 package com.moesol.gwt.maps.client;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+
 
 
 
@@ -28,6 +36,34 @@ public class ViewPort {
 	public ViewPort(IProjection proj) {
 		m_projection = proj;
 	}
+	
+	public DialogBox alertWidget(final String header, String content) {
+        final DialogBox box = new DialogBox();
+        final VerticalPanel panel = new VerticalPanel();
+        final String strContent = ".  " + content + "  .";
+        box.setText(header);
+        panel.add(new Label( strContent ));
+        final Button btnClose = new Button("Close");
+        ClickHandler handler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                box.hide();
+            }
+        };
+        btnClose.addClickHandler(handler);
+        
+        // few empty labels to make widget larger
+        final Label emptyLabel = new Label("");
+        emptyLabel.setSize("auto","25px");
+        panel.add(emptyLabel);
+        panel.add(emptyLabel);
+        btnClose.setWidth("90px");
+        panel.add(btnClose);
+        panel.setCellHorizontalAlignment(btnClose, HasAlignment.ALIGN_RIGHT);
+        box.add(panel);
+        box.getElement().getStyle().setProperty("zIndex", Integer.toString(9000) );
+        return box;
+    }
 	
 	public void setTileDegWidth( double deg ){
 		m_tileDegWidth = deg;
@@ -106,29 +142,33 @@ public class ViewPort {
 		if ( m_projection.getScale() == 0.0 ){
 			m_projection.setScale(lsScale);
 		}
+
 		m_centerTile = findTile(  level, gc );
 		positionCenterOffsetForView();
 		computeHowManyXTiles();
 		computeHowManyYTiles();
 		
-		TileCoords[] r = makeTilesResult();
+		TileCoords[] r = makeTilesResult(level);
 		buildTilesRelativeToCenter( r, ls.isZeroTop() );
 		
 		return r;
 	}
 	
-	public ViewCoords worldToView(WorldCoords v) {
+	public ViewCoords worldToView(WorldCoords v, boolean checkWrap) {
 		ViewCoords r = m_returnedViewCoords;
 		r.setX(v.getX() - m_worldCenter.getX() + getCenterX());
 		r.setY(-(v.getY() - m_worldCenter.getY()) + getCenterY()); // flip y axis
 		
 		// Check for world wrap
-		if (r.getX() < 0) {
-			int checkX = r.getX() + m_projection.getWorldDimension().getWidth();
-			r.setX(checkX);
-		} else if (r.getX() >= m_dimension.getWidth()) {
-			int checkX = r.getX() - m_projection.getWorldDimension().getWidth();
-			r.setX(checkX);
+		// We may want to remove the wrap check all together.
+		if ( checkWrap == true ){ 
+			if (r.getX() < 0) {
+				int checkX = r.getX() + m_projection.getWorldDimension().getWidth();
+				r.setX(checkX);
+			} else if (r.getX() >= m_dimension.getWidth()) {
+				int checkX = r.getX() - m_projection.getWorldDimension().getWidth();
+				r.setX(checkX);
+			}
 		}
 		return r;
 	}
@@ -139,8 +179,9 @@ public class ViewPort {
 		return m_returnedWorldCoords;
 	}
 
-	private TileCoords[] makeTilesResult() {
-		TileCoords[] r = new TileCoords[m_cyTiles * m_cxTiles];
+	private TileCoords[] makeTilesResult(int level) {
+		int count = m_cyTiles * m_cxTiles;
+		TileCoords[] r = new TileCoords[count];
 		return r;
 	}
 
@@ -257,10 +298,10 @@ public class ViewPort {
 	}
 
 	private void positionCenterOffsetForView() {
-	  // This routine positions the center tile relative the view it sits in.
+	  // This routine positions the center tile relative to the view it sits in.
 		m_returnedWorldCoords.setX(m_centerTile.getOffsetX());
 		m_returnedWorldCoords.setY(m_centerTile.getOffsetY());
-		ViewCoords vc = worldToView(m_returnedWorldCoords);
+		ViewCoords vc = worldToView(m_returnedWorldCoords, false);
 		m_centerTile.setOffsetY(vc.getY());
 		m_centerTile.setOffsetX(vc.getX());
 	}
