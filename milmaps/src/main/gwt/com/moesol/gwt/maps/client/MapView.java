@@ -246,7 +246,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	}
 
 	public ViewCoords getViewCenter() {
-		return m_viewPort.worldToView(getWorldCenter());
+		return m_viewPort.worldToView(getWorldCenter(), true);
 	}
 
 	public WorldCoords getWorldCenter() {
@@ -475,7 +475,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 			double offsetY) {
 
 		WorldCoords w = m_tempProj.geodeticToWorld(icon.getLocation());
-		ViewCoords vc = m_viewPort.worldToView(w);
+		ViewCoords vc = m_viewPort.worldToView(w, false);
 		Image image = icon.getImage();
 		int x = (int) (scale * vc.getX() - offsetX)
 				+ icon.getIconOffset().getX();
@@ -494,7 +494,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 	private void positionOneIcon(Icon icon) {
 		WorldCoords v = m_projection.geodeticToWorld(icon.getLocation());
-		ViewCoords portCoords = m_viewPort.worldToView(v);
+		ViewCoords portCoords = m_viewPort.worldToView(v, true);
 		Image image = icon.getImage();
 		image.getElement().getStyle()
 				.setProperty("zIndex", Integer.toString(4));
