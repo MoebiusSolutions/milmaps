@@ -13,6 +13,26 @@ public interface IProjection {
 	public abstract void initialize( int tileWidth, double degWidth, double degHeight );
 	
 	/**
+	 * Synchronize the original tile data.
+	 * This method does not effect the current scale.
+	 * @param tileWidth : in pixels
+	 * @param degWidth of tile.
+	 */
+	public abstract void synchronize( int tileWidth, double degWidth, double degHeight );
+	
+	/**
+	 * Checks that the projection will support the espg associated with the layerset
+	 * @param espg
+	 * @return true or false
+	 */
+	public abstract boolean doesSupport( int espg );
+	
+	/**
+	 * Clone projection
+	 */
+	public abstract IProjection cloneProj();
+	
+	/**
 	 * Copies information from one projection to the next.
 	 * @param orig
 	 */
@@ -79,7 +99,7 @@ public interface IProjection {
 	 * returns the viewport's geo-center.
 	 * @return
 	 */
-	public abstract GeodeticCoords getVpGeoCenter();
+	public abstract GeodeticCoords getViewGeoCenter();
 
 	/**
 	 * Returns the center of the viewPort in World Coordinates
@@ -99,6 +119,11 @@ public interface IProjection {
 	 */
 	public abstract void zoomByFactor(double scaleFactor);
 	
+	public abstract double getOrigTileDegWidth();
+	
+	public abstract double getOrigTileDegHeight();
+	
+	public abstract int getOrigTilePixelSize();
 	
 	public abstract int lngDegToPixX( double deg );
 	

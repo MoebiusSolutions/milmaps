@@ -19,6 +19,24 @@ public class CylEquiDistProj extends AbstractProjection {
 		m_minLat = -90.0;
 		m_maxLat = 90.0;
 	}
+	
+	@Override
+	public boolean doesSupport( int espg ){
+		switch ( espg ){
+		case 4326:
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public IProjection cloneProj(){
+		IProjection proj = new CylEquiDistProj( m_orgTilePixSize,
+												m_origTileDegWidth, 
+												m_origTileDegHeight );
+		proj.setViewGeoCenter(this.getViewGeoCenter());
+		return proj;
+	}
 
 	@Override
 	public int lngDegToPixX( double deg ){
@@ -124,14 +142,14 @@ public class CylEquiDistProj extends AbstractProjection {
 	}
 
 	protected double orig_yPixToDegLat( int level, double pix ){
-        double mapSize = m_orgTilePixSize << (level);
+        double mapSize = (m_origMapWidthSize/2) << level;
         double y = (pix / mapSize); 
 		double dLat = y*180.0;
 		return ( -90 + dLat);
 	}
 	
 	protected double orig_xPixToDegLng( int level, double pix ){
-        double mapSize = m_orgTilePixSize << (level+1);
+        double mapSize = m_origMapWidthSize << level;
         double x = (pix / mapSize) - 0.5;   
         return (x*360);		
 	}	
@@ -147,9 +165,9 @@ public class CylEquiDistProj extends AbstractProjection {
     }
 	
     @Override
-	public int adjustSize( int level, int size){    	
-    	double mapSize =  (m_orgTilePixSize << (level+1));
-    	double scaledMapSize =  (m_scale * EarthCirMeters / m_scrnMpp );
+	public int adjustSize( int level, int size){   
+    	double mapSize =  (m_origMapWidthSize << level);
+    	double scaledMapSize =  mapSize();
     	double factor = scaledMapSize/mapSize;
     	return (int)(factor*size);
     }

@@ -46,7 +46,8 @@ public class TiledImageLayer {
 		public Object createImage(TileCoords tileCoords) {
 			Image image = new Image();
 			image.addLoadListener(m_tileImageLoadListener);
-			image.setUrl(tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter()));
+			String url = tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter());
+			image.setUrl(url);
 			image.setStyleName("moesol-MapTile");
 			m_absolutePanel.add(image);
 			return image;

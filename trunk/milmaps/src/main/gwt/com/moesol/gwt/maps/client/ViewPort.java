@@ -7,14 +7,13 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.moesol.gwt.maps.client.units.AngleUnit;
 
 
 
 
 public class ViewPort {
 	private final ViewDimension m_dimension = new ViewDimension(600, 400);
-	private final IProjection m_projection;
+	private IProjection m_projection = null;
 	private final ViewCoords m_returnedViewCoords = new ViewCoords();
 	
 	private final WorldCoords m_worldCenter = new WorldCoords();
@@ -33,7 +32,10 @@ public class ViewPort {
 	private int m_topTiles;
 	private int m_bottomTiles;
 	
-	public ViewPort(IProjection proj) {
+	public ViewPort(){
+	}
+	
+	public void setProjection( IProjection proj ){
 		m_projection = proj;
 	}
 	
@@ -137,7 +139,7 @@ public class ViewPort {
 		double degFactor = ( tLevel < 1 ? 1 : Math.pow(2, tLevel) );
 		m_tileDegWidth  = ls.getStartLevelTileWidthInDeg()/degFactor;
 		m_tileDegHeight = ls.getStartLevelTileHeightInDeg()/degFactor;
-		GeodeticCoords gc = m_projection.getVpGeoCenter();
+		GeodeticCoords gc = m_projection.getViewGeoCenter();
 		m_worldCenter.copyFrom(m_projection.geodeticToWorld(gc));
 		if ( m_projection.getScale() == 0.0 ){
 			m_projection.setScale(lsScale);

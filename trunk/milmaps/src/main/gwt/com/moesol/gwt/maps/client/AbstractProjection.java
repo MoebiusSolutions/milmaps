@@ -31,6 +31,8 @@ public abstract class AbstractProjection implements IProjection {
 	protected double m_prevScale;
 	protected double m_wholeWorldScale;
 	
+	protected int m_origMapWidthSize;
+	
 	protected double m_minLat = -90.0;
 	protected double m_minLng = -180.0;
 	protected double m_maxLat = 90.0;
@@ -65,6 +67,12 @@ public abstract class AbstractProjection implements IProjection {
 		m_vpGeoCenter.setPhi(0.0, AngleUnit.DEGREES);
 	}
 	
+	public double getOrigTileDegWidth(){ return m_origTileDegWidth; }
+	
+	public double getOrigTileDegHeight(){ return m_origTileDegHeight; }
+	
+	public int getOrigTilePixelSize(){ return m_orgTilePixSize; }
+	
     protected double clip(double n, double minValue, double maxValue)
     {
         return Math.min(Math.max(n, minValue), maxValue);
@@ -89,13 +97,26 @@ public abstract class AbstractProjection implements IProjection {
 		m_orgTilePixSize = tileSize;
 		m_origTileDegWidth = degWidth;
 		m_origTileDegHeight = degHeight;
+		m_origMapWidthSize = (int)( tileSize*(360/degWidth) + 0.5);
+		computeWorldSize();
+	}
+	
+	@Override
+	public void synchronize( int tileSize, double degWidth, double degHeight ){
+		double earth_mpp = degWidth * (MeterPerDeg / tileSize);
+		// meters per pixel for physical screen
+		m_scrnMpp = 2.54 / (m_scrnDpi * 100); 	
+		m_orgTilePixSize = tileSize;
+		m_origTileDegWidth = degWidth;
+		m_origTileDegHeight = degHeight;
+		m_origMapWidthSize = (int)( tileSize*(360/degWidth) + 0.5);
 		computeWorldSize();
 	}
 	
 	@Override
 	public void copyFrom(IProjection orig) {
 		m_scrnDpi = orig.getScrnDpi();
-		m_vpGeoCenter.copyFrom(orig.getVpGeoCenter());
+		m_vpGeoCenter.copyFrom(orig.getViewGeoCenter());
 		setScale(orig.getScale());
 		computeWorldSize();
 	}
@@ -161,7 +182,7 @@ public abstract class AbstractProjection implements IProjection {
 	}
 
 	@Override
-	public GeodeticCoords getVpGeoCenter() {
+	public GeodeticCoords getViewGeoCenter() {
 		return m_vpGeoCenter;
 	}
 	

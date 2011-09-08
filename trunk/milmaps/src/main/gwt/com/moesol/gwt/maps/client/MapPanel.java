@@ -14,10 +14,6 @@ public class MapPanel extends Composite implements RequiresResize {
 	private int lastWidth = 0;
 	private int lastHeight = 0;
 	
-	public MapPanel() {
-		this(new MapView());
-	}
-	
 	public MapPanel(MapView mapView) {
 		m_mapView = mapView;
 		initWidget(m_mapView);
