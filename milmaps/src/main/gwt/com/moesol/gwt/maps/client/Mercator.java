@@ -14,6 +14,24 @@ public class Mercator extends AbstractProjection {
 		m_minLat = -85.05113;
 		m_maxLat = 85.05113;
 	}
+	
+	@Override
+	public boolean doesSupport( int espg ){
+		switch ( espg ){
+		case 900913:
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public IProjection cloneProj(){
+		IProjection proj = new Mercator( m_orgTilePixSize,
+										 m_origTileDegWidth, 
+										 m_origTileDegHeight );
+		proj.setViewGeoCenter(this.getViewGeoCenter());
+		return proj;
+	}
     
 
 	@Override

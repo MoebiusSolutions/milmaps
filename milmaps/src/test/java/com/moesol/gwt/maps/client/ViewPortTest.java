@@ -17,10 +17,11 @@ public class ViewPortTest {
 			//setdPhi(Math.toRadians(36.0));
 		}
 	};
-	private ViewPort m_vp = new ViewPort(m_p);
+	private ViewPort m_vp = new ViewPort();
 	
 	@Test
 	public void testArrangeTiles() {
+		m_vp.setProjection(m_p);
 		m_vp.setSize(200, 200);
 		GeodeticCoords worldCoords = new GeodeticCoords(0, 0, AngleUnit.DEGREES);
 		checkForCenter(worldCoords, 5, 2);
@@ -34,6 +35,7 @@ public class ViewPortTest {
 	
 	@Test
 	public void testValidateViewCenter() {
+		m_vp.setProjection(m_p);
 		m_vp.setSize(200, 200);
 		check(0, 100, 0, 0);
 		check(1, 100, 1, 1);
@@ -43,6 +45,8 @@ public class ViewPortTest {
 	
 	@Test
 	public void testComputeInViewPort() {
+		m_vp.setProjection(m_p);
+		
 		TileCoords tc;
 		
 		tc = new TileCoords();

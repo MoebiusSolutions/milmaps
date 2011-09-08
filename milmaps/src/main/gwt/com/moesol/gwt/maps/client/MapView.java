@@ -29,11 +29,9 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	private final FocusPanel m_focusPanel = new FocusPanel();
 	private final MapController m_mapEventListener = new MapController(this);
 
-	private final IProjection m_projection = new CylEquiDistProj(512,180,180);
-	private final IProjection m_tempProj = new CylEquiDistProj(512,180,180);
-	//private final IProjection m_projection = new Mercator(256,180,85.05113);
-	//private final IProjection m_tempProj = new Mercator(256,180,85.05113);
-	private final ViewPort m_viewPort = new ViewPort(m_projection);
+	private IProjection m_projection = null;
+	private IProjection m_tempProj;
+	private final ViewPort m_viewPort = new ViewPort();
 	private final ViewCoords m_vc = new ViewCoords();
 	private final AnimationEngine m_animateEngine = new AnimationEngine(this);
 	private final FlyToEngine m_flyToEngine = new FlyToEngine(this);
@@ -49,9 +47,21 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	private boolean m_bSuspendMapAction = false;
 	private double m_mapBrightness = 1.0;
 	private boolean m_firstSearch = true;
+	private boolean m_bProjSet = false;
+	private double m_defLat = 0;
+	private double m_defLng = 0;
+	
+	public MapView(){
+		this(Projection.T.CylEquiDist);
+	}
 
-	public MapView() {
-		this(0, 0);
+	public MapView( Projection.T type ) {
+		if ( type == Projection.T.Mercator ){
+			setProjection(new Mercator(256,180,85.05113));
+		}else{
+			setProjection(new CylEquiDistProj(512,180,180));
+		}
+		initialize();
 	}
 
 	MapsClientBundle clientBundle = GWT.create(MapsClientBundle.class);
@@ -59,10 +69,21 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	// MapControls getMapControls() {
 	// return mapControls;
 	// }
+	
+	public MapView( Projection.T type, double defLat, double defLng) {
+		m_defLat = defLat;
+		m_defLng = defLng;
+		if ( type == Projection.T.Mercator ){
+			setProjection(new Mercator(256,180,85.05113));
+		}else{
+			setProjection(new CylEquiDistProj(512,180,180));
+		}
+		initialize();
+	}
 
-	public MapView(double defLng, double defLat) {
+	public  void initialize() {
 		ProjectionValues.readCookies(m_projection);
-		setCenter(recoverCenter(defLng, defLat));
+		setCenter(recoverCenter(m_defLng, m_defLat));
 		initSize();
 		updateView();
 		initDynamicRefreshTimer();
@@ -77,6 +98,27 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		initWidget(m_focusPanel);
 	}
 
+	public void setProjection(IProjection proj){
+		m_projection = proj;
+		m_viewPort.setProjection(proj);
+		m_tempProj = proj.cloneProj();
+	}
+	
+	public boolean setProjFromLayerSet( LayerSet ls ){
+		if ( m_projection != null ){
+			if ( m_projection.doesSupport(ls.getEpsg()) && m_bProjSet )
+				return true;
+		}
+		
+		IProjection proj = Projection.getProj(ls);
+		if ( proj != null ){
+			setProjection(proj);
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public void addEventListener(EventListener eventListener) {
 		this.addEventListener(eventListener);
 	}
@@ -154,6 +196,9 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	}
 
 	public TiledImageLayer addLayer(LayerSet layerSet) {
+		if ( m_bProjSet == false ){
+			m_bProjSet = setProjFromLayerSet(layerSet);
+		}
 		TiledImageLayer tiledImageLayer = new TiledImageLayer(this, layerSet,
 				m_tileLayersPanel);
 		m_tiledImageLayers.add(tiledImageLayer);
@@ -359,7 +404,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 				continue;
 			}
 			if (bestScaleSoFar == layerScale) {
-				if (level > 0 && level < LevelWithBestScaleSoFar) {
+				if (level >= 0 && level < LevelWithBestScaleSoFar) {
 					bestLayerSoFar = layer;
 					bestScaleSoFar = layerScale;
 					LevelWithBestScaleSoFar = level;
@@ -376,8 +421,11 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		}
 		if (bestLayerSoFar != null) {
 			bestLayerSoFar.setPriority(true);
-			// double scale = syncProjScale(zoomFlag, bestScaleSoFar);
-			// m_projection.setScale(scale);
+			LayerSet ls = bestLayerSoFar.getLayerSet();
+			int tileWidth = ls.getPixelWidth();
+			double degWidth = ls.getStartLevelTileWidthInDeg();
+			double degHeight = ls.getStartLevelTileHeightInDeg();
+			m_projection.synchronize(tileWidth, degWidth, degHeight);
 		}
 	}
 
@@ -445,15 +493,15 @@ public class MapView extends Composite implements SourcesChangeEvents {
 			// An animation is in progress so tiles will be updating anyway
 			return;
 		}
-		if (!hasDynamicLayers()) {
+		if (!hasAutoRefreshOnTimerLayers()) {
 			return;
 		}
 		updateView();
 	}
 
-	private boolean hasDynamicLayers() {
+	private boolean hasAutoRefreshOnTimerLayers() {
 		for (TiledImageLayer layer : m_tiledImageLayers) {
-			if (layer.getLayerSet().isDynamic()) {
+			if (layer.getLayerSet().isAutoRefreshOnTimer()) {
 				return true;
 			}
 		}
@@ -573,7 +621,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 			ViewDimension v = m_projection.getViewSize();
 			m_vc.set(v.getWidth() / 2 + dx, v.getHeight() / 2 + dy);
 			m_projection.setCenterFromViewPixel(m_vc);
-			setCenter(m_projection.getVpGeoCenter());
+			setCenter(m_projection.getViewGeoCenter());
 			updateView();
 		}
 		return (m_bSuspendMapAction == false);
@@ -606,7 +654,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 			}
 			//compTileDegDimensions();
 			m_projection.tagPositionToPixel(m_gc, m_vc);
-			setCenter(m_projection.getVpGeoCenter());
+			setCenter(m_projection.getViewGeoCenter());
 			m_animateEngine.setTiledImageLayers(m_tiledImageLayers);
 			m_animateEngine.animateZoomMap(x, y, scaleFactor);
 		}

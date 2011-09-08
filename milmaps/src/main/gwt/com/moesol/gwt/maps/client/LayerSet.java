@@ -15,7 +15,7 @@ public class LayerSet implements IsSerializable {
 	private boolean m_zeroTop;
 	private boolean m_alwaysDraw = false;
 	private boolean m_useToScale = true;
-	private boolean m_dynamic = false;
+	private boolean m_autoRefreshOnTimer = false;
 	private int m_epsg = 4326;
 	private int m_minLevel = -20;
 	private int m_maxLevel = 20;
@@ -263,14 +263,14 @@ public class LayerSet implements IsSerializable {
 	 *         example a layer that contains GPS data needs to be refreshed from
 	 *         the server periodically to show the current GPS positions.
 	 */
-	public boolean isDynamic() {
-		return m_dynamic;
+	public boolean isAutoRefreshOnTimer() {
+		return m_autoRefreshOnTimer;
 	}
-	public void setDynamic(boolean dynamic) {
-		m_dynamic = dynamic;
+	public void setAutoRefreshOnTimer(boolean refresh) {
+		m_autoRefreshOnTimer = refresh;
 	}
-	public LayerSet withDynamic(boolean dynamic) {
-		setDynamic(dynamic);
+	public LayerSet withAutoRefreshOnTimer(boolean refresh) {
+		setAutoRefreshOnTimer(refresh);
 		return this;
 	}
 	

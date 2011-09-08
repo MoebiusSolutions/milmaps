@@ -47,7 +47,7 @@ public class MCOP implements EntryPoint {
 		AbsolutePanel controlsAndMap = new AbsolutePanel();
 		
 		m_msg = new Label("msg...");
-		m_map = new MapView();
+		m_map = new MapView(Projection.T.CylEquiDist);
 		loadLayerConfigsFromClient();
 		
 		int w = Window.getClientWidth() - 20;

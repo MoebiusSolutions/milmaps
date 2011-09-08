@@ -135,13 +135,13 @@ public class Driver implements EntryPoint {
 		dockPanel.setHeight("420px");
 		dockPanel.setWidth("600px");
 		mapPanel.add(dockPanel);
+
+		// loadLayerConfigsFromServer();
+		loadLayerConfigsFromClient(); 
 		
 		//VerticalPanel vp = new VerticalPanel();
-		
-		MapPanel mapFillPanel = new MapPanel();
-		m_map = mapFillPanel.getMapView();
+		MapPanel mapFillPanel = new MapPanel(m_map);
 		m_map.setDpi( m_scrnDpi );
-		
 		m_map.getController().withHoverDelayMillis(MAP_HOVER_DELAY_MILLIS);
 		
 		//new EdgeHoverPanControl(m_map, MAP_EDGE_HOVER_RADIUS_PIXELS,
@@ -158,9 +158,6 @@ public class Driver implements EntryPoint {
 //				bc.animateShow(e.getClientX(), e.getClientY());
 //			}
 //		});
-		
-		// loadLayerConfigsFromServer();
-		loadLayerConfigsFromClient();
 		
 		if (isTrue("showSomeIcons", false)) {
 			addSomeIcons();
@@ -249,7 +246,6 @@ public class Driver implements EntryPoint {
 //		}
 		//vp.add(bar);
 		
-		// KBT change this to layout panel
 		LayoutPanel hp = new LayoutPanel();
 		dockPanel.add(hp);
 		//hp.setHeight("500px");
@@ -317,7 +313,7 @@ public class Driver implements EntryPoint {
 	private void loadLayerConfigsFromClient() {
 		// this assumes we are starting with cell sizes of 
 		// 180x180 and pixels sizes of 512 x 512
-		
+		m_map = new MapView();
 		// Try to pull from json in .html
 		JsArray<LayerSetJson> layerSets = getLayerSets();
 		if (layerSets != null) {

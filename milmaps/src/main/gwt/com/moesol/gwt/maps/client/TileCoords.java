@@ -241,7 +241,7 @@ public class TileCoords {
 	 * @return returnStr or returnStr with counter appended.
 	 */
 	private String maybeAppendDynamicCounter(LayerSet layerSet, String returnStr, long dynamicCounter) {
-		if (!layerSet.isDynamic()) {
+		if (!layerSet.isAutoRefreshOnTimer()) {
 			return returnStr;
 		}
 		if (returnStr.contains("?")) {

@@ -46,7 +46,7 @@ public class FlyToEngine extends Animation{
 		m_projScale = m_p.getScale();
 		m_scaleFactor = scaleFactor;
 		m_zoomIn =  (m_scaleFactor < 1.0 ? false : true );
-		GeodeticCoords gc = m_p.getVpGeoCenter();
+		GeodeticCoords gc = m_p.getViewGeoCenter();
 		m_startLat = gc.getPhi(AngleUnit.DEGREES);
 		m_startLng = gc.getLambda(AngleUnit.DEGREES);
 		m_lngVector = getLngVector(m_startLng, lng);

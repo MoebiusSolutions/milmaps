@@ -43,7 +43,7 @@ public class MapJsApi implements EntryPoint {
 
 	public static MapView newMapView(String id) {
 		RootPanel root = RootPanel.get(id);
-		MapView map = new MapView();
+		MapView map = new MapView(Projection.T.CylEquiDist);
 //		map.addLayers(getWorldWindLayerSets());
 		root.add(map);
 //		map.updateView();
