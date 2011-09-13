@@ -23,7 +23,7 @@
         <dependency>
             <groupId>mil.geotransj</groupId>
             <artifactId>geotransJ</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
