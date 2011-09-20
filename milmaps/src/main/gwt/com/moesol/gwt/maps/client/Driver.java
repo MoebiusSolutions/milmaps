@@ -247,7 +247,9 @@ public class Driver implements EntryPoint {
 		//vp.add(bar);
 		
 		LayoutPanel hp = new LayoutPanel();
+		//int count = hp.getWidgetCount();
 		dockPanel.add(hp);
+		//count = hp.getWidgetCount();
 		//hp.setHeight("500px");
 		//hp.setWidth("500px");
 		//vp.add(hp);
@@ -269,11 +271,13 @@ public class Driver implements EntryPoint {
 		
 		// The map viewport
 		hp.add(mapFillPanel);
+		//count = hp.getWidgetCount();
 		//hp.setWidgetLeftWidth(mapFillPanel,0, Style.Unit.PCT, 100, Style.Unit.PCT);
 		// The map controls
 		MapPanZoomControl mapControls = new MapPanZoomControl(m_map, 15, 100);
 		mapControls.getElement().getStyle().setZIndex(100000);
 		hp.add(mapControls);
+		//count = hp.getWidgetCount();	
 		hp.setWidgetLeftWidth(mapControls,0, Style.Unit.PX, 56, Style.Unit.PX);
 		hp.setWidgetTopHeight(mapControls,0, Style.Unit.PX, 121, Style.Unit.PX);
 		//The mouse position label;

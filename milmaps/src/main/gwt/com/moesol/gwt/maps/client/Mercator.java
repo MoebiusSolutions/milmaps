@@ -126,7 +126,7 @@ public class Mercator extends AbstractProjection {
 	protected double  pixY2Lat( double dY )
 	{
         double mapSize = mapSize();
-        double y = 0.5 - (clip(dY, 0, mapSize -1 ) / mapSize);
+        double y = 0.5 - (clip(dY, 0, mapSize ) / mapSize);
         double lat = 90 - 360 * Math.atan(Math.exp(-y * 2 * Math.PI)) / Math.PI;
         return lat;
 	}
@@ -268,9 +268,11 @@ public class Mercator extends AbstractProjection {
     }
     
     @Override
-	public int adjustSize( int level, int size){    	
-    	double mapSize =  (m_orgTilePixSize << level);
-    	double scaledMapSize =  (m_scale * EarthCirMeters / m_scrnMpp );
+	public int adjustSize(  int size ){   
+    	// scale = origScale*2^z  so z = log(scale/origScale)/log(2)
+    	int z = (int)Math.max(0,(( Math.log(m_scale)- Math.log(m_origScale))/Math.log(2)));
+    	double mapSize =  m_origMapWidthSize<<z;
+    	double scaledMapSize =  mapSize();
     	double factor = scaledMapSize/mapSize;
     	return (int)(factor*size);
     }

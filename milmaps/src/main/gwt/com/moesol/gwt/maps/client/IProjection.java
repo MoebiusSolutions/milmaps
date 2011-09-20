@@ -226,7 +226,24 @@ public interface IProjection {
 	
 	public abstract WorldCoords tileXYToTopLeftXY(  int level, TileXY tile   );
 	
+	/**
+	 * Returns the original scale that is computed when the projection 
+	 * is initialized with the layer data.
+	 */
+	public abstract double getOrigScale();
+	
+	public abstract int computeLevel();
+	
+	/**
+	 * This adjust size method doesn't rely on passing the level.
+	 * It computes it on the fly.
+	 * @param size
+	 * @return
+	 */
+	public abstract int adjustSize( int size );
+	
 	public abstract int adjustSize( int level, int size );
+	
 	
 	public abstract int compWidthInPixels(double lng1, double lng2);
 	
