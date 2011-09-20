@@ -57,7 +57,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 	public MapView( Projection.T type ) {
 		if ( type == Projection.T.Mercator ){
-			setProjection(new Mercator(256,180,85.05113));
+			setProjection(new Mercator(256,360,170.10226));
 		}else{
 			setProjection(new CylEquiDistProj(512,180,180));
 		}
@@ -74,7 +74,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		m_defLat = defLat;
 		m_defLng = defLng;
 		if ( type == Projection.T.Mercator ){
-			setProjection(new Mercator(256,180,85.05113));
+			setProjection(new Mercator(256,360,170.10226));
 		}else{
 			setProjection(new CylEquiDistProj(512,180,180));
 		}
@@ -357,7 +357,8 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	void preUpdateView() {
 		computeLevelsAndTileCoords();
 	}
-
+	
+/*
 	private double syncProjScale(ZoomFlag zoomFlag, double scale) {
 		double tScale = m_projection.getScale();
 		if (zoomFlag == ZoomFlag.IN) {// zooming in
@@ -367,7 +368,8 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		}
 		return tScale;
 	}
-
+*/
+	
 	/**
 	 * Marks the tiled image layer that is the best for this projection as
 	 * priority.

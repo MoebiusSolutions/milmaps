@@ -28,6 +28,8 @@ public class Projection {
 			return null;
 		if ( type == Projection.T.Mercator ){
 			proj = new Mercator(size,degWidth,degHeight);
+			// We want to start with level 1 and not 0.
+			proj.zoomByFactor(2.0);
 		}else if (type == Projection.T.CylEquiDist ) {
 			proj = new CylEquiDistProj(size,degWidth,degHeight);
 		}

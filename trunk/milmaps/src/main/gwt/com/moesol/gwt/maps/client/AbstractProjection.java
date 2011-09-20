@@ -38,7 +38,8 @@ public abstract class AbstractProjection implements IProjection {
 	protected double m_maxLat = 90.0;
 	protected double m_maxLng = 180.0;
 	
-	protected int m_orgTilePixSize = 0;
+	protected double m_origScale = 0;
+	protected int 	 m_orgTilePixSize = 0;
 	protected double m_origTileDegWidth = 0;
 	protected double m_origTileDegHeight = 0;
 	
@@ -93,6 +94,7 @@ public abstract class AbstractProjection implements IProjection {
 		// meters per pixel for physical screen
 		m_scrnMpp = 2.54 / (m_scrnDpi * 100); 
 		m_scale = (m_scrnMpp / earth_mpp);
+		m_origScale = m_scale;
 		m_prevScale = m_scale;	
 		m_orgTilePixSize = tileSize;
 		m_origTileDegWidth = degWidth;
@@ -277,7 +279,6 @@ public abstract class AbstractProjection implements IProjection {
 		if ( dist > mapSize/2 )
 			dist = mapSize - dist;
 		return (int)(dist + 0.5 );
-		
     }
 	
     @Override
@@ -287,4 +288,38 @@ public abstract class AbstractProjection implements IProjection {
 		return (int)(Math.abs(y2 - y1));
     }
     
+    @Override
+    public double getOrigScale(){ 
+    	return m_origScale; 
+    }
+    
+	// 1852 meters/ nautical mile so 1 deg = 60*1852 meters = 111,120 meters.
+	// mpp is meters per pixel.
+	// level_n_mpp = (level_0_mpp)/2^n so level_n_scale =
+	// (m_mpp/level_0_mpp)*2^n
+	// We wan to find n so so that level_n_Scale close to given projScale
+	//
+	// Hence n = ( log(projScale) + log(level_0_mpp) - log(m_mpp) )/log(2);
+
+	// dpi is pixels per inch for physical screen
+    @Override
+	public int computeLevel(){
+		double mpp = m_scrnMpp; // meters per pixel for physical screen
+		double m_dx = m_orgTilePixSize;
+		double l_mpp = m_origTileDegWidth* (MeterPerDeg / m_dx);
+
+		double logMess = Math.log(m_scale) + Math.log(l_mpp)
+				- Math.log(mpp);
+		double dN = logMess / Math.log(2);
+		return (int)(Math.rint(dN));
+	}
+    
+    @Override
+	public int adjustSize( int level, int size ){   
+    	int tLevel = Math.max(0,level);
+    	double mapSize =  m_origMapWidthSize<<tLevel;
+    	double scaledMapSize =  mapSize();
+    	double factor = scaledMapSize/mapSize;
+    	return (int)(factor*size);
+    }
 }

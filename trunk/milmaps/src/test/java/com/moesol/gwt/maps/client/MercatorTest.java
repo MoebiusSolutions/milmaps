@@ -9,8 +9,7 @@ import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class MercatorTest {
 
-	private IProjection m_proj = new Mercator(256,180,85.05113);
-	//private CylEquiDistProj m_cylinProj = new CylEquiDistProj(256,180,180);
+	private IProjection m_proj = new Mercator(256,360,2*85.05113);
 	private MercProj m_mercProj = new MercProj();
 	
 	private TileXY m_tile = new TileXY();
@@ -25,7 +24,7 @@ public class MercatorTest {
 	protected int m_scrnDpi = 75;   // screen dot per inch
 	protected double m_scrnMpp = 2.54/7500.0; // screen meter per pixel
 	protected int m_orgTilePixSize = 256;
-	protected double m_orgTileWidthInDeg = 180;
+	protected double m_orgTileWidthInDeg = 360;
 	
 	public MercatorTest(){
 	}
@@ -67,13 +66,15 @@ public class MercatorTest {
 		WorldCoords v = new WorldCoords(0, 0);
 		GeodeticCoords w = m_proj.worldToGeodetic(v);
 		//GeodeticCoords exp = new GeodeticCoords(-180, -85.05113, AngleUnit.DEGREES);
-		assertEquals(w.getPhi(AngleUnit.DEGREES),-85.05113, 0.2);
-		assertEquals(w.getLambda(AngleUnit.DEGREES),-180, 0.2);
+		double val = w.getPhi(AngleUnit.DEGREES);
+		assertEquals(val,-85.05113, 0.2);
+		val = w.getLambda(AngleUnit.DEGREES);
+		assertEquals(val,-180, 0.2);
 		//assertEquals(exp, w);
 		
 		int level = -1;
-		int viewDx = 512/ (1 << (-level));
-		int viewDy = 512/ (1 << (-level));
+		int viewDx = 256/ (1 << (-level));
+		int viewDy = 256/ (1 << (-level));
 		
 		v = new WorldCoords(viewDx, viewDy);
 		w = m_proj.worldToGeodetic(v);
@@ -124,7 +125,7 @@ public class MercatorTest {
 		double lat, lng;
 		lng = 1.0;
 		lat = -80;
-		int level = computeLevel(1,m_proj.getScale());
+		int level = m_proj.computeLevel();
 		for (lat = -80; lat <= 80; lat += 1.0) {
 			for (lng = -180; lng <= 180; lng += 1.0) {
 				gc = new GeodeticCoords(lng, lat, AngleUnit.DEGREES);
@@ -154,7 +155,7 @@ public class MercatorTest {
 		GeodeticCoords gc2;
 		WorldCoords wc = new WorldCoords() ;
 		m_proj.zoomByFactor(16);
-		int level = computeLevel(1,m_proj.getScale());
+		int level = m_proj.computeLevel();
 		for (int x = 2; x < 512; x += 2 ) {
 			for ( int y = 2; y < 512; y += 2 ) {
 				wc.setX(x); wc.setY(y);
@@ -243,8 +244,8 @@ public class MercatorTest {
 		for ( int i = 1; i < 5; i++ ){
 			double dFactor = Math.pow(2,i) + fudge;
 			m_proj.zoomByFactor(dFactor);
-			int level = computeLevel(1,m_proj.getScale());
-			int width  = m_proj.adjustSize(i+1, 256);
+			int level = m_proj.computeLevel();
+			int width  = m_proj.adjustSize(level, 256);
 			double dZ = (1 + fudge/Math.pow(2,i));
 			int expValue = (int)(dZ*256);
 			m_proj.zoomByFactor(1.0/dFactor);
@@ -305,9 +306,9 @@ public class MercatorTest {
 				for ( int level = 4; level < 5; level++ ){
 					PixelXY pixel = m_mercProj.latLngToPixelXY( level, lat, lng ).clone();
 					
-					double dFactor = Math.pow(2,level-1);
+					double dFactor = Math.pow(2,level);
 					m_proj.zoomByFactor(dFactor);
-					int tLevel = computeLevel( 1, m_proj.getScale());
+					int tLevel =  m_proj.computeLevel();
 					if ( tLevel != level )
 						tLevel = level;
 					else
@@ -322,8 +323,7 @@ public class MercatorTest {
 	}
 
 	public int computeLevel( int startLevel, double projScale) {
-		double m_dx = m_orgTilePixSize;
-		double earth_mpp = m_orgTileWidthInDeg* (MeterPerDeg / m_dx);
+		double earth_mpp = m_orgTileWidthInDeg* (MeterPerDeg / m_orgTilePixSize);
 		// compute the best level.
 		if ( projScale == 0.0 ){
 			projScale = (m_scrnMpp / earth_mpp);
@@ -343,8 +343,8 @@ public class MercatorTest {
 		
 		w = new GeodeticCoords(180, 85.05113, AngleUnit.DEGREES);
 		v = m_proj.geodeticToWorld(w);
-		int viewDx = 256*(1<<level+1);
-		int viewDy = 256*(1<<level+1);
+		int viewDx = 256*(1<<level);
+		int viewDy = 256*(1<<level);
 		exp = new WorldCoords(viewDx, viewDy);
 		assertEquals(exp, v);
 		

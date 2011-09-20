@@ -132,8 +132,9 @@ public class CylEquiDistProj extends AbstractProjection {
 	@Override
 	public TileXY geoPosToTileXY( int level, GeodeticCoords g  )
 	{
-		double degCellWidth = m_origTileDegWidth/Math.pow(2.0,level);
-		double degCellHeight = m_origTileDegHeight/Math.pow(2.0,level);
+		int tLevel = Math.max(0,level);
+		double degCellWidth = m_origTileDegWidth/Math.pow(2.0,tLevel);
+		double degCellHeight = m_origTileDegHeight/Math.pow(2.0,tLevel);
 		double degMag = Math.abs(g.getLambda(AngleUnit.DEGREES)+180);
 		m_tile.m_x = (int)(degMag/degCellWidth);
 		degMag = Math.abs(g.getPhi(AngleUnit.DEGREES)+90);
@@ -158,15 +159,18 @@ public class CylEquiDistProj extends AbstractProjection {
     public WorldCoords tileXYToTopLeftXY(  int level, TileXY tile  ){
     	int topLeftX = tile.m_x*m_orgTilePixSize;
     	int topLeftY = (tile.m_y+1)*m_orgTilePixSize;
-    	double lat = orig_yPixToDegLat( level, topLeftY);
-    	double lng = orig_xPixToDegLng( level, topLeftX);
+    	int tLevel = Math.max(0, level);
+    	double lat = orig_yPixToDegLat( tLevel, topLeftY);
+    	double lng = orig_xPixToDegLng( tLevel, topLeftX);
     	m_tileGeoPos.set(lng, lat, AngleUnit.DEGREES);
     	return geodeticToWorld(m_tileGeoPos);
     }
-	
+    
     @Override
-	public int adjustSize( int level, int size){   
-    	double mapSize =  (m_origMapWidthSize << level);
+	public int adjustSize(  int size ){   
+    	// scale = origScale*2^z  so z = log(scale/origScale)/log(2)
+    	int z = (int)Math.max(0,(( Math.log(m_scale)- Math.log(m_origScale))/Math.log(2)));
+    	double mapSize =  m_origMapWidthSize<<z;
     	double scaledMapSize =  mapSize();
     	double factor = scaledMapSize/mapSize;
     	return (int)(factor*size);

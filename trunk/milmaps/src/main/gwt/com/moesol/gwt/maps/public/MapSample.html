@@ -25,32 +25,32 @@
 		};
 		
 		var layerSets = [
-         //{ 
+        // { 
         //	  server: "http://khm1.google.com/kh/v=84", 
         //	  data: "Google Satellite maps",
         //	  urlPattern: "{server}&x={x}&y={y}&z={level}&s=Gali",
         //	  epsg: 900913,
         //	  zeroTop: true,
         //	  autoRefreshOnTimer: false,
-        //	  startLevel: 1,
-        //	  startLevelTileWidthInDeg:180,
-        //	  startLevelTileHeightInDeg:85.05113,
+        //	  startLevel: 0,
+        //	  startLevelTileWidthInDeg:360,
+        //	  startLevelTileHeightInDeg:170.10226,
         //	  pixelHeight: 256,
-		//    pixelWidth: 256
+	    //	  pixelWidth: 256
         // }
-         // 
-        //{ 
-        //     server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
-        //     data: "I3_Imagery_Prime_World_2D",
-        //	   urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
-        //	   epsg: 4326,
-        //	   zeroTop: true,
-        //	   autoRefreshOnTimer: false,
-        //	   startLevelTileWidthInDeg:180,
-        //	   startLevelTileHeightInDeg:180,
-        //	   pixelHeight: 512,
-		//     pixelWidth: 512
-        // }
+       // 
+        { 
+             server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
+             data: "I3_Imagery_Prime_World_2D",
+        	 urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
+        	 epsg: 4326,
+        	 zeroTop: true,
+        	 autoRefreshOnTimer: false,
+        	 startLevelTileWidthInDeg:180,
+        	 startLevelTileHeightInDeg:180,
+        	 pixelHeight: 512,
+		     pixelWidth: 512
+         }
         // ,
         // { 
         //	  server: "http://localhost:8080/mgrs-grid", 
@@ -79,32 +79,32 @@
 		//	   pixelWidth: 512      
         //  }
         //  ,
-          {
-             server: "http://bv.moesol.com/rpf-ww-server",
-             urlPattern: "{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}",
-			 data: "BMNG (Shaded %2B Bathymetry) Tiled - 5.2004", 
-             epsg: 4326,
-             zeroTop: false,
-             autoRefreshOnTimer: false,
-             startLevel:0,
-	         startLevelTileWidthInDeg: 36,
-	         startLevelTileHeightInDeg: 36,
-        	 pixelHeight: 512,
-			 pixelWidth: 512
-          }
-          ,
-          {
-            server: "http://bv.moesol.com/rpf-ww-server",
-            urlPattern: "{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}",
-            epsg: 4326,
-            zeroTop: false,
-            autoRefreshOnTimer: false,
-			data: "esat_world",
-	        startLevelTileWidthInDeg: 2.25,
-	        startLevelTileHeightInDeg: 2.25,
-        	pixelHeight: 512,
-			pixelWidth: 512
-          }
+        //  {
+        //     server: "http://bv.moesol.com/rpf-ww-server",
+        //     urlPattern: "{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}",
+		//	 data: "BMNG (Shaded %2B Bathymetry) Tiled - 5.2004", 
+        //     epsg: 4326,
+        //     zeroTop: false,
+        //     autoRefreshOnTimer: false,
+        //     startLevel:0,
+	    //     startLevelTileWidthInDeg: 36,
+	    //     startLevelTileHeightInDeg: 36,
+        //	 pixelHeight: 512,
+		//	 pixelWidth: 512
+        //  }
+         // ,
+         // {
+         //   server: "http://bv.moesol.com/rpf-ww-server",
+         //   urlPattern: "{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}",
+         //   epsg: 4326,
+         //   zeroTop: false,
+         //   autoRefreshOnTimer: false,
+		//	data: "esat_world",
+	    //    startLevelTileWidthInDeg: 2.25,
+	    //    startLevelTileHeightInDeg: 2.25,
+        //	pixelHeight: 512,
+		//	pixelWidth: 512
+        //  }
        //   ,
        //   {
 		//	   urlPattern: "http://localhost/geowebcache/service/wms?LAYERS=img states&FORMAT=image/gif&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&EXCEPTIONS=application/vnd.ogc.se_inimage&SRS=EPSG:4326&BBOX={bbox}&WIDTH=256&HEIGHT=256",
