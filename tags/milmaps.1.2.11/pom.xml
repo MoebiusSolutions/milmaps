@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.moesol.maps</groupId>
+    <artifactId>milmaps-parent</artifactId>
+    <version>1.2.11</version>
+    <name>milmaps-parent</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>milmaps</module>
+        <module>mgrs-grid</module>
+    </modules>
+
+	<!-- List of repositories used when deploying this software -->
+    <distributionManagement>
+		<!-- This is used by "maven deploy" (deploying a SNAPSHOT release) -->
+        <snapshotRepository>
+            <id>moesol.artifactory</id>
+            <url>http://artifactory.moesol.com/artifactory/libs-snapshots-local</url>
+        </snapshotRepository>
+		<!-- This is used by "maven deploy" (deploying a release) -->
+        <repository>
+            <id>moesol.artifactory</id>
+            <url>http://artifactory.moesol.com/artifactory/libs-releases-local</url>
+        </repository>
+		<!-- This is used by maven "site:deploy" (deploying release notes) -->
+        <site>
+            <id>moesol.docs</id>
+            <url>svn:https://svn.moesol.com/svn/opensource/software-docs/releases/${project.artifactId}/${project.version}</url>
+        </site>
+    </distributionManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+	  </plugins>
+	</build>
+</project>
