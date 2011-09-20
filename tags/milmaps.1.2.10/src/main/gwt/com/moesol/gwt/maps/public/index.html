@@ -1,0 +1,45 @@
+<html>
+
+<head>
+
+<script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
+<script type="text/javascript" src="js/jquery.ui.all.js"></script>
+<script type="text/javascript" src="js/jquery.layout.js"></script>
+
+<script language="javascript">
+var moesolMapReady = function() {
+	myMap = moesol.newMapView('map');
+	myLayout = $('body').layout({
+		applyDefaultStyles: true,
+		east__onresize: function(name, pane) {
+			myMap.setPixelSize(pane.width(), pane.height());
+			myMap.updateView();
+	
+			// maybe layout bug, this fixes problem where panes maxSize gets
+			// set wrong once east/west touch...
+			myLayout.state.west.maxSize = myLayout.state.container.innerWidth - myLayout.state.east.size;
+			myLayout.state.east.maxSize = myLayout.state.container.innerWidth - myLayout.state.west.size;
+		}
+	});
+	myLayout.resizeAll();
+}
+</script>
+
+</head>
+
+<body>
+
+<div class="ui-layout-west">
+WEST
+</div>
+
+<div class="ui-layout-east">
+	<div id='map'>
+	</div>
+</div>
+
+<script language="javascript" src="com.moesol.gwt.maps.MapJsApi.nocache.js">
+</script>
+</body>
+
+</html>
