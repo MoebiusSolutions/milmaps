@@ -8,6 +8,12 @@
 	<inherits name="mil.GeotransJ"/>
 	<inherits name="com.google.gwt.json.JSON"/>
 	
+	<stylesheet src='milmap-stylesheet.css' />
+	<servlet path='/wwLayerConfigs'
+		class="com.moesol.gwt.maps.server.WorldwindLayerConfigs" />
+	<servlet path='/tms'
+		class="com.moesol.gwt.maps.server.tms.RemoteTileMapServiceImpl" />
+	
 	<source path="client" excludes="**/*Test.java,**/Test*.java"/>
 	<source path="shared" excludes="**/*Test.java,**/Test*.java"/>
 </module>
