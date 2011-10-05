@@ -82,6 +82,27 @@ public class MapPanZoomControl extends Composite {
 	};
 
 	private boolean m_panning;
+	
+	/**
+	 * @param map The map to plug this control into.
+	 * @param maxPanPixels The maximum number of pixels to
+	 * move the map each time a pan occurs. 
+	 * @param millisBetweenPans The milliseconds between consecutive
+	 * pans that occur while the mouse is down on the pan portion
+	 * of the control.
+	 */
+	public void initPanVals( int maxPanPixels, int millisBetweenPans ) {
+		m_maxPanPixels = maxPanPixels;
+		m_millisBetweenConsecutiveActions = millisBetweenPans;	
+	}
+	
+	public void setMapView( MapView map ){
+		m_map = map;
+	}
+	
+	public MapPanZoomControl( ) {
+		initWidget(uiBinder.createAndBindUi(this));
+	}
 
 	/**
 	 * @param map The map to plug this control into.
@@ -91,8 +112,7 @@ public class MapPanZoomControl extends Composite {
 	 * pans that occur while the mouse is down on the pan portion
 	 * of the control.
 	 */
-	public MapPanZoomControl(MapView map, int maxPanPixels,
-			int millisBetweenPans) {
+	public MapPanZoomControl(MapView map, int maxPanPixels, int millisBetweenPans) {
 		m_map = map;
 		m_maxPanPixels = maxPanPixels;
 		m_millisBetweenConsecutiveActions = millisBetweenPans;

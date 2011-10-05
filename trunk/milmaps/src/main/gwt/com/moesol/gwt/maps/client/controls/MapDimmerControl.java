@@ -12,9 +12,18 @@ public class MapDimmerControl extends Composite{
 	MapView m_mapView;
 	
 	private double m_opacity = 0.5;
-		
+	
+	public MapDimmerControl() {
+
+	}
+	
 	public MapDimmerControl(MapView mapView, boolean bHorizontal ) {
 		super();
+		setMapView(mapView,bHorizontal );
+	}
+		
+	public void setMapView(MapView mapView, boolean bHorizontal ) {
+		
 		m_mapView = mapView;
 		
 		MapButton dimBtn = new MapButton();
