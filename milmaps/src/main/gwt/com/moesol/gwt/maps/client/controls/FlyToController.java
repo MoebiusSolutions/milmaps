@@ -14,7 +14,7 @@ public class FlyToController implements SearchHandler {
 
 	private ArrayList<IFlyToHandler> m_handlers = new ArrayList<IFlyToHandler>();
 
-	public FlyToController(MapView map) {
+	public FlyToController( MapView map ) {
 		m_map = map;
 	}
 

@@ -21,11 +21,20 @@ public class PositionControl extends Composite {
 	private final OutlinedLabel m_mousePosLabel = new OutlinedLabel();
 	private final Mgrs m_mgrs = new Mgrs();
 	private final Geodetic m_geo = new Geodetic();
-	private final MapView m_mapView;
 	private final ViewCoords m_vc = new ViewCoords();
 	
+	private MapView m_mapView = null;
+	
+	public PositionControl() {
+		
+	}
+	
 	public PositionControl(MapView mapView) {
-		m_mapView = mapView;
+		setMapView(mapView);
+	}
+	
+	public void setMapView( MapView view ) {
+		m_mapView = view;
 		initWidget(m_mousePosLabel);
 		
 		MouseMoveHandler handler = new MouseMoveHandler() {
