@@ -61,6 +61,7 @@ import com.moesol.gwt.maps.client.controls.MapDimmerControl;
 import com.moesol.gwt.maps.client.controls.PositionControl;
 import com.moesol.gwt.maps.client.controls.SearchEvent;
 import com.moesol.gwt.maps.client.controls.SearchHandler;
+import com.moesol.gwt.maps.client.controls.TagControl;
 import com.moesol.gwt.maps.client.gin.MapsGinjector;
 import com.moesol.gwt.maps.client.place.MapsActivityMapper;
 import com.moesol.gwt.maps.client.place.MapsPlaceHistoryMapper;
@@ -76,7 +77,7 @@ public class Driver implements EntryPoint {
 	private static final int MAP_HOVER_DELAY_MILLIS = 300;
 	private static final int TILE_DY = 3;
 	private static final int TILE_DX = 4;
-	private static Dictionary OPTIONS = Dictionary.getDictionary("Driver_options");
+	private static Dictionary OPTIONS = Dictionary.getDictionary("milMap_options");
 	private int m_scrnDpi = 75;
 	private MapView m_map;
 	//private PositionControl m_mousePosLabel;
@@ -251,6 +252,12 @@ public class Driver implements EntryPoint {
 		hp.add(dimmer);
 		hp.setWidgetRightWidth(dimmer,10, Style.Unit.PX, 35, Style.Unit.PX);
 		hp.setWidgetBottomHeight(dimmer, 10, Style.Unit.PX, 22, Style.Unit.PX);
+		
+		// Map tag control
+		TagControl tag = new TagControl(m_map, true);
+		hp.add(tag);
+		hp.setWidgetRightWidth(tag,10, Style.Unit.PX, 35, Style.Unit.PX);
+		hp.setWidgetBottomHeight(tag, 40, Style.Unit.PX, 22, Style.Unit.PX);
 		
 		SearchControl flyToControl = new SearchControl();
 		hp.add(flyToControl);
