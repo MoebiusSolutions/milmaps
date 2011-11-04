@@ -4,6 +4,7 @@ import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
@@ -15,9 +16,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.moesol.gwt.maps.client.IconLayer;
 import com.moesol.gwt.maps.client.LayerSet;
 import com.moesol.gwt.maps.client.LayerSetJson;
 import com.moesol.gwt.maps.client.MapPanel;
@@ -92,23 +95,50 @@ public class XMap implements Exportable {
 	}
 	
 	@Export("addDimmerControl")
-	public void addMapDimmerControl( XMapDimmerControl control ){
+	public void addMapDimmerControl( XMapDimmerControl control, int right, int bot){
 		// Map dimmer control
 		control.setMapView( m_mapView, true );
 		control.getElement().getStyle().setZIndex(100000);
 		m_lp.add(control);
-		m_lp.setWidgetRightWidth(control,10, Style.Unit.PX, 35, Style.Unit.PX);
-		m_lp.setWidgetBottomHeight(control, 10, Style.Unit.PX, 22, Style.Unit.PX);
+		m_lp.setWidgetRightWidth(control,right, Style.Unit.PX, 35, Style.Unit.PX);
+		m_lp.setWidgetBottomHeight(control, bot, Style.Unit.PX, 22, Style.Unit.PX);
 	}
 	
 	@Export("addFlyToControl")
-	public void addMapFlyToControl( XFlyToControl control ){
+	public void addMapFlyToControl( XFlyToControl control, int right, int top ){
 		// Fly To control
 		//control.getElement().getStyle().setZIndex(100000);
 		m_lp.add(control);
-		m_lp.setWidgetRightWidth( control, 0, Style.Unit.PX, 160, Style.Unit.PX );
-		m_lp.setWidgetTopHeight( control, 0, Style.Unit.PX, 50, Style.Unit.PX );
+		// right should be at least 160, top should be at least 50
+		m_lp.setWidgetRightWidth( control, 0, Style.Unit.PX, right, Style.Unit.PX );
+		m_lp.setWidgetTopHeight( control, 0, Style.Unit.PX, top, Style.Unit.PX );
 		control.addSearchHandler(new FlyToController(m_mapView));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Export("loadLayerSets")
+	public void loadLayerSets( JavaScriptObject lsArray ){
+		JsArray<LayerSetJson> layerSets = (JsArray<LayerSetJson>)lsArray;
+		if (layerSets != null) {
+			for (int i = 0, n = layerSets.length(); i < n; ++i) {
+				LayerSetJson l = layerSets.get(i);
+				LayerSet ls = l.toLayerSet();
+				m_mapView.addLayer(ls);
+			}
+		}
+	}
+	
+	@Export("addIcon")
+	public void addIcon( XIcon icon, int zOrder  ){
+		IconLayer il = m_mapView.getIconLayer();
+		Image im = icon.getImage();
+		im.getElement().getStyle().setZIndex(zOrder);
+		il.addIcon(icon);
+	}
+	
+	@Export("removeIcon")
+	public void removeIcon( XIcon icon  ){
+		m_mapView.getIconLayer().removeIcon(icon);
 	}
 
 	@Export("addResizeButton")
@@ -151,7 +181,7 @@ public class XMap implements Exportable {
 		// loadLayerConfigsFromServer();
 		loadLayerConfigsFromClient(); 
 		
-		addResizeButton();
+		//addResizeButton();
 		
 		MapPanel mapFillPanel = new MapPanel(m_mapView);
 		m_mapView.setDpi( m_scrnDpi );
@@ -161,7 +191,7 @@ public class XMap implements Exportable {
 		
 		m_lp = new LayoutPanel();
 		m_dockPanel.add(m_lp);
-		// Add the map viewport 
+		// Add the map view port 
 		m_lp.add(mapFillPanel);
 	
 	}
