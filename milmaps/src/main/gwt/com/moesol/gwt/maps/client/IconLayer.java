@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 
 public class IconLayer {
 	private final List<Icon> m_icons = new ArrayList<Icon>();
@@ -16,6 +17,10 @@ public class IconLayer {
 		if (m_icons.remove(i)) {
 			Image image = i.getImage();
 			image.removeFromParent();
+			Label label = i.getLabel();
+			if ( label != null ){
+				label.removeFromParent();
+			}
 		}
 	}
 	

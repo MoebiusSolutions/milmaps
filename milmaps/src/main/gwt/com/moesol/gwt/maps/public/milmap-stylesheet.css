@@ -51,6 +51,16 @@
 	z-index: 10000;
 }
 
+.map-DimmerControl {
+	margin-top: 2px;
+	z-index: 10000;
+}
+
+.map-TagControl {
+	margin-top: 2px;
+	z-index: 10000;
+}
+
 .map-SmallButton {
 	height: 15px;
 	width: 15px;
@@ -97,6 +107,19 @@
 	background-position: 0px -240px;
 	opacity: 1.0;
 }
+
+.map-TagControlPositionOffButton {
+	background-position: 15px -255px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+.map-TagControlPositionOnButton {
+	background-position: 15px -240px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
 
 .map-SearchControlInput {
 	float: right;

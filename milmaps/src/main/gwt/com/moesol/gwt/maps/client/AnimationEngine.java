@@ -12,6 +12,7 @@ public class AnimationEngine extends Animation {
 	private double m_xDiff;
 	private double m_yDiff;
 	private double m_factor;
+	private double m_zoomPercent;
 	private boolean m_directionIn;
 	private int m_durationInSecs = 750;
 	  
@@ -39,6 +40,7 @@ public class AnimationEngine extends Animation {
 		m_y = y;
 		m_directionIn = ( scaleFactor >= 1.0 ? true : false);
 		m_factor = ( m_directionIn ? scaleFactor : 1.0/scaleFactor);
+		m_zoomPercent = scaleFactor*100;
 		IProjection p = m_mapView.getProjection(); 
 		m_xDiff =  x - p.getViewSize().getWidth()/2.0;
 		m_yDiff =  y - p.getViewSize().getHeight()/2.0;
@@ -48,7 +50,6 @@ public class AnimationEngine extends Animation {
 	}
 	
 	
-
 	@Override
 	protected void onUpdate(double progress) {
 		double offsetX , offsetY;
@@ -66,6 +67,23 @@ public class AnimationEngine extends Animation {
 		zoom( scale, offsetX, offsetY);
 	}
 
+	
+// TODO kbt
+/*
+	@Override
+	protected void onUpdate(double progress) {
+		double zoomPercent;
+		if( m_directionIn ){
+			zoomPercent = 100.0 + ((m_zoomPercent-100)*Math.min(1.0,progress));
+		}
+		else{
+			zoomPercent = m_zoomPercent - ((m_zoomPercent-100)*Math.min(1.0,progress));
+		}
+		m_mapView.setPanelPercentSize(zoomPercent);
+	}
+*/
+	
+	
 	@Override
 	protected void onComplete(){
 		super.onComplete();

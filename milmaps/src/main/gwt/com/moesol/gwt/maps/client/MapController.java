@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
@@ -46,6 +47,7 @@ public class MapController implements
 	private DragTracker m_dragTracker;
 	private int m_wheelAccum = 0;
 	private int m_keyVelocity = 1;
+	private boolean m_bUseDragTracker = true;
 	private HasText m_msg = new HasText() {
 		@Override
 		public void setText(String text) {
@@ -84,19 +86,23 @@ public class MapController implements
 		return this;
 	}
 	
-	public void bindHandlers(FocusPanel m_focusPanel) {
-		m_focusPanel.addMouseMoveHandler(this);
-		m_focusPanel.addMouseDownHandler(this);
-		m_focusPanel.addMouseUpHandler(this);
-		m_focusPanel.addMouseOutHandler(this);
-		m_focusPanel.addMouseWheelListener(this);
-		m_focusPanel.addKeyboardListener(this);
+	public void bindHandlers(FocusPanel focusPanel) {
+		focusPanel.addMouseMoveHandler(this);
+		focusPanel.addMouseDownHandler(this);
+		focusPanel.addMouseUpHandler(this);
+		focusPanel.addMouseOutHandler(this);
+		focusPanel.addMouseWheelListener(this);
+		focusPanel.addKeyboardListener(this);
 	}
 	
 	public void zoomAndCenter(int x, int y, boolean bZoomIn) {
 		double zoomFactor = (bZoomIn ? 2.0 : 0.5 );
 		m_map.zoomOnPixel(x,y,zoomFactor);
 		
+	}
+	
+	public void setUseDragTracker( boolean bUseDragTracker ){
+		m_bUseDragTracker = bUseDragTracker;
 	}
 
 	
@@ -113,7 +119,7 @@ public class MapController implements
 			// See event preview code.
 			// zoomAndCenter(x, y, true);
 			m_dragTracker = null;
-		} else {
+		} else if( m_bUseDragTracker ){
 			m_dragTracker = new DragTracker(x, y, m_map.getWorldCenter());
 		}
 	}
@@ -143,7 +149,7 @@ public class MapController implements
 		
 		try {
 			maybeDragMap(x, y);
-			m_map.setFocus();
+			m_map.setFocus(true);
 		} finally {
 			m_dragTracker = null;
 		}

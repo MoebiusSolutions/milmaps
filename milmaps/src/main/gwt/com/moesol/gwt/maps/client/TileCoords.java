@@ -203,6 +203,7 @@ public class TileCoords {
 		replacements.put("data", encode(layerSet.getData()));
 		replacements.put("level", Integer.toString(levelInUrl));
 		replacements.put("epsg", Integer.toString(layerSet.getEpsg()));
+		replacements.put("imgSize", Integer.toString(layerSet.getPixelWidth()));
 		replacements.put("width", Integer.toString(layerSet.getPixelWidth()));
 		replacements.put("height", Integer.toString(layerSet.getPixelHeight()));
 		replacements.put("x", Integer.toString(getX()));
