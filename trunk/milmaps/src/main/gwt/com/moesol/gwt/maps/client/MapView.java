@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Timer;
@@ -16,6 +19,7 @@ import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.moesol.gwt.maps.client.IProjection.ZoomFlag;
 import com.moesol.gwt.maps.client.units.AngleUnit;
@@ -24,7 +28,7 @@ import com.moesol.gwt.maps.shared.BoundingBox;
 public class MapView extends Composite implements SourcesChangeEvents {
 	private static final double BBOX_ZOOM_BUFFER = 2.0;
 	private static final long ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
-	private final AbsolutePanel m_iconsOverTilesPanel = new AbsolutePanel();
+	//private final AbsolutePanel m_iconsOverTilesPanel = new AbsolutePanel();
 	private final AbsolutePanel m_tileLayersPanel = new AbsolutePanel();
 	private final FocusPanel m_focusPanel = new FocusPanel();
 	private final MapController m_mapEventListener = new MapController(this);
@@ -91,10 +95,9 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		m_focusPanel.setStyleName("moesol-MapView");
 		m_mapEventListener.bindHandlers(m_focusPanel);
 
-		m_iconsOverTilesPanel.add(m_tileLayersPanel);
-		// m_iconsOverTilesPanel.add(mapControls, 5, 5);
-		m_focusPanel.setWidget(m_iconsOverTilesPanel);
-
+		//m_iconsOverTilesPanel.add(m_tileLayersPanel);
+		//m_focusPanel.setWidget(m_iconsOverTilesPanel);
+		m_focusPanel.setWidget(m_tileLayersPanel);
 		initWidget(m_focusPanel);
 	}
 
@@ -309,7 +312,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	private Timer m_updateTimer = null;
 	private Timer m_dynamicTimer = null;
 	private int m_dynamicRefreshMillis = 10000;
-	private long m_dynamicCounter = 0L;
+	private long m_dynamicCounter = new Date().getTime();
 
 	/**
 	 * Match the view to the model data.
@@ -531,7 +534,11 @@ public class MapView extends Composite implements SourcesChangeEvents {
 				+ icon.getIconOffset().getX();
 		int y = (int) (scale * vc.getY() - offsetY)
 				+ icon.getIconOffset().getY();
-		m_iconsOverTilesPanel.setWidgetPosition(image, x, y);
+		//m_iconsOverTilesPanel.setWidgetPosition(image, x, y);
+		m_tileLayersPanel.setWidgetPosition(image, x, y);
+		Label label = icon.getLabel();
+		if ( label != null )
+			m_tileLayersPanel.setWidgetPosition(label, x+18, y);
 	}
 
 	private void positionIcons() {
@@ -546,14 +553,23 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		WorldCoords v = m_projection.geodeticToWorld(icon.getLocation());
 		ViewCoords portCoords = m_viewPort.worldToView(v, true);
 		Image image = icon.getImage();
-		image.getElement().getStyle()
-				.setProperty("zIndex", Integer.toString(4));
 		int x = portCoords.getX() + icon.getIconOffset().getX();
 		int y = portCoords.getY() + icon.getIconOffset().getY();
 		if (image.getParent() == null) {
-			m_iconsOverTilesPanel.add(image, x, y);
+			//m_iconsOverTilesPanel.add(image, x, y);
+			m_tileLayersPanel.add(image, x, y);
 		} else {
-			m_iconsOverTilesPanel.setWidgetPosition(image, x, y);
+			//m_iconsOverTilesPanel.setWidgetPosition(image, x, y);
+			m_tileLayersPanel.setWidgetPosition(image, x, y);
+		}
+		Label label = icon.getLabel();
+		if ( label != null ){
+			x += icon.getImagePixWidth() + 4;
+			if (label.getParent() == null) {
+				m_tileLayersPanel.add(label, x, y);
+			} else {
+				m_tileLayersPanel.setWidgetPosition(label, x, y);
+			}
 		}
 	}
 
@@ -563,8 +579,8 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		return getCenter().toString();
 	}
 
-	public void setFocus() {
-		m_focusPanel.setFocus(true);
+	public void setFocus( boolean bFocus) {
+		m_focusPanel.setFocus(bFocus);
 	}
 
 	@Override
@@ -583,7 +599,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	private void updateSize(int width, int height) {
 		m_viewPort.setSize(width, height);
 		m_tileLayersPanel.setPixelSize(width, height);
-		m_iconsOverTilesPanel.setPixelSize(width, height);
+		//m_iconsOverTilesPanel.setPixelSize(width, height);
 		m_focusPanel.setPixelSize(width, height);
 	}
 
@@ -687,6 +703,13 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		int x = v.getWidth() / 2;
 		int y = v.getHeight() / 2;
 		zoomOnPixel(x, y, scaleFactor);
+	}
+	
+	public void setPanelPercentSize(double percent) {
+		Element el = m_focusPanel.getElement();
+		Style s = el.getStyle();
+		s.setWidth(percent, Unit.PC);
+		s.setHeight(percent, Unit.PC);
 	}
 
 	/**

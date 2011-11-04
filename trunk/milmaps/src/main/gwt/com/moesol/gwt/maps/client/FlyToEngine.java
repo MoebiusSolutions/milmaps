@@ -6,7 +6,6 @@ import com.moesol.gwt.maps.client.units.AngleUnit;
 public class FlyToEngine extends Animation{
 	private final MapView m_mapView;
 	private int m_durationInSecs = 750;
-	private IProjection m_p;
 	private double m_startLat;
 	private double m_startLng;
 	private double m_endLat;
@@ -24,7 +23,6 @@ public class FlyToEngine extends Animation{
 	
 	public FlyToEngine( MapView mv ) {
 		m_mapView = mv;
-		m_p = m_mapView.getProjection(); 
 	}
 	/*
 	public void flyTo( final double lat, final double lng, double projScale ) {
@@ -43,13 +41,14 @@ public class FlyToEngine extends Animation{
 		m_panning = true;
 		m_endLat = lat;
 		m_endLng = lng;
-		m_projScale = m_p.getScale();
+		IProjection p = m_mapView.getProjection(); 
+		m_projScale = p.getScale();
 		m_scaleFactor = scaleFactor;
 		m_zoomIn =  (m_scaleFactor < 1.0 ? false : true );
-		GeodeticCoords gc = m_p.getViewGeoCenter();
+		GeodeticCoords gc = p.getViewGeoCenter();
 		m_startLat = gc.getPhi(AngleUnit.DEGREES);
 		m_startLng = gc.getLambda(AngleUnit.DEGREES);
-		m_lngVector = getLngVector(m_startLng, lng);
+		m_lngVector = getLngVector(p, m_startLng, lng);
 		m_latVector = lat - m_startLat;
 		m_mapView.setSuspendFlag(true);
 		run(m_durationInSecs);
@@ -127,13 +126,13 @@ public class FlyToEngine extends Animation{
 	 * @param endLng (end longitude )
 	 * @return shortest longitude distance
 	 */
-	private double getLngVector(double startLng, double endLng){
+	private double getLngVector(IProjection p, double startLng, double endLng){
 		double diff = endLng - startLng; 
 		if ( (0.0 < startLng && 0.0 < endLng) || (startLng < 0.0 && endLng < 0.0 ) ){
 			return diff;
 		}
 		if ( Math.abs(diff) > 180.0 ){
-			return m_p.wrapLng(diff);
+			return p.wrapLng(diff);
 		}
 		return diff;
 	}
