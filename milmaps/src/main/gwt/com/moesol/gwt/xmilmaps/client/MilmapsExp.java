@@ -12,6 +12,7 @@ public class MilmapsExp implements EntryPoint {
 		GWT.create(XMapDimmerControl.class);
 		GWT.create(XMapPanZoomControl.class);
 		GWT.create(XPositionControl.class);
+		GWT.create(XIcon.class);
 		loadImpl();
 	}
 	private native void loadImpl() /*-{    
