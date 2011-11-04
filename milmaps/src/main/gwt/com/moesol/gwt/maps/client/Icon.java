@@ -53,7 +53,7 @@ public class Icon {
 	public void setLabel(String text){
 		if ( m_label == null ){
 			m_label = new Label();
-			m_label.getElement().getStyle().setColor("white");
+			m_label.getElement().getStyle().setColor("yellow");
 			m_label.getElement().getStyle().setZIndex( m_zIndex );
 		}
 		m_label.setText(text);
