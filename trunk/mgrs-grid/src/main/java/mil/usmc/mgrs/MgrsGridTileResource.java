@@ -65,8 +65,7 @@ public class MgrsGridTileResource {
 			
 			Color c = new Color(r,g,b,a);
 			Image tileImage = createMgrsTile( c, epsg, width, height, zoomLevel, xTileCoord, yTileCoord );
-			return Response.ok(tileImage, new MediaType("image", imageFormat))
-					.build();
+			return Response.ok(tileImage, new MediaType("image", imageFormat)).build();
 		} catch (Exception e) {
 			throw new WebApplicationException(e,
 					Response.Status.INTERNAL_SERVER_ERROR);
