@@ -155,7 +155,6 @@ public class Driver implements EntryPoint {
 		m_map = new MapView();
 		loadLayerConfigsFromClient(); 
 		
-		//VerticalPanel vp = new VerticalPanel();
 		MapPanel mapFillPanel = new MapPanel(m_map);
 		m_map.setDpi( m_scrnDpi );
 		m_map.getController().withHoverDelayMillis(MAP_HOVER_DELAY_MILLIS);
@@ -219,12 +218,7 @@ public class Driver implements EntryPoint {
 		dockPanel.addNorth(bar, 20);
 		
 		LayoutPanel hp = new LayoutPanel();
-		//int count = hp.getWidgetCount();
 		dockPanel.add(hp);
-		//count = hp.getWidgetCount();
-		//hp.setHeight("500px");
-		//hp.setWidth("500px");
-		//vp.add(hp);
 
 		if (isTrue("showLayerPanel", false)) {
 			addTileMapServiceView(hp);
@@ -261,8 +255,8 @@ public class Driver implements EntryPoint {
 		
 		SearchControl flyToControl = new SearchControl();
 		hp.add(flyToControl);
-		hp.setWidgetRightWidth(flyToControl, 0, Style.Unit.PX, 160, Style.Unit.PX);
-		hp.setWidgetTopHeight(flyToControl, 0, Style.Unit.PX, 50, Style.Unit.PX);
+		hp.setWidgetRightWidth(flyToControl, 10, Style.Unit.PX, 160, Style.Unit.PX);
+		hp.setWidgetTopHeight(flyToControl, 10, Style.Unit.PX, 50, Style.Unit.PX);
 		
 		flyToControl.addSearchHandler(new FlyToController(m_map));
 		

@@ -107,11 +107,11 @@ public class XMap implements Exportable {
 	@Export("addFlyToControl")
 	public void addMapFlyToControl( XFlyToControl control, int right, int top ){
 		// Fly To control
-		//control.getElement().getStyle().setZIndex(100000);
+		control.getElement().getStyle().setZIndex(100000);
 		m_lp.add(control);
 		// right should be at least 160, top should be at least 50
-		m_lp.setWidgetRightWidth( control, 0, Style.Unit.PX, right, Style.Unit.PX );
-		m_lp.setWidgetTopHeight( control, 0, Style.Unit.PX, top, Style.Unit.PX );
+		m_lp.setWidgetRightWidth( control, right, Style.Unit.PX, 160, Style.Unit.PX );
+		m_lp.setWidgetTopHeight( control, top, Style.Unit.PX, 50, Style.Unit.PX );
 		control.addSearchHandler(new FlyToController(m_mapView));
 	}
 	

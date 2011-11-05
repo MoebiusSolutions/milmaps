@@ -13,11 +13,19 @@ public class FlyToController implements SearchHandler {
 	private MapView m_map;
 
 	private ArrayList<IFlyToHandler> m_handlers = new ArrayList<IFlyToHandler>();
+	
+	public FlyToController() {
+	}
 
 	public FlyToController( MapView map ) {
 		m_map = map;
 	}
-
+	
+	public void setMapView(MapView map ) {
+		
+		m_map = map;
+	}
+	
 	/**
 	 * Add a handler for fly to queries. This allows applications
 	 * to provide their own fly-to logic, while allowing the controller
