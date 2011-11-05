@@ -48,9 +48,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ILayerConfig;
 import com.moesol.gwt.maps.client.ILayerConfigAsync;
+import com.moesol.gwt.maps.client.IProjection;
 import com.moesol.gwt.maps.client.Icon;
 import com.moesol.gwt.maps.client.LayerSet;
 import com.moesol.gwt.maps.client.LayerSetJson;
+import com.moesol.gwt.maps.client.MapLayersOnClient;
 import com.moesol.gwt.maps.client.MapPanel;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.controls.EdgeHoverPanControl;
@@ -281,6 +283,7 @@ public class Driver implements EntryPoint {
 		// 180x180 and pixels sizes of 512 x 512
 		//m_map = new MapView();
 		// Try to pull from json in .html
+		
 		JsArray<LayerSetJson> layerSets = getLayerSets();
 		if (layerSets != null) {
 			for (int i = 0, n = layerSets.length(); i < n; ++i) {
@@ -289,7 +292,13 @@ public class Driver implements EntryPoint {
 				m_map.addLayer(ls);
 			}
 		}
-	  
+		//**** Testing getLayerSets ******/
+		//	IProjection p = m_map.getProjection();
+		//	LayerSet[] layerSets = MapLayersOnClient.getLayerSets(p, true);
+		//	LayerSet ls = layerSets[0];
+		//	m_map.addLayer(ls);
+		//////////
+		
 		// TODO need a library of layer configs. I see that BV uses the same
 		// code over and over again
 		// to setup the layers and if change them we'd have to change it
