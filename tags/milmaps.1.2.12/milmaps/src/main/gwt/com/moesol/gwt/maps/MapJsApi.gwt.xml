@@ -1,0 +1,9 @@
+<module>
+	<inherits name="com.moesol.gwt.maps.Maps" />
+	<inherits name="mil.GeotransJ" />
+	
+	<entry-point class='com.moesol.gwt.maps.client.MapJsApi' />
+
+	<source path="client" excludes="**/*Test.java,**/Test*.java" />
+	<source path="shared" excludes="**/*Test.java,**/Test*.java" />
+</module>
