@@ -119,31 +119,48 @@ public class MapCacheTileResource {
 		BufferedImage img = null;
 		String dirPath = buildDirPath(m_data, size, level, xTile );
 		String filePath = buildFilePath(dirPath, yTile, imageFormat);
-		File dir = new File(dirPath);
-		if ( dir.exists() == false ){
-			if ( dir.mkdirs() == true ){
-				// Get Image and write to file
-				String url = buildUrl( server, urlPatern, data, epsg, size, level, xTile, yTile );
-				File file = new File(filePath);
-				File errorFile = null;// new File(filePath);
-				img = getImageFromURL(url,file);
-			}
+		File file = new File(filePath);
+		if ( file.exists() == true ){
+			img = (BufferedImage)ImageIO.read(file);
 		}
-		else{ // directories exists so check on image tile
-			File file = new File(filePath);
-			if ( file.exists() == false ){
-				// Get Image and write to file
-				String url = buildUrl( server, urlPatern, data, epsg, size, level, xTile, yTile );
-				//File errorFile = new File(filePath);
-				img = getImageFromURL(url,file);//,errorFile);
+		else{
+			String url = buildUrl( server, urlPatern, data, epsg, size, level, xTile, yTile );
+			img = getImageFromURL(url,file);
+		}
+		
+		return img;
+	}
+	
+/*
+	BufferedImage buildMapTile( String server, String urlPatern, String data,
+								int epsg, int size, int level, int xTile, int yTile,
+								String imageFormat ) throws FileNotFoundException, MalformedURLException, IOException {
+		
+		BufferedImage img = null;
+		String dirPath = buildDirPath(m_data, size, level, xTile );
+		String filePath = buildFilePath(dirPath, yTile, imageFormat);
+		File file = new File(filePath);
+		if ( file.exists() == true ){
+			img = (BufferedImage)ImageIO.read(file);
+		}
+		else{
+			File dir = new File(dirPath);
+			if ( dir.exists() == false ){
+				if ( dir.mkdirs() == true ){
+					// Get Image and write to file
+					String url = buildUrl( server, urlPatern, data, epsg, size, level, xTile, yTile );
+					img = getImageFromURL(url,file);
+				}
 			}
 			else{
-				img = (BufferedImage)ImageIO.read(file);
+				String url = buildUrl( server, urlPatern, data, epsg, size, level, xTile, yTile );
+				img = getImageFromURL(url,file);
 			}
 		}
 		
 		return img;
 	}
+ */
 	
 	
 	BufferedImage getImageFromURL(final String url, final File outFile) 
