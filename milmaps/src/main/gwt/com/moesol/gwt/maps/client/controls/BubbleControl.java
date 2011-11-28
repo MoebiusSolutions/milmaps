@@ -4,10 +4,13 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.moesol.gwt.maps.client.MapView;
+import com.moesol.gwt.maps.client.MapViewChangeEvent;
 
 /**
  * Animated bubble to show on map.
@@ -30,23 +33,56 @@ public class BubbleControl extends DecoratedPopupPanel {
 	private final HTML m_html;
 	private final int TOP_OFFSET = -20;
 	private final int LEFT_OFFSET = 20;
+    private boolean bound = false;
 	private int m_duration = 500;
 	private int m_initialX;
 	private int m_initialY;
+    private MapView m_map;
+    private HandlerRegistration m_mouseDownHandlerRegistration;
+    private HandlerRegistration m_mapViewChangeEventRegistration;
 
-	public BubbleControl(MapView m) {
+    public BubbleControl(final MapView map) {
+        m_map = map;
 		setStylePrimaryName("map-BubbleControl");
 		m_html = new HTML("Loading...");
 		setWidget(m_html);
+        bind();
+	}
 
-		m.addDomHandler(new MouseDownHandler() {
+    public void bind()
+    {
+        if(bound)
+            return;
+
+		m_mouseDownHandlerRegistration = m_map.addDomHandler(new MouseDownHandler() {
 			@Override
 			public void onMouseDown(MouseDownEvent event) {
 				event.preventDefault();
 				hide();
 			}
 		}, MouseDownEvent.getType());
-	}
+
+        m_mapViewChangeEventRegistration = MapViewChangeEvent.register(m_map.getEventBus(), new MapViewChangeEvent.Handler()
+        {
+            @Override
+            public void onValueChange(final ValueChangeEvent<MapView> mapViewValueChangeEvent)
+            {
+                hide();
+            }
+        });
+
+        bound = true;
+    }
+
+    public void unbind()
+    {
+        if(!bound)
+            return;
+        
+        m_mouseDownHandlerRegistration.removeHandler();
+        m_mapViewChangeEventRegistration.removeHandler();
+        bound = false;
+    }
 
 	/**
 	 * Show the bubble control over the map using an animation. If you call this
