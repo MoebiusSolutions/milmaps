@@ -13,6 +13,13 @@ public class GeodeticCoords implements IsSerializable {
 		m_lambda = m_phi = m_altitude = 0.0;
 	}
 
+    public static GeodeticCoords newInstanceFrom(final GeodeticCoords other)
+    {
+        GeodeticCoords result = new GeodeticCoords();
+        result.copyFrom(other);
+        return result;
+    }
+
 	/**
 	 * @param lambda longitude
 	 * @param phi latitude

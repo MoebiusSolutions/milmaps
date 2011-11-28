@@ -45,8 +45,13 @@ public class AnimationEngine extends Animation {
 		m_xDiff =  x - p.getViewSize().getWidth()/2.0;
 		m_yDiff =  y - p.getViewSize().getHeight()/2.0;
 
-		m_mapView.setSuspendFlag(true);
-		run(m_durationInSecs);
+        try {
+		    m_mapView.setSuspendFlag(true);
+		    run(m_durationInSecs);
+        }
+        finally {
+            m_mapView.setSuspendFlag(false);
+        }
 	}
 	
 	

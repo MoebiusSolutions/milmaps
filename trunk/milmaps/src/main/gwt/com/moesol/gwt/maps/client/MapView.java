@@ -8,6 +8,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Timer;
@@ -31,7 +33,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	//private final AbsolutePanel m_iconsOverTilesPanel = new AbsolutePanel();
 	private final AbsolutePanel m_tileLayersPanel = new AbsolutePanel();
 	private final FocusPanel m_focusPanel = new FocusPanel();
-	private final MapController m_mapEventListener = new MapController(this);
+	private MapController m_mapEventListener;
 
 	private IProjection m_projection = null;
 	private IProjection m_tempProj;
@@ -54,17 +56,28 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	private boolean m_bProjSet = false;
 	private double m_defLat = 0;
 	private double m_defLng = 0;
-	
-	public MapView(){
-		this(Projection.T.CylEquiDist);
+    private EventBus m_eventBus;
+
+    public MapView()
+    {
+        this(Projection.T.CylEquiDist, new SimpleEventBus());
+    }
+
+	public MapView(final EventBus eventBus){
+		this(Projection.T.CylEquiDist, eventBus);
 	}
 
-	public MapView( Projection.T type ) {
+    public MapView(final Projection.T type) {
+        this(type, new SimpleEventBus());
+    }
+
+	public MapView( Projection.T type, final EventBus eventBus ) {
 		if ( type == Projection.T.Mercator ){
 			setProjection(new Mercator(256,360,170.10226));
 		}else{
 			setProjection(new CylEquiDistProj(512,180,180));
 		}
+        m_eventBus = eventBus;
 		initialize();
 	}
 
@@ -73,7 +86,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	// MapControls getMapControls() {
 	// return mapControls;
 	// }
-	
+
 	public MapView( Projection.T type, double defLat, double defLng) {
 		m_defLat = defLat;
 		m_defLng = defLng;
@@ -93,6 +106,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		initDynamicRefreshTimer();
 
 		m_focusPanel.setStyleName("moesol-MapView");
+        m_mapEventListener = new MapController(this);
 		m_mapEventListener.bindHandlers(m_focusPanel);
 
 		//m_iconsOverTilesPanel.add(m_tileLayersPanel);
@@ -101,27 +115,32 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		initWidget(m_focusPanel);
 	}
 
+    public EventBus getEventBus()
+    {
+        return m_eventBus;
+    }    
+
 	public void setProjection(IProjection proj){
 		m_projection = proj;
 		m_viewPort.setProjection(proj);
 		m_tempProj = proj.cloneProj();
 	}
-	
+
 	public boolean setProjFromLayerSet( LayerSet ls ){
 		if ( m_projection != null ){
 			if ( m_projection.doesSupport(ls.getEpsg()) && m_bProjSet )
 				return true;
 		}
-		
+
 		IProjection proj = Projection.getProj(ls);
 		if ( proj != null ){
 			setProjection(proj);
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public void addEventListener(EventListener eventListener) {
 		this.addEventListener(eventListener);
 	}
@@ -246,7 +265,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 	/**
 	 * Sets the map center
-	 * 
+	 *
 	 * @param latDegrees
 	 *            (latitude in degrees)
 	 * @param lngDegrees
@@ -262,7 +281,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 	/**
 	 * Center on a position and scale
-	 * 
+	 *
 	 * @param latDegrees
 	 * @param lngDegrees
 	 * @param scale
@@ -280,7 +299,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 	/**
 	 * Sets the map center
-	 * 
+	 *
 	 * @param center
 	 */
 
@@ -360,7 +379,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	void preUpdateView() {
 		computeLevelsAndTileCoords();
 	}
-	
+
 /*
 	private double syncProjScale(ZoomFlag zoomFlag, double scale) {
 		double tScale = m_projection.getScale();
@@ -372,11 +391,11 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		return tScale;
 	}
 */
-	
+
 	/**
 	 * Marks the tiled image layer that is the best for this projection as
 	 * priority.
-	 * 
+	 *
 	 * @param zoomFlag
 	 */
 	public void setLayerBestSuitedForScale(ZoomFlag zoomFlag) {
@@ -466,6 +485,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 		positionIcons();
 		m_changeListeners.fireChange(this);
+        m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
 		recordCenter();
 		ProjectionValues.writeCookies(m_projection);
 	}
@@ -501,6 +521,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		if (!hasAutoRefreshOnTimerLayers()) {
 			return;
 		}
+        SymbologyRefreshEvent.fire(m_eventBus);
 		updateView();
 	}
 
@@ -629,7 +650,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 	/**
 	 * Pan map by dx, dy;
-	 * 
+	 *
 	 * @param dx
 	 * @param dy
 	 * @return
@@ -648,7 +669,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	/**
 	 * Animate zoom map, but keep the latitude and longitude under x, y at x, y
 	 * during the zoom and after its completion.
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @param bZoomIn
@@ -704,7 +725,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		int y = v.getHeight() / 2;
 		zoomOnPixel(x, y, scaleFactor);
 	}
-	
+
 	public void setPanelPercentSize(double percent) {
 		Element el = m_focusPanel.getElement();
 		Style s = el.getStyle();
@@ -714,7 +735,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 	/**
 	 * Clients will call this routine to fly to a center lat, lng.
-	 * 
+	 *
 	 * @param lat
 	 * @param lng
 	 * @param scale
@@ -726,7 +747,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	/**
 	 * Clients will call this routine to fly to a center lat, lng and scale
 	 * based on a bounding box.
-	 * 
+	 *
 	 * @param box
 	 */
 	public void flyTo(BoundingBox box) {
@@ -745,7 +766,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 	/**
 	 * This routine centers on a position with a given scale.
-	 * 
+	 *
 	 * @param lat
 	 * @param lng
 	 * @param scale
@@ -824,7 +845,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		};
 		timer.schedule(INTERVAL_MILSECS);
 	}
-	
+
 	public FocusPanel getFocusPanel() {
 		return m_focusPanel;
 	}

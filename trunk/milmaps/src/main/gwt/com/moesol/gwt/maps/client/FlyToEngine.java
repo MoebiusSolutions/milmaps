@@ -50,8 +50,15 @@ public class FlyToEngine extends Animation{
 		m_startLng = gc.getLambda(AngleUnit.DEGREES);
 		m_lngVector = getLngVector(p, m_startLng, lng);
 		m_latVector = lat - m_startLat;
-		m_mapView.setSuspendFlag(true);
-		run(m_durationInSecs);
+        try
+        {
+		    m_mapView.setSuspendFlag(true);
+		    run(m_durationInSecs);
+        }
+        finally
+        {
+            m_mapView.setSuspendFlag(false);
+        }
 	}
 	
 	protected void moveTo( double lat, double lng, double scale ){ 

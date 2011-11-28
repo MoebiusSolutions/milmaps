@@ -27,8 +27,14 @@ public class Icon {
 			image.removeLoadListener(this);
 		}
 	};
-	
-	public Icon() {
+
+    @Override
+    public String toString()
+    {
+        return "Icon{" + "m_location=" + m_location + ", m_iconOffset=" + m_iconOffset + ", m_label=" + m_label + ", m_zIndex=" + m_zIndex + '}';
+    }
+
+    public Icon() {
 	}
 	
 	public Icon(int zIndex) {
@@ -107,8 +113,8 @@ public class Icon {
 	public ViewCoords getIconOffset() {
 		return m_iconOffset;
 	}
-	
-	
+		
+
 	/**
 	 * The default icon offset is 0, 0, the upper left hand corner of
 	 * the icon. The offset is added to the icon position when placed on the map.

@@ -45,15 +45,15 @@ public abstract class AbstractProjection implements IProjection {
 	
 	protected ZoomFlag m_zoomFlag = ZoomFlag.NONE;
 	
-	public static double M_PI = Math.PI;
-	public static double M_PI_2 = Math.PI/2.0;
-	public static double M_PI_4 = Math.PI/4.0;
-	public static double MaxLatInRadians = Math.PI*(80.0/180.0);
-	public static double NMtoMeters  = 1852.0;
-	public static double RadToDeg = 57.29577951;
-	public static double DegToRad = 0.017453293;
-	
-	
+	public static final double M_PI = Math.PI;
+	public static final double M_PI_2 = Math.PI/2.0;
+	public static final double M_PI_4 = Math.PI/4.0;
+	public static final double MaxLatInRadians = Math.PI*(80.0/180.0);
+	public static final double NMtoMeters  = 1852.0;
+	public static final double RadToDeg = 57.29577951;
+	public static final double DegToRad = 0.017453293;
+
+
 	public AbstractProjection(){
 		m_scrnDpi = 75;
 		m_scrnMpp = 2.54 / (75.0 * 100); // meters per pixel for physical screen

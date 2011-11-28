@@ -31,7 +31,41 @@ public class ViewDimension {
 		m_width = width;
 	}
 
-	@Override
+    @Override
+    public boolean equals(final Object o)
+    {
+        if(this == o)
+        {
+            return true;
+        }
+        if(o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final ViewDimension that = (ViewDimension) o;
+
+        if(m_height != that.m_height)
+        {
+            return false;
+        }
+        if(m_width != that.m_width)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = m_width;
+        result = 31 * result + m_height;
+        return result;
+    }
+
+    @Override
 	public String toString() {
 		return "[w=" + m_width + ",h=" + m_height + "]";
 	}
