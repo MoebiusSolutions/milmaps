@@ -4,6 +4,8 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseWheelEvent;
+import com.google.gwt.event.dom.client.MouseWheelHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
@@ -40,6 +42,7 @@ public class BubbleControl extends DecoratedPopupPanel {
     private MapView m_map;
     private HandlerRegistration m_mouseDownHandlerRegistration;
     private HandlerRegistration m_mapViewChangeEventRegistration;
+    private HandlerRegistration m_mouseWheelHandlerRegistration;
 
     public BubbleControl(final MapView map) {
         m_map = map;
@@ -62,6 +65,15 @@ public class BubbleControl extends DecoratedPopupPanel {
 			}
 		}, MouseDownEvent.getType());
 
+        m_mouseWheelHandlerRegistration = m_map.addDomHandler(new MouseWheelHandler()
+        {
+            @Override
+            public void onMouseWheel(final MouseWheelEvent mouseWheelEvent)
+            {
+                hide();
+            }
+        }, MouseWheelEvent.getType());
+
         m_mapViewChangeEventRegistration = MapViewChangeEvent.register(m_map.getEventBus(), new MapViewChangeEvent.Handler()
         {
             @Override
@@ -81,6 +93,8 @@ public class BubbleControl extends DecoratedPopupPanel {
         
         m_mouseDownHandlerRegistration.removeHandler();
         m_mapViewChangeEventRegistration.removeHandler();
+        m_mouseWheelHandlerRegistration.removeHandler();
+        
         bound = false;
     }
 
