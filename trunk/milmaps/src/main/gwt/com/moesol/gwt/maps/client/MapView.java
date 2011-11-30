@@ -33,7 +33,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	//private final AbsolutePanel m_iconsOverTilesPanel = new AbsolutePanel();
 	private final AbsolutePanel m_tileLayersPanel = new AbsolutePanel();
 	private final FocusPanel m_focusPanel = new FocusPanel();
-	private MapController m_mapEventListener;
+	private final MapController m_mapEventListener;
 
 	private IProjection m_projection = null;
 	private IProjection m_tempProj;
@@ -56,45 +56,35 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	private boolean m_bProjSet = false;
 	private double m_defLat = 0;
 	private double m_defLng = 0;
-    private EventBus m_eventBus;
-
-    public MapView()
-    {
-        this(Projection.T.CylEquiDist, new SimpleEventBus());
-    }
-
-	public MapView(final EventBus eventBus){
-		this(Projection.T.CylEquiDist, eventBus);
-	}
-
-    public MapView(final Projection.T type) {
-        this(type, new SimpleEventBus());
-    }
-
-	public MapView( Projection.T type, final EventBus eventBus ) {
-		if ( type == Projection.T.Mercator ){
-			setProjection(new Mercator(256,360,170.10226));
-		}else{
-			setProjection(new CylEquiDistProj(512,180,180));
-		}
-        m_eventBus = eventBus;
-		initialize();
-	}
+	private final EventBus m_eventBus;
 
 	MapsClientBundle clientBundle = GWT.create(MapsClientBundle.class);
 
-	// MapControls getMapControls() {
-	// return mapControls;
-	// }
-
-	public MapView( Projection.T type, double defLat, double defLng) {
+	public MapView() {
+		this(Projection.T.CylEquiDist, new SimpleEventBus());
+	}
+	public MapView(final EventBus eventBus){
+		this(Projection.T.CylEquiDist, eventBus);
+	}
+	public MapView(final Projection.T type) {
+		this(type, new SimpleEventBus());
+	}
+	public MapView(final Projection.T type, final EventBus eventBus) {
+		this(type, eventBus, 0, 0);
+	}
+	public MapView(final Projection.T type, final double defLat, final double defLng) {
+		this(type, new SimpleEventBus(), defLat, defLng);
+	}
+	public MapView(final Projection.T type, final EventBus eventBus, final double defLat, final double defLng) {
 		m_defLat = defLat;
 		m_defLng = defLng;
-		if ( type == Projection.T.Mercator ){
+		if (type == Projection.T.Mercator ) {
 			setProjection(new Mercator(256,360,170.10226));
-		}else{
+		} else {
 			setProjection(new CylEquiDistProj(512,180,180));
 		}
+		m_eventBus = eventBus;
+		m_mapEventListener = new MapController(this, m_eventBus);
 		initialize();
 	}
 
@@ -106,7 +96,6 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		initDynamicRefreshTimer();
 
 		m_focusPanel.setStyleName("moesol-MapView");
-        m_mapEventListener = new MapController(this);
 		m_mapEventListener.bindHandlers(m_focusPanel);
 
 		//m_iconsOverTilesPanel.add(m_tileLayersPanel);
@@ -115,10 +104,10 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		initWidget(m_focusPanel);
 	}
 
-    public EventBus getEventBus()
-    {
-        return m_eventBus;
-    }    
+	public EventBus getEventBus()
+	{
+		return m_eventBus;
+	}
 
 	public void setProjection(IProjection proj){
 		m_projection = proj;
@@ -485,7 +474,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 		positionIcons();
 		m_changeListeners.fireChange(this);
-        m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
+		m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
 		recordCenter();
 		ProjectionValues.writeCookies(m_projection);
 	}
@@ -521,7 +510,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		if (!hasAutoRefreshOnTimerLayers()) {
 			return;
 		}
-        SymbologyRefreshEvent.fire(m_eventBus);
+		SymbologyRefreshEvent.fire(m_eventBus, this);
 		updateView();
 	}
 

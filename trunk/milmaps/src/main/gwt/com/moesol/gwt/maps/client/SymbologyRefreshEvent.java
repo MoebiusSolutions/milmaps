@@ -6,46 +6,52 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 public class SymbologyRefreshEvent
-        extends GwtEvent<SymbologyRefreshEvent.Handler>
+		extends GwtEvent<SymbologyRefreshEvent.Handler>
 {
-    public interface Handler
-            extends EventHandler
-    {
-        void onSymbologyRefresh(final SymbologyRefreshEvent event);
-    }
+	public interface Handler
+			extends EventHandler
+	{
+		void onSymbologyRefresh(final SymbologyRefreshEvent event);
+	}
 
-    public static final Type<Handler> TYPE = new Type<Handler>();
+	private static final Type<Handler> TYPE = new Type<Handler>();
+	private final MapView map;
 
-    private SymbologyRefreshEvent()
-    {
+	private SymbologyRefreshEvent(final MapView map)
+	{
+		this.map = map;
+	}
 
-    }
+	public static void fire(final EventBus eventBus, final MapView map)
+	{
+		eventBus.fireEvent(new SymbologyRefreshEvent(map));
+	}
 
-    public static void fire(final EventBus eventBus)
-    {
-        eventBus.fireEvent(new SymbologyRefreshEvent());
-    }
+	public static Type<Handler> getType()
+	{
+		return TYPE;
+	}
 
-    public static Type<Handler> getType()
-    {
-        return TYPE;
-    }
+	public static HandlerRegistration register(final EventBus eventBus,
+			final Handler handler)
+	{
+		return eventBus.addHandler(SymbologyRefreshEvent.getType(), handler);
+	}
 
-    public static HandlerRegistration register(final EventBus eventBus,
-            final Handler handler)
-    {
-        return eventBus.addHandler(TYPE, handler);
-    }
+	public MapView getMap()
+	{
+		return this.map;
+	}
 
-    @Override
-    public final Type<Handler> getAssociatedType()
-    {
-        return TYPE;
-    }
+	@Override
+	public Type<Handler> getAssociatedType()
+	{
+		return TYPE;
+	}
 
-    @Override
-    protected void dispatch(final Handler handler)
-    {
-        handler.onSymbologyRefresh(this);
-    }
+	@Override
+	protected void dispatch(final Handler handler)
+	{
+		handler.onSymbologyRefresh(this);
+	}
 }

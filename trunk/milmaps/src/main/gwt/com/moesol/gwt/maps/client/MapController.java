@@ -37,7 +37,7 @@ import com.moesol.gwt.maps.client.units.AngleUnit;
 public class MapController implements 
 	HasHandlers,
 	MouseMoveHandler, MouseDownHandler, MouseUpHandler, MouseOutHandler,
-    MouseWheelHandler, EventPreview, KeyboardListener,
+	MouseWheelHandler, EventPreview, KeyboardListener,
 	TouchStartHandler, TouchMoveHandler, TouchEndHandler, TouchCancelHandler
 {
 	private static boolean s_previewInstalled = false;
@@ -70,23 +70,23 @@ public class MapController implements
 				);
 		}};
 	private int m_hoverDelayMillis = 500;
-    private final EventBus m_eventBus;
+	private final EventBus m_eventBus;
 
-	public MapController(MapView map) {
+	public MapController(MapView map, final EventBus eventBus) {
 		m_map = map;
-        m_eventBus = m_map.getEventBus();
-		
+		m_eventBus = eventBus;
+
 		if (!s_previewInstalled) {
 			s_previewInstalled = true;
 			DOM.addEventPreview(this);
 		}
 	}
-	
+
 	public MapController withMsg(HasText msg) {
 		m_msg = msg;
 		return this;
 	}
-	
+
 	public void bindHandlers(FocusPanel focusPanel) {
 		focusPanel.addMouseMoveHandler(this);
 		focusPanel.addMouseDownHandler(this);
@@ -95,18 +95,18 @@ public class MapController implements
 		focusPanel.addMouseWheelHandler(this);
 		focusPanel.addKeyboardListener(this);
 	}
-	
+
 	public void zoomAndCenter(int x, int y, boolean bZoomIn) {
 		double zoomFactor = (bZoomIn ? 2.0 : 0.5 );
 		m_map.zoomOnPixel(x,y,zoomFactor);
-		
+
 	}
-	
+
 	public void setUseDragTracker( boolean bUseDragTracker ){
 		m_bUseDragTracker = bUseDragTracker;
 	}
 
-	
+
 	@Override
 	public void onMouseDown(MouseDownEvent event) {
 		Widget sender = (Widget) event.getSource();
@@ -139,7 +139,7 @@ public class MapController implements
 	public void onMouseOut(MouseOutEvent event) {
 		m_hoverTimer .cancel();
 	}
-	
+
 	@Override
 	public void onMouseUp(MouseUpEvent event) {
 		m_hoverTimer.cancel();
@@ -147,7 +147,7 @@ public class MapController implements
 		int x = event.getX();
 		int y = event.getY();
 		DOM.releaseCapture(sender.getElement());
-		
+
 		try {
 			maybeDragMap(x, y);
 			m_map.setFocus(true);
@@ -176,7 +176,7 @@ public class MapController implements
 		}
 		m_hoverTimer.schedule(getHoverDelayMillis());
 	}
-	
+
 	public int getHoverDelayMillis() {
 		return m_hoverDelayMillis;
 	}
@@ -219,13 +219,13 @@ public class MapController implements
 	public void onMouseWheel(final MouseWheelEvent event) {
 		m_wheelAccum += event.getDeltaY();
 		int jumpPoint = 8;
-		
+
 		ViewCoords vCoords = m_mouseWheelTracker.getViewCoordinates();
 		//	DJD NOTE: removed centering of the map when we zoom with wheel, beacuse
 		// its just strange. Most applications when using a mouse wheel, the cursor pos is irrelevant
 		// For example, most image editing software / IE / etc they do something to the entire image, where the 
 		// cursor is when this is done does not mean anything.
-		
+
 		if (event.getDeltaY() < 0) {
 			m_wheelAccum = 0;
 			zoomAndCenter(vCoords.getX(), vCoords.getY(), true);
@@ -233,7 +233,7 @@ public class MapController implements
 			m_wheelAccum = 0;
 			zoomAndCenter(vCoords.getX(), vCoords.getY(), false);
 		}
-        //MapViewChangeEvent.fire(m_eventBus, m_map);
+		//MapViewChangeEvent.fire(m_eventBus, m_map);
 	}
 
 	@Override
@@ -242,11 +242,11 @@ public class MapController implements
 //		if (m_map.getMapControls().handleEventPreview(event)) {
 //			return false;
 //		}
-		
+
 		if (!DOM.isOrHasChild(m_map.getElement(), DOM.eventGetTarget(event))) {
 			return true;
 		}
-		
+
 		onEventPreviewForMap(event);
 
 		// Allow the event to file
@@ -259,12 +259,12 @@ public class MapController implements
 		// case Event.ONMOUSEWHEEL: See comment on onMouseWheel.
 			DOM.eventPreventDefault(event);
 			break;
-			
+
 		case Event.ONDBLCLICK:
 			zoomAndCenter(m_doubleClickTracker.getX(), m_doubleClickTracker.getY(), true);
 			DOM.eventPreventDefault(event);
 			break;
-			
+
 		case Event.ONKEYDOWN:
 		case Event.ONKEYUP:
 			switch (DOM.eventGetKeyCode(event)) {
@@ -348,39 +348,39 @@ public class MapController implements
 		m_eventBus.fireEvent(event);
 	}
 
-    private Timer m_viewChangeTimer = null;
-    private GeodeticCoords m_oldCenter = new GeodeticCoords(0,0, AngleUnit.DEGREES);
-    private ViewDimension m_oldViewSize = new ViewDimension(0, 0);
-    private double m_oldScale = 0.0;
+	private Timer m_viewChangeTimer = null;
+	private GeodeticCoords m_oldCenter = new GeodeticCoords(0,0, AngleUnit.DEGREES);
+	private ViewDimension m_oldViewSize = new ViewDimension(0, 0);
+	private double m_oldScale = 0.0;
 
-    public void fireMapViewChangeEventWithMinElapsedInterval(final int minEventFireIntervalMillis) {
-        if (m_viewChangeTimer != null) {
-            m_viewChangeTimer.cancel();
-        }
-        m_viewChangeTimer = new Timer()
-        {
-            @Override
-            public void run()
-            {
-                final IProjection newProjection = m_map.getProjection();
-                final GeodeticCoords newCenter = newProjection.getViewGeoCenter();
+	public void fireMapViewChangeEventWithMinElapsedInterval(final int minEventFireIntervalMillis) {
+		if (m_viewChangeTimer != null) {
+			m_viewChangeTimer.cancel();
+		}
+		m_viewChangeTimer = new Timer()
+		{
+			@Override
+			public void run()
+			{
+				final IProjection newProjection = m_map.getProjection();
+				final GeodeticCoords newCenter = newProjection.getViewGeoCenter();
 
-                if (m_oldCenter.equals(newCenter)) {
-                    if (m_oldViewSize.equals(newProjection.getViewSize())) {
-                        if (m_oldScale == newProjection.getScale()) {
-                            return;
-                        }
-                    }
-                }
+				if (m_oldCenter.equals(newCenter)) {
+					if (m_oldViewSize.equals(newProjection.getViewSize())) {
+						if (m_oldScale == newProjection.getScale()) {
+							return;
+						}
+					}
+				}
 
-                m_oldCenter = GeodeticCoords.newInstanceFrom(newCenter);
-                m_oldViewSize.setHeight(newProjection.getViewSize().getHeight());
-                m_oldViewSize.setWidth(newProjection.getViewSize().getWidth());
-                m_oldScale = newProjection.getScale();
-                MapViewChangeEvent.fire(m_eventBus, m_map);
-            }
-        };
-        m_viewChangeTimer.schedule(minEventFireIntervalMillis);
-    }
+				m_oldCenter = GeodeticCoords.newInstanceFrom(newCenter);
+				m_oldViewSize.setHeight(newProjection.getViewSize().getHeight());
+				m_oldViewSize.setWidth(newProjection.getViewSize().getWidth());
+				m_oldScale = newProjection.getScale();
+				MapViewChangeEvent.fire(m_eventBus, m_map);
+			}
+		};
+		m_viewChangeTimer.schedule(minEventFireIntervalMillis);
+	}
 
 }
