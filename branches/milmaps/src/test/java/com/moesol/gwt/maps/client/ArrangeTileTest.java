@@ -22,7 +22,8 @@ public class ArrangeTileTest {
 		}
 	};
 	private IProjection m_proj = new CylEquiDistProj();// 512, 180, 180);
-	private ViewPort m_VP = new ViewPort();
+	private ViewPort m_vp = new ViewPort();
+	DivWorker m_divWorker = new DivWorker();
 	
 	private final double EarthCirMeters  = 2.0*Math.PI*6378137;
 	private final double MeterPerDeg  = EarthCirMeters/360.0;
@@ -38,6 +39,11 @@ public class ArrangeTileTest {
 
 	private GeodeticCoords m_geo = new GeodeticCoords();
 	
+	public ArrangeTileTest(){
+		m_vp.setDivWorker(m_divWorker);
+	}
+	
+	
 	protected void compareTileCoords(TileCoords[] c, TileCoords[] d ){
 		int cn = c.length;
 		int dn = d.length;
@@ -45,12 +51,14 @@ public class ArrangeTileTest {
 		for ( int i = 0; i < cn; i++ ){
 			TileCoords tc = c[i];
 			TileCoords td = d[i];
-			assertEquals(tc.getX(), td.getX());
-			assertEquals(tc.getY(), td.getY());
-			assertEquals(tc.getOffsetX(), td.getOffsetX());
-			assertEquals(tc.getOffsetY(), td.getOffsetY());
-			assertEquals(tc.getDrawTileWidth(),td.getDrawTileWidth());
-			assertEquals(tc.getDrawTileWidth(),td.getDrawTileWidth());				
+			if ( tc != null && td != null ){
+				assertEquals(tc.getX(), td.getX());
+				assertEquals(tc.getY(), td.getY());
+				assertEquals(tc.getOffsetX(), td.getOffsetX());
+				assertEquals(tc.getOffsetY(), td.getOffsetY());
+				assertEquals(tc.getDrawTileWidth(),td.getDrawTileWidth());
+				assertEquals(tc.getDrawTileWidth(),td.getDrawTileWidth());	
+			}
 		}	
 	}
 	
@@ -78,8 +86,8 @@ public class ArrangeTileTest {
 	
 	@Test
 	public void testArrangeTiles(){
-		m_VP.setProjection(m_proj);
-		m_VP.setSize(2400,1200);
+		m_vp.setProjection(m_proj);
+		m_vp.setSize(600,400);
 		for ( int j = 0; j < 3; j++ ){
 		    LayerSet ls = createLayerSet(j);
 			m_geo.set(0,0,AngleUnit.DEGREES);
@@ -88,7 +96,7 @@ public class ArrangeTileTest {
 				double factor = ( level< 1 ? 1 : 2 );
 				m_proj.zoomByFactor(factor);
 				double lsScale = findScale(m_dpi, level, ls);
-				TileCoords[] tc = m_VP.arrangeTiles(ls, lsScale, level);
+				TileCoords[] tc = m_vp.arrangeTiles(ls, lsScale, level);
 				compareTileCoords( tc, tc );
 			}
 		}

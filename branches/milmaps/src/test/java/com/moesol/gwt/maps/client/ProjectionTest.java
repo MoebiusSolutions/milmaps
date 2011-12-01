@@ -156,7 +156,7 @@ public class ProjectionTest {
 		return ((mpp * Math.pow(2, level)) / l_mpp);
 	}
 	
-	/*
+	/* 
 	@Test
 	public void testScaleAdjustSize(){
 		double fudge = 0.5;
