@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Map Sample</title>
+		<style type="text/css">
+			html, body, #mapPanel {
+				height: 100%;
+				margin: 0;
+			}
+		</style>	
+	</head>
+
+	<script type="text/javascript">
+		var milMap_options = {
+			showLayerPanel: "false",
+			showTestDialog: " false",
+			showSomeIcons: "true",
+			
+			useTmsBMNG: "false",
+			tmsURL: "http://localhost/geowebcache/service/tms/1.0.0",
+			
+			useWmscBMNG: "false",
+			wmscURL: "http://localhost/geowebcache/service/wms"
+		};
+		
+		var layerSets = [
+			{  
+				 server: "http://localhost:8080/milmapsCache/rs/mapcache",
+				 data: "I3_Imagery_Prime_World_2D",
+				 urlPattern: "{server}/{data}/{epsg}/{imgSize}/{level}/{x}/{y}",
+				 epsg: 4326,
+				 zeroTop: true,
+				 autoRefreshOnTimer: false,
+				 startLevelTileWidthInDeg:180,
+				 startLevelTileHeightInDeg:180,
+				 pixelWidth: 512
+			}
+		//	{ 
+        //	  	server: "http://khm1.google.com/kh/v=84", 
+        //	  	data: "Google Satellite maps",
+        //	  	urlPattern: "{server}&x={x}&y={y}&z={level}&s=Gali",
+        //	  	epsg: 900913,
+        //	  	zeroTop: true,
+        //	  	autoRefreshOnTimer: false,
+        //	  	startLevel: 0,
+        //	  	startLevelTileWidthInDeg:360,
+        //	  	startLevelTileHeightInDeg:170.10226,
+        //	  	pixelHeight: 256,
+	    //	  	pixelWidth: 256
+        //	}
+        // ,
+        // { 
+        //     server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
+        //     data: "I3_Imagery_Prime_World_2D",
+        //     urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
+        //	 epsg: 4326,
+        //	 zeroTop: true,
+        //	 autoRefreshOnTimer: false,
+        //	 startLevelTileWidthInDeg:180,
+        //	 startLevelTileHeightInDeg:180,
+        //	 pixelHeight: 512,
+		//   pixelWidth: 512
+        // }
+        //	,
+		//	{ 
+        //  	server: "http://localhost:8080/mgrs-grid", 
+        //	  	urlPattern: "{server}/rs/mgrstile/99999900/{epsg}/{width}/{height}/{level}/{x}/{y}.png",
+        //	  	epsg: 900913,
+        //	  	zeroTop: false,
+		//	  	autoRefreshOnTimer: false,
+		//	  	alwaysDraw: true,
+		//	  	useToScale: false,
+		//	  	startLevel:0,
+		//	  	priority:false,		
+		//	  	startLevelTileHeightInDeg:170.10226,
+		//	  	startLevelTileWidthInDeg:360,
+        //	  	pixelHeight: 512,
+		//	  	pixelWidth: 512
+        //	}     
+        // ,
+        // {
+		//	   server: "https://neutron.moesol.com/pli-service",
+		//	   urlPattern: "{server}/rs/tms/{level}/{x}/{y}.png",
+		//	   autoRefreshOnTimer: true,
+		//	   alwaysDraw: true,
+		//	   useToScale: false,
+		//	   zIndex: 6,
+        //	   pixelHeight: 512,
+		//	   pixelWidth: 512      
+        //  }
+        //  ,
+        //  {
+        //     server: "http://localhost:8080/rpf-ww-server",
+        //     urlPattern: "{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}",
+		//	   data: "BMNG (Shaded %2B Bathymetry) Tiled - 5.2004", 
+        //     epsg: 4326,
+        //     zeroTop: false,
+        //     autoRefreshOnTimer: false,
+        //     startLevel:0,
+	    //     startLevelTileWidthInDeg: 36,
+	    //     startLevelTileHeightInDeg: 36,
+        //	   pixelHeight: 512,
+		//	   pixelWidth: 512,
+		//	   minLevel: -4,
+		//	   maxLevel: 4
+        //  }
+        //  ,
+        //  {
+        //    server: "http://localhost:8080/rpf-ww-server",
+        //    urlPattern: "{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}",
+        //    epsg: 4326,
+        //    zeroTop: false,
+        //    autoRefreshOnTimer: false,
+		//	  data: "esat_world",
+	    //    startLevelTileWidthInDeg: 2.25,
+	    //    startLevelTileHeightInDeg: 2.25,
+        // 	  pixelHeight: 512,
+		//	  pixelWidth: 512,
+		//	  minLevel: -4,
+		//    maxLevel: 4
+        // }
+        // ,
+        // {
+		//	   urlPattern: "http://localhost/geowebcache/service/wms?LAYERS=img states&FORMAT=image/gif&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&EXCEPTIONS=application/vnd.ogc.se_inimage&SRS=EPSG:4326&BBOX={bbox}&WIDTH=256&HEIGHT=256",
+		//	   alwaysDraw: true,
+		//	   useToScale: false,
+		//     autoRefreshOnTimer: false,
+		//	   zIndex: 5,
+		//     startLevelTileWidthInDeg: 180.0,
+		//     startLevelTileHeightInDeg: 180.0,
+        //	   pixelHeight: 256,
+		//	   pixelWidth: 256
+		// }
+	    ]
+	</script>
+
+	<body>
+		<div id="mapPanel">Loading...</div>
+		<script language="javascript" src="milmap.nocache.js"></script>
+		<!--<iframe id="__gwt_historyFrame" style="width:0;height:0;border:0"></iframe>-->
+	</body>
+</html>
