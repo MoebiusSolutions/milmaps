@@ -29,14 +29,6 @@ public interface IProjection {
 	public abstract void initialize( int tileWidth, double degWidth, double degHeight );
 	
 	/**
-	 * Synchronize the original tile data.
-	 * This method does not effect the current scale.
-	 * @param tileWidth : in pixels
-	 * @param degWidth of tile.
-	 */
-	//public abstract void synchronize( int tileWidth, double degWidth, double degHeight );
-	
-	/**
 	 * Checks that the projection will support the espg associated with the layerset
 	 * @param espg
 	 * @return true or false
@@ -153,14 +145,6 @@ public interface IProjection {
 	 * @return GeodeticCoords
 	 */
 	public abstract MapCoords geodeticToMapCoords(GeodeticCoords g);
-
-
-	/**
-	 * Converts a position in geodetic coordinates to a position in view coordinates
-	 * @param g : geodetic position.
-	 * @return GeodeticCoords
-	 */
-	//public abstract ViewCoords geodeticToView(GeodeticCoords g);
 
 	/**
 	 * This routine returns the size (dimensions) of the whole earth map

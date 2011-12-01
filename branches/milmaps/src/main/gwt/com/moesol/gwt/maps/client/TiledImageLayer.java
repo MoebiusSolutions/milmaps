@@ -168,11 +168,7 @@ public class TiledImageLayer {
 			return;
 		}
 		ImageDiv image = (ImageDiv)m_tileImageEngine.findOrCreateImage(tileCoords);
-		if ( m_layerSet.isAlwaysDraw() == false ){
-			image.getElement().getStyle().setOpacity(m_mapView.getMapBrightness());
-		}
 		setImageZIndex(image, REAL_ZOFFSET + m_layerSet.getZIndex());
-		//image.setPixelSize(tileCoords.getDrawTileWidth(), tileCoords.getDrawTileHeight());
 		int x = tileCoords.getOffsetX();
 		int y = tileCoords.getOffsetY();
 		int width = tileCoords.getDrawTileWidth();
@@ -180,8 +176,6 @@ public class TiledImageLayer {
 		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(x, y, width, height);
 		m_layoutPanel.setWidgetLeftRight(image, b.left, Unit.PCT, 100-b.right, Unit.PCT);
 		m_layoutPanel.setWidgetTopBottom(image, b.top, Unit.PCT, 100-b.bot, Unit.PCT);
-		
-		//m_absolutePanel.setWidgetPosition(image, tileCoords.getOffsetX(), tileCoords.getOffsetY());
 	}
 
 	private void setImageZIndex(ImageDiv image, int zIndex) {

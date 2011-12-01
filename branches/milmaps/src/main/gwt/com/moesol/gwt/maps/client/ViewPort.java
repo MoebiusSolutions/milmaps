@@ -321,7 +321,7 @@ public class ViewPort {
 	    // This routine positions the center tile relative to the view it sits in.
 		m_returnedWorldCoords.setX(m_centerTile.getOffsetX());
 		m_returnedWorldCoords.setY(m_centerTile.getOffsetY());
-		DivCoords dc = worldToDiv(m_returnedWorldCoords, true);
+		DivCoords dc = worldToDiv(m_returnedWorldCoords, false);
 		m_centerTile.setOffsetY(dc.getY());
 		m_centerTile.setOffsetX(dc.getX());
 	}

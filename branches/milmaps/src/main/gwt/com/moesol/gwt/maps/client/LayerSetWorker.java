@@ -40,16 +40,7 @@ public class LayerSetWorker {
     	return m_proj.compWidthInPixels(0, degWidth);	
     }
     
-    public int compTileDrawHeight( LayerSet ls, int level  ){
-		//int tLevel = level - ls.getStartLevel();
-		//double f = ( tLevel < 1 ? 1 : Math.pow(2, tLevel) );
-		//double degHeight  = ls.getStartLevelTileHeightInDeg()/f;
-		//if ( degHeight > 170 ){
-		//	degHeight /= 2.0;
-		//	return( m_proj.compHeightInPixels(0, degHeight)*2);
-		//}
-    	//return m_proj.compHeightInPixels(0, degHeight);	
-    	
+    public int compTileDrawHeight( LayerSet ls, int level  ){		
     	// Tiles are square so we can use this.
     	return compTileDrawWidth(ls,level);
     }   
@@ -142,13 +133,16 @@ public class LayerSetWorker {
     	return m_proj.geodeticToWorld(m_gc);
     }
     
-    public TileCoords findTile( LayerSet ls, int level, 
-    							double tileDegWidth, double tileDegHeight, GeodeticCoords gc ) {
-    	//int drawTileSize = m_projection.adjustSize(level, m_tilePixWidth);
+    public TileCoords findTile( 
+    		LayerSet ls, 
+    		int level,
+    		double tileDegWidth, 
+    		double tileDegHeight, 
+    		GeodeticCoords gc ) 
+    {
+
     	int drawPixWidth  = compTileDrawWidth( ls, level );
     	int drawPixHeight = compTileDrawHeight( ls, level );
-    	//m_tilePixWidth  = drawPixWidth;
-    	//m_tilePixHeight = drawPixHeight;
     	ls.setDrawPixelWidth(drawPixWidth);
     	ls.setDrawPixelHeight(drawPixHeight);
     	TileXY tile = geoPosToTileXY(ls, gc);
@@ -162,10 +156,6 @@ public class LayerSetWorker {
     	///////////
     	tileCoords.setTileWidth( ls.getPixelWidth() );
     	tileCoords.setTileHeight( ls.getPixelHeight() );   
-    	//int tLevel = level - ls.getStartLevel();
-		//double degFactor = ( tLevel < 1 ? 1 : Math.pow(2, tLevel) );
-		//double tileDegWidth  = ls.getStartLevelTileWidthInDeg()/degFactor;
-		//double tileDegHeight = ls.getStartLevelTileHeightInDeg()/degFactor;
 		
     	tileCoords.setDrawTileWidth( drawPixWidth );
     	tileCoords.setDrawTileHeight( drawPixHeight );
@@ -175,21 +165,4 @@ public class LayerSetWorker {
     	tileCoords.setLevel(level);
     	return tileCoords;
     }
-    
-	/*
-    public WorldCoords tileXYToTopLeftXY( LayerSet ls, int level, TileXY tile  ){
-    	int topLeftX = tile.m_x;
-    	int topLeftY = tile.m_y+1;
-    	double minLat = computeMinLat(ls);
-    	level = Math.max(0, level);
-    	double d = 1<<level;
-    	double degWidth = ls.getStartLevelTileWidthInDeg()/d;
-    	double degHeight = ls.getStartLevelTileHeightInDeg()/d;
-    	double dLat = minLat+topLeftY*degHeight;
-    	double dLng = -180.0 + topLeftX*degWidth;
-    	m_gc.setPhi(dLat, AngleUnit.DEGREES);
-    	m_gc.setLambda( dLng, AngleUnit.DEGREES);
-    	return m_proj.geodeticToWorld(m_gc);
-    }
-    */
 }

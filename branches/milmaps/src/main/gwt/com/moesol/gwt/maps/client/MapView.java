@@ -851,7 +851,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		}
 		m_mapBrightness += val;
 		setMapBrightness(m_mapBrightness);
-		updateView();
+		m_divPanel.getElement().getStyle().setOpacity(getMapBrightness());
 	}
 
 	public void setAnimationDurationSeconds(int v) {

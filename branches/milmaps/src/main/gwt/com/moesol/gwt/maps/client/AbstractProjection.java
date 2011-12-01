@@ -1,7 +1,5 @@
 package com.moesol.gwt.maps.client;
 
-import com.moesol.gwt.maps.client.units.AngleUnit;
-
 public abstract class AbstractProjection implements IProjection {
 	
 	protected IProjection.T m_projType;
@@ -87,15 +85,7 @@ public abstract class AbstractProjection implements IProjection {
 		//m_origMapWidthSize = (int)( tileSize*(360/degWidth) + 0.5);
 		computeWorldSize();
 	}
-	/*
-	@Override
-	public void synchronize( int tileSize, double degWidth, double degHeight ){
-		// meters per pixel for physical screen
-		m_scrnMpp = 2.54 / (m_scrnDpi * 100); 	
-		m_origMapWidthSize = (int)( tileSize*(360/degWidth) + 0.5);
-		computeWorldSize();
-	}
-	*/
+
 	@Override
 	public void setGeoBounds(double minLat, double minLng, double maxLat, double maxLng ){
 		m_minLat = minLat;
