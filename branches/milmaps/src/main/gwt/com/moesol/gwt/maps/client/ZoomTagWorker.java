@@ -1,18 +1,19 @@
 package com.moesol.gwt.maps.client;
 
 public class ZoomTagWorker {
-	private int m_offsetX = 0;
-	private int m_offsetY = 0;
 	private int m_tagX; // In view coordinates
 	private int m_tagY; // In view coordinates
-	private int m_vwOffsetWcX; // View's x offset in WCs
-	private int m_vwOffsetWcY; // View's y offset in WCs
+	
+	private double m_offsetX = 0;
+	private double m_offsetY = 0;
+	private double m_vwOffsetWcX; // View's x offset in WCs
+	private double m_vwOffsetWcY; // View's y offset in WCs
 	
 	public ZoomTagWorker(){
 
 	}
 	
-	public void setViewOffsets( int ox, int oy ){
+	public void setViewOffsets( double ox, double oy ){
 		m_vwOffsetWcX = ox;
 		m_vwOffsetWcY = oy;
 	}
@@ -22,9 +23,9 @@ public class ZoomTagWorker {
 		m_tagY = tagY;
 	}
 	
-	public int getOffsetX(){ return m_offsetX; }
+	public double getOffsetX(){ return m_offsetX; }
 	
-	public int getOffsetY() { return m_offsetY; }
+	public double getOffsetY() { return m_offsetY; }
 	
 	/**
 	 * compViewOffsets: computes the view's new offsets so that 
@@ -33,7 +34,7 @@ public class ZoomTagWorker {
 	 * @param factor
 	 */
 	public void compViewOffsets( double factor ) {
-		m_offsetX = (int)(factor*(m_vwOffsetWcX + m_tagX))- m_tagX;
-		m_offsetY = (int)(factor*(m_vwOffsetWcY - m_tagY))+ m_tagY;
+		m_offsetX = factor*(m_vwOffsetWcX + m_tagX)- m_tagX;
+		m_offsetY = factor*(m_vwOffsetWcY - m_tagY)+ m_tagY;
 	}
 }

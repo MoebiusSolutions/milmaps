@@ -11,7 +11,8 @@ public class AnimationEngine extends Animation {
 	private ViewWorker m_vpWorker = null;
 	private ZoomTagWorker m_ztWorker = new ZoomTagWorker();
 	// Tag coordinates in View Coordinates
-
+	private double m_ox;
+	private double m_oy;
 	private double m_oldScale;
 	private double m_startScale;
 	private double m_scaleDiff;
@@ -30,18 +31,20 @@ public class AnimationEngine extends Animation {
 		m_startScale = m_proj.getScale();
 		m_oldScale = m_startScale;
 		m_scaleDiff = (scaleFactor - 1.0)*m_startScale;
-
+		int oWcX = m_vpWorker.getOffsetInWcX();
+		int oWcY = m_vpWorker.getOffsetInWcY();
+		m_ztWorker.setViewOffsets(oWcX, oWcY);
 		m_mapView.setSuspendFlag(true);
 		run(m_durationInSecs);
 	}
 	
 	protected void zoom( double nextScale ){
-		int oWcX = m_vpWorker.getOffsetInWcX();
-		int oWcY = m_vpWorker.getOffsetInWcY();
-		m_ztWorker.setViewOffsets(oWcX, oWcY);
 		double f = nextScale/m_oldScale;
 		m_ztWorker.compViewOffsets(f);
-		m_mapView.ZoomAndMove(f, m_ztWorker.getOffsetX(), m_ztWorker.getOffsetY());
+		double ox = m_ztWorker.getOffsetX();
+		double oy = m_ztWorker.getOffsetY();
+		m_ztWorker.setViewOffsets(ox, oy);
+		m_mapView.ZoomAndMove(f, (int)ox, (int)oy);
 		m_oldScale = nextScale;
 		// TODO fix this soon.
 		//m_mapView.drawIcons();
