@@ -3,7 +3,7 @@ package com.moesol.gwt.maps.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import java.util.logging.Logger;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
@@ -59,6 +59,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	private final EventBus m_eventBus;
 
 	MapsClientBundle clientBundle = GWT.create(MapsClientBundle.class);
+	private static final Logger logger = Logger.getLogger(MapView.class.getName());
 
 	public MapView() {
 		this(Projection.T.CylEquiDist, new SimpleEventBus());
@@ -693,17 +694,21 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	 * Non-animated zoom in.
 	 */
 	public void zoomByFactor(double zoomFactor) {
+		/**
 		if (!allTilesLoaded()) {
 			return;
 		}
+		 **/
 		m_projection.zoomByFactor(zoomFactor);
 		updateView();
 	}
 
 	public void zoom(double dScale) {
+		/**
 		if (!allTilesLoaded()) {
 			return;
 		}
+		**/
 		m_projection.setScale(dScale);
 		updateView();
 	}
@@ -804,11 +809,13 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	}
 
 	public boolean allTilesLoaded() {
+		/**
 		for (TiledImageLayer layer : m_tiledImageLayers) {
 			if (layer.areAllLoaded() == false) {
 				return false;
 			}
 		}
+		 **/
 		return true;
 	}
 
