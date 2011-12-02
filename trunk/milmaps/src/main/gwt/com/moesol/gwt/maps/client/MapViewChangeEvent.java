@@ -1,23 +1,25 @@
 package com.moesol.gwt.maps.client;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 public class MapViewChangeEvent
-		extends ValueChangeEvent<MapView>
+		extends GwtEvent<MapViewChangeEvent.Handler>
 {
 	public interface Handler
-			extends ValueChangeHandler<MapView>
+			extends EventHandler
 	{
+		void onMapViewChangeEvent(final MapViewChangeEvent event);
 	}
 
 	private static final Type<Handler> TYPE = new Type<Handler>();
+	private final MapView map;
 
-	private MapViewChangeEvent(final MapView value)
+	private MapViewChangeEvent(final MapView map)
 	{
-		super(value);
+		this.map = map;
 	}
 
 	public static void fire(final EventBus eventBus, final MapView map)
@@ -25,9 +27,31 @@ public class MapViewChangeEvent
 		eventBus.fireEvent(new MapViewChangeEvent(map));
 	}
 
+	public static Type<Handler> getType()
+	{
+		return TYPE;
+	}
+
 	public static HandlerRegistration register(EventBus eventBus,
 			Handler handler)
 	{
 		return eventBus.addHandler(TYPE, handler);
+	}
+
+	public MapView getMap()
+	{
+		return map;
+	}
+
+	@Override
+	public Type<Handler> getAssociatedType()
+	{
+		return TYPE;
+	}
+
+	@Override
+	protected void dispatch(final Handler handler)
+	{
+		handler.onMapViewChangeEvent(this);
 	}
 }

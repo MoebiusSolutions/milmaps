@@ -77,7 +77,7 @@ public class BubbleControl extends DecoratedPopupPanel {
 		m_mapViewChangeEventRegistration = MapViewChangeEvent.register(m_map.getEventBus(), new MapViewChangeEvent.Handler()
 		{
 			@Override
-			public void onValueChange(final ValueChangeEvent<MapView> mapViewValueChangeEvent)
+			public void onMapViewChangeEvent(final MapViewChangeEvent mapViewValueChangeEvent)
 			{
 				hide();
 			}
@@ -115,14 +115,14 @@ public class BubbleControl extends DecoratedPopupPanel {
 		Animation a = new Animation() {
 			@Override
 			protected void onStart() {
-				getWidget().getElement().getStyle().setProperty("fontSize", 0.0 * 100.0 + "%");
+				//getWidget().getElement().getStyle().setProperty("fontSize", 0.0 * 100.0 + "%");
 				setPopupPosition(m_initialX, m_initialY);
 				show();
 			}
 
 			@Override
 			protected void onUpdate(double progress) {
-				getWidget().getElement().getStyle().setProperty("fontSize", progress * 100.0 + "%");
+				//getWidget().getElement().getStyle().setProperty("fontSize", progress * 100.0 + "%");
 				int targetX = Math.min(m_initialX + (int)(LEFT_OFFSET * progress), Window.getClientWidth() - getOffsetWidth());
 				int targetY = m_initialY + (int)(TOP_OFFSET * progress) - getOffsetHeight();
 				targetY = Math.max(targetY, Document.get().getScrollTop());
