@@ -57,6 +57,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	private double m_defLat = 0;
 	private double m_defLng = 0;
 	private final EventBus m_eventBus;
+	private final DynamicUpdateEngine m_dynamicUpdateEngine;
 
 	MapsClientBundle clientBundle = GWT.create(MapsClientBundle.class);
 	private static final Logger logger = Logger.getLogger(MapView.class.getName());
@@ -86,6 +87,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		}
 		m_eventBus = eventBus;
 		m_mapEventListener = new MapController(this, m_eventBus);
+		m_dynamicUpdateEngine = new DynamicUpdateEngine(this, m_eventBus);
 		initialize();
 	}
 
@@ -94,7 +96,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		setCenter(recoverCenter(m_defLng, m_defLat));
 		initSize();
 		updateView();
-		initDynamicRefreshTimer();
+		m_dynamicUpdateEngine.initDynamicRefreshTimer();
 
 		m_focusPanel.setStyleName("moesol-MapView");
 		m_mapEventListener.bindHandlers(m_focusPanel);
@@ -105,18 +107,17 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		initWidget(m_focusPanel);
 	}
 
-	public EventBus getEventBus()
-	{
+	public EventBus getEventBus() {
 		return m_eventBus;
 	}
 
-	public void setProjection(IProjection proj){
+	public void setProjection(IProjection proj) {
 		m_projection = proj;
 		m_viewPort.setProjection(proj);
 		m_tempProj = proj.cloneProj();
 	}
 
-	public boolean setProjFromLayerSet( LayerSet ls ){
+	public boolean setProjFromLayerSet(LayerSet ls) {
 		if ( m_projection != null ){
 			if ( m_projection.doesSupport(ls.getEpsg()) && m_bProjSet )
 				return true;
@@ -319,9 +320,6 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	}
 
 	private Timer m_updateTimer = null;
-	private Timer m_dynamicTimer = null;
-	private int m_dynamicRefreshMillis = 10000;
-	private long m_dynamicCounter = new Date().getTime();
 
 	/**
 	 * Match the view to the model data.
@@ -488,34 +486,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		}
 	}
 
-	private void initDynamicRefreshTimer() {
-		if (m_dynamicTimer != null) {
-			return;
-		}
-		m_dynamicTimer = new Timer() {
-			@Override
-			public void run() {
-				doDynamicRefresh();
-			}
-		};
-		m_dynamicTimer.scheduleRepeating(m_dynamicRefreshMillis);
-	}
-
-	private void doDynamicRefresh() {
-		m_dynamicCounter++;
-
-		if (isMapActionSuspended()) {
-			// An animation is in progress so tiles will be updating anyway
-			return;
-		}
-		if (!hasAutoRefreshOnTimerLayers()) {
-			return;
-		}
-		SymbologyRefreshEvent.fire(m_eventBus, this);
-		updateView();
-	}
-
-	private boolean hasAutoRefreshOnTimerLayers() {
+	boolean hasAutoRefreshOnTimerLayers() {
 		for (TiledImageLayer layer : m_tiledImageLayers) {
 			if (layer.getLayerSet().isAutoRefreshOnTimer()) {
 				return true;
@@ -771,15 +742,15 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	}
 
 	public int getDynamicRefreshMillis() {
-		return m_dynamicRefreshMillis;
+		return m_dynamicUpdateEngine.getDynamicRefreshMillis();
 	}
 
 	public void setDynamicRefreshMillis(int dynamicRefreshMillis) {
-		m_dynamicRefreshMillis = dynamicRefreshMillis;
+		m_dynamicUpdateEngine.setDynamicRefreshMillis(dynamicRefreshMillis);
 	}
 
 	public long getDynamicCounter() {
-		return m_dynamicCounter;
+		return m_dynamicUpdateEngine.getDynamicCounter();
 	}
 
 	public void setMapBrightness(double val) {
