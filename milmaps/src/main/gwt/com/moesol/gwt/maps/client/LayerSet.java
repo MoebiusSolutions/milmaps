@@ -103,12 +103,10 @@ public class LayerSet implements IsSerializable {
 	public void setAlwaysDraw(boolean flag) {
 		m_alwaysDraw = flag;
 	}
-	
 	public LayerSet withAlwaysDraw(boolean flag) {
 		setAlwaysDraw(flag);
 		return this;
 	}
-	
 	public boolean isAlwaysDraw() {
 		return m_alwaysDraw;
 	}
