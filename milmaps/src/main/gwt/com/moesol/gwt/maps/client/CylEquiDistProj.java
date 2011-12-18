@@ -59,7 +59,8 @@ public class CylEquiDistProj extends AbstractProjection {
 		deg = clip(deg,m_minLat,m_maxLat);
 		double y = (deg + 90)/180;
 		double mapHeightSize = mapSize()/2.0;
-		return (int)((y * mapHeightSize)+0.5);
+		int result = (int)((y * mapHeightSize)+0.5); 
+		return result;
 	}
 	
 	@Override
@@ -175,5 +176,16 @@ public class CylEquiDistProj extends AbstractProjection {
     	double factor = scaledMapSize/mapSize;
     	return (int)(factor*size);
     }
+
+	@Override
+	public String toString() {
+		return "CylEquiDistProj [m_vpGeoCenter=" + m_vpGeoCenter + ", m_scale="
+				+ m_scale + ", m_wholeWorldScale=" + m_wholeWorldScale
+				+ ", m_minLat=" + m_minLat + ", m_minLng=" + m_minLng
+				+ ", m_maxLat=" + m_maxLat + ", m_maxLng=" + m_maxLng
+				+ ", m_zoomFlag=" + m_zoomFlag + "]";
+	}
+    
+    
 }
 
