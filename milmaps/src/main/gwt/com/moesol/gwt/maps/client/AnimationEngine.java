@@ -45,13 +45,7 @@ public class AnimationEngine extends Animation {
 		m_xDiff =  x - p.getViewSize().getWidth()/2.0;
 		m_yDiff =  y - p.getViewSize().getHeight()/2.0;
 
-        try {
-		    m_mapView.setSuspendFlag(true);
-		    run(m_durationInSecs);
-        }
-        finally {
-            m_mapView.setSuspendFlag(false);
-        }
+	    run(m_durationInSecs);
 	}
 	
 	
@@ -90,17 +84,29 @@ public class AnimationEngine extends Animation {
 	
 	
 	@Override
-	protected void onComplete(){
-		super.onComplete();
-		m_mapView.setSuspendFlag(false);
+	protected void onStart() {
+		super.onStart();
+		m_mapView.setSuspendFlag(true);
+	}
+
+	@Override
+	protected void onComplete() {
+		try {
+			super.onComplete();
+		} finally {
+			m_mapView.setSuspendFlag(false);
+		}
 		m_mapView.hideAnimatedTiles();
 		m_mapView.doUpdateView();
 	}
 	
 	@Override
-	protected void onCancel(){
-		super.onCancel();
-		m_mapView.setSuspendFlag(false);
+	protected void onCancel() {
+		try {
+			super.onCancel();
+		} finally {
+			m_mapView.setSuspendFlag(false);
+		}
 		m_mapView.hideAnimatedTiles();
 		m_mapView.doUpdateView();
 	}

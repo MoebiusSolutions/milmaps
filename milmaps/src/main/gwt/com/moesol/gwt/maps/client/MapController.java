@@ -362,6 +362,9 @@ public class MapController implements
 			@Override
 			public void run()
 			{
+				// Map went idle force suspend flag to off, work around bug in IE
+				m_map.setSuspendFlag(false);
+
 				final IProjection newProjection = m_map.getProjection();
 				final GeodeticCoords newCenter = newProjection.getViewGeoCenter();
 
@@ -378,6 +381,10 @@ public class MapController implements
 				m_oldViewSize.setWidth(newProjection.getViewSize().getWidth());
 				m_oldScale = newProjection.getScale();
 				MapViewChangeEvent.fire(m_eventBus, m_map);
+				
+				// Things changed, save cookies
+				m_map.recordCenter();
+				ProjectionValues.writeCookies(m_map.getProjection());
 			}
 		};
 		m_viewChangeTimer.schedule(minEventFireIntervalMillis);
