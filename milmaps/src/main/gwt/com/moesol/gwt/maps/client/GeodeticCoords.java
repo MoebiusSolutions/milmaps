@@ -21,12 +21,12 @@ public class GeodeticCoords implements IsSerializable {
     }
 
 	/**
-	 * @param lambda longitude
-	 * @param phi latitude
+	 * @param lambdaLongitude in radians or degrees based on unit
+	 * @param phiLatitude in radians or degrees based on unit
 	 * @param angleUnit angular units of lambda and phi
 	 */
-	public GeodeticCoords(double lambda, double phi, AngleUnit angleUnit) {
-		set(lambda, phi, angleUnit);
+	public GeodeticCoords(double lambdaLongitude, double phiLatitude, AngleUnit angleUnit) {
+		set(lambdaLongitude, phiLatitude, angleUnit);
 		m_altitude = 0.0;
 	}
 
@@ -136,7 +136,7 @@ public class GeodeticCoords implements IsSerializable {
 	
 	@Override
 	public String toString() {
-		return "[" + Radians.asDegrees(m_lambda) + "," + Radians.asDegrees(m_phi) + "," + m_altitude + "]";
+		return "[lon=" + Radians.asDegrees(m_lambda) + ", lat=" + Radians.asDegrees(m_phi) + "," + m_altitude + "]";
 	}
 
 }
