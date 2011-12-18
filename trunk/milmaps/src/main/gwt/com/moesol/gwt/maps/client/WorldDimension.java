@@ -25,5 +25,10 @@ public class WorldDimension {
 	public void setWidth(int width) {
 		m_width = width;
 	}
+
+	@Override
+	public String toString() {
+		return "[w=" + m_width + ", h=" + m_height + "]";
+	}
 	
 }

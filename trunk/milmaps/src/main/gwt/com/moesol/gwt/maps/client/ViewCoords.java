@@ -68,6 +68,6 @@ public class ViewCoords {
 
 	@Override
 	public String toString() {
-		return "[" + m_x + "," + m_y + "]";
+		return "[x=" + m_x + ", y=" + m_y + "]";
 	}
 }
