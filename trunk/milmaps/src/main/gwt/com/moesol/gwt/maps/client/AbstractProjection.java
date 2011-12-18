@@ -105,7 +105,7 @@ public abstract class AbstractProjection implements IProjection {
 	
 	@Override
 	public void synchronize( int tileSize, double degWidth, double degHeight ){
-		double earth_mpp = degWidth * (MeterPerDeg / tileSize);
+		// double earth_mpp = degWidth * (MeterPerDeg / tileSize);
 		// meters per pixel for physical screen
 		m_scrnMpp = 2.54 / (m_scrnDpi * 100); 	
 		m_orgTilePixSize = tileSize;
