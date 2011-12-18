@@ -32,11 +32,17 @@ public class ViewPort {
 	private int m_topTiles;
 	private int m_bottomTiles;
 	
-	public ViewPort(){
+	public ViewPort() {
 	}
 	
-	public void setProjection( IProjection proj ){
+	public IProjection getProjection() {
+		return m_projection;
+	}
+	public void setProjection(IProjection proj) {
 		m_projection = proj;
+		GeodeticCoords gc = m_projection.getViewGeoCenter();
+		m_worldCenter.copyFrom(m_projection.geodeticToWorld(gc));
+		m_projection.setViewSize(m_dimension);
 	}
 	
 	public DialogBox alertWidget(final String header, String content) {
@@ -156,10 +162,10 @@ public class ViewPort {
 		return r;
 	}
 	
-	public ViewCoords worldToView(WorldCoords v, boolean checkWrap) {
+	public ViewCoords worldToView(WorldCoords wc, boolean checkWrap) {
 		ViewCoords r = m_returnedViewCoords;
-		r.setX(v.getX() - m_worldCenter.getX() + getCenterX());
-		r.setY(-(v.getY() - m_worldCenter.getY()) + getCenterY()); // flip y axis
+		r.setX(wc.getX() - m_worldCenter.getX() + getCenterX());
+		r.setY(-(wc.getY() - m_worldCenter.getY()) + getCenterY()); // flip y axis
 		
 		// Check for world wrap
 		// We may want to remove the wrap check all together.
@@ -233,6 +239,44 @@ public class ViewPort {
 		return tc;
 	}
 
+	/**
+	 * @param vc ViewCoords
+	 * @return true if {@code vc} is in the view port
+	 */
+	public boolean isInViewPort(ViewCoords vc) {
+		if (vc.getX() < 0) {
+			return false;
+		}
+		if (vc.getX() >= m_dimension.getWidth()) {
+			return false;
+		}
+		if (vc.getY() < 0) {
+			return false;
+		}
+		if (vc.getY() >= m_dimension.getHeight()) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @param wc WorldCoords
+	 * @return true if {@code wc} is contained in view port
+	 */
+	public boolean isInViewPort(WorldCoords wc) {
+		ViewCoords vc = worldToView(wc, false);
+		return isInViewPort(vc);
+	}
+
+	/**
+	 * @param gc GeodeticCoords
+	 * @return true if {@code gc} is contained in view port
+	 */
+	public boolean isInViewPort(GeodeticCoords gc) {
+		WorldCoords wc = m_projection.geodeticToWorld(gc);
+		return isInViewPort(wc);
+	}
+	
 	boolean computeInViewPort(TileCoords tc) {
 		if (tc.getOffsetX() + tc.getTileHeight() < 0) {
 			return false;
@@ -249,15 +293,15 @@ public class ViewPort {
 		return true;
 	}
 
-	private boolean badYTile(int y) {
-		if (y < 0) {
-			return true;
-		}
-		if (y >= getNumYTiles()) {
-			return true;
-		}
-		return false;
-	}
+//	private boolean badYTile(int y) {
+//		if (y < 0) {
+//			return true;
+//		}
+//		if (y >= getNumYTiles()) {
+//			return true;
+//		}
+//		return false;
+//	}
 
 	private int wrapTileX(int x) {
 		int xTiles = getNumXTiles();
@@ -340,25 +384,26 @@ public class ViewPort {
 	
 	 public int getLevel() { return m_level; }
 	
-		/**
-		 * Keep the view center x on the view and the y within the view port.
-		 * 
-		 * @param viewCenter
-		 * @return viewCenter
-		 */
-		public void constrainAsWorldCenter(WorldCoords centerToUpdate) {
-			WorldDimension dim = m_projection.getWorldDimension();
-			if (centerToUpdate.getX() < 0) {
-				centerToUpdate.setX(dim.getWidth() + centerToUpdate.getX());
-			} else {
-				centerToUpdate.setX(centerToUpdate.getX() % dim.getWidth());
-			}
-			
-			int hmid = getCenterY();
-			if (centerToUpdate.getY() < hmid) {
-				centerToUpdate.setY(hmid);
-			} if (centerToUpdate.getY() > dim.getHeight() - hmid) {
-				centerToUpdate.setY(dim.getHeight() - hmid);
-			}
+	/**
+	 * Keep the view center x on the view and the y within the view port.
+	 * 
+	 * @param viewCenter
+	 * @return viewCenter
+	 */
+	public void constrainAsWorldCenter(WorldCoords centerToUpdate) {
+		WorldDimension dim = m_projection.getWorldDimension();
+		if (centerToUpdate.getX() < 0) {
+			centerToUpdate.setX(dim.getWidth() + centerToUpdate.getX());
+		} else {
+			centerToUpdate.setX(centerToUpdate.getX() % dim.getWidth());
 		}
+		
+		int hmid = getCenterY();
+		if (centerToUpdate.getY() < hmid) {
+			centerToUpdate.setY(hmid);
+		} if (centerToUpdate.getY() > dim.getHeight() - hmid) {
+			centerToUpdate.setY(dim.getHeight() - hmid);
+		}
+	}
+
 }

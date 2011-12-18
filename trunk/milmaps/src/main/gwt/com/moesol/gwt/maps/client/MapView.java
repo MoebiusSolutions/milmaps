@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
@@ -27,7 +28,7 @@ import com.moesol.gwt.maps.client.IProjection.ZoomFlag;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.shared.BoundingBox;
 
-public class MapView extends Composite implements SourcesChangeEvents {
+public class MapView extends Composite implements IMapView, SourcesChangeEvents {
 	private static final double BBOX_ZOOM_BUFFER = 2.0;
 	private static final long ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
 	//private final AbsolutePanel m_iconsOverTilesPanel = new AbsolutePanel();
@@ -180,7 +181,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		}
 	}
 
-	private void recordCenter() {
+	void recordCenter() {
 		String centerLng = Double.toString(getCenter().getLambda(
 				AngleUnit.DEGREES));
 		String centerLat = Double.toString(getCenter()
@@ -459,7 +460,10 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		return true;
 	}
 
-	void doUpdateView() {
+	/**
+	 * Internal method, use updateView from clients.
+	 */
+	public void doUpdateView() {
 		WallClock wc = new WallClock();
 		wc.start();
 
@@ -472,10 +476,9 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		// System.out.println(wc);
 
 		positionIcons();
-		m_changeListeners.fireChange(this);
+		
+		m_changeListeners.fireChange(this); // TODO remove this and all uses of ChangeListener use event below instead.
 		m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
-		recordCenter();
-		ProjectionValues.writeCookies(m_projection);
 	}
 
 	public void hideAnimatedTiles() {
@@ -699,16 +702,14 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	}
 
 	/**
-	 * Clients will call this routine to fly to a center lat, lng.
-	 *
-	 * @param lat
-	 * @param lng
+	 * Fly to center/scale.
+	 * @param center
 	 * @param scale
 	 */
-	public void flyTo(double lat, double lng, double zoomX) {
-		m_flyToEngine.flyTo(lat, lng, zoomX);
+	public void flyTo(GeodeticCoords center, MapScale scale) {
+		m_flyToEngine.flyTo(center.getPhi(AngleUnit.DEGREES), center.getLambda(AngleUnit.DEGREES), scale.asDouble());
 	}
-
+	
 	/**
 	 * Clients will call this routine to fly to a center lat, lng and scale
 	 * based on a bounding box.
@@ -716,17 +717,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	 * @param box
 	 */
 	public void flyTo(BoundingBox box) {
-		double minLon = box.getMinLon();
-		double maxLon = box.getMaxLon();
-		double minLat = box.getMinLat();
-		double maxLat = box.getMaxLat();
-		double pixWidth = m_projection.compWidthInPixels( minLon, maxLon);
-		double pixHeight = m_projection.compHeightInPixels( minLat, maxLat);
-		double zoomX = 1.0;
-		double zH = ((double)m_viewPort.getHeight()) / (pixHeight + BBOX_ZOOM_BUFFER);
-		double zW = ((double)m_viewPort.getWidth()) / (pixWidth + BBOX_ZOOM_BUFFER);
-		zoomX = Math.min(zH, zW);
-		m_flyToEngine.flyTo(box.getCenterLat(), box.getCenterLng(), zoomX);
+		m_flyToEngine.flyTo(box.getCenterLat(), box.getCenterLng(), Projections.findScaleFor(getViewport(), box));
 	}
 
 	/**
