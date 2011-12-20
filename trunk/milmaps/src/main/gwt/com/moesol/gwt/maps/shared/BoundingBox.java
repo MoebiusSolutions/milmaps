@@ -1,34 +1,34 @@
 package com.moesol.gwt.maps.shared;
 
 public class BoundingBox {
+	
+	private double m_topLat;
+	private double m_leftLon;
+	private double m_botLat;
+	private double m_rightLon;
 
-	private double m_minLon;
-	private double m_minLat;
-	private double m_maxLon;
-	private double m_maxLat;
-
-	public BoundingBox(double minLat, double minLon, double maxLat,
-			double maxLon) {
-		if (maxLat < minLat) {
+	public BoundingBox(double topLat, double leftLon, double botLat, double rightLon) {
+		if (topLat < botLat) {
 			throw new IllegalArgumentException(
-					"Max lat must be greater than min lat");
-		}
-		if (maxLon < minLon) {
-			throw new IllegalArgumentException(
-					"Max lon must be greater than min lon");
+					"Top lat must be greater than bottom lat");
 		}
 
-		m_minLon = minLon;
-		m_minLat = minLat;
-		m_maxLon = maxLon;
-		m_maxLat = maxLat;
+		m_topLat   = topLat;
+		m_leftLon  = wrapLon(leftLon);
+		m_botLat   = botLat;
+		m_rightLon = wrapLon(rightLon);
+		if( ( 0 <= m_leftLon && 0 <= m_rightLon )||
+			( m_leftLon <= 0 && m_rightLon <= 0 )){
+			if ( m_rightLon < m_leftLon )
+				throw new IllegalArgumentException("Switch the longitudes");
+		}
 	}
 
 	public BoundingBox() {
-		m_minLon = Double.POSITIVE_INFINITY;
-		m_minLat = Double.POSITIVE_INFINITY;
-		m_maxLon = Double.NEGATIVE_INFINITY;
-		m_maxLat = Double.NEGATIVE_INFINITY;
+		m_topLat = Double.POSITIVE_INFINITY;
+		m_leftLon = Double.NEGATIVE_INFINITY;
+		m_botLat = Double.NEGATIVE_INFINITY;
+		m_rightLon = Double.POSITIVE_INFINITY;
 	}
 
 	public static BoundingBox valueOf(String boundingBoxString)
@@ -41,19 +41,31 @@ public class BoundingBox {
 					"Bounding box contained too few arguments");
 		} else {
 			try {
-				double minLon = Double.parseDouble(bboxTokens[0]);
-				double minLat = Double.parseDouble(bboxTokens[1]);
-				double maxLon = Double.parseDouble(bboxTokens[2]);
-				double maxLat = Double.parseDouble(bboxTokens[3]);
+				double topLat   = Double.parseDouble(bboxTokens[0]);
+				double leftLon  = wrapLon(Double.parseDouble(bboxTokens[1]));
+				double botLat   = Double.parseDouble(bboxTokens[2]);
+				double rightLon = wrapLon(Double.parseDouble(bboxTokens[3]));
 
-				return new BoundingBox(minLat, minLon, maxLat, maxLon);
+				return new BoundingBox(topLat, leftLon, botLat, rightLon);
 			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException(
 						"not all bbox arguments were numeric", e);
 			}
 		}
 	}
-
+	
+	private static double wrapLon(double lng) {
+		if (lng > 180.0) {
+			while (lng > 180.0)
+				lng -= 360.0;
+		} else if (lng < -180.0) {
+			while (lng < -180.0)
+				lng += 360.0;
+		}
+		return lng;
+	}
+	// TODO
+	/*
 	public static BoundingBox union(BoundingBox first, BoundingBox second) {
 		double minLon = Math.min(first.getMinLon(), second.getMinLon());
 		double minLat = Math.min(first.getMinLat(), second.getMinLat());
@@ -83,85 +95,128 @@ public class BoundingBox {
 			return false;
 		return true;
 	}
-
-	public double getMaxLat() {
-		return m_maxLat;
+*/
+	public double getTopLat() {
+		return m_topLat;
 	}
 
-	public double getMaxLon() {
-		return m_maxLon;
+	public double getLeftLon() {
+		return m_leftLon;
 	}
 
-	public double getMinLat() {
-		return m_minLat;
+	public double getBotLat() {
+		return m_botLat;
 	}
 
-	public double getMinLon() {
-		return m_minLon;
+	public double getRightLon() {
+		return m_rightLon;
 	}
 
 	public double getLatSpan() {
-		return getMaxLat() - getMinLat();
+		return (m_topLat - m_botLat);
 	}
-
+	
+	//This computes the shorter distance
 	public double getLonSpan() {
-		return getMaxLon() - getMinLon();
+		double dist = m_rightLon - m_leftLon;
+		if ( dist < 0.0 ){
+			// contains the 180 mark.
+			dist *= -1;
+			if ( dist > 180.0 ){
+				dist = 360 - dist;
+			}
+		}
+		return dist;
 	}
 
 	@Override
 	public String toString() {
-		return m_minLon + "," + m_minLat + "," + m_maxLon + "," + m_maxLat;
+		return m_topLat + "," + m_leftLon + "," + m_botLat + "," + m_rightLon;
 	}
 
 	public boolean contains(double lat, double lon) {
-		if (lat < m_minLat || lat > m_maxLat) {
+		if (lat < m_botLat || lat > m_topLat) {
 			return false;
 		} else {
-			return containsLon(lon) || containsLon(lon - 360.0)
-					|| containsLon(lon + 360.0);
+			return containsLon(lon);
 		}
 	}
 
 	boolean containsLon(double lon) {
-		return lon >= m_minLon && lon <= m_maxLon;
+		lon = wrapLon(lon);
+		if ( m_leftLon <= m_rightLon ){
+			if( m_leftLon <= lon && lon <= m_rightLon ){
+				return true;
+			}
+		}
+		else{ // we have a 180 wrap
+			if( ( -180 <= lon && lon <= m_rightLon) ||
+			    ( m_leftLon <= lon && lon <= 180) ){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void union(double lat, double lng) {
-		double centerLng = getCenterLng();
-		if (centerLng != Double.NaN && centerLng > 0.0 && lng < 0.0) {
-			lng += 360.0;
+		lng = wrapLon(lng);
+		if( Double.isInfinite(m_leftLon) ){
+			m_leftLon = lng;
 		}
-		
-		m_minLon = Math.min(m_minLon, lng);
-		m_minLat = Math.min(m_minLat, lat);
-		m_maxLon = Math.max(m_maxLon, lng);
-		m_maxLat = Math.max(m_maxLat, lat);
+		if( Double.isInfinite(m_rightLon) ){
+			m_rightLon = lng;
+		}
+		if( Double.isInfinite(m_botLat) ){
+			m_botLat = lat;
+		}
+		if( Double.isInfinite(m_topLat) ){
+			m_topLat = lat;
+		}
+		double dist = m_rightLon - m_leftLon;
+		if ( dist < 0 ){
+			if ( lng >= 0 ){
+				m_leftLon = Math.min(m_leftLon, lng);
+			}
+			else {
+				m_rightLon = Math.max(m_rightLon, lng);
+			}
+		}
+		else{
+			m_leftLon = Math.min(m_leftLon, lng);
+			m_rightLon = Math.max(m_rightLon, lng);
+		}
+		fixLon();
+		m_botLat = Math.min(m_botLat, lat);
+		m_topLat = Math.max(m_topLat, lat);
+	}
+	
+	private void fixLon(){
+		m_leftLon = wrapLon(m_leftLon);
+		m_rightLon = wrapLon(m_rightLon);
+		if ( m_leftLon < 0 && m_rightLon > 0 ){
+			if (m_rightLon - m_leftLon > 180.0 ){
+				double tempLon = m_rightLon;
+				m_rightLon = m_leftLon;
+				m_leftLon = tempLon;
+			}
+		}
 	}
 
 	public void union(BoundingBox other) {
-		double centerLng = getCenterLng();
-		double otherCenterLng = other.getCenterLng();
-
-		if (centerLng != Double.NaN && centerLng > 0.0 && otherCenterLng < 0.0) {
-			other = wrapPositive(other);
-		}
-
-		m_minLon = Math.min(m_minLon, other.getMinLon());
-		m_minLat = Math.min(m_minLat, other.getMinLat());
-		m_maxLon = Math.max(m_maxLon, other.getMaxLon());
-		m_maxLat = Math.max(m_maxLat, other.getMaxLat());
+		union(other.getTopLat(),other.getLeftLon());
+		union(other.getBotLat(),other.getRightLon());
 	}
 
 	public static BoundingBox wrapPositive(BoundingBox bbox) {
-		return new BoundingBox(bbox.getMinLat(), bbox.getMinLon() + 360.0,
-				bbox.getMaxLat(), bbox.getMaxLon() + 360.0);
+		return new BoundingBox(	bbox.getTopLat(), bbox.getLeftLon(),
+								bbox.getBotLat(), bbox.getRightLon() );
 	}
 
 	public double getCenterLng() {
-		return m_minLon + (getLonSpan() / 2.0);
+		return wrapLon(m_leftLon + (getLonSpan() / 2.0));
 	}
 	
 	public double getCenterLat() {
-		return m_minLat + (getLatSpan() / 2.0);
+		return m_botLat + (getLatSpan() / 2.0);
 	}
 }

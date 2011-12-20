@@ -25,8 +25,8 @@ public class Projections {
 		tmp.setViewGeoCenter(Degrees.geodetic(box.getCenterLat(), box.getCenterLng() ));
 		viewPort.setProjection(tmp); // Updates view port state
 		try {
-			GeodeticCoords upperLeft = Degrees.geodetic(box.getMaxLat(), box.getMinLon());
-			GeodeticCoords lowerRight = Degrees.geodetic(box.getMinLat(), box.getMaxLon());
+			GeodeticCoords upperLeft = Degrees.geodetic(box.getTopLat(), box.getLeftLon());
+			GeodeticCoords lowerRight = Degrees.geodetic(box.getBotLat(), box.getRightLon());
 			// If both already fit then search by zooming in until they do not 
 			boolean searchIn = viewPort.isInViewPort(upperLeft) && viewPort.isInViewPort(lowerRight);
 			double searchMultiplier = searchIn ? 2.0 : 0.5;
