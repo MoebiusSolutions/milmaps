@@ -111,8 +111,7 @@ public class AbstractFeatureTileResourceTest {
 
 	@Test
 	public void testGetBoundingBoxJson_precision() {
-		BoundingBox bbox = new BoundingBox(-0.100000000012,
-				-0.10000000000005568, 89.999999999999, 179.99999999999);
+		BoundingBox bbox = new BoundingBox( 89.999999999999, -0.10000000000005568,  -0.100000000012, 179.99999999999);
 		assertEquals(
 				"{\"minLat\":-0.100000000012,\"minLng\":-0.10000000000005568,\"maxLat\":89.999999999999,\"maxLng\":179.99999999999}",
 				m_resource.createBoundingBoxJson(bbox));
