@@ -1,11 +1,8 @@
 package mil.usmc.mapCache;
 
-import java.awt.Color;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -38,10 +35,13 @@ public class MapCacheTileResource {
 	private static final Logger s_logger = Logger.getLogger(MapCacheTileResource.class.getName());
 	///////////////////////////////////////////
 	// This is just for now, we will create a config file later
+	private int m_urlDataSize = 512;
 	private String m_data = "bmng";
 	private String m_urlPatern =  "{server}/{data}/MapServer/tile/{level}/{y}/{x}";
 	private String m_server = "http://services.arcgisonline.com/ArcGIS/rest/services";
 	private String m_imageFormat = "png";
+	private Split m_split = new Split();
+	private Split.ImgInfo m_inf = m_split.createInfObj();
 	/**
 	* @param zoomLevel
 	*       The zoom level of the requested tile.
@@ -71,6 +71,9 @@ public class MapCacheTileResource {
 			
 			BufferedImage tileImage = buildMapTile( m_server,m_urlPatern, data, epsg, 
 												    size, level, xTile, yTile, m_imageFormat );
+			if ( level == 256 ){
+				
+			}
 			return Response.ok(tileImage, new MediaType("image", m_imageFormat))
 					.build();
 		} catch (Exception e) {
@@ -112,6 +115,7 @@ public class MapCacheTileResource {
 		return returnStr;
 	}
 	
+	/*
 	BufferedImage buildMapTile( String server, String urlPatern, String data,
 								int epsg, int size, int level, int xTile, int yTile,
 								String imageFormat ) throws FileNotFoundException, MalformedURLException, IOException {
@@ -130,8 +134,15 @@ public class MapCacheTileResource {
 		
 		return img;
 	}
+	*/
 	
-/*
+	private void splitFile(int level, int x, int y, BufferedImage img ) throws IOException{
+		m_inf.level = level;
+		m_inf.x = x;
+		m_inf.y = y;
+		m_split.splitImage(m_inf, img);		
+	}
+
 	BufferedImage buildMapTile( String server, String urlPatern, String data,
 								int epsg, int size, int level, int xTile, int yTile,
 								String imageFormat ) throws FileNotFoundException, MalformedURLException, IOException {
@@ -142,26 +153,44 @@ public class MapCacheTileResource {
 		File file = new File(filePath);
 		if ( file.exists() == true ){
 			img = (BufferedImage)ImageIO.read(file);
-		}
-		else{
-			File dir = new File(dirPath);
-			if ( dir.exists() == false ){
-				if ( dir.mkdirs() == true ){
-					// Get Image and write to file
-					String url = buildUrl( server, urlPatern, data, epsg, size, level, xTile, yTile );
-					img = getImageFromURL(url,file);
-				}
+			if ( size == 512 ){
+				splitFile(level, xTile, yTile, img );
 			}
-			else{
+		}
+		else if ( size == 512 ){
+			File dir = new File(dirPath);
+			boolean bGoodDir = true;
+			if ( dir.exists() == false ){
+				bGoodDir = dir.mkdirs();
+			}
+			if ( bGoodDir ){
+				// Get Image and write to file
 				String url = buildUrl( server, urlPatern, data, epsg, size, level, xTile, yTile );
 				img = getImageFromURL(url,file);
+				splitFile(level, xTile, yTile, img );
 			}
 		}
-		
+		/* we will add this when I can lock the files.
+		else{ // 256
+			// we need to convert the 256 info to 512 info
+			int x = xTile/2;
+			int y = yTile/2;
+			int s = 512;
+			String url = buildUrl( server, urlPatern, data, epsg, s, level, x, y );
+			img = getImageFromURL(url,file);
+			if ( img != null ){
+				BufferedImage img2 = null;
+				splitFile(level, x, y, img );
+				if ( file.exists() == true ){
+					img2 = (BufferedImage)ImageIO.read(file);
+				}
+				return img2;
+			}
+		}
+		*/
 		return img;
 	}
- */
-	
+
 	
 	BufferedImage getImageFromURL(final String url, final File outFile) 
 								 throws FileNotFoundException, MalformedURLException, IOException 
@@ -194,6 +223,7 @@ public class MapCacheTileResource {
 		}
 		return img;
 	}
+
 	
 	private void writeTileFile(String url, BufferedImage bi, File outFile) throws IOException {
 		try {
