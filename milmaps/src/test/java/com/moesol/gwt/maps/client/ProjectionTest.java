@@ -28,6 +28,19 @@ public class ProjectionTest {
 	}
 	
 	@Test
+	public void testNumYTiles(){
+		double startDegs[] = {180 , 90, 45, 27.5 };
+		for( int i = 0; i < 1; i++ ){
+			for( int level = 0; level < 20; level++){
+				double degWidth = startDegs[i]/(1<<level);
+				int numTiles = m_proj.getNumYtiles(degWidth);
+				assertEquals(numTiles,(1<<(level+i)));
+			}
+		}
+		
+	}
+	
+	@Test
 	public void testWorldToGeo(){
 		GeodeticCoords gc1;
 		GeodeticCoords gc2;

@@ -214,8 +214,8 @@ public class ViewPort {
 		int y = centTileY - centerOffsetYIdx; // Flip y
 		if ( zeroTop  ){
 			// since tile is zero-top, we need to translate it.
-			int level = m_centerTile.getLevel();
-			y = ((1 << level) - y - 1);
+			int numYTiles = getNumYTiles();
+			y = (numYTiles - y - 1);
 		}
 		
 		//if (badYTile(y)) {

@@ -127,12 +127,13 @@ public class CylEquiDistProj extends AbstractProjection {
 	
 	@Override
     public int getNumYtiles(double tileDegWidth){
-    	return getNumXtiles(tileDegWidth)/2;
+    	return Math.max(1,getNumXtiles(tileDegWidth)/2);
     }
 	
 	@Override
 	public TileXY geoPosToTileXY( int level, GeodeticCoords g  )
 	{
+		// This computes the tile (x,y) with y = 0 as the bottom tile.
 		int tLevel = Math.max(0,level);
 		double degCellWidth = m_origTileDegWidth/Math.pow(2.0,tLevel);
 		double degCellHeight = m_origTileDegHeight/Math.pow(2.0,tLevel);
