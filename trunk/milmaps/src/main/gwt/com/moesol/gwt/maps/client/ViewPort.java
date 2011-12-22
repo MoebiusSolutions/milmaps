@@ -360,10 +360,16 @@ public class ViewPort {
 		return m_dimension.getHeight() / 2;
 	}
 	
+	/**
+	 * @return width in pixels
+	 */
 	public int getWidth() {
 		return m_dimension.getWidth();
 	}
 	
+	/**
+	 * @return height in pixels
+	 */
 	public int getHeight() {
 		return m_dimension.getHeight();
 	}
