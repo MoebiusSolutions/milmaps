@@ -25,6 +25,19 @@
 		};
 		
 		var layerSets = [
+			//{  
+			//	 server: "http://localhost:8080/milmapsCache/rs/mapcache",
+			//	 data: "I3_Imagery_Prime_World_2D",
+			//	 urlPattern: "{server}/{data}/{epsg}/{imgSize}/{level}/{x}/{y}",
+			//	 epsg: 4326,
+			//	 zeroTop: true,
+			//	 autoRefreshOnTimer: false,
+			//	 startLevelTileWidthInDeg:90,
+			//	 startLevelTileHeightInDeg:90,
+			//	 pixelWidth:256,
+			//	 pixelHeight:256
+			//}
+			// This version uses 512x512 with deg width of 180.
 			{  
 				 server: "http://localhost:8080/milmapsCache/rs/mapcache",
 				 data: "I3_Imagery_Prime_World_2D",
@@ -34,7 +47,7 @@
 				 autoRefreshOnTimer: false,
 				 startLevelTileWidthInDeg:180,
 				 startLevelTileHeightInDeg:180,
-				 imgSize: 512
+				 pixelWidth: 512
 			}
         // { 
         //	  server: "http://khm1.google.com/kh/v=84", 
@@ -52,7 +65,7 @@
         // ,
         // { 
         //     server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
-        //     data: "I3_Imagery_Prime_World_2D",
+        //     data: "NatGeo_World_Map",
         //     urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
         //	 epsg: 4326,
         //	 zeroTop: true,
@@ -61,6 +74,18 @@
         //	 startLevelTileHeightInDeg:180,
         //	 pixelHeight: 512,
 		//     pixelWidth: 512
+        // }
+        // { 
+        //     server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
+        //     data: "I3_Imagery_Prime_World_2D",
+        //     urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
+        //	 epsg: 4326,
+        //	 zeroTop: true,
+        //	 autoRefreshOnTimer: false,
+        //	 startLevelTileWidthInDeg:180,
+        //	 startLevelTileHeightInDeg:180,
+        //	 pixelHeight: 512,
+		//   pixelWidth: 512
         // }
         // ,
         // { 
