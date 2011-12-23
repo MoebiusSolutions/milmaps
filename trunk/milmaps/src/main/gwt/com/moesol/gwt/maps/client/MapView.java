@@ -565,6 +565,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_tileLayersPanel.setWidgetPosition(image, x, y);
 		Label label = icon.getLabel();
 		if (label != null) {
+			x -= icon.getIconOffset().getX();
+			y -= icon.getIconOffset().getY();
 			x += icon.getDeclutterOffset().getX();
 			y += icon.getDeclutterOffset().getY();
 			m_tileLayersPanel.setWidgetPosition(label, x+18, y);
@@ -586,6 +588,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		}
 		Label label = icon.getLabel();
 		if (label != null) {
+			x -= icon.getIconOffset().getX();
+			y -= icon.getIconOffset().getY();
 			x += icon.getDeclutterOffset().getX();
 			y += icon.getDeclutterOffset().getY();
 			if (label.getParent() == null) {

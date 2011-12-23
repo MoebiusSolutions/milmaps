@@ -25,7 +25,7 @@ public class DeclutterEngine {
 //		-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	};
 	static int CELL_WIDTH = 4; // px
-	static int CELL_HEIGHT = 4; // px
+	static int CELL_HEIGHT = 8; // px
 	
 	private final IMapView m_mapView;
 	private BitSet m_bitSet;
@@ -152,7 +152,7 @@ public class DeclutterEngine {
 	ViewCoords computeIconCenterViewCoords(Icon icon) {
 		WorldCoords wc = m_mapView.getProjection().geodeticToWorld(icon.getLocation());
 		ViewCoords vc = m_mapView.getViewport().worldToView(wc, true);
-		return vc.translate(icon.getIconOffset());
+		return new ViewCoords(vc.getX(), vc.getY());
 	}
 	
 	private void moveDeclutterOffset(Icon icon, int rowOffset, int colOffset) {
