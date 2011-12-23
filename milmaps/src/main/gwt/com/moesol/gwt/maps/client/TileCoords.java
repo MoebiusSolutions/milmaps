@@ -210,6 +210,7 @@ public class TileCoords {
 		replacements.put("y", Integer.toString(getY()));
 		replacements.put("bbox", computeBbox(layerSet, levelInUrl));
 		replacements.put("quadkey", computeQuadKey(layerSet, levelInUrl));
+		replacements.put("quad", computeQuad(layerSet, levelInUrl));
 		
 		String returnStr = layerSet.getUrlPattern();
 		for (Entry<String, String> e : replacements.entrySet()) {
@@ -230,6 +231,15 @@ public class TileCoords {
 	
 	private String computeQuadKey(LayerSet layerSet, int levelInUrl) {
 		return QuadKey.tileXYToKey(getX(), getY(), levelInUrl);
+	}
+	private String computeQuad(LayerSet layerSet, int levelInUrl) {
+		String key = QuadKey.tileXYToKey(getX(), getY(), levelInUrl);
+		String q = key.replace('0', 'q');
+		String r = q.replace('1', 'r');
+		String s = r.replace('2', 't');
+		String t = s.replace('3', 's');
+		
+		return t;
 	}
 
 	/**
