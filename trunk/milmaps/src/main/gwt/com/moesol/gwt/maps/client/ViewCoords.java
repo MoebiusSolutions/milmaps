@@ -41,6 +41,14 @@ public class ViewCoords {
 		m_y = y;
 	}
 
+	/**
+	 * @param offset
+	 * @return new view coords with x and y translated by offset.
+	 */
+	public ViewCoords translate(ViewCoords offset) {
+		return new ViewCoords(m_x + offset.m_x, m_y + offset.m_y);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int PRIME = 31;
