@@ -42,6 +42,11 @@ public class MapCacheTileResource {
 	private String m_imageFormat = "png";
 	private Split m_split = new Split();
 	private Split.ImgInfo m_inf = m_split.createInfObj();
+	
+	public MapCacheTileResource(){
+		m_split.setBase(m_csBase);
+	}
+	
 	/**
 	* @param zoomLevel
 	*       The zoom level of the requested tile.
@@ -71,9 +76,7 @@ public class MapCacheTileResource {
 			
 			BufferedImage tileImage = buildMapTile( m_server,m_urlPatern, data, epsg, 
 												    size, level, xTile, yTile, m_imageFormat );
-			if ( level == 256 ){
-				
-			}
+
 			return Response.ok(tileImage, new MediaType("image", m_imageFormat))
 					.build();
 		} catch (Exception e) {
