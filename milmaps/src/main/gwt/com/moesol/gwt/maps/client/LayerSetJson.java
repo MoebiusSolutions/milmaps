@@ -17,6 +17,7 @@ public class LayerSetJson extends JavaScriptObject {
 	public final native boolean isAlwaysDraw(boolean def) /*-{ return this.alwaysDraw != undefined ? this.alwaysDraw : def; }-*/;
 	public final native boolean isUseToScale(boolean def) /*-{ return this.useToScale != undefined ? this.useToScale : def; }-*/;
 	public final native boolean isAutoRefreshOnTimer(boolean def) /*-{ return this.autoRefreshOnTimer != undefined ? this.autoRefreshOnTimer : def; }-*/;
+	public final native boolean isActive(boolean def) /*-{ return this.active != undefined ? this.active : def; }-*/;
 	public final native int getEpsg(int def) /*-{ return this.epsg || def; }-*/;
 	public final native int getMinLevel(int def) /*-{ return this.minLevel || def; }-*/;
 	public final native int getMaxLevel(int def) /*-{ return this.maxLevel || def; }-*/;
@@ -40,6 +41,7 @@ public class LayerSetJson extends JavaScriptObject {
 			.withAlwaysDraw(isAlwaysDraw(layerSet.isAlwaysDraw()))
 			.withUseToScale(isUseToScale(layerSet.useToScale()))
 			.withAutoRefreshOnTimer(isAutoRefreshOnTimer(layerSet.isAutoRefreshOnTimer()))
+			.withActive(isActive(layerSet.isActive()))
 			.withEpsg(getEpsg(layerSet.getEpsg()))
 			.withZIndex(getZIndex(layerSet.getZIndex()))
 			.withStartLevel(getStartLevel(layerSet.getStartLevel()))
