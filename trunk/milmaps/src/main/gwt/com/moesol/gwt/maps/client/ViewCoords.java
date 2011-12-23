@@ -49,6 +49,10 @@ public class ViewCoords {
 		return new ViewCoords(m_x + offset.m_x, m_y + offset.m_y);
 	}
 	
+	public ViewCoords scale(int s) {
+		return new ViewCoords(s * m_x, s * m_y);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int PRIME = 31;
@@ -78,4 +82,5 @@ public class ViewCoords {
 	public String toString() {
 		return "[x=" + m_x + ", y=" + m_y + "]";
 	}
+
 }
