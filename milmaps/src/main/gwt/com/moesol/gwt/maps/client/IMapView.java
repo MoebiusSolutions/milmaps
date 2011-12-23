@@ -5,4 +5,5 @@ public interface IMapView {
 	void setSuspendFlag(boolean b);
 	void doUpdateView();
 	void setCenter(GeodeticCoords geodeticCoords);
+	ViewPort getViewport();
 }

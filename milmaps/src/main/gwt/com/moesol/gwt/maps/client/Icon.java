@@ -4,15 +4,48 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LoadListener;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Provider;
 
 public class Icon {
+	static Provider<Image> IMAGE_PROVIDER = new Provider<Image>() {
+		@Override
+		public Image get() {
+			return new Image();
+		}
+	};
+	static Provider<Label> LABEL_PROVIDER = new Provider<Label>() {
+		@Override
+		public Label get() {
+			return new Label();
+		}
+	};
+	static LabelStyler LABEL_STYLER = new LabelStyler() {
+		@Override
+		public void setWordWrap(Label label, boolean v) {
+			label.setWordWrap(v);
+		}
+		@Override
+		public void setColor(Label label, String color) {
+			label.getElement().getStyle().setColor(color);
+		}
+		@Override
+		public void setZIndex(Label label, int index) {
+			label.getElement().getStyle().setZIndex(index);
+		}
+	};
+	interface LabelStyler {
+		void setWordWrap(Label label, boolean v);
+		void setColor(Label label, String color);
+		void setZIndex(Label label, int index);
+	}
 	private final GeodeticCoords m_location = new GeodeticCoords();
 	private final ViewCoords m_iconOffset = new ViewCoords();
+	private final ViewCoords m_declutterOffset = new ViewCoords(4, 0);
 	private static String MISSING_IMAGE_URL = "missing.gif";
 	private String m_iconUrl;
 	private String m_clickUrl;
 	private Label m_label = null;
-	private Image m_image = new Image();
+	private Image m_image = IMAGE_PROVIDER.get();
 	private int m_zIndex = 2010;
 	private final LoadListener m_loadListener = new LoadListener() {
 		@Override
@@ -57,10 +90,11 @@ public class Icon {
 	}
 	
 	public void setLabel(String text){
-		if ( m_label == null ){
-			m_label = new Label();
-			m_label.getElement().getStyle().setColor("yellow");
-			m_label.getElement().getStyle().setZIndex( m_zIndex );
+		if (m_label == null) {
+			m_label = LABEL_PROVIDER.get();
+			LABEL_STYLER.setWordWrap(m_label, false);
+			LABEL_STYLER.setColor(m_label, "yellow");
+			LABEL_STYLER.setZIndex(m_label, m_zIndex);
 		}
 		m_label.setText(text);
 	}
@@ -113,7 +147,9 @@ public class Icon {
 	public ViewCoords getIconOffset() {
 		return m_iconOffset;
 	}
-		
+	public ViewCoords getDeclutterOffset() {
+		return m_declutterOffset;
+	}
 
 	/**
 	 * The default icon offset is 0, 0, the upper left hand corner of

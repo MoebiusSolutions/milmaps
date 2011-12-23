@@ -353,15 +353,14 @@ public class MapController implements
 	private ViewDimension m_oldViewSize = new ViewDimension(0, 0);
 	private double m_oldScale = 0.0;
 
+	// TODO move this somewhere else???
 	public void fireMapViewChangeEventWithMinElapsedInterval(final int minEventFireIntervalMillis) {
 		if (m_viewChangeTimer != null) {
 			m_viewChangeTimer.cancel();
 		}
-		m_viewChangeTimer = new Timer()
-		{
+		m_viewChangeTimer = new Timer() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				// Map went idle force suspend flag to off, work around bug in IE
 				m_map.setSuspendFlag(false);
 
@@ -371,7 +370,7 @@ public class MapController implements
 				if (m_oldCenter.equals(newCenter)) {
 					if (m_oldViewSize.equals(newProjection.getViewSize())) {
 						if (m_oldScale == newProjection.getScale()) {
-							return;
+							return; // Nothing has changed.
 						}
 					}
 				}
@@ -380,11 +379,10 @@ public class MapController implements
 				m_oldViewSize.setHeight(newProjection.getViewSize().getHeight());
 				m_oldViewSize.setWidth(newProjection.getViewSize().getWidth());
 				m_oldScale = newProjection.getScale();
+				
 				MapViewChangeEvent.fire(m_eventBus, m_map);
 				
-				// Things changed, save cookies
-				m_map.recordCenter();
-				ProjectionValues.writeCookies(m_map.getProjection());
+				m_map.onChangeAndIdle();
 			}
 		};
 		m_viewChangeTimer.schedule(minEventFireIntervalMillis);

@@ -42,6 +42,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private final ViewCoords m_vc = new ViewCoords();
 	private final AnimationEngine m_animateEngine = new AnimationEngine(this);
 	private final FlyToEngine m_flyToEngine = new FlyToEngine(this);
+	private DeclutterEngine m_declutterEngine; // null unless needed
 	private final ChangeListenerCollection m_changeListeners = new ChangeListenerCollection();
 	// private final MapControls mapControls = new MapControls(this);
 
@@ -52,6 +53,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private final ArrayList<TiledImageLayer> m_tiledImageLayers = new ArrayList<TiledImageLayer>();
 	private int m_dpi = 75;
 	private boolean m_bSuspendMapAction = false;
+	private boolean m_bDeclutterLabels = false;
+
 	private double m_mapBrightness = 1.0;
 	private boolean m_firstSearch = true;
 	private boolean m_bProjSet = false;
@@ -82,9 +85,9 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_defLat = defLat;
 		m_defLng = defLng;
 		if (type == Projection.T.Mercator ) {
-			setProjection(new Mercator(256,360,170.10226));
+			setProjection(new Mercator(256,360.0,170.10226));
 		} else {
-			setProjection(new CylEquiDistProj(512,180,180));
+			setProjection(new CylEquiDistProj(512,180.0,180.0));
 		}
 		m_eventBus = eventBus;
 		m_mapEventListener = new MapController(this, m_eventBus);
@@ -118,8 +121,11 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_tempProj = proj.cloneProj();
 	}
 
-	public boolean setProjFromLayerSet(LayerSet ls) {
-		if ( m_projection != null ){
+	private boolean computeProjFromLayerSet(LayerSet ls) {
+		if (!ls.isActive()) {
+			return false;
+		}
+		if (m_projection != null) {
 			if ( m_projection.doesSupport(ls.getEpsg()) && m_bProjSet )
 				return true;
 		}
@@ -140,9 +146,23 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public void setSuspendFlag(boolean flag) {
 		this.m_bSuspendMapAction = flag;
 	}
-
 	public boolean isMapActionSuspended() {
 		return this.m_bSuspendMapAction;
+	}
+	
+	/**
+	 * @return true when label declutter is enabled.
+	 */
+	public boolean isDeclutterLabels() {
+		return m_bDeclutterLabels;
+	}
+	/**
+	 * Set declutter labels flag. When declutter labels is enabled the map view will
+	 * move the labels so that they do not overlap each other.
+	 * @param bDeclutterLabels
+	 */
+	public void setDeclutterLabels(boolean bDeclutterLabels) {
+		m_bDeclutterLabels = bDeclutterLabels;
 	}
 
 	public MapController getController() {
@@ -181,7 +201,23 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		}
 	}
 
-	void recordCenter() {
+	/**
+	 * Called when map changed and idle
+	 */
+	void onChangeAndIdle() {
+		// Things changed, save cookies
+		recordCenter();
+		ProjectionValues.writeCookies(getProjection());
+
+		if (isDeclutterLabels()) {
+			if (m_declutterEngine == null) {
+				m_declutterEngine = new DeclutterEngine(this);
+			}
+			m_declutterEngine.declutter(getIconLayer().getIcons());
+			positionIcons();
+		}
+	}
+	private void recordCenter() {
 		String centerLng = Double.toString(getCenter().getLambda(
 				AngleUnit.DEGREES));
 		String centerLat = Double.toString(getCenter()
@@ -210,11 +246,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 
 	public TiledImageLayer addLayer(LayerSet layerSet) {
-		if ( m_bProjSet == false ){
-			m_bProjSet = setProjFromLayerSet(layerSet);
+		if (m_bProjSet == false) {
+			m_bProjSet = computeProjFromLayerSet(layerSet);
 		}
-		TiledImageLayer tiledImageLayer = new TiledImageLayer(this, layerSet,
-				m_tileLayersPanel);
+		TiledImageLayer tiledImageLayer = new TiledImageLayer(this, layerSet, m_tileLayersPanel);
 		m_tiledImageLayers.add(tiledImageLayer);
 		return tiledImageLayer;
 	}
@@ -477,7 +512,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 
 		positionIcons();
 		
-		m_changeListeners.fireChange(this); // TODO remove this and all uses of ChangeListener use event below instead.
+		m_changeListeners.fireChange(this); // TODO remove this and all uses of ChangeListener use event below instead which only happens after map idle for a while...
 		m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
 	}
 
@@ -498,39 +533,41 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		return false;
 	}
 
+	// RFH: drawIcons is basically the same as positionIcons with extra scale, offsetX, offsetY
+	// If animation just called doUpdateView then drawIcons could be removed.
 	public void drawIcons(double scale, double offsetX, double offsetY) {
-		List<Icon> icons = getIconLayer().getIcons();
 		ZoomFlag flag = m_projection.getZoomFlag();
-		double val = (flag == ZoomFlag.IN ? m_projection.getPrevScale()
-				: m_projection.getScale());
+		double val = (flag == ZoomFlag.IN ? m_projection.getPrevScale() : m_projection.getScale());
 		m_tempProj.setScale(val);
+
+		List<Icon> icons = getIconLayer().getIcons();
 		for (Icon icon : icons) {
 			drawIcon(icon, scale, offsetX, offsetY);
 		}
 	}
+	
+	private void positionIcons() {
+		List<Icon> icons = getIconLayer().getIcons();
+		for (Icon icon : icons) {
+			positionOneIcon(icon);
+		}
+	}
 
-	private void drawIcon(Icon icon, double scale, double offsetX,
-			double offsetY) {
-
+	// RFH: drawIcon is basically the same as positionOneIcon with extra scale, offsetX, offsetY
+	// If animation just called doUpdateView then drawIcon could be removed.
+	private void drawIcon(Icon icon, double scale, double offsetX, double offsetY) {
 		WorldCoords w = m_tempProj.geodeticToWorld(icon.getLocation());
 		ViewCoords vc = m_viewPort.worldToView(w, false);
 		Image image = icon.getImage();
-		int x = (int) (scale * vc.getX() - offsetX)
-				+ icon.getIconOffset().getX();
-		int y = (int) (scale * vc.getY() - offsetY)
-				+ icon.getIconOffset().getY();
+		int x = (int) (scale * vc.getX() - offsetX) + icon.getIconOffset().getX();
+		int y = (int) (scale * vc.getY() - offsetY) + icon.getIconOffset().getY();
 		//m_iconsOverTilesPanel.setWidgetPosition(image, x, y);
 		m_tileLayersPanel.setWidgetPosition(image, x, y);
 		Label label = icon.getLabel();
-		if ( label != null )
+		if (label != null) {
+			x += icon.getDeclutterOffset().getX();
+			y += icon.getDeclutterOffset().getY();
 			m_tileLayersPanel.setWidgetPosition(label, x+18, y);
-	}
-
-	private void positionIcons() {
-		List<Icon> icons = getIconLayer().getIcons();
-
-		for (Icon icon : icons) {
-			positionOneIcon(icon);
 		}
 	}
 
@@ -548,8 +585,9 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 			m_tileLayersPanel.setWidgetPosition(image, x, y);
 		}
 		Label label = icon.getLabel();
-		if ( label != null ){
-			x += icon.getImagePixWidth() + 4;
+		if (label != null) {
+			x += icon.getDeclutterOffset().getX();
+			y += icon.getDeclutterOffset().getY();
 			if (label.getParent() == null) {
 				m_tileLayersPanel.add(label, x, y);
 			} else {
@@ -726,6 +764,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 * @param lat
 	 * @param lng
 	 * @param scale
+	 * 
+	 * @deprecated use GeodeticCoords instead.
 	 */
 	public void centerOn(double lat, double lng, double scale) {
 		setCenter(lat, lng);
@@ -779,29 +819,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		}
 		 **/
 		return true;
-	}
-
-	public void timerZoom(final boolean zoomIn, final double scaleFactor) {
-		final int INTERVAL_MILSECS = 100;
-		Timer timer = new Timer() {
-			int iCount = 0;
-			final int TIMER_COUNT = 10;
-
-			@Override
-			public void run() {
-				iCount++;
-				if (allTilesLoaded()) {
-					cancel();
-					animateZoom(scaleFactor);
-				} else {
-					if (iCount > TIMER_COUNT) {
-						zoomByFactor(scaleFactor);
-						cancel();
-					}
-				}
-			}
-		};
-		timer.schedule(INTERVAL_MILSECS);
 	}
 
 	public FocusPanel getFocusPanel() {
