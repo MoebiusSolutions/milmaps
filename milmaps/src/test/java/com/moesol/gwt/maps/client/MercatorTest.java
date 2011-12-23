@@ -229,7 +229,10 @@ public class MercatorTest {
 					double dFactor = Math.pow(2,level-1);
 					TileXY tile = findTile(m_geo,level);
 					m_proj.zoomByFactor(dFactor);
-					TileXY tile2 = m_proj.geoPosToTileXY(level,m_geo);			
+					int pixSize = m_proj.getOrigTilePixelSize();
+					double degW = m_proj.getOrigTileDegWidth();
+					double degH = m_proj.getOrigTileDegHeight();
+					TileXY tile2 = m_proj.geoPosToTileXY(level,pixSize, degW, degH, m_geo);			
 					assertEquals(tile.m_x, tile2.m_x);
 					assertEquals( tile.m_y, tile2.m_y);
 					m_proj.zoomByFactor(dFactor);

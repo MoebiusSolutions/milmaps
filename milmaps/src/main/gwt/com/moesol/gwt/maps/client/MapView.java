@@ -107,7 +107,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_focusPanel.setWidget(m_tileLayersPanel);
 		initWidget(m_focusPanel);
 	}
-
+	
 	public EventBus getEventBus() {
 		return m_eventBus;
 	}

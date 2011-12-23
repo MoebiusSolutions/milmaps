@@ -171,7 +171,10 @@ public class ProjectionTest {
 				for ( int level = 1; level < 4; level++ ){
 					double dFactor = Math.pow(2,level);
 					m_proj.zoomByFactor(dFactor);
-					TileXY tile = m_proj.geoPosToTileXY( level, m_geo );
+					int pixSize = m_proj.getOrigTilePixelSize();
+					double degW = m_proj.getOrigTileDegWidth();
+					double degH = m_proj.getOrigTileDegHeight();
+					TileXY tile = m_proj.geoPosToTileXY( level, pixSize, degW, degH, m_geo );
 					TileXY tile2 = findTile( lat, lng, level );		
 					if ( tile.m_x != tile2.m_x )
 						tile.m_x += 0;

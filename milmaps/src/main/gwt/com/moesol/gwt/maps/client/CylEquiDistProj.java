@@ -131,12 +131,13 @@ public class CylEquiDistProj extends AbstractProjection {
     }
 	
 	@Override
-	public TileXY geoPosToTileXY( int level, GeodeticCoords g  )
+	public TileXY geoPosToTileXY( int level, int pixWidth, 
+								  double degW, double degH, GeodeticCoords g  )
 	{
 		// This computes the tile (x,y) with y = 0 as the bottom tile.
 		int tLevel = Math.max(0,level);
-		double degCellWidth = m_origTileDegWidth/Math.pow(2.0,tLevel);
-		double degCellHeight = m_origTileDegHeight/Math.pow(2.0,tLevel);
+		double degCellWidth = degW/Math.pow(2.0,tLevel);
+		double degCellHeight = degH/Math.pow(2.0,tLevel);
 		double degMag = Math.abs(g.getLambda(AngleUnit.DEGREES)+180);
 		m_tile.m_x = (int)(degMag/degCellWidth);
 		degMag = Math.abs(g.getPhi(AngleUnit.DEGREES)+90);
@@ -158,9 +159,9 @@ public class CylEquiDistProj extends AbstractProjection {
 	}	
     
     @Override
-    public WorldCoords tileXYToTopLeftXY(  int level, TileXY tile  ){
-    	int topLeftX = tile.m_x*m_orgTilePixSize;
-    	int topLeftY = (tile.m_y+1)*m_orgTilePixSize;
+    public WorldCoords tileXYToTopLeftXY(  int level, int pixSize, TileXY tile  ){
+    	int topLeftX = tile.m_x*pixSize;
+    	int topLeftY = (tile.m_y+1)*pixSize;
     	int tLevel = Math.max(0, level);
     	double lat = orig_yPixToDegLat( tLevel, topLeftY);
     	double lng = orig_xPixToDegLng( tLevel, topLeftX);
