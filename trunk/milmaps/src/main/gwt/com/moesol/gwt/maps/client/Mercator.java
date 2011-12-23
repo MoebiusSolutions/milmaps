@@ -193,7 +193,8 @@ public class Mercator extends AbstractProjection {
 	// This is based on the microsoft version.
 	// This routine is based on 
 	@Override
-	public TileXY geoPosToTileXY( int level, GeodeticCoords g ){
+	public TileXY geoPosToTileXY( int level, int pixSize, 
+								  double degW, double degH, GeodeticCoords g ){
         double lat = clip(g.getPhi(AngleUnit.DEGREES),   m_minLat, m_maxLat);
         double lng = clip(g.getLambda(AngleUnit.DEGREES), -180.0, 180.0);
 
@@ -201,11 +202,11 @@ public class Mercator extends AbstractProjection {
         double sinLat = Math.sin(lat * Math.PI / 180);
         double y = 0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI);
 
-        int mapSize = (int) ( m_orgTilePixSize << level );
+        int mapSize = (int) ( pixSize << level );
         double pixX = clip(x * mapSize + 0.5, 0, mapSize);
         double pixY = clip(y * mapSize + 0.5, 0, mapSize);
-		m_tile.m_x =  (int)Math.floor(pixX/ m_orgTilePixSize);
-		m_tile.m_y =  (int)Math.floor(pixY/m_orgTilePixSize);
+		m_tile.m_x =  (int)Math.floor(pixX/ pixSize);
+		m_tile.m_y =  (int)Math.floor(pixY/pixSize);
 		// translate so it is based on row zero at the bottom of the map
 		int j = (1<<level) - 1;
 		m_tile.m_y = j - m_tile.m_y;
@@ -258,9 +259,9 @@ public class Mercator extends AbstractProjection {
 	}
     
     @Override
-    public WorldCoords tileXYToTopLeftXY( int level, TileXY tile  ){
-    	int topLeftX = tile.m_x*m_orgTilePixSize;
-    	int topLeftY = (tile.m_y+1)*m_orgTilePixSize;
+    public WorldCoords tileXYToTopLeftXY( int level, int pixSize, TileXY tile  ){
+    	int topLeftX = tile.m_x*pixSize;
+    	int topLeftY = (tile.m_y+1)*pixSize;
     	double lat = orig_yPixToDegLat( level, topLeftY);
     	double lng = orig_xPixToDegLng( level, topLeftX);
     	m_tileGeoPos.set(lng, lat, AngleUnit.DEGREES);

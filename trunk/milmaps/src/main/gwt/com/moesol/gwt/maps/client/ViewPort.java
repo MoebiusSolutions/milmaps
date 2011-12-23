@@ -89,15 +89,19 @@ public class ViewPort {
     public int getTilePixHeight(){ return m_tilePixHeight; }
 	
 
-    public TileCoords findTile(  int level, GeodeticCoords gc ) {
+    public TileCoords findTile( LayerSet ls, int level, GeodeticCoords gc ) {
     	int drawTileSize = m_projection.adjustSize(level, m_tilePixWidth);
     	//int drawTileHeight = m_projection.adjustSize(level, m_tilePixHeight);
-    	TileXY tile = m_projection.geoPosToTileXY( level,  gc );
+    	
+    	int pixSize = ls.getPixelWidth();
+    	double degW = ls.getStartLevelTileWidthInDeg();
+    	double degH = ls.getStartLevelTileHeightInDeg();
+    	TileXY tile = m_projection.geoPosToTileXY( level, pixSize, degW, degH,	gc );
     	int modX = tile.m_x;
     	int modY = tile.m_y;
     	TileCoords tileCoords = new TileCoords( modX, modY );
 
-    	WorldCoords wc = m_projection.tileXYToTopLeftXY( level,  tile );
+    	WorldCoords wc = m_projection.tileXYToTopLeftXY( level, pixSize, tile );
     	tileCoords.setOffsetX( wc.getX());
     	tileCoords.setOffsetY( wc.getY());
     	///////////
@@ -151,7 +155,7 @@ public class ViewPort {
 			m_projection.setScale(lsScale);
 		}
 
-		m_centerTile = findTile(  level, gc );
+		m_centerTile = findTile( ls, level, gc );
 		positionCenterOffsetForView();
 		computeHowManyXTiles();
 		computeHowManyYTiles();

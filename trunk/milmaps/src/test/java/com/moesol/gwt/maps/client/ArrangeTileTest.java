@@ -109,7 +109,7 @@ public class ArrangeTileTest {
 			for ( int level = 0; level < 1; level++){
 				double factor = ( level< 1 ? 1 : 2 );
 				m_proj.zoomByFactor(factor);
-				TileCoords tc = m_VP.findTile(level, m_geo);
+				TileCoords tc = m_VP.findTile(ls, level, m_geo);
 				compareTileCoord( tc, level, j);
 			}
 		}

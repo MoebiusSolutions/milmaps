@@ -221,10 +221,11 @@ public interface IProjection {
 	 * 		TileXY based on the Microsoft way of doing things.
 	 *  see: http://msdn.microsoft.com/en-us/library/bb259689.aspx
 	 */
-	public abstract TileXY geoPosToTileXY( int level, GeodeticCoords g );
+	public abstract TileXY geoPosToTileXY( int level, int pixSize, 
+										  double degW, double degH, GeodeticCoords g );
 	
 	
-	public abstract WorldCoords tileXYToTopLeftXY(  int level, TileXY tile   );
+	public abstract WorldCoords tileXYToTopLeftXY(  int level, int pixSize, TileXY tile   );
 	
 	/**
 	 * Returns the original scale that is computed when the projection 
