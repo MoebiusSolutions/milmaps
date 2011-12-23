@@ -25,10 +25,12 @@ public class Split {
 	
 	public ImgInfo createInfObj(){ return new ImgInfo(); }
 	
-	private String m_csBase = "e:/milmapsCache";
+	private String m_csBase = null;// "e:/milmapsCache";
 	private String m_data = "bmng";
 	private static final Logger s_logger = Logger.getLogger(Split.class.getName());
 	private final ImgInfo m_info = new ImgInfo();
+	
+	public void setBase(String csBase){m_csBase = csBase;}
 	
 	String buildDirPath( String data, int size, int level, int xTile ){
 		String csDir = m_csBase + "/" + data + "/" + size + "/" + level + "/" + xTile;

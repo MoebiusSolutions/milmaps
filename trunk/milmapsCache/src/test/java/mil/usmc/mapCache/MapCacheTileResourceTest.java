@@ -24,7 +24,6 @@ public class MapCacheTileResourceTest {
 		String data = "I3_Imagery_Prime_World_2D";
 		int epsg = 4326;
 		int width = 512;
-		int height = 512;
 		int level = 1;
 		int xTile = 0;
 		int yTile = 1;
@@ -48,36 +47,5 @@ public class MapCacheTileResourceTest {
 		
 		String ans = "e:/milmapsCache/I3_Imagery_Prime_World_2D/512/1/0/1.png";
 		assertEquals(filePath,ans );
-	}
-	
-	@Test
-	public void testCreateTile(){
-		String server = "http://services.arcgisonline.com/ArcGIS/rest/services";
-		String urlPatern = "{server}/{data}/MapServer/tile/{level}/{y}/{x}";
-		String data = "I3_Imagery_Prime_World_2D";
-		String csFormat = "png";
-		int epsg = 4326;
-		int width = 512;
-		int height = 512;
-		int level = 1;
-		int xTile = 0;
-		int yTile = 1;
-		/*
-		try {
-			BufferedImage bi = m_cache.buildMapTile( server, urlPatern, data,
-													 epsg, width, height, level,
-													 xTile, yTile, csFormat );
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
-		assertEquals(true,true );
 	}
 }
