@@ -81,12 +81,11 @@ public class DeclutterEngineTest {
 		Icon.LABEL_STYLER = mock(Icon.LabelStyler.class);
 		
 		/* Reset to match test in case we use different values later */
-		DeclutterEngine.CELL_WIDTH = 16;
-		DeclutterEngine.CELL_HEIGHT = 16;
-		DeclutterEngine.SEARCH_ROW_OFFSETS = SEARCH_ROW_OFFSETS;
-		DeclutterEngine.SEARCH_COL_OFFSETS = SEARCH_COL_OFFSETS;
-		
 		engine = new DeclutterEngine(m_mapView);
+		engine.cellWidth = 16;
+		engine.cellHeight = 16;
+		engine.searchRowOffsets = SEARCH_ROW_OFFSETS;
+		engine.searchColOffsets = SEARCH_COL_OFFSETS;
 	}
 	
 	@Test

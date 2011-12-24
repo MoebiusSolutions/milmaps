@@ -164,6 +164,12 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public void setDeclutterLabels(boolean bDeclutterLabels) {
 		m_bDeclutterLabels = bDeclutterLabels;
 	}
+	public DeclutterEngine getDeclutterEngine() {
+		if (m_declutterEngine == null) {
+			m_declutterEngine = new DeclutterEngine(this);
+		}
+		return m_declutterEngine;
+	}
 
 	public MapController getController() {
 		return m_mapEventListener;
@@ -202,21 +208,43 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 
 	/**
-	 * Called when map changed and idle
+	 * Called when map changed and idle, when this method is called onIdle is not called.
 	 */
 	void onChangeAndIdle() {
+		// Map went idle force suspend flag to off, work around bug in IE
+		setSuspendFlag(false);
+		
 		// Things changed, save cookies
 		recordCenter();
 		ProjectionValues.writeCookies(getProjection());
 
+		// View changed re-declutter
 		if (isDeclutterLabels()) {
-			if (m_declutterEngine == null) {
-				m_declutterEngine = new DeclutterEngine(this);
-			}
-			m_declutterEngine.declutter(getIconLayer().getIcons());
+			getDeclutterEngine().declutter(getIconLayer().getIcons());
 			positionIcons();
 		}
 	}
+	
+	/**
+	 * Called when map goes idle. When this method is called onChangeAndIdle is not called.
+	 */
+	long m_oldIconVersion = 0L;
+	void onIdle() {
+		// Map went idle force suspend flag to off, work around bug in IE
+		setSuspendFlag(false);
+		
+		if (!isDeclutterLabels()) {
+			return;
+		}
+		if (m_oldIconVersion == getIconLayer().getVersion()) {
+			return;
+		}
+		m_oldIconVersion = getIconLayer().getVersion();
+		
+		getDeclutterEngine().declutter(getIconLayer().getIcons());
+		positionIcons();
+	}
+	
 	private void recordCenter() {
 		String centerLng = Double.toString(getCenter().getLambda(
 				AngleUnit.DEGREES));
