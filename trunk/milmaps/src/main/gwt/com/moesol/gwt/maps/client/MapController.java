@@ -361,15 +361,13 @@ public class MapController implements
 		m_viewChangeTimer = new Timer() {
 			@Override
 			public void run() {
-				// Map went idle force suspend flag to off, work around bug in IE
-				m_map.setSuspendFlag(false);
-
 				final IProjection newProjection = m_map.getProjection();
 				final GeodeticCoords newCenter = newProjection.getViewGeoCenter();
 
 				if (m_oldCenter.equals(newCenter)) {
 					if (m_oldViewSize.equals(newProjection.getViewSize())) {
 						if (m_oldScale == newProjection.getScale()) {
+							m_map.onIdle();
 							return; // Nothing has changed.
 						}
 					}

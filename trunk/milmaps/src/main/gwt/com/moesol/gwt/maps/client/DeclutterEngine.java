@@ -2,7 +2,10 @@ package com.moesol.gwt.maps.client;
 
 import java.util.List;
 
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.Label;
+import com.moesol.gwt.maps.client.json.DeclutterCellSizeJson;
+import com.moesol.gwt.maps.client.json.DeclutterSearchOffsetJson;
 import com.moesol.gwt.maps.client.util.BitSet;
 
 /**
@@ -16,16 +19,16 @@ public class DeclutterEngine {
 	 * The size of SEARCH_ROW_OFFSETS and SEARCH_COL_OFFSETS should be the same.
 	 * This search pattern tries to put all the labels on the right vertically, then tries the same on the left.
 	 */
-	static int[] SEARCH_ROW_OFFSETS = {
+	int[] searchRowOffsets = {
 		0, -1, -2, -3, -4, 1, 2, 3, 4, -5, -6, -7, -8, 5, 6, 7, 8,
-//		0, -1, -2, -3, -4, 1, 2, 3, 4, -5, -6, -7, -8, 5, 6, 7, 8,
+		0, -1, -2, -3, -4, 1, 2, 3, 4, -5, -6, -7, -8, 5, 6, 7, 8,
 	};
-	static int[] SEARCH_COL_OFFSETS = {
+	int[] searchColOffsets = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-//		-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	};
-	static int CELL_WIDTH = 4; // px
-	static int CELL_HEIGHT = 8; // px
+	int cellWidth = 4; // px
+	int cellHeight = 8; // px
 	
 	private final IMapView m_mapView;
 	private BitSet m_bitSet;
@@ -55,6 +58,33 @@ public class DeclutterEngine {
 		m_mapView = mapView;
 	}
 
+	/**
+	 * Pass in custom declutter search configuration
+	 * @param offsets
+	 */
+	public void setSearchOffsets(JsArray<DeclutterSearchOffsetJson> offsets) {
+		if (offsets == null) {
+			return;
+		}
+		int[] newColOffsets = new int[offsets.length()];
+		int[] newRowOffsets = new int[offsets.length()];
+		for (int i = 0; i < offsets.length(); i++) {
+			DeclutterSearchOffsetJson searchOffsetJson = offsets.get(i);
+			newColOffsets[i] = searchOffsetJson.getColOffset();
+			newRowOffsets[i] = searchOffsetJson.getRowOffset();
+		}
+		searchColOffsets = newColOffsets;
+		searchRowOffsets = newRowOffsets;
+	}
+	/**
+	 * Pass in custom cell size configuration
+	 * @param cellSize
+	 */
+	public void setCellSize(DeclutterCellSizeJson cellSize) {
+		cellWidth = cellSize.getWidth();
+		cellHeight = cellSize.getHeight();
+	}
+
 	public void declutter(List<Icon> icons) {
 		makeBitSet();
 		
@@ -77,10 +107,10 @@ public class DeclutterEngine {
 		computeIconBounds(icon);
 
 		int startRow = Math.max(0, m_iconStartRow);
-		int endRow = Math.min(m_nRowsInView, m_iconEndRow);
+		int endRow = Math.min(m_nRowsInView - 1, m_iconEndRow);
 
 		int startCol = Math.max(0, m_iconStartCol);
-		int endCol = Math.min(m_nColsInView, m_iconEndCol);
+		int endCol = Math.min(m_nColsInView - 1, m_iconEndCol);
 		
 		for (int r = startRow; r <= endRow; r++) {
 			for (int c = startCol; c <= endCol; c++) {
@@ -107,8 +137,8 @@ public class DeclutterEngine {
 
 	int makeBitSet() {
 		ViewPort viewport = m_mapView.getViewport();
-		m_nRowsInView = roundUp(viewport.getHeight(), CELL_HEIGHT);
-		m_nColsInView = roundUp(viewport.getWidth(), CELL_WIDTH);
+		m_nRowsInView = roundUp(viewport.getHeight(), cellHeight);
+		m_nColsInView = roundUp(viewport.getWidth(), cellWidth);
 		int numBits = m_nRowsInView * m_nColsInView;
 		m_bitSet = new BitSet(numBits);
 		return numBits;
@@ -127,9 +157,9 @@ public class DeclutterEngine {
 		
 		int nLabelCols = computeLabelColumnSpan(icon);
 		int nLabelRows = computeLabelRowSpan(icon);
-		for (int i = 0; i < SEARCH_ROW_OFFSETS.length; i++) {
-			int rowOffset = SEARCH_ROW_OFFSETS[i];
-			int colOffset = SEARCH_COL_OFFSETS[i];
+		for (int i = 0; i < searchRowOffsets.length; i++) {
+			int rowOffset = searchRowOffsets[i];
+			int colOffset = searchColOffsets[i];
 
 			int startRow = m_iconCenterRow + rowOffset;
 			int startCol;
@@ -156,17 +186,17 @@ public class DeclutterEngine {
 	}
 	
 	private void moveDeclutterOffset(Icon icon, int rowOffset, int colOffset) {
-		int cellY = m_iconCenter.getY() % CELL_HEIGHT;
-		int cellX = m_iconCenter.getX() % CELL_WIDTH;
+		int cellY = m_iconCenter.getY() % cellHeight;
+		int cellX = m_iconCenter.getX() % cellWidth;
 		
-		int offsetY = rowOffset * CELL_HEIGHT - cellY;
-		int offsetX = colOffset * CELL_WIDTH;
+		int offsetY = rowOffset * cellHeight - cellY;
+		int offsetX = colOffset * cellWidth;
 		if (colOffset < 0) { // left
 			offsetX += icon.getIconOffset().getX();
 			offsetX -= cellX;
 		} else {
 			offsetX -= icon.getIconOffset().getX();
-			offsetX += CELL_WIDTH - cellX;
+			offsetX += cellWidth - cellX;
 		}
 		icon.getDeclutterOffset().setY(offsetY);
 		icon.getDeclutterOffset().setX(offsetX);
@@ -207,16 +237,16 @@ public class DeclutterEngine {
 	}
 
 	private GridCoords computeIconCenterGridCoords(ViewCoords vc) {
-		GridCoords rc = new GridCoords(vc.getY() / CELL_HEIGHT, vc.getX() / CELL_WIDTH);
+		GridCoords rc = new GridCoords(vc.getY() / cellHeight, vc.getX() / cellWidth);
 		return rc;
 	}
 
 	private int computeLabelColumnSpan(Icon icon) {
-		return roundUp(icon.getLabel().getOffsetWidth(), CELL_WIDTH);
+		return roundUp(icon.getLabel().getOffsetWidth(), cellWidth);
 	}
 
 	private int computeLabelRowSpan(Icon icon) {
-		return roundUp(icon.getLabel().getOffsetHeight(), CELL_HEIGHT);
+		return roundUp(icon.getLabel().getOffsetHeight(), cellHeight);
 	}
 
 	static int roundUp(int total, int dividend) {
