@@ -6,11 +6,44 @@ public class BoundingBox {
 	private double m_leftLon;
 	private double m_botLat;
 	private double m_rightLon;
+	
+	public static class Builder {
+		private double left;
+		private double bottom;
+		private double right;
+		private double top;
+		
+		public Builder left(double v) {
+			left = v;
+			return this;
+		}
+		public Builder bottom(double v) {
+			bottom = v;
+			return this;
+		}
+		public Builder right(double v) {
+			right = v;
+			return this;
+		}
+		public Builder top(double v) {
+			top = v;
+			return this;
+		}
+		public BoundingBox build() {
+			return new BoundingBox(top, left, bottom, right);
+		}
+	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
+	// TODO consider just hidding this as package private or
+	// Using WMS order from BBOX left,bottom,right,top
 	public BoundingBox(double topLat, double leftLon, double botLat, double rightLon) {
 		if (topLat < botLat) {
 			throw new IllegalArgumentException(
-					"Top lat must be greater than bottom lat");
+					"Top lat must be greater than bottom lat: top=" + topLat + " bottom=" + botLat);
 		}
 
 		m_topLat   = topLat;
