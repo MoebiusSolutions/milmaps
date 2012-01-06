@@ -16,6 +16,7 @@
 
 	<properties>
 		<gwt.style>OBF</gwt.style>
+		<!-- <gwt.style>PRETTY</gwt.style> -->
 		<!-- gwt.compiler.skip -->
 	</properties>
 
