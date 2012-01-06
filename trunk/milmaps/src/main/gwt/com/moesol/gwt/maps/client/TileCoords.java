@@ -25,7 +25,7 @@ public class TileCoords {
 	private static URLProvider s_urlProvider = new URLProvider() {
 		@Override
 		public String encodeComponent(String decodedURLComponent) {
-			return URL.encodeComponent(decodedURLComponent);
+			return URL.encodeQueryString(decodedURLComponent);
 		}
 	};
 
