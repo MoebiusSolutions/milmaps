@@ -2,6 +2,7 @@ package com.moesol.gwt.maps.client;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
+import com.moesol.gwt.maps.client.stats.Sample;
 
 /**
  * Images are placed into an absolute panel. The z-index (zIndex) style is used
@@ -63,13 +64,17 @@ public class TiledImageLayer {
 		@Override
 		public void useImage(TileCoords tileCoords, Object object) {
 			Image image = (Image)object;
-			// needed only for dynamic layers, but should not impact normal layers
-			image.setUrl(tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter()));
+			if (getLayerSet().isAutoRefreshOnTimer()) {
+				image.setUrl(tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter()));
+			}
 		}
 
 		@Override
 		public void hideImage(Object object) {
 			Image image = (Image)object;
+//			if (image.getAbsoluteLeft() == -513) {
+//				return; // Already hidden
+//			}
 			image.setPixelSize(512, 512);
 			m_absolutePanel.setWidgetPosition(image, -513, -513);
 		}
@@ -143,21 +148,31 @@ public class TiledImageLayer {
 			m_tileImageEngine.hideUnplacedImages();
 			return; // do nothing.
 		}
+		
+		Sample.LAYER_POSITION_IMAGES.beginSample();
 		positionImages();
+		Sample.LAYER_POSITION_IMAGES.endSample();
 	}
 
 	private void positionImages() {
 		for (int i = 0; i < m_tileCoords.length; i++) {
 			positionOneImage(m_tileCoords[i]);
 		}
+		
+		Sample.LAYER_HIDE_IMAGES.beginSample();
 		m_tileImageEngine.hideUnplacedImages();
+		Sample.LAYER_HIDE_IMAGES.endSample();
 	}
 
 	private void positionOneImage(TileCoords tileCoords) {
 		if (tileCoords == null) {
 			return;
 		}
+		
+		Sample.TILE_IMG_ENGINE_FIND_OR_CREATE.beginSample();
 		Image image = (Image)m_tileImageEngine.findOrCreateImage(tileCoords);
+		Sample.TILE_IMG_ENGINE_FIND_OR_CREATE.endSample();
+		
 		if ( m_layerSet.isAlwaysDraw() == false ){
 			image.getElement().getStyle().setOpacity(m_mapView.getMapBrightness());
 		}
