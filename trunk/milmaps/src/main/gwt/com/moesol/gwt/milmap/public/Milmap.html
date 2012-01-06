@@ -24,22 +24,25 @@
 			wmscURL: "http://localhost/geowebcache/service/wms"
 		};
 		
+		var myOrigin = window.location.protocol + '//' + window.location.host;
 		var layerSets = [
-			//{  
-			//	 server: "http://localhost:8080/milmapsCache/rs/mapcache",
-			//	 data: "I3_Imagery_Prime_World_2D",
-			//	 urlPattern: "{server}/{data}/{epsg}/{imgSize}/{level}/{x}/{y}",
-			//	 epsg: 4326,
-			//	 zeroTop: true,
-			//	 autoRefreshOnTimer: false,
-			//	 startLevelTileWidthInDeg:90,
-			//	 startLevelTileHeightInDeg:90,
-			//	 pixelWidth:256,
-			//	 pixelHeight:256
-			//}
+			{  
+				 server: myOrigin + "/milmapsCache/rs/mapcache",
+				 data: "I3_Imagery_Prime_World_2D",
+				 urlPattern: "{server}/{data}/{epsg}/{imgSize}/{level}/{x}/{y}",
+				 epsg: 4326,
+				 zeroTop: true,
+				 autoRefreshOnTimer: false,
+				 startLevelTileWidthInDeg:90,
+				 startLevelTileHeightInDeg:90,
+				 pixelWidth:256,
+				 pixelHeight:256,
+				 active: false
+			}
+			,
 			// This version uses 512x512 with deg width of 180.
 			{  
-				 server: "http://localhost:8080/milmapsCache/rs/mapcache",
+				 server: myOrigin + "/milmapsCache/rs/mapcache",
 				 data: "I3_Imagery_Prime_World_2D",
 				 urlPattern: "{server}/{data}/{epsg}/{imgSize}/{level}/{x}/{y}",
 				 epsg: 4326,
@@ -47,117 +50,129 @@
 				 autoRefreshOnTimer: false,
 				 startLevelTileWidthInDeg:180,
 				 startLevelTileHeightInDeg:180,
-				 pixelWidth: 512
+				 pixelWidth: 512,
+				 active: true
 			}
-        // { 
-        //	  server: "http://khm1.google.com/kh/v=84", 
-        //	  data: "Google Satellite maps",
-        //	  urlPattern: "{server}&x={x}&y={y}&z={level}&s=Gali",
-        //	  epsg: 900913,
-        //	  zeroTop: true,
-        //	  autoRefreshOnTimer: false,
-        //	  startLevel: 0,
-        //	  startLevelTileWidthInDeg:360,
-        //	  startLevelTileHeightInDeg:170.10226,
-        //	  pixelHeight: 256,
-	    //	  pixelWidth: 256
-        // }
-        // ,
-        // { 
-        //     server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
-        //     data: "NatGeo_World_Map",
-        //     urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
-        //	 epsg: 4326,
-        //	 zeroTop: true,
-        //	 autoRefreshOnTimer: false,
-        //	 startLevelTileWidthInDeg:180,
-        //	 startLevelTileHeightInDeg:180,
-        //	 pixelHeight: 512,
-		//     pixelWidth: 512
-        // }
-        // { 
-        //     server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
-        //     data: "I3_Imagery_Prime_World_2D",
-        //     urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
-        //	 epsg: 4326,
-        //	 zeroTop: true,
-        //	 autoRefreshOnTimer: false,
-        //	 startLevelTileWidthInDeg:180,
-        //	 startLevelTileHeightInDeg:180,
-        //	 pixelHeight: 512,
-		//   pixelWidth: 512
-        // }
-        // ,
-        // { 
-        //	  server: "http://localhost:8080/mgrs-grid", 
-        //	  urlPattern: "{server}/rs/mgrstile/99999900/{epsg}/{width}/{height}/{level}/{x}/{y}.png",
-        //	  epsg: 4326,
-        //	  zeroTop: false,
-		//	  autoRefreshOnTimer: false,
-		//	  alwaysDraw: true,
-		//	  useToScale: false,
-		//	  startLevel:0,
-		//	  priority:false,
-		//	  zIndex: 6,
-		//	  startLevelTileWidthInDeg:180,
-        //	  pixelHeight: 512,
-		//	  pixelWidth: 512
-        // }     
-        // ,
-        // {
-		//	   server: "https://neutron.moesol.com/pli-service",
-		//	   urlPattern: "{server}/rs/tms/{level}/{x}/{y}.png",
-		//	   autoRefreshOnTimer: true,
-		//	   alwaysDraw: true,
-		//	   useToScale: false,
-		//	   zIndex: 6,
-        //	   pixelHeight: 512,
-		//	   pixelWidth: 512      
-        //  }
-        //  ,
-        //  {
-        //     server: "http://localhost:8080/rpf-ww-server",
-        //     urlPattern: "{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}",
-		//	   data: "BMNG (Shaded %2B Bathymetry) Tiled - 5.2004", 
-        //     epsg: 4326,
-        //     zeroTop: false,
-        //     autoRefreshOnTimer: false,
-        //     startLevel:0,
-	    //     startLevelTileWidthInDeg: 36,
-	    //     startLevelTileHeightInDeg: 36,
-        //	   pixelHeight: 512,
-		//	   pixelWidth: 512,
-		//	   minLevel: -4,
-		//	   maxLevel: 4
-        //  }
-        //  ,
-        //  {
-        //    server: "http://localhost:8080/rpf-ww-server",
-        //    urlPattern: "{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}",
-        //    epsg: 4326,
-        //    zeroTop: false,
-        //    autoRefreshOnTimer: false,
-		//	  data: "esat_world",
-	    //    startLevelTileWidthInDeg: 2.25,
-	    //    startLevelTileHeightInDeg: 2.25,
-        // 	  pixelHeight: 512,
-		//	  pixelWidth: 512,
-		//	  minLevel: -4,
-		//    maxLevel: 4
-        // }
-        // ,
-        // {
-		//	   urlPattern: "http://localhost/geowebcache/service/wms?LAYERS=img states&FORMAT=image/gif&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&EXCEPTIONS=application/vnd.ogc.se_inimage&SRS=EPSG:4326&BBOX={bbox}&WIDTH=256&HEIGHT=256",
-		//	   alwaysDraw: true,
-		//	   useToScale: false,
-		//     autoRefreshOnTimer: false,
-		//	   zIndex: 5,
-		//     startLevelTileWidthInDeg: 180.0,
-		//     startLevelTileHeightInDeg: 180.0,
-        //	   pixelHeight: 256,
-		//	   pixelWidth: 256
-		// }
-	    ]
+			,
+			{ 
+				server: "http://khm1.google.com/kh/v=84", 
+				data: "Google Satellite maps",
+				urlPattern: "{server}&x={x}&y={y}&z={level}&s=Gali",
+				epsg: 900913,
+				zeroTop: true,
+				autoRefreshOnTimer: false,
+				startLevel: 0,
+				startLevelTileWidthInDeg:360,
+				startLevelTileHeightInDeg:170.10226,
+				pixelHeight: 256,
+				pixelWidth: 256,
+				active: false
+			}
+	        ,
+			{ 
+				server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
+				data: "NatGeo_World_Map",
+				urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
+				epsg: 4326,
+				zeroTop: true,
+				autoRefreshOnTimer: false,
+				startLevelTileWidthInDeg:180,
+				startLevelTileHeightInDeg:180,
+				pixelHeight: 512,
+				pixelWidth: 512,
+				active: false
+			}
+	        ,
+			{
+				server: "http://services.arcgisonline.com/ArcGIS/rest/services", 
+				data: "I3_Imagery_Prime_World_2D",
+				urlPattern: "{server}/{data}/MapServer/tile/{level}/{y}/{x}",
+				epsg: 4326,
+				zeroTop: true,
+				autoRefreshOnTimer: false,
+				startLevelTileWidthInDeg:180,
+				startLevelTileHeightInDeg:180,
+				pixelHeight: 512,
+				pixelWidth: 512,
+				active: false
+			}
+	        ,
+			{ 
+				server: "http://localhost:8080/mgrs-grid", 
+				urlPattern: "{server}/rs/mgrstile/99999900/{epsg}/{width}/{height}/{level}/{x}/{y}.png",
+				epsg: 4326,
+				zeroTop: false,
+				autoRefreshOnTimer: false,
+				alwaysDraw: true,
+				useToScale: false,
+				startLevel:0,
+				priority:false,
+				zIndex: 6,
+				startLevelTileWidthInDeg:180,
+				pixelHeight: 512,
+				pixelWidth: 512,
+				active: false
+			}     
+	        ,
+			{
+				server: "https://neutron.moesol.com/pli-service",
+				urlPattern: "{server}/rs/tms/{level}/{x}/{y}.png",
+				autoRefreshOnTimer: true,
+				alwaysDraw: true,
+				useToScale: false,
+				zIndex: 6,
+				pixelHeight: 512,
+				pixelWidth: 512,
+				active: false
+			}
+			,
+			{
+				server: myOrigin + "/rpf-ww-server",
+				urlPattern: "{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}",
+				data: "BMNG (Shaded %2B Bathymetry) Tiled - 5.2004", 
+				epsg: 4326,
+				zeroTop: false,
+				autoRefreshOnTimer: false,
+				startLevel:0,
+				startLevelTileWidthInDeg: 36,
+				startLevelTileHeightInDeg: 36,
+				pixelHeight: 512,
+				pixelWidth: 512,
+				minLevel: -4,
+				maxLevel: 4,
+				active: false
+			}
+			,
+			{
+				server: myOrigin + "/rpf-ww-server",
+				urlPattern: "{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}",
+				epsg: 4326,
+				zeroTop: false,
+				autoRefreshOnTimer: false,
+				data: "esat_world",
+				startLevelTileWidthInDeg: 2.25,
+				startLevelTileHeightInDeg: 2.25,
+				pixelHeight: 512,
+				pixelWidth: 512,
+				minLevel: -4,
+				maxLevel: 4,
+				active: false
+			}
+			,
+			{
+				server: myOrigin,
+				urlPattern: "{server}/geowebcache/service/wms?LAYERS=img states&FORMAT=image/gif&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&EXCEPTIONS=application/vnd.ogc.se_inimage&SRS=EPSG:4326&BBOX={bbox}&WIDTH=256&HEIGHT=256",
+				alwaysDraw: true,
+				useToScale: false,
+				autoRefreshOnTimer: false,
+				zIndex: 5,
+				startLevelTileWidthInDeg: 180.0,
+				startLevelTileHeightInDeg: 180.0,
+				pixelHeight: 256,
+				pixelWidth: 256,
+				active: false
+			}
+		]
 	</script>
 
 	<body>
