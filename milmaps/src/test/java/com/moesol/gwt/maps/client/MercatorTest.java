@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 
 public class MercatorTest {
@@ -153,13 +154,11 @@ public class MercatorTest {
 	public void testWorldToGeodetic() {
 		GeodeticCoords gc1;
 		GeodeticCoords gc2;
-		WorldCoords wc = new WorldCoords() ;
 		m_proj.zoomByFactor(16);
 		int level = m_proj.computeLevel();
 		for (int x = 2; x < 512; x += 2 ) {
 			for ( int y = 2; y < 512; y += 2 ) {
-				wc.setX(x); wc.setY(y);
-				gc1 = m_proj.worldToGeodetic(wc);
+				gc1 = m_proj.worldToGeodetic(WorldCoords.builder().setX(x).setY(y).build());
 				gc2 = m_mercProj.pixelXYToLatLng(level, x, y);
 				compareGeoPos( gc1, gc2, 0.0001 );
 			}
@@ -224,7 +223,7 @@ public class MercatorTest {
 			double lat = 38.0 - latInc*76;
 			for ( int lngInc = 0; lngInc < 3; lngInc++ ){
 				double lng = -120.0 + lngInc*120;
-				m_geo.set(lng, lat, AngleUnit.DEGREES);
+				m_geo = Degrees.geodetic(lat, lng);
 				for ( int level = 4; level < 5; level++ ){
 					double dFactor = Math.pow(2,level-1);
 					TileXY tile = findTile(m_geo,level);
@@ -281,7 +280,7 @@ public class MercatorTest {
 			double lat = -60.0 + latInc*60;
 			for ( int lngInc = 0; lngInc < 3; lngInc++ ){
 				double lng = -120.0 + lngInc*120;
-				m_geo.set(lng, lat, AngleUnit.DEGREES);
+				m_geo = Degrees.geodetic(lat, lng);
 				for ( int level = 1; level < 13; level++ ){	
 					for ( int j = 5; j < 10; j++ ){
 						double dFactor = Math.pow(2,level-1) + j*0.1;
@@ -305,7 +304,7 @@ public class MercatorTest {
 			double lat = -60.0 + latInc*60;
 			for ( int lngInc = 0; lngInc < 3; lngInc++ ){
 				double lng = -120.0 + lngInc*120;
-				m_geo.set(lng, lat, AngleUnit.DEGREES);
+				m_geo = Degrees.geodetic(lat, lng);
 				for ( int level = 4; level < 5; level++ ){
 					PixelXY pixel = m_mercProj.latLngToPixelXY( level, lat, lng ).clone();
 					

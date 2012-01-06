@@ -38,9 +38,9 @@ public class Icon {
 		void setColor(Label label, String color);
 		void setZIndex(Label label, int index);
 	}
-	private final GeodeticCoords m_location = new GeodeticCoords();
-	private final ViewCoords m_iconOffset = new ViewCoords();
-	private final ViewCoords m_declutterOffset = new ViewCoords(4, 0);
+	private GeodeticCoords m_location = new GeodeticCoords();
+	private ViewCoords m_iconOffset = new ViewCoords();
+	private ViewCoords m_declutterOffset = new ViewCoords(4, 0);
 	private static String MISSING_IMAGE_URL = "missing.gif";
 	private String m_iconUrl;
 	private String m_clickUrl;
@@ -133,7 +133,7 @@ public class Icon {
 	}
 
 	public void setLocation(GeodeticCoords location) {
-		m_location.copyFrom(location);
+		m_location = location;
 	}
 	
 	public Image getImage() {
@@ -147,10 +147,6 @@ public class Icon {
 	public ViewCoords getIconOffset() {
 		return m_iconOffset;
 	}
-	public ViewCoords getDeclutterOffset() {
-		return m_declutterOffset;
-	}
-
 	/**
 	 * The default icon offset is 0, 0, the upper left hand corner of
 	 * the icon. The offset is added to the icon position when placed on the map.
@@ -159,8 +155,14 @@ public class Icon {
 	 * @param offset
 	 */
 	public void setIconOffset(ViewCoords offset) {
-		m_iconOffset.setX(offset.getX());
-		m_iconOffset.setY(offset.getY());
+		m_iconOffset = offset;
 	}
 	
+	public ViewCoords getDeclutterOffset() {
+		return m_declutterOffset;
+	}
+	public void setDeclutterOffset(ViewCoords offset) {
+		m_declutterOffset = offset;
+	}
+
 }

@@ -198,8 +198,7 @@ public class DeclutterEngine {
 			offsetX -= icon.getIconOffset().getX();
 			offsetX += cellWidth - cellX;
 		}
-		icon.getDeclutterOffset().setY(offsetY);
-		icon.getDeclutterOffset().setX(offsetX);
+		icon.setDeclutterOffset(new ViewCoords(offsetX, offsetY));
 	}
 
 	private boolean searchOneSlot(int startRow, int startCol, int nLabelRows, int nLabelCols) {

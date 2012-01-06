@@ -7,6 +7,7 @@ import com.moesol.gwt.maps.client.units.AngleUnit;
 //     Copyright (c) 2006-2009 Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
+import com.moesol.gwt.maps.client.units.Degrees;
 
 
 public class MercProj
@@ -129,7 +130,7 @@ public class MercProj
 
         double latitude = 90 - 360 * Math.atan(Math.exp(-y * 2 * Math.PI)) / Math.PI;
         double longitude = 360 * x;
-        m_geoPt.set( longitude, latitude, AngleUnit.DEGREES );
+        m_geoPt = Degrees.geodetic(latitude, longitude);
         return m_geoPt;
     }
 

@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 public class MapJsApi implements EntryPoint {
 
@@ -57,8 +58,7 @@ public class MapJsApi implements EntryPoint {
 	
 	public static void setIconLocation(MapView map, int index, double latDegrees, double lngDegrees) {
 		Icon icon = findOrMakeIcon(map, index);
-		icon.getLocation().setPhi(latDegrees, AngleUnit.DEGREES);
-		icon.getLocation().setLambda(lngDegrees, AngleUnit.DEGREES);
+		icon.setLocation(Degrees.geodetic(latDegrees, lngDegrees));
 	}
 	
 	public static void setIconUrl(MapView map, int index, String url) {
@@ -68,8 +68,7 @@ public class MapJsApi implements EntryPoint {
 	
 	public static void setIconOffsets(MapView map, int index, int x, int y) {
 		Icon icon = findOrMakeIcon(map, index);
-		icon.getIconOffset().setX(x);
-		icon.getIconOffset().setY(y);
+		icon.setIconOffset(new ViewCoords(x, y));
 	}
 	
 	public static void setIconCount(MapView map, int count) {

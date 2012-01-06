@@ -10,9 +10,15 @@ public class WallClock {
 	public void stop() {
 		m_stop = System.currentTimeMillis();
 	}
+	public long getDuration() {
+		return m_stop - m_start;
+	}
+	public double computeOperationsPersecond(long nops) {
+		return (nops * 1000.0) / getDuration();
+	}
+
 	@Override
 	public String toString() {
-		long dur = m_stop - m_start;
-		return "milli=" + dur;
+		return "milli=" + getDuration();
 	}
 }
