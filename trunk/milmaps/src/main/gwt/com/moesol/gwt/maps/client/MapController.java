@@ -1,5 +1,12 @@
 package com.moesol.gwt.maps.client;
 
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
@@ -19,10 +26,10 @@ import com.google.gwt.user.client.EventPreview;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.controls.HoverEvent;
 import com.moesol.gwt.maps.client.controls.HoverHandler;
+import com.moesol.gwt.maps.client.stats.StatsDialogBox;
 import com.moesol.gwt.maps.client.touch.Touch;
 import com.moesol.gwt.maps.client.touch.TouchCancelEvent;
 import com.moesol.gwt.maps.client.touch.TouchCancelHandler;
@@ -37,7 +44,7 @@ import com.moesol.gwt.maps.client.units.AngleUnit;
 public class MapController implements 
 	HasHandlers,
 	MouseMoveHandler, MouseDownHandler, MouseUpHandler, MouseOutHandler,
-	MouseWheelHandler, EventPreview, KeyboardListener,
+	MouseWheelHandler, EventPreview, KeyDownHandler, KeyUpHandler, KeyPressHandler,
 	TouchStartHandler, TouchMoveHandler, TouchEndHandler, TouchCancelHandler
 {
 	private static boolean s_previewInstalled = false;
@@ -63,8 +70,8 @@ public class MapController implements
 		@Override
 		public void run() {
 			m_eventBus.fireEvent(new HoverEvent()
-				.withX(m_mouseWheelTracker.m_x)
-				.withY(m_mouseWheelTracker.m_y)
+				.withX(m_mouseWheelTracker.getViewCoordinates().getX())
+				.withY(m_mouseWheelTracker.getViewCoordinates().getY())
 				.withClientX(m_moveClientX)
 				.withClientY(m_moveClientY)
 				);
@@ -93,7 +100,9 @@ public class MapController implements
 		focusPanel.addMouseUpHandler(this);
 		focusPanel.addMouseOutHandler(this);
 		focusPanel.addMouseWheelHandler(this);
-		focusPanel.addKeyboardListener(this);
+		focusPanel.addKeyDownHandler(this);
+		focusPanel.addKeyUpHandler(this);
+		focusPanel.addKeyPressHandler(this);
 	}
 
 	public void zoomAndCenter(int x, int y, boolean bZoomIn) {
@@ -268,10 +277,10 @@ public class MapController implements
 		case Event.ONKEYDOWN:
 		case Event.ONKEYUP:
 			switch (DOM.eventGetKeyCode(event)) {
-			case KeyboardListener.KEY_LEFT:
-			case KeyboardListener.KEY_RIGHT:
-			case KeyboardListener.KEY_UP:
-			case KeyboardListener.KEY_DOWN:
+			case KeyCodes.KEY_LEFT:
+			case KeyCodes.KEY_RIGHT:
+			case KeyCodes.KEY_UP:
+			case KeyCodes.KEY_DOWN:
 				DOM.eventPreventDefault(event);
 				break;
 			}
@@ -280,39 +289,46 @@ public class MapController implements
 	}
 
 	@Override
-	public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-		if ((KeyboardListener.MODIFIER_CTRL & modifiers) != 0) {
-			onKeyDownWithControl(keyCode);
+	public void onKeyDown(KeyDownEvent event) {
+		if (event.isControlKeyDown()) {
+			onKeyDownWithControl(event.getNativeKeyCode());
 		} else {
-			onKeyDownNoModifiers(keyCode);
+			onKeyDownNoModifiers(event.getNativeKeyCode());
+		}
+	}
+	
+	@Override
+	public void onKeyPress(KeyPressEvent event) {
+		switch (event.getCharCode()) {
+		case '\\':
+			new StatsDialogBox().show();
+			break;
 		}
 	}
 
-	private void onKeyDownWithControl(char keyCode) {
+	private void onKeyDownWithControl(int keyCode) {
 		switch (keyCode) {
-		case KeyboardListener.KEY_UP:
+		case KeyCodes.KEY_UP:
 			m_map.animateZoom(2);
-			//m_map.updateView();
 			break;
-		case KeyboardListener.KEY_DOWN:
+		case KeyCodes.KEY_DOWN:
 			m_map.animateZoom(1/2.0);
-			//m_map.updateView();
 			break;
 		}
 	}
 
-	private void onKeyDownNoModifiers(char keyCode) {
+	private void onKeyDownNoModifiers(int keyCode) {
 		switch (keyCode) {
-		case KeyboardListener.KEY_LEFT:
+		case KeyCodes.KEY_LEFT:
 			moveMap(-1, 0);
 			break;
-		case KeyboardListener.KEY_RIGHT:
+		case KeyCodes.KEY_RIGHT:
 			moveMap(1, 0);
 			break;
-		case KeyboardListener.KEY_UP:
+		case KeyCodes.KEY_UP:
 			moveMap(0, 1);
 			break;
-		case KeyboardListener.KEY_DOWN:
+		case KeyCodes.KEY_DOWN:
 			moveMap(0, -1);
 			break;
 		}
@@ -325,20 +341,16 @@ public class MapController implements
 		int xdist = m_keyVelocity;
 		int ydist = m_keyVelocity;
 		WorldCoords v = m_map.getWorldCenter();
-		v.setX(v.getX() + xdist * x);
-		v.setY(v.getY() + ydist * y);
+		v = v.translate(x * xdist, y * ydist);
 		m_map.setWorldCenter(v);
 		m_map.updateView();
 	}
 
 	@Override
-	public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-	}
-
-	@Override
-	public void onKeyUp(Widget sender, char keyCode, int modifiers) {
+	public void onKeyUp(KeyUpEvent event) {
 		m_keyVelocity = 1;
 	}
+
 
 	public void addHoverHandler(HoverHandler h) {
 		m_eventBus.addHandler(HoverEvent.getType(), h);
@@ -373,7 +385,7 @@ public class MapController implements
 					}
 				}
 
-				m_oldCenter = GeodeticCoords.newInstanceFrom(newCenter);
+				m_oldCenter = newCenter;
 				m_oldViewSize.setHeight(newProjection.getViewSize().getHeight());
 				m_oldViewSize.setWidth(newProjection.getViewSize().getWidth());
 				m_oldScale = newProjection.getScale();

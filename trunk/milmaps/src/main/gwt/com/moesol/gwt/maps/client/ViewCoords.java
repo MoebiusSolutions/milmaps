@@ -1,44 +1,47 @@
 package com.moesol.gwt.maps.client;
 
-public class ViewCoords {
-	private int m_x;
-	private int m_y;
+import com.moesol.gwt.maps.client.stats.Stats;
 
+public class ViewCoords {
+	private final int m_x;
+	private final int m_y;
+
+	public static class Builder {
+		private int m_x;
+		private int m_y;
+		
+		public ViewCoords build() {
+			return new ViewCoords(m_x, m_y);
+		}
+		public Builder setX(int x) { m_x = x; return this; }
+		public Builder setY(int y) { m_y = y; return this; }
+		public int getX() { return m_x; }
+		public int getY() { return m_y; }
+	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
+	
 	public ViewCoords() {
+		Stats.incrementNewViewCoords();
+		
 		m_x = m_y = 0;
 	}
 	
 	public ViewCoords(int x, int y) {
+		Stats.incrementNewViewCoords();
+		
 		m_x = x;
 		m_y = y;
 	}
 	
-	public void copyFrom( ViewCoords vc ){
-		m_x  = vc.getX();
-		m_y = vc.getY();
-	}
-
 	public int getX() {
 		return m_x;
 	}
 
-	public ViewCoords setX(int x) {
-		m_x = x;
-		return this;
-	}
-
 	public int getY() {
 		return m_y;
-	}
-
-	public ViewCoords setY(int y) {
-		m_y = y;
-		return this;
-	}
-	
-	public void set(int x, int y) {
-		m_x = x;
-		m_y = y;
 	}
 
 	/**

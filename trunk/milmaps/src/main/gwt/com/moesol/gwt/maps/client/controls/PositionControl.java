@@ -21,7 +21,6 @@ public class PositionControl extends Composite {
 	private final OutlinedLabel m_mousePosLabel = new OutlinedLabel();
 	private final Mgrs m_mgrs = new Mgrs();
 	private final Geodetic m_geo = new Geodetic();
-	private final ViewCoords m_vc = new ViewCoords();
 	
 	private MapView m_mapView = null;
 	
@@ -48,8 +47,8 @@ public class PositionControl extends Composite {
 	}
 	
 	public void mouseMove( int x, int y ) {
-		m_vc.set(x,y);
-		GeodeticCoords gc = m_mapView.getProjection().viewToGeodetic(m_vc);
+		ViewCoords vc = new ViewCoords(x, y);
+		GeodeticCoords gc = m_mapView.getProjection().viewToGeodetic(vc);
 		String pos = LatLonString.build(gc.getPhi(AngleUnit.DEGREES), 
 										gc.getLambda(AngleUnit.DEGREES));
 		String mgrsPos = "";

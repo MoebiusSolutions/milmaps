@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
+import com.moesol.gwt.maps.client.stats.Sample;
 
 public class TileImageEngine {
 	private static class TileInfo {
@@ -77,7 +78,11 @@ public class TileImageEngine {
 			if (tileInfo.m_placed) {
 				continue;
 			}
+			
+			Sample.USE_IMAGE.beginSample();
 			m_listener.useImage(tileCoords, tileInfo.m_image);
+			Sample.USE_IMAGE.endSample();
+			
 			tileInfo.m_placed = true;
 			tileInfo.m_lastUsedMillis = System.currentTimeMillis();
 			return tileInfo.m_image;
@@ -85,7 +90,11 @@ public class TileImageEngine {
 		}
 		
 		TileInfo result = new TileInfo();
+		
+		Sample.CREATE_IMAGE.beginSample();
 		result.m_image = m_listener.createImage(tileCoords);
+		Sample.CREATE_IMAGE.endSample();
+		
 		result.m_lastUsedMillis = System.currentTimeMillis();
 		result.m_level = levelOrZero(tileCoords);
 		result.m_loaded = false;

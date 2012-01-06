@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.moesol.gwt.maps.client.stats.Stats;
 
 
 
@@ -14,10 +15,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class ViewPort {
 	private final ViewDimension m_dimension = new ViewDimension(600, 400);
 	private IProjection m_projection = null;
-	private final ViewCoords m_returnedViewCoords = new ViewCoords();
 	
-	private final WorldCoords m_worldCenter = new WorldCoords();
-	private final WorldCoords m_returnedWorldCoords = new WorldCoords();
+	private WorldCoords m_worldCenter = new WorldCoords();
 	private int m_tilePixWidth  = 512;
 	private int m_tilePixHeight = 512;
 	private double m_tileDegWidth  = 180;
@@ -40,9 +39,9 @@ public class ViewPort {
 	}
 	public void setProjection(IProjection proj) {
 		m_projection = proj;
-		GeodeticCoords gc = m_projection.getViewGeoCenter();
-		m_worldCenter.copyFrom(m_projection.geodeticToWorld(gc));
 		m_projection.setViewSize(m_dimension);
+		GeodeticCoords gc = m_projection.getViewGeoCenter();
+		m_worldCenter = m_projection.geodeticToWorld(gc);
 	}
 	
 	public DialogBox alertWidget(final String header, String content) {
@@ -150,7 +149,7 @@ public class ViewPort {
 		m_tileDegWidth  = ls.getStartLevelTileWidthInDeg()/degFactor;
 		m_tileDegHeight = ls.getStartLevelTileHeightInDeg()/degFactor;
 		GeodeticCoords gc = m_projection.getViewGeoCenter();
-		m_worldCenter.copyFrom(m_projection.geodeticToWorld(gc));
+		m_worldCenter = m_projection.geodeticToWorld(gc);
 		if ( m_projection.getScale() == 0.0 ){
 			m_projection.setScale(lsScale);
 		}
@@ -167,28 +166,56 @@ public class ViewPort {
 	}
 	
 	public ViewCoords worldToView(WorldCoords wc, boolean checkWrap) {
-		ViewCoords r = m_returnedViewCoords;
-		r.setX(wc.getX() - m_worldCenter.getX() + getCenterX());
-		r.setY(-(wc.getY() - m_worldCenter.getY()) + getCenterY()); // flip y axis
+		Stats.incrementWorldToView();
+		
+//		ViewCoords r = m_returnedViewCoords;
+//		r.setX(wc.getX() - m_worldCenter.getX() + getCenterX());
+//		r.setY(-(wc.getY() - m_worldCenter.getY()) + getCenterY()); // flip y axis
+//		
+//		// Check for world wrap
+//		// We may want to remove the wrap check all together.
+//		if ( checkWrap == true ){ 
+//			if (r.getX() < 0) {
+//				int checkX = r.getX() + m_projection.getWorldDimension().getWidth();
+//				r.setX(checkX);
+//			} else if (r.getX() >= m_dimension.getWidth()) {
+//				int checkX = r.getX() - m_projection.getWorldDimension().getWidth();
+//				r.setX(checkX);
+//			}
+//		}
+//		return r;
+		
+		int x = wc.getX() - m_worldCenter.getX() + getCenterX();
+		int y = -(wc.getY() - m_worldCenter.getY()) + getCenterY(); // flip y axis
 		
 		// Check for world wrap
 		// We may want to remove the wrap check all together.
 		if ( checkWrap == true ){ 
-			if (r.getX() < 0) {
-				int checkX = r.getX() + m_projection.getWorldDimension().getWidth();
-				r.setX(checkX);
-			} else if (r.getX() >= m_dimension.getWidth()) {
-				int checkX = r.getX() - m_projection.getWorldDimension().getWidth();
-				r.setX(checkX);
+			if (x < 0) {
+				int checkX = x + m_projection.getWorldDimension().getWidth();
+				x = checkX;
+			} else if (x >= m_dimension.getWidth()) {
+				int checkX = x - m_projection.getWorldDimension().getWidth();
+				x = checkX;
 			}
 		}
-		return r;
+		return new ViewCoords(x, y);
 	}
 	
 	public WorldCoords viewToWorld(ViewCoords in) {
-		m_returnedWorldCoords.setX(in.getX() + m_worldCenter.getX());
-		m_returnedWorldCoords.setY(in.getY() + m_worldCenter.getY());
-		return m_returnedWorldCoords;
+		Stats.incrementViewToWorld();
+		
+//		m_returnedWorldCoords.setX(in.getX() + m_worldCenter.getX());
+//		m_returnedWorldCoords.setY(in.getY() + m_worldCenter.getY());
+//		return m_returnedWorldCoords;
+		// TODO this method is never called?
+		// TODO this method appears to have a bug also because it does not flip the y axis.
+		// TODO unit test to verify this is the inverse of worldToView...
+		
+		int x = in.getX() + m_worldCenter.getX();
+		int y = in.getY() + m_worldCenter.getY();
+		
+		return new WorldCoords(x, y);
 	}
 
 	private TileCoords[] makeTilesResult(int level) {
@@ -348,10 +375,9 @@ public class ViewPort {
 	}
 
 	private void positionCenterOffsetForView() {
-	  // This routine positions the center tile relative to the view it sits in.
-		m_returnedWorldCoords.setX(m_centerTile.getOffsetX());
-		m_returnedWorldCoords.setY(m_centerTile.getOffsetY());
-		ViewCoords vc = worldToView(m_returnedWorldCoords, false);
+		// This routine positions the center tile relative to the view it sits in.
+		WorldCoords wc = new WorldCoords(m_centerTile.getOffsetX(), m_centerTile.getOffsetY());
+		ViewCoords vc = worldToView(wc, false);
 		m_centerTile.setOffsetY(vc.getY());
 		m_centerTile.setOffsetX(vc.getX());
 	}
@@ -398,22 +424,40 @@ public class ViewPort {
 	 * Keep the view center x on the view and the y within the view port.
 	 * 
 	 * @param viewCenter
-	 * @return viewCenter
+	 * @return constrained view center
 	 */
-	public void constrainAsWorldCenter(WorldCoords centerToUpdate) {
+	public WorldCoords constrainAsWorldCenter(WorldCoords centerToUpdate) {
 		WorldDimension dim = m_projection.getWorldDimension();
-		if (centerToUpdate.getX() < 0) {
-			centerToUpdate.setX(dim.getWidth() + centerToUpdate.getX());
+		int x = centerToUpdate.getX();
+		
+		if (x < 0) {
+			x = dim.getWidth() + centerToUpdate.getX();
 		} else {
-			centerToUpdate.setX(centerToUpdate.getX() % dim.getWidth());
+			x = centerToUpdate.getX() % dim.getWidth();
 		}
 		
+		int y = centerToUpdate.getY();
 		int hmid = getCenterY();
-		if (centerToUpdate.getY() < hmid) {
-			centerToUpdate.setY(hmid);
-		} if (centerToUpdate.getY() > dim.getHeight() - hmid) {
-			centerToUpdate.setY(dim.getHeight() - hmid);
+		if (y < hmid) {
+			y = hmid;
+		} if (y > dim.getHeight() - hmid) {
+			y = dim.getHeight() - hmid;
 		}
+		return new WorldCoords(x, y);
+	}
+
+	@Override
+	public String toString() {
+		return "ViewPort [m_dimension=" + m_dimension + ", m_projection="
+				+ m_projection + ", m_worldCenter=" + m_worldCenter
+				+ ", m_tilePixWidth=" + m_tilePixWidth + ", m_tilePixHeight="
+				+ m_tilePixHeight + ", m_tileDegWidth=" + m_tileDegWidth
+				+ ", m_tileDegHeight=" + m_tileDegHeight + ", m_level="
+				+ m_level + ", m_cxTiles=" + m_cxTiles + ", m_cyTiles="
+				+ m_cyTiles + ", m_centerTile=" + m_centerTile
+				+ ", m_leftTiles=" + m_leftTiles + ", m_rightTiles="
+				+ m_rightTiles + ", m_topTiles=" + m_topTiles
+				+ ", m_bottomTiles=" + m_bottomTiles + "]";
 	}
 
 }

@@ -1,17 +1,18 @@
 package com.moesol.gwt.maps.client;
 
+import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 public abstract class AbstractProjection implements IProjection {
 	// private final GeodeticCoords m_lowerLeft;
-	protected final GeodeticCoords m_vpGeoCenter = new GeodeticCoords(); // viewport
+	protected GeodeticCoords m_vpGeoCenter = new GeodeticCoords(); // viewport
 																		// center
 	protected final WorldDimension m_wdSize = new WorldDimension(); // Whole world
 																  // map size
 	protected final ViewDimension m_vpSize = new ViewDimension(); // viewPort size
 	protected final ViewCoords m_returnedViewCoords = new ViewCoords();
 	protected final WorldCoords m_returnedWorldCoords = new WorldCoords();
-	protected final WorldCoords m_wc = new WorldCoords();
 	protected final GeodeticCoords m_returnedGeodeticCoords = new GeodeticCoords();
 	protected final GeodeticCoords m_viewToGeoPos = new GeodeticCoords();
 	protected GeodeticCoords m_tileGeoPos = new GeodeticCoords();
@@ -54,18 +55,16 @@ public abstract class AbstractProjection implements IProjection {
 	public static final double DegToRad = 0.017453293;
 
 
-	public AbstractProjection(){
+	public AbstractProjection() {
 		m_scrnDpi = 75;
 		m_scrnMpp = 2.54 / (75.0 * 100); // meters per pixel for physical screen
-		m_vpGeoCenter.setLambda(0.0, AngleUnit.DEGREES);
-		m_vpGeoCenter.setPhi(0.0, AngleUnit.DEGREES);
+		m_vpGeoCenter = Degrees.geodetic(0.0, 0.0);
 	}
 	
 	public AbstractProjection(int dpi) {
 		m_scrnDpi = dpi;
 		m_scrnMpp = 2.54 / (dpi * 100); // meters per pixel for physical screen
-		m_vpGeoCenter.setLambda(0.0, AngleUnit.DEGREES);
-		m_vpGeoCenter.setPhi(0.0, AngleUnit.DEGREES);
+		m_vpGeoCenter = Degrees.geodetic(0.0, 0.0);
 	}
 	
 	public double getOrigTileDegWidth(){ return m_origTileDegWidth; }
@@ -118,7 +117,7 @@ public abstract class AbstractProjection implements IProjection {
 	@Override
 	public void copyFrom(IProjection orig) {
 		m_scrnDpi = orig.getScrnDpi();
-		m_vpGeoCenter.copyFrom(orig.getViewGeoCenter());
+		m_vpGeoCenter = orig.getViewGeoCenter();
 		setScale(orig.getScale());
 		computeWorldSize();
 	}
@@ -159,28 +158,28 @@ public abstract class AbstractProjection implements IProjection {
 
 	@Override
 	public void setViewGeoCenter(GeodeticCoords c) {
-		m_vpGeoCenter.copyFrom(c);
+		m_vpGeoCenter = c;
 	}
 	
 
 	@Override
 	public void setCenterFromViewPixel( ViewCoords vc ){
 		GeodeticCoords gc = viewToGeodetic(vc);
-		if ( m_wdSize.getHeight() <= m_vpSize.getHeight() )
-			gc.setPhi(0.0, AngleUnit.DEGREES);
-		m_vpGeoCenter.copyFrom(gc);
+		if ( m_wdSize.getHeight() <= m_vpSize.getHeight() ) {
+			gc = Degrees.geodetic(0.0, gc.getLambda(AngleUnit.DEGREES));
+		}
+		m_vpGeoCenter = gc;
 	}
 	
-
+	// TODO better documentation for this method
 	@Override
 	public void tagPositionToPixel( GeodeticCoords gc, ViewCoords vc ){
 		int xDiff = m_vpSize.getWidth()/2 - vc.getX();
 		int yDiff = vc.getY() - m_vpSize.getHeight()/2;
 		WorldCoords tagWc = geodeticToWorld(gc);
-		m_wc.setX(tagWc.getX()+xDiff);
-		m_wc.setY(tagWc.getY() + yDiff);
-		GeodeticCoords c = worldToGeodetic(m_wc);
-		m_vpGeoCenter.copyFrom(c);
+		WorldCoords wc = tagWc.translate(xDiff, yDiff);
+		GeodeticCoords c = worldToGeodetic(wc);
+		m_vpGeoCenter = c;
 	}
 
 	@Override
@@ -249,6 +248,8 @@ public abstract class AbstractProjection implements IProjection {
 
 	@Override
 	public GeodeticCoords viewToGeodetic( ViewCoords v ) {
+		Stats.incrementViewToGeodetic();
+		
 		int wcX = lngDegToPixX( m_vpGeoCenter.getLambda(AngleUnit.DEGREES) );
 		int wcY = latDegToPixY( m_vpGeoCenter.getPhi(AngleUnit.DEGREES));
 		wcX += (v.getX() - m_vpSize.getWidth()/2);
@@ -257,8 +258,7 @@ public abstract class AbstractProjection implements IProjection {
 		double lng = wrapLng(xPixToDegLng(wcX));
 		double lat = clip(yPixToDegLat(wcY),m_minLat,m_maxLat);
 		
-		m_viewToGeoPos.set( lng, lat, AngleUnit.DEGREES );
-		return m_viewToGeoPos;
+		return Degrees.geodetic(lat, lng);
 	}
 	
 	protected void computeWorldSize() {

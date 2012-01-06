@@ -4,6 +4,8 @@ import com.moesol.gwt.maps.client.controls.Tag;
 import org.junit.After;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
+
 import java.io.File;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,7 +55,8 @@ public class TagControlServiceImplTest {
         boolean result = instance.saveTagToDisk(TANK, gc);
         assertEquals(expResult, result);
 
-        gc.set(-34.34, 1.001, AngleUnit.DEGREES);
+        gc = Degrees.geodetic(1.001, -34.34);
+//        gc.set(-34.34, 1.001, AngleUnit.DEGREES);
         result = instance.saveTagToDisk(SHIP, gc);
         assertEquals(expResult, result);
         File tagDir = TagControlServiceImpl.TAG_DIRECTORY_PATH_PROVIDER.get();

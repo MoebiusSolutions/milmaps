@@ -1,6 +1,8 @@
 package com.moesol.gwt.maps.client;
 
+import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 
 /**
@@ -94,24 +96,39 @@ public class CylEquiDistProj extends AbstractProjection {
 	
 	@Override
 	public GeodeticCoords worldToGeodetic(WorldCoords w) {
+		Stats.incrementWorldToGeodetic();
+		
 		// we have to mod by world size in case we had
 		// to extend the whole world
+//		double lng = xPixToDegLng(w.getX() % m_wdSize.getWidth());
+//		if (w.getX() > 10 && lng == m_minLng)
+//			lng = m_maxLng;
+//		double lat = yPixToDegLat(w.getY());
+//		m_returnedGeodeticCoords.set(lng, lat, AngleUnit.DEGREES);
+//		return m_returnedGeodeticCoords;
+		
 		double lng = xPixToDegLng(w.getX() % m_wdSize.getWidth());
-		if (w.getX() > 10 && lng == m_minLng)
+		if (w.getX() > 10 && lng == m_minLng) {
 			lng = m_maxLng;
+		}
 		double lat = yPixToDegLat(w.getY());
-		m_returnedGeodeticCoords.set(lng, lat, AngleUnit.DEGREES);
-		return m_returnedGeodeticCoords;
+		
+		return Degrees.geodetic(lat, lng);
 	}
 	
 
 	@Override
 	public WorldCoords geodeticToWorld(GeodeticCoords g) {
-		m_returnedWorldCoords
-				.setX(lngDegToPixX(g.getLambda(AngleUnit.DEGREES)));
-		m_returnedWorldCoords
-				.setY(latDegToPixY(g.getPhi(AngleUnit.DEGREES)));
-		return m_returnedWorldCoords;
+		Stats.incrementGeodeticToWorld();
+		
+		int x = lngDegToPixX(g.getLambda(AngleUnit.DEGREES));
+		int y = latDegToPixY(g.getPhi(AngleUnit.DEGREES));
+		return new WorldCoords(x, y);
+//		m_returnedWorldCoords
+//				.setX(lngDegToPixX(g.getLambda(AngleUnit.DEGREES)));
+//		m_returnedWorldCoords
+//				.setY(latDegToPixY(g.getPhi(AngleUnit.DEGREES)));
+//		return m_returnedWorldCoords;
 	}
 
 	protected double computeScale(double deg, int pix) {
@@ -163,9 +180,9 @@ public class CylEquiDistProj extends AbstractProjection {
     	int topLeftX = tile.m_x*pixSize;
     	int topLeftY = (tile.m_y+1)*pixSize;
     	int tLevel = Math.max(0, level);
-    	double lat = orig_yPixToDegLat( tLevel, topLeftY);
-    	double lng = orig_xPixToDegLng( tLevel, topLeftX);
-    	m_tileGeoPos.set(lng, lat, AngleUnit.DEGREES);
+    	double lat = orig_yPixToDegLat(tLevel, topLeftY);
+    	double lng = orig_xPixToDegLng(tLevel, topLeftX);
+    	m_tileGeoPos = Degrees.geodetic(lat, lng);
     	return geodeticToWorld(m_tileGeoPos);
     }
     
@@ -181,10 +198,24 @@ public class CylEquiDistProj extends AbstractProjection {
 
 	@Override
 	public String toString() {
-		return "CylEquiDistProj [m_vpGeoCenter=" + m_vpGeoCenter + ", m_scale="
-				+ m_scale + ", m_wholeWorldScale=" + m_wholeWorldScale
-				+ ", m_minLat=" + m_minLat + ", m_minLng=" + m_minLng
-				+ ", m_maxLat=" + m_maxLat + ", m_maxLng=" + m_maxLng
+		return "CylEquiDistProj [m_vpGeoCenter=" + m_vpGeoCenter
+				+ ", m_wdSize=" + m_wdSize + ", m_vpSize=" + m_vpSize
+				+ ", m_returnedViewCoords=" + m_returnedViewCoords
+				+ ", m_returnedWorldCoords=" + m_returnedWorldCoords
+				+ ", m_returnedGeodeticCoords=" + m_returnedGeodeticCoords
+				+ ", m_viewToGeoPos=" + m_viewToGeoPos + ", m_tileGeoPos="
+				+ m_tileGeoPos + ", m_pixel=" + m_pixel + ", m_tile=" + m_tile
+				+ ", EarthRadius=" + EarthRadius + ", EarthCirMeters="
+				+ EarthCirMeters + ", MeterPerDeg=" + MeterPerDeg
+				+ ", m_scrnDpi=" + m_scrnDpi + ", m_scrnMpp=" + m_scrnMpp
+				+ ", m_scale=" + m_scale + ", m_prevScale=" + m_prevScale
+				+ ", m_wholeWorldScale=" + m_wholeWorldScale
+				+ ", m_origMapWidthSize=" + m_origMapWidthSize + ", m_minLat="
+				+ m_minLat + ", m_minLng=" + m_minLng + ", m_maxLat="
+				+ m_maxLat + ", m_maxLng=" + m_maxLng + ", m_origScale="
+				+ m_origScale + ", m_orgTilePixSize=" + m_orgTilePixSize
+				+ ", m_origTileDegWidth=" + m_origTileDegWidth
+				+ ", m_origTileDegHeight=" + m_origTileDegHeight
 				+ ", m_zoomFlag=" + m_zoomFlag + "]";
 	}
     

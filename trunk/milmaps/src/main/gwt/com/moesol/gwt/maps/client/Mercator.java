@@ -1,6 +1,9 @@
 package com.moesol.gwt.maps.client;
 
+import com.moesol.gwt.maps.client.WorldCoords.Builder;
+import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 // EPSG:3857 Mercator projection
 
@@ -52,6 +55,8 @@ public class Mercator extends AbstractProjection {
 	
 	@Override
 	public GeodeticCoords worldToGeodetic(WorldCoords w) {
+		Stats.incrementWorldToGeodetic();
+		
 		// we have to mod by world size in case we had
 		// to extend the whole world
 		double pix = w.getX() % m_wdSize.getWidth();
@@ -59,19 +64,22 @@ public class Mercator extends AbstractProjection {
 		if (w.getX() > 10 && lng == m_minLng)
 			lng = m_maxLng;
 		double lat = yPixToDegLat( w.getY() );
-		m_returnedGeodeticCoords.set(lng, lat, AngleUnit.DEGREES);
-		return m_returnedGeodeticCoords;
+		return Degrees.geodetic(lat, lng);
 	}
 	
 
 	@Override
 	public WorldCoords geodeticToWorld(GeodeticCoords g) {
+		Stats.incrementGeodeticToWorld();
+		
+		Builder builder = WorldCoords.builder();
+		
 		double deg = g.getLambda(AngleUnit.DEGREES);
-		m_returnedWorldCoords.setX((int)(lngDegToPixX(deg)+0.5));
+		builder.setX((int)(lngDegToPixX(deg)+0.5));
 
 		deg = g.getPhi(AngleUnit.DEGREES);
-		m_returnedWorldCoords.setY((int)(latDegToPixY(deg)+0.5));
-		return m_returnedWorldCoords;
+		builder.setY((int)(latDegToPixY(deg)+0.5));
+		return builder.build();
 	}
 	
 	//protected double degPixToScale(double deg, int pix) {
@@ -264,7 +272,7 @@ public class Mercator extends AbstractProjection {
     	int topLeftY = (tile.m_y+1)*pixSize;
     	double lat = orig_yPixToDegLat( level, topLeftY);
     	double lng = orig_xPixToDegLng( level, topLeftX);
-    	m_tileGeoPos.set(lng, lat, AngleUnit.DEGREES);
+    	m_tileGeoPos = Degrees.geodetic(lat, lng);
     	return geodeticToWorld(m_tileGeoPos);
     }
     

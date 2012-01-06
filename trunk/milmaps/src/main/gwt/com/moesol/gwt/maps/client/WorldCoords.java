@@ -1,36 +1,61 @@
 package com.moesol.gwt.maps.client;
 
+import com.moesol.gwt.maps.client.stats.Stats;
+
+/**
+ * Immutable
+ * @author hastings
+ */
 public class WorldCoords {
-	private int m_x;
-	private int m_y;
+	private final int m_x;
+	private final int m_y;
+	
+	public static class Builder {
+		private int m_x;
+		private int m_y;
+		
+		public WorldCoords build() {
+			return new WorldCoords(m_x, m_y);
+		}
+		public Builder setX(int x) { m_x = x; return this; }
+		public Builder setY(int y) { m_y = y; return this; }
+		public int getX() { return m_x; }
+		public int getY() { return m_y; }
+	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	public WorldCoords() {
+		Stats.incrementNewWorldCoords();
+		
 		m_x = m_y = 0;
 	}
 	
 	public WorldCoords(int x, int y) {
+		Stats.incrementNewWorldCoords();
+		
 		m_x = x;
 		m_y = y;
-	}
-
-	public WorldCoords(WorldCoords v) {
-		copyFrom(v);
 	}
 
 	public int getX() {
 		return m_x;
 	}
 
-	public void setX(int x) {
-		m_x = x;
-	}
-
 	public int getY() {
 		return m_y;
 	}
 
-	public void setY(int y) {
-		m_y = y;
+	/**
+	 * Translates the this world coordinate by adding xDiff to x and yDiff to y.
+	 * @param xDiff
+	 * @param yDiff
+	 * @return translated world coordinates.
+	 */
+	public WorldCoords translate(int xDiff, int yDiff) {
+		return new WorldCoords(m_x + xDiff, m_y + yDiff);
 	}
 
 	@Override
@@ -63,8 +88,4 @@ public class WorldCoords {
 		return "[x=" + m_x + ", y=" + m_y + "]";
 	}
 
-	public void copyFrom(WorldCoords wc) {
-		m_x = wc.getX();
-		m_y = wc.getY();
-	}
 }

@@ -1,6 +1,7 @@
 package com.moesol.gwt.maps.client;
 
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 public class CylProj {
 	
@@ -8,7 +9,7 @@ public class CylProj {
 		OUT, NONE, IN
 	}
 	
-	protected final GeodeticCoords m_vpGeoCenter = new GeodeticCoords(); // viewport Center
+	protected GeodeticCoords m_vpGeoCenter = new GeodeticCoords(); // viewport Center
 	protected final WorldDimension m_wdSize = new WorldDimension(); // Whole world map size
 	protected final ViewDimension m_vpSize = new ViewDimension(); // viewPort size
 	protected final ViewCoords m_returnedViewCoords = new ViewCoords();
@@ -56,7 +57,7 @@ public class CylProj {
 	}
 	
 	public void setViewGeoCenter(GeodeticCoords c) {
-		m_vpGeoCenter.copyFrom(c);
+		m_vpGeoCenter = c;
 	}
 	
 	public GeodeticCoords getVpGeoCenter() {
@@ -102,16 +103,14 @@ public class CylProj {
 		if (w.getX() > 10 && lng == m_minLng)
 			lng = m_maxLng;
 		double lat = pixToLatDegMag(w.getY()) + m_minLat;
-		m_returnedGeodeticCoords.set(lng, lat, AngleUnit.DEGREES);
-		return m_returnedGeodeticCoords;
+
+		return Degrees.geodetic(lat, lng);
 	}
 	
 	public WorldCoords geodeticToWorld(GeodeticCoords g) {
-		m_returnedWorldCoords
-				.setX(lngDegToPixMag(g.getLambda(AngleUnit.DEGREES) + m_maxLng));
-		m_returnedWorldCoords
-				.setY(latDegToPixMag(g.getPhi(AngleUnit.DEGREES) + m_maxLat));
-		return m_returnedWorldCoords;
+		int x = lngDegToPixMag(g.getLambda(AngleUnit.DEGREES) + m_maxLng);
+		int y = latDegToPixMag(g.getPhi(AngleUnit.DEGREES) + m_maxLat);
+		return new WorldCoords(x, y);
 	}
 	
 	public void zoom( double scale) {

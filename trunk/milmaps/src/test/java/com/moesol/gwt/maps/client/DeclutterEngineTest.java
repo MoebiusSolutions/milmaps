@@ -29,8 +29,7 @@ public class DeclutterEngineTest {
 			Icon icon = new Icon();
 			icon.setLocation(Degrees.geodetic(lat, lng));
 			icon.setLabel(label);
-			icon.getIconOffset().setX(-8);
-			icon.getIconOffset().setY(-8);
+			icon.setIconOffset(ViewCoords.builder().setX(-8).setY(-8).build());
 			icons.add(icon);
 			return this;
 		}
@@ -111,15 +110,14 @@ public class DeclutterEngineTest {
 	public void testComputeIconCenterViewCoords() {
 		Icon icon = new Icon();
 		icon.setLocation(Degrees.geodetic(0, 0));
-		icon.getIconOffset().setX(-8);
-		icon.getIconOffset().setY(-8);
+		icon.setIconOffset(ViewCoords.builder().setX(-8).setY(-8).build());
 
 		ViewCoords vc = engine.computeIconCenterViewCoords(icon);
 		
 		assertEquals(300, vc.getX());
 		assertEquals(200, vc.getY());
-		
-		icon.getIconOffset().setX(1);
+
+		icon.setIconOffset(ViewCoords.builder().setX(1).setY(-8).build());
 		vc = engine.computeIconCenterViewCoords(icon);
 		assertEquals(300, vc.getX());
 		assertEquals(200, vc.getY());
