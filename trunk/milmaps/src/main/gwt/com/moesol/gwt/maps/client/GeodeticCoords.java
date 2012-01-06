@@ -48,13 +48,6 @@ public class GeodeticCoords implements IsSerializable {
 		m_lambda = m_phi = m_altitude = 0.0;
 	}
 
-//    public static GeodeticCoords newInstanceFrom(final GeodeticCoords other)
-//    {
-//        GeodeticCoords result = new GeodeticCoords();
-//        result.copyFrom(other);
-//        return result;
-//    }
-
 	/**
 	 * @param lambdaLongitude in radians or degrees based on unit
 	 * @param phiLatitude in radians or degrees based on unit
@@ -76,41 +69,17 @@ public class GeodeticCoords implements IsSerializable {
 		// TODO remove altitude or add DistanceUnit parameter
 		
 		// similar to x, y, z
-//		set(lambda, phi, angleUnit);
 		m_lambda = angleUnit.toRadians(lambda);
 		m_phi = angleUnit.toRadians(phi);
 		m_altitude = altitude;
 	}
 	
 	/**
-	 * @param lambda longitude
-	 * @param phi latitude
-	 * @param angleUnit angular units of lambda and phi
-	 */
-//	public void set(double lambda, double phi, AngleUnit angleUnit) {
-//		m_lambda = angleUnit.toRadians(lambda);
-//		m_phi = angleUnit.toRadians(phi);
-//	}
-
-	/**
-	 * Copy location's state to this
-	 * @param location
-	 */
-//	public void copyFrom(GeodeticCoords location) {
-//		m_altitude = location.m_altitude;
-//		m_lambda = location.m_lambda;
-//		m_phi = location.m_phi;
-//	}
-
-	/**
 	 * @return altitude in meters
 	 */
 	public double getAltitude() {
 		return m_altitude;
 	}
-//	public void setAltitude(double meters) {
-//		m_altitude = meters;
-//	}
 	
 	/** 
 	 * @param unit angular unit to convert return value to
@@ -119,13 +88,6 @@ public class GeodeticCoords implements IsSerializable {
 	public double getLambda(AngleUnit unit) {
 		return unit.fromRadians(m_lambda);
 	}
-	/**
-	 * @param lambda longitude
-	 * @param unit angular units of longitude
-	 */
-//	public void setLambda(double lambda, AngleUnit unit) {
-//		m_lambda = unit.toRadians(lambda);
-//	}
 
 	/**
 	 * @param unit angular unit to convert return value to
@@ -134,13 +96,6 @@ public class GeodeticCoords implements IsSerializable {
 	public double getPhi(AngleUnit unit) {
 		return unit.fromRadians(m_phi);
 	}
-	/**
-	 * @param phi latitude
-	 * @param unit angular units of latitude
-	 */
-//	public void setPhi(double phi, AngleUnit unit) {
-//		m_phi = unit.toRadians(phi);
-//	}
 
 	@Override
 	public int hashCode() {
