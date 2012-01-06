@@ -544,9 +544,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public void hideAnimatedTiles() {
 		if (m_mapBrightness < 1.0) {
 			for (TiledImageLayer layer : getActiveLayers()) {
-				if (!layer.getLayerSet().isActive()) {
-					continue;
-				}
 				layer.hideAnimatedTiles();
 			}
 		}
