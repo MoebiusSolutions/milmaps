@@ -1,15 +1,18 @@
 package com.moesol.gwt.maps.client;
 
 import com.google.gwt.animation.client.Animation;
+import com.moesol.gwt.maps.client.timing.interpolators.SplineInterpolator;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
 
 public class FlyToEngine extends Animation {
-	static final double ZOOM_OUT_TARGET_SCALE = MapScale.parse("1:20M").asDouble();
-	static double ZOOM_OUT_UNTIL = 0.50;
-	static double PAN_OUT_UNTIL = 0.66;
+	static final double ZOOM_OUT_TARGET_SCALE = MapScale.parse("1:100M").asDouble();
+	static final SplineInterpolator EASE_IN_OUT = new SplineInterpolator(1.0, 0, 0.0, 1.0);
+	static double ZOOM_OUT_UNTIL = 0.30;
+	static double ZOOM_IN_AT = 0.40;
+	static double PAN_UNTIL = 0.45;
 	private final IMapView m_mapView;
-	private int m_durationInMilliSecs = 5000;
+	private int m_durationInMilliSecs = 10000;
 	private double m_startLat;
 	private double m_startLng;
 	private double m_startScale;
@@ -51,21 +54,21 @@ public class FlyToEngine extends Animation {
 	 */
 	@Override
 	protected void onUpdate(double progress) {
-		pan(progress);
+		if (progress <= PAN_UNTIL) {
+			double panProgress = progress / PAN_UNTIL;
+			panProgress = EASE_IN_OUT.interpolate(panProgress);
+			
+			pan(panProgress);
+		} else {
+			pan(1.0);
+		}
 		
 		if (progress <= ZOOM_OUT_UNTIL) {
 			double outProgress = progress / ZOOM_OUT_UNTIL;
 			zoomOut(outProgress);
-//		} else if (progress <= PAN_OUT_UNTIL) {
-//			double deltaPan = PAN_OUT_UNTIL - ZOOM_OUT_UNTIL;
-//			double panProgress = (progress - ZOOM_OUT_UNTIL) / deltaPan;
-//			pan(panProgress);
-		} else {
-//			double deltaZoomIn = 1.0 - PAN_OUT_UNTIL;
-//			double inProgress = (progress - PAN_OUT_UNTIL) / deltaZoomIn;
-//			pan(1.0); // The animation might jump past pan(1.0) during second phase.
-			double deltaZoomIn = 1.0 - ZOOM_OUT_UNTIL;
-			double inProgress = (progress - ZOOM_OUT_UNTIL) / deltaZoomIn;
+		} else if (progress >= ZOOM_IN_AT) {
+			double deltaZoomIn = 1.0 - ZOOM_IN_AT;
+			double inProgress = (progress - ZOOM_IN_AT) / deltaZoomIn;
 			zoomIn(inProgress);
 		}
 		m_mapView.doUpdateView();
@@ -84,10 +87,14 @@ public class FlyToEngine extends Animation {
 	}
 	
 	void zoomOut(double progress) {
+		progress = EASE_IN_OUT.interpolate(progress);
+		
 		double newScale = m_startScale + m_deltaOutScale * progress;
 		m_mapView.getProjection().setScale(newScale);
 	}
 	void zoomIn(double progress) {
+		progress = EASE_IN_OUT.interpolate(progress);
+		
 		double newScale = ZOOM_OUT_TARGET_SCALE + m_deltaInScale * progress;
 		m_mapView.getProjection().setScale(newScale);
 	}
