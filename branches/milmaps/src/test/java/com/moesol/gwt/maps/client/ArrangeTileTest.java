@@ -23,6 +23,7 @@ public class ArrangeTileTest {
 	};
 	private IProjection m_proj = new CylEquiDistProj();// 512, 180, 180);
 	private ViewPort m_vp = new ViewPort();
+	private TileBuilder m_tb = new TileBuilder();
 	DivWorker m_divWorker = new DivWorker();
 	
 	private final double EarthCirMeters  = 2.0*Math.PI*6378137;
@@ -41,6 +42,8 @@ public class ArrangeTileTest {
 	
 	public ArrangeTileTest(){
 		m_vp.setDivWorker(m_divWorker);
+		m_tb.setProjection(m_proj);
+		m_tb.setDivWorker(m_divWorker);
 	}
 	
 	
@@ -83,7 +86,7 @@ public class ArrangeTileTest {
 		assertEquals(c.getOffsetY(), offsetY);
 	}
 	
-	
+
 	@Test
 	public void testArrangeTiles(){
 		m_vp.setProjection(m_proj);
@@ -96,11 +99,12 @@ public class ArrangeTileTest {
 				double factor = ( level< 1 ? 1 : 2 );
 				m_proj.zoomByFactor(factor);
 				double lsScale = findScale(m_dpi, level, ls);
-				TileCoords[] tc = m_vp.arrangeTiles(ls, lsScale, level);
+				TileCoords[] tc = m_tb.arrangeTiles(level, ls, lsScale);
 				compareTileCoords( tc, tc );
 			}
 		}
 	}
+
 	
 	@Test
 	public void testQuadkey(){

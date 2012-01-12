@@ -58,7 +58,7 @@ public class ZoomTagWorkerTest {
 		int tagX = 450;
 		int tagY = 50;
 		double factor = 2.0;
-		double startScale = m_proj.getScale();
+		double startScale = m_proj.getEquatorialScale();
 		double finalScale = startScale*factor;
 		// now we want to incrementally increase the scale
 		int numIncs = 30;
@@ -87,7 +87,7 @@ public class ZoomTagWorkerTest {
 		int tagX = 100;
 		int tagY = 100;
 		double factor = 2.0;
-		double startScale = m_proj.getScale();
+		double startScale = m_proj.getEquatorialScale();
 		double scaleDiff = (factor - 1.0)*startScale;;
 		// now we want to incrementally increase the scale
 		int numIncs = 15;
@@ -121,7 +121,7 @@ public class ZoomTagWorkerTest {
 		int tagX = 100;
 		int tagY = 100;
 		double factor = 0.5;
-		double startScale = m_proj.getScale();
+		double startScale = m_proj.getEquatorialScale();
 		double scaleDiff = (factor - 1.0)*startScale;;
 		// now we want to incrementally increase the scale
 		int numIncs = 15;

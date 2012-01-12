@@ -284,7 +284,7 @@ public class MercatorTest {
 					for ( int j = 5; j < 10; j++ ){
 						double dFactor = Math.pow(2,level-1) + j*0.1;
 						m_proj.zoomByFactor(dFactor);
-						int tLevel = computeLevel( 1, m_proj.getScale());
+						int tLevel = computeLevel( 1, m_proj.getEquatorialScale());
 						m_proj.zoomByFactor(1.0/dFactor);
 						if ( level != tLevel )
 							tLevel = level;
