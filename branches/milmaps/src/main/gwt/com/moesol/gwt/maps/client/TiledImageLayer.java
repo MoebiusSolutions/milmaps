@@ -31,7 +31,7 @@ public class TiledImageLayer {
 	private final LayerSet m_layerSet;
 	
 	private final LayoutPanel m_layoutPanel;
-	private final TileImageEngine m_tileImageEngine = new TileImageEngine(this,m_tileImageEngineListener);
+	private final TileImageManager m_tileImageMgr = new TileImageManager(this,m_tileImageEngineListener);
 	private final int REAL_ZOFFSET = 2000;
 	private final int ANIMATED_ZOFFSET = 1000;
 	private final int NOT_IN_USE_ZOFFSET = 0;
@@ -41,14 +41,15 @@ public class TiledImageLayer {
 	
 	private TileCoords[] m_tileCoords;
 	private int m_level;
-	private final MapView m_mapView;
 	private IProjection m_proj;
 	private LayerSetWorker m_lsWorker;
 	private DivWorker m_divWorker;
+	private final DivPanel m_divPanel;
 	private final WorldCoords m_wc = new WorldCoords();
 	/** Marked as priority when this image layer is the best for the scale */
 	private boolean m_priority = false;
 	private boolean m_allTilesLoaded = false;
+	
 	
 	private class MyTileImageEngineListener implements TileImageEngineListener {
 		@Override
@@ -98,28 +99,22 @@ public class TiledImageLayer {
 		}
 	};
 
-	/*
-	public TiledImageLayer(MapView mapView, LayerSet layerSet, AbsolutePanel absolutePanel) {
-		m_mapView = mapView;
+	public TiledImageLayer( DivPanel divPanel, LayerSet layerSet ) {
+		m_divPanel = divPanel;
 		m_layerSet = layerSet;
-		m_proj = mapView.getProjection();
+		m_proj = divPanel.getProjection();
 		m_lsWorker = new LayerSetWorker(m_proj);
-		m_absolutePanel = absolutePanel;
-		m_tileImageLoadListener.setTileImageEngine(m_tileImageEngine);
+		m_divWorker = divPanel.getDivWorker();
+		m_layoutPanel = divPanel.getTileLayerPanel();
+		m_tileImageLoadListener.setTileImageEngine(m_tileImageMgr);
 	}
-	*/
-	public TiledImageLayer(MapView mapView, LayerSet layerSet, LayoutPanel layoutPanel) {
-		m_mapView = mapView;
-		m_layerSet = layerSet;
-		m_proj = mapView.getProjection();
-		m_lsWorker = new LayerSetWorker(m_proj);
-		m_divWorker = m_mapView.getDivPanel().getDivWorker();
-		m_layoutPanel = layoutPanel;
-		m_tileImageLoadListener.setTileImageEngine(m_tileImageEngine);
+	
+	public void clearTileImages(){
+		m_tileImageMgr.clear();
 	}
 	
 	public long getDynamicCounter() {
-		return m_mapView.getDynamicCounter();
+		return m_divPanel.getDynamicCounter();
 	}
 
 	public void setTileCoords(TileCoords[] tileCoords) {
@@ -132,9 +127,9 @@ public class TiledImageLayer {
 	
 	
 	public void hideAnimatedTiles(){
-		if ( m_mapView.getMapBrightness() < 1.0 ){
-			if ( areAllLoaded() && !m_mapView.isMapActionSuspended() ){
-				m_tileImageEngine.doHideAnimatedImages();
+		if ( m_divPanel.getMapBrightness() < 1.0 ){
+			if ( areAllLoaded() && !m_divPanel.isMapActionSuspended() ){
+				m_tileImageMgr.doHideAnimatedImages();
 			}	
 		}
 	}
@@ -146,11 +141,11 @@ public class TiledImageLayer {
 
 	public void updateView() {
 		if ( (m_layerSet.isAlwaysDraw() == false && isPriority() == false ) ){
-			m_tileImageEngine.hideUnplacedImages();
+			m_tileImageMgr.hideUnplacedImages();
 			return; 
 		}
 		if (!m_layerSet.isActive()) {
-			m_tileImageEngine.hideUnplacedImages();
+			m_tileImageMgr.hideUnplacedImages();
 			return; // do nothing.
 		}
 		positionImages();
@@ -160,14 +155,14 @@ public class TiledImageLayer {
 		for (int i = 0; i < m_tileCoords.length; i++) {
 			positionOneImage(m_tileCoords[i]);
 		}
-		m_tileImageEngine.hideUnplacedImages();
+		m_tileImageMgr.hideUnplacedImages();
 	}
 
 	private void positionOneImage(TileCoords tileCoords) {
 		if (tileCoords == null) {
 			return;
 		}
-		ImageDiv image = (ImageDiv)m_tileImageEngine.findOrCreateImage(tileCoords);
+		ImageDiv image = (ImageDiv)m_tileImageMgr.findOrCreateImage(tileCoords);
 		setImageZIndex(image, REAL_ZOFFSET + m_layerSet.getZIndex());
 		int x = tileCoords.getOffsetX();
 		int y = tileCoords.getOffsetY();
@@ -196,7 +191,7 @@ public class TiledImageLayer {
 	}
 	
 	public boolean areAllLoaded() {
-		ImageDiv image = (ImageDiv)m_tileImageEngine.firstUnloadedImage();
+		ImageDiv image = (ImageDiv)m_tileImageMgr.firstUnloadedImage();
 		if (image != null) {
 			System.out.println("Waiting for " + image.getUrl());
 		}
@@ -213,7 +208,7 @@ public class TiledImageLayer {
 	}
 
 	public void destroy() {
-		m_tileImageEngine.clear();
+		m_tileImageMgr.clear();
 	}
 
 	public boolean isPriority() {

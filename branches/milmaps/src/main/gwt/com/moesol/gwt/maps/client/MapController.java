@@ -154,6 +154,7 @@ public class MapController implements
 			m_map.setFocus(true);
 			if ( m_movedMap ){
 				m_movedMap = false;
+				m_map.computeGeoCenterAndUpdate();
 				//m_map.updateDivPanel();
 				//m_map.updateView();
 			}
@@ -172,8 +173,8 @@ public class MapController implements
 			return;
 		}
 		m_map.setWorldCenter(newWorldCenter);
-		m_map.updateDivPanel();
-		m_map.updateView();
+		//m_map.updateDivPanel();
+		//m_map.updateView();
 		m_movedMap = true;
 		//TODO KBT need to incorporate Div stuff.
 		//m_map.updateView();

@@ -60,22 +60,22 @@ public interface IProjection {
 	public abstract double getMaxLng();
 
 	/**
-	 * sets the decimal scale of the projection
+	 * sets the decimal equatorial scale of the projection
 	 * @param dScale
 	 */
-	public abstract void setScale(double dScale);
+	public abstract void setEquatorialScale(double dScale);
 
 	/**
-	 * sets the decimal scale of the projection
+	 * gets the decimal equatorial scale of the projection
 	 * @return
 	 */
-	public abstract double getScale();
+	public abstract double getEquatorialScale();
 
 	/**
-	 * returns the previous scale when changed by a zoom or set scale
+	 * returns the previous equatorial scale when changed by a zoom or set scale
 	 * @return
 	 */
-	public abstract double getPrevScale();
+	public abstract double getPrevEquatorialScale();
 
 	/**
 	 * sets the zoom in, out or none flag
@@ -191,7 +191,7 @@ public interface IProjection {
 	 * Returns the original scale that is computed when the projection 
 	 * is initialized with the layer data.
 	 */
-	public abstract double getOrigScale();
+	public abstract double getOrigEquatorialScale();
 	
 	
 	/**

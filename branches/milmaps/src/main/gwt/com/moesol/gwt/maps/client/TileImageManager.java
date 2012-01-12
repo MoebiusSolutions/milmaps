@@ -7,7 +7,7 @@ import java.util.Comparator;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TileImageEngine {
+public class TileImageManager {
 	private static class TileInfo {
 		long m_lastUsedMillis;
 		int m_x;
@@ -33,7 +33,7 @@ public class TileImageEngine {
 	private final ArrayList<TileInfo> m_infoCache = new ArrayList<TileInfo>();
 	private final TileImageEngineListener m_listener;
 	private final TiledImageLayer m_imgLayer;
-	public TileImageEngine( TiledImageLayer imgLayer, TileImageEngineListener l) {
+	public TileImageManager( TiledImageLayer imgLayer, TileImageEngineListener l) {
 		m_listener = l;
 		m_imgLayer = imgLayer;
 	}
@@ -164,6 +164,7 @@ public class TileImageEngine {
 		}
 	}
 	
+
 	private boolean isMatch(TileInfo tileInfo, TileCoords tileCoords) {
 		if (tileInfo.m_level != levelOrZero(tileCoords)) {
 			return false;

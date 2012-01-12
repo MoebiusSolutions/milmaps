@@ -1,11 +1,15 @@
 package com.moesol.gwt.maps.client;
 
 public class DivDimensions {
+	public static final int WIDTH = 1200;
+	public static final int HEIGHT = 800;
+	
 	private int m_width;
 	private int m_height;
 	
 	public DivDimensions() {
-		m_width = m_height = 0;
+		m_width = WIDTH;
+		m_height = HEIGHT;
 	}
 	
 	public DivDimensions(int width, int height) {

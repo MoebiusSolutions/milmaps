@@ -3,7 +3,8 @@ package com.moesol.gwt.maps.client;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class LayerSetWorker {
-	
+	private final double EarthCirMeters  = 2.0*Math.PI*6378137;
+	private final double MeterPerDeg  = EarthCirMeters/360.0;
 	protected IProjection m_proj = null;
 	protected final TileXY m_tile = new TileXY();
 	protected final GeodeticCoords m_gc = new GeodeticCoords();
@@ -140,7 +141,7 @@ public class LayerSetWorker {
     		double tileDegHeight, 
     		GeodeticCoords gc ) 
     {
-
+    	//TODO we might want to change the next two line back at some point.
     	int drawPixWidth  = compTileDrawWidth( ls, level );
     	int drawPixHeight = compTileDrawHeight( ls, level );
     	ls.setDrawPixelWidth(drawPixWidth);
@@ -165,4 +166,37 @@ public class LayerSetWorker {
     	tileCoords.setLevel(level);
     	return tileCoords;
     }
+    
+	// we can make the latitude as an input param if we want to
+	// compute scale at latitudes other than the equator.
+
+	// 1852 meters/ nautical mile so 1 deg = 60*1852 meters = 111,120 meters.
+	// mpp is meters per pixel.
+	// level_n_mpp = (level_0_mpp)/2^n so level_n_scale =
+	// (m_mpp/level_0_mpp)*2^n
+	// We wan to find n so so that level_n_Scale close to given projScale
+	//
+	// Hence n = ( log(projScale) + log(level_0_mpp) - log(m_mpp) )/log(2);
+
+	// dpi is pixels per inch for physical screen
+	public int findLevel( LayerSet layerSet, double dpi, double projScale) {
+		double mpp = 2.54 / (dpi * 100); // meters per pixel for physical screen
+		double m_dx = layerSet.getPixelWidth();
+		double l_mpp = layerSet.getStartLevelTileWidthInDeg()* (MeterPerDeg / m_dx);
+		// compute the best level.
+		if ( projScale == 0.0 ){
+			projScale = (mpp / l_mpp);
+		}
+		double logMess = Math.log(projScale) + Math.log(l_mpp)- Math.log(mpp);
+		double dN = logMess / Math.log(2);
+		return (int)(Math.rint(dN)) + layerSet.getStartLevel();
+	}
+
+	public double findScale( LayerSet layerSet, double dpi, int level ) {
+		double mpp = 2.54 / (dpi * 100);
+		double m_dx = layerSet.getPixelWidth();
+		double l_mpp = layerSet.getStartLevelTileWidthInDeg()* (MeterPerDeg / m_dx);
+		// we want to return ( (mpp*2^n)/(l_mpp) );
+		return ((mpp * Math.pow(2, level)) / l_mpp);
+	}
 }

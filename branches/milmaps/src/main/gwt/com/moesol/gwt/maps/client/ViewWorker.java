@@ -4,13 +4,16 @@ public class ViewWorker {
 	private final ViewDimension m_dims = new ViewDimension(1000, 800);
 	private final ViewCoords m_returnedViewCoords = new ViewCoords();
 	private final WorldCoords m_returnedWc = new WorldCoords();
-	private final WorldCoords m_wc = new WorldCoords();
 	private final GeodeticCoords m_geoCenter = new GeodeticCoords(); // view-port center
 	private final WorldCoords m_vpCenterWc = new WorldCoords(); // viewport center in wc.
 	private int m_offsetInWcX;
 	private int m_offsetInWcY;
+	private IProjection m_proj = null;
 	
-	IProjection m_proj = null;
+	
+	public void setProjection( IProjection p ){
+		m_proj = p;
+	}
 	
 	public IProjection getProjection(){ return m_proj; }
 	
@@ -103,24 +106,6 @@ public class ViewWorker {
 		m_returnedViewCoords.setY(wcYtoVcY(wc.getY()));
 		return m_returnedViewCoords;
 	}
-	/*
-	public ViewCoords wcToVC( WorldCoords wc ) {
-		ViewCoords r = m_returnedViewCoords;
-		int vW2 = m_dims.getWidth()/2;// view width/2
-		int vH2 = m_dims.getHeight()/2;// view height/2
-		//m_wc.copyFrom( m_proj.getViewCenterInWC() );// view center in wc.
-		int vX = wc.getX() - m_vpCenterWc.getX() + vW2;
-		r.setX(vX);
-		// Normally we would have vY = (wc.getY() - m_viewCentInWc.getY() + vH2).
-		// But for the view y axis we want the y values changed to be relative to the 
-		// view's top. So we will subtract vY from the view's top. This will also
-		// flip the direction of the view's y axis
-		int vY = m_dims.getHeight()- wc.getY() + m_vpCenterWc.getY() - vH2;
-		r.setY(vY); // flip y axis
-		
-		return r;
-	}
-	*/
 	
 	public int vcXtoWcX( int vcX ){
 		return (vcX + m_offsetInWcX);

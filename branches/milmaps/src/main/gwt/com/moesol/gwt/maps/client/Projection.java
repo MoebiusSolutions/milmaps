@@ -13,6 +13,16 @@ public class Projection {
 		return type;
 	}
 	
+	public static IProjection createProj( IProjection.T type ){
+		IProjection proj = null;
+		if ( type == IProjection.T.Mercator ){
+			proj = new Mercator();
+		}else if (type == IProjection.T.CylEquiDist ) {
+			proj = new CylEquiDistProj();
+		}
+		return proj;
+	}
+	
 	public static IProjection getProj( LayerSet ls ){
 		IProjection proj = null;
 		if ( ls.isAutoRefreshOnTimer() == true )

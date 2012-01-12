@@ -196,7 +196,7 @@ public class Mercator extends AbstractProjection {
 	 * 		pixels in double value.
 	 */
 	protected double horizontalDist( double lng1, double lng2 ){
-		double dR   = EarthRadius*m_scale;
+		double dR   = EarthRadius*m_eqScale;
 		double x1 = lng2PixX( lng1 );
 		double x2 = lng2PixX( lng2 );
 		return Math.abs(x2 - x1);

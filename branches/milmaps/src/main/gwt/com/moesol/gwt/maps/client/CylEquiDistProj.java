@@ -93,8 +93,8 @@ public class CylEquiDistProj extends AbstractProjection {
 
 	@Override
 	public WorldDimension getWorldDimension() {
-		int wdX = (int) (m_scale * (360 * MeterPerDeg) / m_scrnMpp + 0.5);
-		int wdY = (int) (m_scale * (180 * MeterPerDeg) / m_scrnMpp + 0.5);
+		int wdX = (int) (m_eqScale * (360 * MeterPerDeg) / m_scrnMpp + 0.5);
+		int wdY = (int) (m_eqScale * (180 * MeterPerDeg) / m_scrnMpp + 0.5);
 
 		m_wdSize.setWidth(wdX);
 		m_wdSize.setHeight(wdY);

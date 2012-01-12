@@ -31,7 +31,6 @@ public class LayerSet implements IsSerializable {
 	//private double m_degHeight = 180.0;
 	private double m_startLevelTileWidthInDeg = 180.0;
 	private double m_startLevelTileHeightInDeg = 180.0;
-
 	
 	public double getStartLevelTileWidthInDeg() {
 		return m_startLevelTileWidthInDeg;

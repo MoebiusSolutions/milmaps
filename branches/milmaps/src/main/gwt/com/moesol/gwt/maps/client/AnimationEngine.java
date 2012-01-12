@@ -14,7 +14,7 @@ public class AnimationEngine extends Animation {
 	private double m_ox;
 	private double m_oy;
 	private double m_oldScale;
-	private double m_startScale;
+	private double m_startEqScale;
 	private double m_scaleDiff;
 	private int m_durationInSecs = 750;
 	  
@@ -28,9 +28,9 @@ public class AnimationEngine extends Animation {
 		m_viewPort = m_mapView.getViewport();
 		m_vpWorker = m_viewPort.getVpWorker(); 
 		m_ztWorker.setTagInVC((int)tagX, (int)tagY);
-		m_startScale = m_proj.getScale();
-		m_oldScale = m_startScale;
-		m_scaleDiff = (scaleFactor - 1.0)*m_startScale;
+		m_startEqScale = m_proj.getEquatorialScale();
+		m_oldScale = m_startEqScale;
+		m_scaleDiff = (scaleFactor - 1.0)*m_startEqScale;
 		int oWcX = m_vpWorker.getOffsetInWcX();
 		int oWcY = m_vpWorker.getOffsetInWcY();
 		m_ztWorker.setViewOffsets(oWcX, oWcY);
@@ -52,7 +52,7 @@ public class AnimationEngine extends Animation {
 	
 	@Override
 	protected void onUpdate(double progress) {
-		double nextScale = m_startScale + m_scaleDiff*Math.min(1.0, progress);
+		double nextScale = m_startEqScale + m_scaleDiff*Math.min(1.0, progress);
 		if ( progress != 0.0 )
 			zoom( nextScale );
 	}
@@ -62,7 +62,7 @@ public class AnimationEngine extends Animation {
 	protected void onComplete(){
 		super.onComplete();
 		m_mapView.setSuspendFlag(false);
-		m_mapView.updateDivPanel();
+		//m_mapView.updateDivPanel();
 		m_mapView.doUpdateView();
 	}
 	
@@ -70,7 +70,7 @@ public class AnimationEngine extends Animation {
 	protected void onCancel(){
 		super.onCancel();
 		m_mapView.setSuspendFlag(false);
-		m_mapView.updateDivPanel();
+		//m_mapView.updateDivPanel();
 		m_mapView.doUpdateView();
 	}
 

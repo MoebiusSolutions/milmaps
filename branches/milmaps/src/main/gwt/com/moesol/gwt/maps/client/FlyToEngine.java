@@ -16,7 +16,7 @@ public class FlyToEngine extends Animation{
 	private double m_latVector;
 	private static double EPSILON = 0.00001;
 	private double m_scaleFactor;
-	private double m_projScale;
+	private double m_projEqScale;
 	private int    m_zoomCount = 0;
 	private boolean m_zoomIn = true;
 	private boolean m_panning = true;
@@ -42,7 +42,7 @@ public class FlyToEngine extends Animation{
 		m_endLat = lat;
 		m_endLng = lng;
 		IProjection p = m_mapView.getProjection(); 
-		m_projScale = p.getScale();
+		m_projEqScale = p.getEquatorialScale();
 		m_scaleFactor = scaleFactor;
 		m_zoomIn =  (m_scaleFactor < 1.0 ? false : true );
 		GeodeticCoords gc = m_mapView.getViewport().getVpWorker().getGeoCenter();

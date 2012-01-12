@@ -20,8 +20,8 @@ public abstract class AbstractProjection implements IProjection {
 	protected int m_scrnDpi = 75;   // screen dot per inch
 	protected double m_scrnMpp = 2.54/7500.0; // screen meter per pixel
 	
-	protected double m_scale = 0; // map scale
-	protected double m_prevScale;
+	protected double m_eqScale = 0; // map scale
+	protected double m_prevEqScale;
 	protected double m_wholeWorldScale;
 	
 	protected int m_origMapWidthSize;
@@ -31,7 +31,7 @@ public abstract class AbstractProjection implements IProjection {
 	double m_maxLat = 90.0;
 	double m_maxLng = 180.0;
 	
-	protected double m_origScale = 0;
+	protected double m_origEqScale = 0;
 	//protected int 	 m_orgTilePixSize = 0;
 	//protected double m_origTileDegHeight = 0;
 	
@@ -66,7 +66,7 @@ public abstract class AbstractProjection implements IProjection {
 	
 	// Map size in pixels
 	public double mapSize(){
-		double pixels = (EarthCirMeters*m_scale/m_scrnMpp);
+		double pixels = (EarthCirMeters*m_eqScale/m_scrnMpp);
 		return pixels;
 	}
 	
@@ -79,9 +79,9 @@ public abstract class AbstractProjection implements IProjection {
 		double earth_mpp = degWidth * (MeterPerDeg / tileSize);
 		// meters per pixel for physical screen
 		m_scrnMpp = 2.54 / (m_scrnDpi * 100); 
-		m_scale = (m_scrnMpp / earth_mpp);
-		m_origScale = m_scale;
-		m_prevScale = m_scale;	
+		m_eqScale = (m_scrnMpp / earth_mpp);
+		m_origEqScale = m_eqScale;
+		m_prevEqScale = m_eqScale;	
 		//m_origMapWidthSize = (int)( tileSize*(360/degWidth) + 0.5);
 		computeWorldSize();
 	}
@@ -108,7 +108,7 @@ public abstract class AbstractProjection implements IProjection {
 		m_minLng = p.getMinLng();
 		m_maxLat = p.getMaxLat();
 		m_maxLng = p.getMaxLng();
-		setScale(p.getScale());
+		setEquatorialScale(p.getEquatorialScale());
 	}
 
 	@Override
@@ -117,21 +117,21 @@ public abstract class AbstractProjection implements IProjection {
 	}
 	
 	@Override
-	public double getScale() {
-		return m_scale;
+	public double getEquatorialScale() {
+		return m_eqScale;
 	}
 	
 
 	@Override
-	public void setScale(double dScale) {
-		m_prevScale = m_scale;
-		m_scale = dScale;
+	public void setEquatorialScale(double dScale) {
+		m_prevEqScale = m_eqScale;
+		m_eqScale = dScale;
 		computeWorldSize();
 	}
 
 	@Override
-	public double getPrevScale() {
-		return m_prevScale;
+	public double getPrevEquatorialScale() {
+		return m_prevEqScale;
 	}
 	
 
@@ -150,13 +150,13 @@ public abstract class AbstractProjection implements IProjection {
 		if ( scale <= 0.0 ){
 			throw new IllegalArgumentException("scale Factor less than zero");
 		}
-		m_prevScale = m_scale;
-		m_scale = scale;
-		if ( scale == m_prevScale ){
+		m_prevEqScale = m_eqScale;
+		m_eqScale = scale;
+		if ( scale == m_prevEqScale ){
 			m_zoomFlag = ZoomFlag.NONE;
 		}
 		else{
-			m_zoomFlag = ( scale < m_prevScale ? ZoomFlag.OUT : ZoomFlag.IN );
+			m_zoomFlag = ( scale < m_prevEqScale ? ZoomFlag.OUT : ZoomFlag.IN );
 		}
 		computeWorldSize();
 	}
@@ -167,7 +167,7 @@ public abstract class AbstractProjection implements IProjection {
 		if ( scaleFactor <= 0.0 ){
 			throw new IllegalArgumentException("scale Factor less than zero");
 		}
-		zoom(scaleFactor*m_scale);
+		zoom(scaleFactor*m_eqScale);
 	}
 	
 
@@ -220,7 +220,7 @@ public abstract class AbstractProjection implements IProjection {
     }
     
     @Override
-    public double getOrigScale(){ 
-    	return m_origScale; 
+    public double getOrigEquatorialScale(){ 
+    	return m_origEqScale; 
     }
 }
