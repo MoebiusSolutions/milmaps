@@ -85,7 +85,7 @@ public class IconEngine {
 		}
 	}
 
-	private void positionOneIcon(Icon icon) {
+	public void positionOneIcon(Icon icon) {
 		AbsolutePanel iconPanel = m_mapView.getIconPanel();
 		positionOneIconOn(icon, iconPanel);
 	}
