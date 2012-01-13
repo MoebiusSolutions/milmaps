@@ -3,8 +3,10 @@ package com.moesol.gwt.maps.client;
 import static org.junit.Assert.*;
 import static org.powermock.api.mockito.PowerMockito.*;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.io.File;
@@ -39,7 +41,7 @@ public class DeclutterEngineTest {
 			Icon icon = new Icon();
 			icon.setLocation(Degrees.geodetic(lat, lng));
 			icon.setLabel(label);
-			icon.setIconOffset(ViewCoords.builder().setX(-8).setY(-8).build());
+			icon.setIconOffset(ViewCoords.builder().setX(-16).setY(-16).build());
 			icons.add(icon);
 			return this;
 		}
@@ -77,8 +79,8 @@ public class DeclutterEngineTest {
 		m_viewport.setProjection(m_projection);
 		when(m_labelMock.getOffsetHeight()).thenReturn(16);
 		when(m_labelMock.getOffsetWidth()).thenReturn(48);
-		when(m_imageMock.getOffsetHeight()).thenReturn(16);
-		when(m_imageMock.getOffsetWidth()).thenReturn(16);
+		when(m_imageMock.getOffsetHeight()).thenReturn(32);
+		when(m_imageMock.getOffsetWidth()).thenReturn(32);
 
 		Icon.IMAGE_PROVIDER = new Provider<Image>() {
 			@Override
@@ -220,39 +222,39 @@ public class DeclutterEngineTest {
 		engine.declutter(icons);
 
 		int n = 17;
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(-8, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(-24, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(-40, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(-56, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(-72, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(8, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(24, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(40, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(56, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(-88, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(-104, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(-120, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(-136, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(72, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(88, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(104, icons.get(n++).getDeclutterOffset().getY());
-		assertEquals(-76, icons.get(n).getDeclutterOffset().getX());
+		assertEquals(-92, icons.get(n).getDeclutterOffset().getX());
 		assertEquals(120, icons.get(n++).getDeclutterOffset().getY());
 	}
 
@@ -395,10 +397,30 @@ public class DeclutterEngineTest {
 			graphics.drawRect(p.x, p.y, p.width, p.height);
 		}
 
+		// 1-pixel lines, anti-alias
+		graphics.setStroke(new BasicStroke(1.0f));
+		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		for (int i = 0; i < iconPlacer.images.size(); i++) {
 			Placement pImage = iconPlacer.images.get(i);
 			Placement pLabel = iconPlacer.labels.get(i);
-			graphics.drawLine(pImage.x, pImage.y, pLabel.x, pLabel.y);
+
+			int imageHalfWidth = pImage.width / 2;
+			int imageHalfHeight = pImage.height / 2;
+			int labelHalfHeight = pLabel.height / 2;
+			
+			if (pImage.x < pLabel.x) {
+				// right
+				graphics.drawLine(pImage.x + imageHalfWidth, pImage.y + imageHalfHeight, 
+						pLabel.x - engine.cellWidth, pLabel.y + labelHalfHeight);
+				graphics.drawLine(pLabel.x - engine.cellWidth, pLabel.y + labelHalfHeight, 
+						pLabel.x, pLabel.y + labelHalfHeight);
+			} else {
+				// left
+				graphics.drawLine(pImage.x + imageHalfWidth, pImage.y + imageHalfHeight, 
+						pLabel.x + pLabel.width + engine.cellWidth, pLabel.y + labelHalfHeight);
+				graphics.drawLine(pLabel.x + pLabel.width + engine.cellWidth, pLabel.y + labelHalfHeight, 
+						pLabel.x + pLabel.width, pLabel.y + labelHalfHeight);
+			}
 		}
 
 		ImageIO.write(img, "png", new File(imageTarget, name));
