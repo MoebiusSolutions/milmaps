@@ -126,7 +126,7 @@ public class DeclutterEngine {
 	private void computeIconBounds(Icon icon) {
 		m_iconCenter = computeIconCenterViewCoords(icon);
 		ViewCoords topLeft = m_iconCenter.translate(icon.getIconOffset());
-		ViewCoords bottomRight = m_iconCenter.translate(icon.getIconOffset().scale(-1));
+		ViewCoords bottomRight = topLeft.translate(icon.getImage().getOffsetWidth(), icon.getImage().getOffsetHeight());
 
 		GridCoords centerGC = computeIconCenterGridCoords(m_iconCenter);
 		GridCoords topLeftGC = computeIconCenterGridCoords(topLeft);
