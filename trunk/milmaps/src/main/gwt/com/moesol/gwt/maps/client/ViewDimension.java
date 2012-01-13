@@ -1,5 +1,6 @@
 package com.moesol.gwt.maps.client;
 
+// TODO make me immutable
 public class ViewDimension {
 	private int m_width;
 	private int m_height;
