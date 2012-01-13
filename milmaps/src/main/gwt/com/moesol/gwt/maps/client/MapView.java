@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
@@ -44,6 +45,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private final ViewPort m_viewPort = new ViewPort();
 	private final AnimationEngine m_animateEngine = new AnimationEngine(this);
 	private final FlyToEngine m_flyToEngine = new FlyToEngine(this);
+	private final IconEngine m_iconEngine = new IconEngine(this);
 	private DeclutterEngine m_declutterEngine; // null unless needed
 	private final ChangeListenerCollection m_changeListeners = new ChangeListenerCollection();
 	// private final MapControls mapControls = new MapControls(this);
@@ -223,7 +225,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		// View changed re-declutter
 		if (isDeclutterLabels()) {
 			getDeclutterEngine().declutter(getIconLayer().getIcons());
-			positionIcons();
+			m_iconEngine.positionIcons();
 		}
 	}
 	
@@ -244,7 +246,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_oldIconVersion = getIconLayer().getVersion();
 		
 		getDeclutterEngine().declutter(getIconLayer().getIcons());
-		positionIcons();
+		m_iconEngine.positionIcons();
 	}
 	
 	private void recordCenter() {
@@ -401,26 +403,25 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	// This will change when we add tile coords for each layer set
 
 	private void placeTiles(int level, TiledImageLayer layer) {
-		//LayerSet ls = layer.getLayerSet();
-		Sample.PLACE_TILES.beginSample();
 		TileCoords[] tileCoords = m_viewPort.arrangeTiles(layer, level);
-		Sample.PLACE_TILES.endSample();
 		
 		if (layer.getLayerSet().isAlwaysDraw() || layer.isPriority()) {
 			layer.setTileCoords(tileCoords);
 			layer.setLevel(level);
 			
-			Sample.LAYER_UPDATE_VIEW.beginSample();
 			layer.updateView();
-			Sample.LAYER_UPDATE_VIEW.endSample();
 		}
 	}
 
 	private void computeLevelsAndTileCoords() {
 		int dpi = m_projection.getScrnDpi();
 		double projScale = m_projection.getScale();
-		for (TiledImageLayer layer : getActiveLayers()) {
+		for (TiledImageLayer layer : m_tiledImageLayers) {
 			LayerSet ls = layer.getLayerSet();
+			if (!ls.isActive()) {
+				layer.updateView(); // Force hiding inactive layers, but skip placing their tiles.
+				continue;
+			}
 			if (ls.isAlwaysDraw() || layer.isPriority()) {
 				int level = layer.findLevel(dpi, projScale);
 				placeTiles(level, layer);
@@ -534,7 +535,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		
 		computeLevelsAndTileCoords();
 
-		positionIcons();
+		m_iconEngine.positionIcons();
+		
 		Sample.MAP_UPDATE_VIEW.endSample();
 		
 		m_changeListeners.fireChange(this); // TODO remove this and all uses of ChangeListener use event below instead which only happens after map idle for a while...
@@ -556,73 +558,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 			}
 		}
 		return false;
-	}
-
-	// RFH: drawIcons is basically the same as positionIcons with extra scale, offsetX, offsetY
-	// If animation just called doUpdateView then drawIcons could be removed.
-	public void drawIcons(double scale, double offsetX, double offsetY) {
-		ZoomFlag flag = m_projection.getZoomFlag();
-		double val = (flag == ZoomFlag.IN ? m_projection.getPrevScale() : m_projection.getScale());
-		m_tempProj.setScale(val);
-
-		List<Icon> icons = getIconLayer().getIcons();
-		for (Icon icon : icons) {
-			drawIcon(icon, scale, offsetX, offsetY);
-		}
-	}
-	
-	private void positionIcons() {
-		List<Icon> icons = getIconLayer().getIcons();
-		for (Icon icon : icons) {
-			positionOneIcon(icon);
-		}
-	}
-
-	// RFH: drawIcon is basically the same as positionOneIcon with extra scale, offsetX, offsetY
-	// If animation just called doUpdateView then drawIcon could be removed.
-	private void drawIcon(Icon icon, double scale, double offsetX, double offsetY) {
-		WorldCoords w = m_tempProj.geodeticToWorld(icon.getLocation());
-		ViewCoords vc = m_viewPort.worldToView(w, false);
-		Image image = icon.getImage();
-		int x = (int) (scale * vc.getX() - offsetX) + icon.getIconOffset().getX();
-		int y = (int) (scale * vc.getY() - offsetY) + icon.getIconOffset().getY();
-		//m_iconsOverTilesPanel.setWidgetPosition(image, x, y);
-		m_tileLayersPanel.setWidgetPosition(image, x, y);
-		Label label = icon.getLabel();
-		if (label != null) {
-			x -= icon.getIconOffset().getX();
-			y -= icon.getIconOffset().getY();
-			x += icon.getDeclutterOffset().getX();
-			y += icon.getDeclutterOffset().getY();
-			m_tileLayersPanel.setWidgetPosition(label, x+18, y);
-		}
-	}
-
-	private void positionOneIcon(Icon icon) {
-		WorldCoords v = m_projection.geodeticToWorld(icon.getLocation());
-		ViewCoords portCoords = m_viewPort.worldToView(v, true);
-		Image image = icon.getImage();
-		int x = portCoords.getX() + icon.getIconOffset().getX();
-		int y = portCoords.getY() + icon.getIconOffset().getY();
-		if (image.getParent() == null) {
-			//m_iconsOverTilesPanel.add(image, x, y);
-			m_tileLayersPanel.add(image, x, y);
-		} else {
-			//m_iconsOverTilesPanel.setWidgetPosition(image, x, y);
-			m_tileLayersPanel.setWidgetPosition(image, x, y);
-		}
-		Label label = icon.getLabel();
-		if (label != null) {
-			x -= icon.getIconOffset().getX();
-			y -= icon.getIconOffset().getY();
-			x += icon.getDeclutterOffset().getX();
-			y += icon.getDeclutterOffset().getY();
-			if (label.getParent() == null) {
-				m_tileLayersPanel.add(label, x, y);
-			} else {
-				m_tileLayersPanel.setWidgetPosition(label, x, y);
-			}
-		}
 	}
 
 	@Override
@@ -687,6 +622,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 * @return
 	 */
 	public boolean moveMapByPixels(int dx, int dy) {
+		m_flyToEngine.getAnimation().cancel();
+		// TODO replace suspend flag with cancel animation.
 		if (m_bSuspendMapAction == false) {
 			ViewDimension v = m_projection.getViewSize();
 			ViewCoords vc = new ViewCoords(v.getWidth() / 2 + dx, v.getHeight() / 2 + dy);
@@ -726,6 +663,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 			m_projection.tagPositionToPixel(m_gc, vc);
 			setCenter(m_projection.getViewGeoCenter());
 			m_animateEngine.setTiledImageLayers(getActiveLayers());
+			m_flyToEngine.getAnimation().cancel();
 			m_animateEngine.animateZoomMap(x, y, scaleFactor);
 		}
 		return (m_bSuspendMapAction == false);
@@ -863,4 +801,19 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public FocusPanel getFocusPanel() {
 		return m_focusPanel;
 	}
+	
+	@Override
+	public AbsolutePanel getIconPanel() {
+		return m_tileLayersPanel;
+	}
+	
+	@Override
+	public IProjection getTempProjection() {
+		return m_tempProj;
+	}
+	
+	void drawIcons(double scale, double offsetX, double offsetY) {
+		m_iconEngine.drawIcons(scale, offsetX, offsetY);
+	}
+	
 }

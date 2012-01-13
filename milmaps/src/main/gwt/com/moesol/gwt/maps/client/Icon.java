@@ -117,17 +117,6 @@ public class Icon {
 		m_clickUrl = clickUrl;
 	}
 	
-	public void setImagePixSize(int x, int y ){
-		m_image.setPixelSize(x, y);
-	}
-	
-	public int getImagePixWidth(){
-		return m_image.getWidth();
-	}
-
-	public int getImagePixHeight(){
-		return m_image.getHeight();
-	}
 	public GeodeticCoords getLocation() {
 		return m_location;
 	}

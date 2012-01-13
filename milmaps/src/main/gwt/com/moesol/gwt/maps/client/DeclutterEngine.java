@@ -6,6 +6,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.Label;
 import com.moesol.gwt.maps.client.json.DeclutterCellSizeJson;
 import com.moesol.gwt.maps.client.json.DeclutterSearchOffsetJson;
+import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.util.BitSet;
 
 /**
@@ -86,6 +87,8 @@ public class DeclutterEngine {
 	}
 
 	public void declutter(List<Icon> icons) {
+		Sample.DECLUTTER_LABELS.beginSample();
+		
 		makeBitSet();
 		
 		for (Icon i : icons) {
@@ -94,6 +97,7 @@ public class DeclutterEngine {
 		for (Icon i : icons) {
 			positionOne(i);
 		}
+		Sample.DECLUTTER_LABELS.endSample();
 	}
 
 	/**
@@ -167,11 +171,11 @@ public class DeclutterEngine {
 				startCol = m_iconStartCol + colOffset - nLabelCols;
 				colOffset -= nLabelCols;
 			} else {
-				startCol = m_iconEndCol + colOffset;
+				startCol = m_iconEndCol + colOffset + 1;
 			}
 			
 			if (searchOneSlot(startRow, startCol, nLabelRows, nLabelCols)) {
-				moveDeclutterOffset(icon, rowOffset, colOffset);
+				moveDeclutterOffset(icon, startRow, startCol);
 				return;
 			}
 		}
@@ -185,19 +189,13 @@ public class DeclutterEngine {
 		return new ViewCoords(vc.getX(), vc.getY());
 	}
 	
-	private void moveDeclutterOffset(Icon icon, int rowOffset, int colOffset) {
-		int cellY = m_iconCenter.getY() % cellHeight;
-		int cellX = m_iconCenter.getX() % cellWidth;
+	private void moveDeclutterOffset(Icon icon, int startRow, int startCol) {
+		int targetY = startRow * cellHeight;
+		int targetX = startCol * cellWidth;
 		
-		int offsetY = rowOffset * cellHeight - cellY;
-		int offsetX = colOffset * cellWidth;
-		if (colOffset < 0) { // left
-			offsetX += icon.getIconOffset().getX();
-			offsetX -= cellX;
-		} else {
-			offsetX -= icon.getIconOffset().getX();
-			offsetX += cellWidth - cellX;
-		}
+		int offsetY = targetY - m_iconCenter.getY();
+		int offsetX = targetX - m_iconCenter.getX();
+
 		icon.setDeclutterOffset(new ViewCoords(offsetX, offsetY));
 	}
 
@@ -219,7 +217,7 @@ public class DeclutterEngine {
 		
 		for (int r = startRow; r < endRows; r++) {
 			for (int c = startCol; c < endCols; c++) {
-				if (m_bitSet.get(r * m_nColsInView + c)) {
+				if (isCellUsed(r, c)) {
 					// Collision
 					return false;
 				}
@@ -233,6 +231,10 @@ public class DeclutterEngine {
 			}
 		}
 		return true;
+	}
+
+	public boolean isCellUsed(int row, int column) {
+		return m_bitSet.get(row * m_nColsInView + column);
 	}
 
 	private GridCoords computeIconCenterGridCoords(ViewCoords vc) {
