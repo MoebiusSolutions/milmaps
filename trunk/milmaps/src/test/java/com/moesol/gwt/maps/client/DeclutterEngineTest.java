@@ -303,6 +303,31 @@ public class DeclutterEngineTest {
 	}
 
 	@Test
+	public void testRenderHorizontalWithInterleavedSearchIcons() throws IOException {
+		int[] INTERLEAVED_ROW_OFFSETS = {
+				// right
+				0, -1, 1, -2, 2, -3, 3, 
+				-4, 4, -5, 5, -6, 6, -7, 7, -8, 8,
+				
+				// left
+				0, -1, 1, -2, 2, -3, 3, 
+				-4, 4, -5, 5, -6, 6, -7, 7, -8, 8, };
+		engine.searchRowOffsets = INTERLEAVED_ROW_OFFSETS;
+
+		m_viewport.setSize(512, 512);
+
+		IconListBuilder builder = builder();
+		builder.add(0, 0, "label");
+		builder.add(0, 10, "label");
+		builder.add(0, 20, "label");
+		builder.add(0, 30, "label");
+		List<Icon> icons = builder.build();
+		engine.declutter(icons);
+
+		renderToPng(icons, "horizontal-interleaved.png");
+	}
+	
+	@Test
 	public void testRenderHorizontal4x8Icons() throws IOException {
 		m_viewport.setSize(512, 512);
 		engine.cellWidth = 4;
