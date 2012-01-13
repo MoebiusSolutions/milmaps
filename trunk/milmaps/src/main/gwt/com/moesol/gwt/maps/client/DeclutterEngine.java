@@ -3,11 +3,12 @@ package com.moesol.gwt.maps.client;
 import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.moesol.gwt.maps.client.json.DeclutterCellSizeJson;
 import com.moesol.gwt.maps.client.json.DeclutterSearchOffsetJson;
 import com.moesol.gwt.maps.client.stats.Sample;
-import com.moesol.gwt.maps.client.util.BitSet;
+import com.moesol.gwt.maps.client.util.BitSet2;
 
 /**
  * Declutter using O(n) grid layout.
@@ -32,7 +33,8 @@ public class DeclutterEngine {
 	int cellHeight = 8; // px
 	
 	private final IMapView m_mapView;
-	private BitSet m_bitSet;
+	//private BitSet m_bitSet;
+	private BitSet2 m_bitSet;
 	int m_nRowsInView;
 	int m_nColsInView;
 	private int m_iconCenterRow;
@@ -41,6 +43,21 @@ public class DeclutterEngine {
 	private int m_iconStartCol;
 	private int m_iconEndCol;
 	private ViewCoords m_iconCenter;
+	
+	// TODO This group for incremental declutter refactor to IncrementalDeclutter class...
+	private static final long INCREMENT_SLICE_MILLS = 100;
+	private List<Icon> iconList;
+	private int markingIconIndex = -1;
+	private int searchLabelIndex = 0;
+	private int positionIconIndex = 0;
+	private IconEngine iconEngine;
+	private long incrementStart;
+	private final Timer m_timer = new Timer() {
+		@Override
+		public void run() {
+			runIncrement();
+		}
+	};
 	
 	static class GridCoords {
 		final int row;
@@ -86,6 +103,10 @@ public class DeclutterEngine {
 		cellHeight = cellSize.getHeight();
 	}
 
+	/**
+	 * Support unit test, should match logic in incrementalDeclutter sans icon engine calls.
+	 * @param icons
+	 */
 	public void declutter(List<Icon> icons) {
 		Sample.DECLUTTER_LABELS.beginSample();
 		
@@ -95,9 +116,64 @@ public class DeclutterEngine {
 			markOneIcon(i);
 		}
 		for (Icon i : icons) {
-			positionOne(i);
+			searchOneLabel(i);
 		}
+		
 		Sample.DECLUTTER_LABELS.endSample();
+	}
+
+	/**
+	 * Declutter icons but use a timer to continue work if we take more than 100 ms.
+	 * 
+	 * @param icons
+	 * @param iconEngine
+	 */
+	public void incrementalDeclutter(List<Icon> icons, IconEngine iconEngine) {
+		m_timer.cancel();
+		markingIconIndex = -1;
+		searchLabelIndex = 0;
+		positionIconIndex = 0;
+		iconList = icons;
+		this.iconEngine = iconEngine;
+		runIncrement();
+	}
+	
+	protected void runIncrement() {
+		Sample.INCREMENTAL_DECLUTTER.beginSample();
+		try {
+			incrementStart = System.currentTimeMillis();
+			
+			if (markingIconIndex < 0) {
+				makeBitSet();
+				markingIconIndex = 0;
+			}
+			while (markingIconIndex < iconList.size() && haveMoreTime()) {
+				markOneIcon(iconList.get(markingIconIndex));
+				markingIconIndex++;
+			}
+			while (searchLabelIndex < iconList.size() && haveMoreTime()) {
+				searchOneLabel(iconList.get(searchLabelIndex));
+				searchLabelIndex++;
+			}
+			while (positionIconIndex < iconList.size() && haveMoreTime()) {
+				iconEngine.positionOneIcon(iconList.get(positionIconIndex));
+				positionIconIndex++;
+			}
+			if (!haveMoreTime()) {
+				m_timer.schedule(10); // Come back in 10 ms...
+			}
+			
+		} finally {
+			Sample.INCREMENTAL_DECLUTTER.endSample();
+		}
+	}
+
+	private boolean haveMoreTime() {
+		long now = System.currentTimeMillis();
+		if (now - incrementStart < INCREMENT_SLICE_MILLS) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -144,11 +220,11 @@ public class DeclutterEngine {
 		m_nRowsInView = roundUp(viewport.getHeight(), cellHeight);
 		m_nColsInView = roundUp(viewport.getWidth(), cellWidth);
 		int numBits = m_nRowsInView * m_nColsInView;
-		m_bitSet = new BitSet(numBits);
+		m_bitSet = new BitSet2(numBits);
 		return numBits;
 	}
 	
-	private void positionOne(Icon icon) {
+	private void searchOneLabel(Icon icon) {
 		Label label = icon.getLabel();
 		if (label == null) {
 			return;

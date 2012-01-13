@@ -2,7 +2,6 @@ package com.moesol.gwt.maps.client;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
@@ -21,12 +20,8 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.moesol.gwt.maps.client.IProjection.ZoomFlag;
-import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
@@ -224,8 +219,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 
 		// View changed re-declutter
 		if (isDeclutterLabels()) {
-			getDeclutterEngine().declutter(getIconLayer().getIcons());
-			m_iconEngine.positionIcons();
+			getDeclutterEngine().incrementalDeclutter(getIconLayer().getIcons(), m_iconEngine);
 		}
 	}
 	
@@ -245,8 +239,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		}
 		m_oldIconVersion = getIconLayer().getVersion();
 		
-		getDeclutterEngine().declutter(getIconLayer().getIcons());
-		m_iconEngine.positionIcons();
+		getDeclutterEngine().incrementalDeclutter(getIconLayer().getIcons(), m_iconEngine);
 	}
 	
 	private void recordCenter() {
