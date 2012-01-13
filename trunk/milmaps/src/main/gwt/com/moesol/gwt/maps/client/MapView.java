@@ -380,6 +380,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 * Match the view to the model data.
 	 */
 	public void updateView() {
+		if (m_declutterEngine != null) {
+			m_declutterEngine.cancelIncrementalDeclutter();
+		}
+		
 		if (m_updateTimer != null) {
 			return;
 		}
