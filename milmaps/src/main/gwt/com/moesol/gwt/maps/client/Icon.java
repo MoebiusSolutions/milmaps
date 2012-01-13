@@ -1,9 +1,12 @@
 package com.moesol.gwt.maps.client;
 
+import com.google.gwt.event.dom.client.ErrorEvent;
+import com.google.gwt.event.dom.client.ErrorHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.LoadListener;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Provider;
 
 public class Icon {
@@ -47,17 +50,20 @@ public class Icon {
 	private Label m_label = null;
 	private Image m_image = IMAGE_PROVIDER.get();
 	private int m_zIndex = 2010;
-	private final LoadListener m_loadListener = new LoadListener() {
+	private HandlerRegistration loadRegistration;
+	private HandlerRegistration errorRegistration;
+	private final LoadHandler m_loadHandler = new LoadHandler() {
 		@Override
-		public void onError(Widget w) {
-			Image image = (Image) w;
-			image.removeLoadListener(this);
-			image.setUrl(MISSING_IMAGE_URL);
+		public void onLoad(LoadEvent event) {
+			loadRegistration.removeHandler();
 		}
+	};
+	private final ErrorHandler m_errorHandler = new ErrorHandler() {
 		@Override
-		public void onLoad(Widget w) {
-			Image image = (Image) w;
-			image.removeLoadListener(this);
+		public void onError(ErrorEvent event) {
+			Image image = (Image) event.getSource();
+			errorRegistration.removeHandler();
+			image.setUrl(MISSING_IMAGE_URL);
 		}
 	};
 
@@ -105,7 +111,8 @@ public class Icon {
 
 	public void setIconUrl(String iconUrl) {
 		m_iconUrl = iconUrl;
-		m_image.addLoadListener(m_loadListener);
+		loadRegistration = m_image.addLoadHandler(m_loadHandler);
+		errorRegistration = m_image.addErrorHandler(m_errorHandler);
 		m_image.setUrl(iconUrl);
 	}
 
