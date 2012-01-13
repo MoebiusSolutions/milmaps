@@ -64,17 +64,13 @@ public class TiledImageLayer {
 		@Override
 		public void useImage(TileCoords tileCoords, Object object) {
 			Image image = (Image)object;
-			if (getLayerSet().isAutoRefreshOnTimer()) {
-				image.setUrl(tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter()));
-			}
+			// Better performance in IE7 to skip for non-auto update, but always setting fixes some IE7 issues.
+			image.setUrl(tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter()));
 		}
 
 		@Override
 		public void hideImage(Object object) {
 			Image image = (Image)object;
-//			if (image.getAbsoluteLeft() == -513) {
-//				return; // Already hidden
-//			}
 			image.setPixelSize(512, 512);
 			m_absolutePanel.setWidgetPosition(image, -513, -513);
 		}
@@ -140,18 +136,23 @@ public class TiledImageLayer {
 	}
 
 	public void updateView() {
-		if ( (m_layerSet.isAlwaysDraw() == false && isPriority() == false ) ){
-			m_tileImageEngine.hideUnplacedImages();
-			return; 
+		Sample.LAYER_UPDATE_VIEW.beginSample();
+		try {
+			if ( (m_layerSet.isAlwaysDraw() == false && isPriority() == false ) ){
+				m_tileImageEngine.hideUnplacedImages();
+				return; 
+			}
+			if (!m_layerSet.isActive()) {
+				m_tileImageEngine.hideUnplacedImages();
+				return; // do nothing.
+			}
+			
+			Sample.LAYER_POSITION_IMAGES.beginSample();
+			positionImages();
+			Sample.LAYER_POSITION_IMAGES.endSample();
+		} finally {
+			Sample.LAYER_UPDATE_VIEW.endSample();
 		}
-		if (!m_layerSet.isActive()) {
-			m_tileImageEngine.hideUnplacedImages();
-			return; // do nothing.
-		}
-		
-		Sample.LAYER_POSITION_IMAGES.beginSample();
-		positionImages();
-		Sample.LAYER_POSITION_IMAGES.endSample();
 	}
 
 	private void positionImages() {
