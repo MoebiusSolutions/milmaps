@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.stats.Stats;
 
 
@@ -125,10 +126,15 @@ public class ViewPort {
 	 * 
 	 */
 	public TileCoords[] arrangeTiles( TiledImageLayer layer, int level ) {
-		LayerSet ls = layer.getLayerSet();
-		int dpi = m_projection.getScrnDpi();
-		double lsScale = layer.findScale(dpi, level);
-		return arrangeTiles( ls, lsScale, level );
+		Sample.ARRANGE_TILES.beginSample();
+		try {
+			LayerSet ls = layer.getLayerSet();
+			int dpi = m_projection.getScrnDpi();
+			double lsScale = layer.findScale(dpi, level);
+			return arrangeTiles( ls, lsScale, level );
+		} finally {
+			Sample.ARRANGE_TILES.endSample();
+		}
 	}
     
     
