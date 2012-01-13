@@ -2,6 +2,7 @@ package com.moesol.gwt.maps.shared;
 
 public class BoundingBox {
 	
+	// TODO make this class immutable
 	private double m_topLat;
 	private double m_leftLon;
 	private double m_botLat;
