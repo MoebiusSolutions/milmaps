@@ -5,7 +5,7 @@ import com.moesol.gwt.maps.client.timing.interpolators.SplineInterpolator;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
 
-public class FlyToEngine extends Animation {
+public class FlyToEngine {
 	static final double ZOOM_OUT_TARGET_SCALE = MapScale.parse("1:100M").asDouble();
 	static final SplineInterpolator EASE_IN_OUT = new SplineInterpolator(1.0, 0, 0.0, 1.0);
 	static double ZOOM_OUT_UNTIL = 0.30;
@@ -20,9 +20,28 @@ public class FlyToEngine extends Animation {
 	private double m_deltaLat;
 	private double m_deltaLng;
 	private double m_deltaInScale;
+	private Animation m_animationAdaptor;
 	
 	public FlyToEngine(IMapView mv) {
 		m_mapView = mv;
+	}
+	
+	private class AnimationAdaptor extends Animation {
+
+		@Override
+		protected void onUpdate(double progress) {
+			FlyToEngine.this.onUpdate(progress);
+		}
+		
+	}
+	
+	public Animation getAnimation() {
+		// Instead of extending Animation we use an adaptor and lazy initialization
+		// so that we can create FlyToEngine in unit test.
+		if (m_animationAdaptor == null) {
+			m_animationAdaptor = new AnimationAdaptor();
+		}
+		return m_animationAdaptor;
 	}
 	
 	void initEngine(double endLat, double endLng, double projectionScale) {
@@ -52,7 +71,6 @@ public class FlyToEngine extends Animation {
 	 * 
 	 * We pan the entire time. We zoom in for the first half and zoom in for the second half.
 	 */
-	@Override
 	protected void onUpdate(double progress) {
 		if (progress <= PAN_UNTIL) {
 			double panProgress = progress / PAN_UNTIL;
@@ -109,29 +127,7 @@ public class FlyToEngine extends Animation {
 	public void flyTo(double endLat, double endLng, double projectionScale) {
 		initEngine(endLat, endLng, projectionScale);
 		
-	    run(m_durationInMilliSecs);
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		m_mapView.setSuspendFlag(true);
-	}
-	@Override
-	protected void onComplete() {
-		try {
-			super.onComplete();
-		} finally {
-			m_mapView.setSuspendFlag(false);
-		}
-	}
-	@Override
-	protected void onCancel() {
-		try {
-			super.onCancel();
-		} finally {
-			m_mapView.setSuspendFlag(false);
-		}
+		getAnimation().run(m_durationInMilliSecs);
 	}
 
 	public int getDurationInSecs() {
