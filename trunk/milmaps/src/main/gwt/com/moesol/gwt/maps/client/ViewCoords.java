@@ -51,6 +51,15 @@ public class ViewCoords {
 	public ViewCoords translate(ViewCoords offset) {
 		return new ViewCoords(m_x + offset.m_x, m_y + offset.m_y);
 	}
+	/**
+	 * @param offsetX
+	 * @param offsetY
+	 * @return new view coords with x translated by offsetX and y by offsetY.
+	 */
+	public ViewCoords translate(int offsetX, int offsetY) {
+		return new ViewCoords(m_x + offsetX, m_y + offsetY);
+	}
+
 	
 	public ViewCoords scale(int s) {
 		return new ViewCoords(s * m_x, s * m_y);
