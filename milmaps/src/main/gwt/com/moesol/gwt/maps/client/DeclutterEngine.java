@@ -305,6 +305,10 @@ public class DeclutterEngine {
 		}
 		
 		// OK we found a slot mark it used.
+		// Pad the column on the right to make a gap between two labels on the same row.
+		if (endCols + 1 < m_nColsInView) {
+			endCols++;
+		}
 		for (int r = startRow; r < endRows; r++) {
 			for (int c = startCol; c < endCols; c++) {
 				m_bitSet.set(r * m_nColsInView + c);
