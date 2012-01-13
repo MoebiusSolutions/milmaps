@@ -1,5 +1,6 @@
 package com.moesol.gwt.maps.client;
 
+// TODO RFH: I think this is the same as ViewCoords?
 public class PixelXY {
 	public int m_x;
 	public int m_y;
