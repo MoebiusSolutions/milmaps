@@ -45,7 +45,7 @@ public class DeclutterEngine {
 	private ViewCoords m_iconCenter;
 	
 	// TODO This group for incremental declutter refactor to IncrementalDeclutter class...
-	private static final long INCREMENT_SLICE_MILLS = 100;
+	private static final long INCREMENT_SLICE_MILLS = 40; // 25 breaks a second
 	private List<Icon> iconList;
 	private int markingIconIndex = -1;
 	private int searchLabelIndex = 0;
@@ -121,6 +121,10 @@ public class DeclutterEngine {
 		
 		Sample.DECLUTTER_LABELS.endSample();
 	}
+	
+	public void cancelIncrementalDeclutter() {
+		m_timer.cancel();
+	}
 
 	/**
 	 * Declutter icons but use a timer to continue work if we take more than 100 ms.
@@ -129,7 +133,7 @@ public class DeclutterEngine {
 	 * @param iconEngine
 	 */
 	public void incrementalDeclutter(List<Icon> icons, IconEngine iconEngine) {
-		m_timer.cancel();
+		cancelIncrementalDeclutter();
 		markingIconIndex = -1;
 		searchLabelIndex = 0;
 		positionIconIndex = 0;
@@ -160,7 +164,7 @@ public class DeclutterEngine {
 				positionIconIndex++;
 			}
 			if (!haveMoreTime()) {
-				m_timer.schedule(10); // Come back in 10 ms...
+				m_timer.schedule(5); // Come back in 5 ms...
 			}
 			
 		} finally {
