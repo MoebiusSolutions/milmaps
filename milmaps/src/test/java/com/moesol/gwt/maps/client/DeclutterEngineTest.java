@@ -28,8 +28,8 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Provider;
-import com.moesol.gwt.maps.client.RecordingIconPlacer.Placement;
 import com.moesol.gwt.maps.client.units.Degrees;
+import com.moesol.maps.tools.Placement;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ GWT.class, DOM.class })
