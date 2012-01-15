@@ -13,6 +13,7 @@ import com.moesol.gwt.maps.client.util.BitSet2;
 /**
  * Declutter using O(n) grid layout.
  * 
+ * @author <a href="http://www.moesol.com">Moebius Solutions, Inc.</a>
  * @author hastings
  */
 public class DeclutterEngine {
@@ -21,16 +22,24 @@ public class DeclutterEngine {
 	 * The size of SEARCH_ROW_OFFSETS and SEARCH_COL_OFFSETS should be the same.
 	 * This search pattern tries to put all the labels on the right vertically, then tries the same on the left.
 	 */
-	int[] searchRowOffsets = {
-		0, -1, -2, -3, -4, 1, 2, 3, 4, -5, -6, -7, -8, 5, 6, 7, 8,
-		0, -1, -2, -3, -4, 1, 2, 3, 4, -5, -6, -7, -8, 5, 6, 7, 8,
+	public int[] searchRowOffsets = {
+		0, 
+		-1, -2, -3, -4, 
+		1, 2, 3, 4, 
+		-5, -6, -7, -8, 
+		5, 6, 7, 8,
+		0, 
+		-1, -2, -3, -4, 
+		1, 2, 3, 4, 
+		-5, -6, -7, -8, 
+		5, 6, 7, 8,
 	};
-	int[] searchColOffsets = {
+	public int[] searchColOffsets = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	};
-	int cellWidth = 4; // px
-	int cellHeight = 8; // px
+	public int cellWidth = 4; // px
+	public int cellHeight = 8; // px
 	
 	private final IMapView m_mapView;
 	//private BitSet m_bitSet;
@@ -45,19 +54,15 @@ public class DeclutterEngine {
 	private ViewCoords m_iconCenter;
 	
 	// TODO This group for incremental declutter refactor to IncrementalDeclutter class...
-	private static final long INCREMENT_SLICE_MILLS = 40; // 25 breaks a second
+	private static final long INCREMENT_SLICE_MILLS = 40; // ~25 breaks a second
+	private static final int YIELD_SLICE_MILLS = 10;
 	private List<Icon> iconList;
 	private int markingIconIndex = -1;
 	private int searchLabelIndex = 0;
 	private int positionIconIndex = 0;
 	private IconEngine iconEngine;
 	private long incrementStart;
-	private final Timer m_timer = new Timer() {
-		@Override
-		public void run() {
-			runIncrement();
-		}
-	};
+	private Timer m_timer = null;
 	
 	static class GridCoords {
 		final int row;
@@ -122,8 +127,21 @@ public class DeclutterEngine {
 		Sample.DECLUTTER_LABELS.endSample();
 	}
 	
+	private Timer getTimer() {
+		if (m_timer == null) {
+			m_timer = new Timer() {
+				@Override
+				public void run() {
+					runIncrement();
+				}
+			};
+		}
+	
+		return m_timer;
+	}
+	
 	public void cancelIncrementalDeclutter() {
-		m_timer.cancel();
+		getTimer().cancel();
 	}
 
 	/**
@@ -164,7 +182,7 @@ public class DeclutterEngine {
 				positionIconIndex++;
 			}
 			if (!haveMoreTime()) {
-				m_timer.schedule(5); // Come back in 5 ms...
+				getTimer().schedule(YIELD_SLICE_MILLS); // Come back in 5 ms...
 			}
 			
 		} finally {
@@ -337,4 +355,5 @@ public class DeclutterEngine {
 	static int roundUp(int total, int dividend) {
 		return (total + (dividend - 1)) / dividend;
 	}
+
 }
