@@ -4,10 +4,12 @@ import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.moesol.gwt.maps.client.json.DeclutterCellSizeJson;
 import com.moesol.gwt.maps.client.json.DeclutterSearchOffsetJson;
 import com.moesol.gwt.maps.client.stats.Sample;
+import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.util.BitSet2;
 
 /**
@@ -17,6 +19,9 @@ import com.moesol.gwt.maps.client.util.BitSet2;
  * @author hastings
  */
 public class DeclutterEngine {
+	public static final int LEADER_IMAGE_WIDTH = 44; // See LabelLeaderGenerator
+	public static final int LEADER_IMAGE_HEIGHT = 144;
+	
 	/*
 	 * The declutter search uses offsets from SEARCH_ROW_OFFSETS and SEARCH_COL_OFFSETS.
 	 * The size of SEARCH_ROW_OFFSETS and SEARCH_COL_OFFSETS should be the same.
@@ -42,6 +47,7 @@ public class DeclutterEngine {
 	public int cellHeight = 8; // px
 	
 	private final IMapView m_mapView;
+	
 	//private BitSet m_bitSet;
 	private BitSet2 m_bitSet;
 	int m_nRowsInView;
@@ -274,11 +280,53 @@ public class DeclutterEngine {
 			
 			if (searchOneSlot(startRow, startCol, nLabelRows, nLabelCols)) {
 				moveDeclutterOffset(icon, startRow, startCol);
+				configureLabelLeader(icon, i);
 				return;
 			}
 		}
 		// No cell found, move offscreen.
 		moveDeclutterOffset(icon, m_nRowsInView + 1, m_nColsInView + 1);
+		hideLabelLeader(icon);
+	}
+
+	private void hideLabelLeader(Icon icon) {
+		if (icon.getLabelLeaderImage() == null) {
+			return;
+		}
+//		Image img = icon.getLabelLeaderImage();
+//		m_pool.put(img);
+//		icon.setLabelLeaderImage(null);
+		
+		Image img = icon.getLabelLeaderImage();
+		img.removeFromParent();
+		Stats.decrementLabelLeaderImageOutstanding();
+		icon.setLabelLeaderImage(null);
+	}
+
+	private void configureLabelLeader(Icon icon, int i) {
+		String url = icon.getLabelLeaderImageUrl();
+		if (url == null) {
+			return;
+		}
+		Image img = icon.getLabelLeaderImage();
+		if (img != null) {
+			img.removeFromParent();
+			Stats.decrementLabelLeaderImageOutstanding();
+		}
+		img = new Image(url, i * LEADER_IMAGE_WIDTH, 0, LEADER_IMAGE_WIDTH, LEADER_IMAGE_HEIGHT);
+		Stats.incrementLabelLeaderImageOutstanding();
+		img.getElement().getStyle().setZIndex(icon.getZIndex());
+		icon.setLabelLeaderImage(img);
+		
+//		Image img = icon.getLabelLeaderImage();
+//		if (img != null) {
+//			img.setVisibleRect(i * LEADER_IMAGE_WIDTH, 0, LEADER_IMAGE_WIDTH, LEADER_IMAGE_HEIGHT);
+//			return;
+//		}
+//		img = m_pool.get();
+//		img.setUrlAndVisibleRect(url, i * LEADER_IMAGE_WIDTH, 0, LEADER_IMAGE_WIDTH, LEADER_IMAGE_HEIGHT);
+//		img.getElement().getStyle().setZIndex(icon.getZIndex());
+//		icon.setLabelLeaderImage(img);
 	}
 
 	ViewCoords computeIconCenterViewCoords(Icon icon) {

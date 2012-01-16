@@ -49,11 +49,14 @@ public class LabelLeaderGenerator {
 			}
 		}
 
+		int paddingWidth = 4;
 		int symbolColWidth = (32 + (engine.cellWidth - 1)) / engine.cellWidth;
 		int rowHeight = maxRowOffset - minRowOffset + 2;
 		int colWidth = maxColOffset - minColOffset + symbolColWidth;
-		int oneImageWidth = colWidth * engine.cellWidth;
+		int oneImageWidth = colWidth * engine.cellWidth + paddingWidth;
 		int oneImageHeight = rowHeight * engine.cellHeight;
+		
+		System.out.printf("oneImageWidth: %d, oneImageHeight: %d%n", oneImageWidth, oneImageHeight);
 		
 		int nImages = COLORS.size() * engine.searchRowOffsets.length;
 		int totalImageWidth = nImages * oneImageWidth;
@@ -62,10 +65,11 @@ public class LabelLeaderGenerator {
 
 		graphics.setStroke(new BasicStroke(1.0f));
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
+
 		int centerX = oneImageWidth / 2;
 		int centerY = oneImageHeight / 2;
-		
+
+//		int imageNumber = 0;
 		for (String colorName : COLORS.keySet()) {
 			Color color = COLORS.get(colorName);
 			for (int i = 0; i < engine.searchRowOffsets.length; i++) {
@@ -102,6 +106,9 @@ public class LabelLeaderGenerator {
 							pLabel.x + pLabel.width, pLabel.y + labelHalfHeight);
 				}
 				
+				// draw line on left
+//				graphics.drawLine(imageNumber * oneImageWidth, 0, imageNumber * oneImageWidth, oneImageHeight);
+				
 				// clear circle
 				Composite composite = graphics.getComposite();
 				graphics.setComposite(AlphaComposite.Clear);
@@ -109,9 +116,12 @@ public class LabelLeaderGenerator {
 				graphics.setComposite(composite);
 				
 				centerX += oneImageWidth;
+//				imageNumber++;
 			}
 		}
-		ImageIO.write(img, "png", new File("target/leaderImages", "label-leaders.png"));
+		File folder = new File("target/leaderImages");
+		folder.mkdirs();
+		ImageIO.write(img, "png", new File(folder, "label-leaders.png"));
 	}
 
 	private static Placement makeLabelPlacement(DeclutterEngine engine, int rowOffset, int colOffset) {

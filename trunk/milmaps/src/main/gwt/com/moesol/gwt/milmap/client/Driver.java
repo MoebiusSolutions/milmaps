@@ -37,6 +37,7 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -45,6 +46,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.moesol.gwt.maps.client.DeclutterEngine;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ILayerConfig;
 import com.moesol.gwt.maps.client.ILayerConfigAsync;
@@ -55,6 +57,7 @@ import com.moesol.gwt.maps.client.MapPanel;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.WallClock;
+import com.moesol.gwt.maps.client.WidgetPositioner;
 import com.moesol.gwt.maps.client.WorldCoords;
 import com.moesol.gwt.maps.client.controls.FlyToController;
 import com.moesol.gwt.maps.client.controls.MapDimmerControl;
@@ -192,6 +195,12 @@ public class Driver implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				moveIcons();
 			}});
+		Button showLeaders = new Button("Show Leaders", new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				showLeaders();
+			}
+		});
 		Button resizeMap = new Button("Fill Viewport", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -224,6 +233,7 @@ public class Driver implements EntryPoint {
 		HorizontalPanel bar = new HorizontalPanel();
 		bar.add(removeIcons);
 		bar.add(moveIcons);
+		bar.add(showLeaders);
 		bar.add(resizeMap);
 		bar.add(benchmarks);
 		bar.add(stats);
@@ -282,6 +292,16 @@ public class Driver implements EntryPoint {
 			db.show();
 		}
 
+	}
+
+	protected void showLeaders() {
+		WidgetPositioner widgetPositioner = m_map.getWidgetPositioner();
+		for (int i = 0; i < 34; i++) {
+			Image img = new Image("images/leader-images.png", i * DeclutterEngine.LEADER_IMAGE_WIDTH, 0,
+					DeclutterEngine.LEADER_IMAGE_WIDTH, DeclutterEngine.LEADER_IMAGE_HEIGHT);
+			img.getElement().getStyle().setZIndex(3020);
+			widgetPositioner.place(img, 200, 200);
+		}
 	}
 
 	private void addTileMapServiceView(Panel panel) {

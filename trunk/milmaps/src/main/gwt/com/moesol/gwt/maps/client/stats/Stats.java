@@ -12,6 +12,8 @@ public class Stats {
 	private static int numNewWorldCoords;
 	private static int numNewViewCoords;
 	
+	private static int numLabelLeaderImageOutstanding;
+	
 	private Stats() {}
 	
 	public static void incrementGeodeticToWorld() {
@@ -72,7 +74,16 @@ public class Stats {
 	public static int getNumNewViewCoords() {
 		return numNewViewCoords;
 	}
-	
+
+	public static void incrementLabelLeaderImageOutstanding() {
+		numLabelLeaderImageOutstanding++;
+	}
+	public static void decrementLabelLeaderImageOutstanding() {
+		numLabelLeaderImageOutstanding--;
+	}
+	public static int getNumLabelLeaderImageOutstanding() {
+		return numLabelLeaderImageOutstanding;
+	}
 
 	public static void reset() {
 		for (Sample s : Sample.values()) {
@@ -88,6 +99,8 @@ public class Stats {
 		numViewToWorld = 0;
 		numWorldToGeodetic = 0;
 		numWorldToView = 0;
+		
+		numLabelLeaderImageOutstanding = 0;
 	}
 
 }

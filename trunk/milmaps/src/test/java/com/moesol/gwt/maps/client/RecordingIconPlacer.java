@@ -5,10 +5,9 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-import com.moesol.gwt.maps.client.IconEngine.IconPlacer;
 import com.moesol.maps.tools.Placement;
 
-public class RecordingIconPlacer implements IconPlacer {
+public class RecordingIconPlacer implements WidgetPositioner {
 
 	List<Placement> images = new ArrayList<Placement>();
 	List<Placement> labels = new ArrayList<Placement>();
@@ -26,6 +25,10 @@ public class RecordingIconPlacer implements IconPlacer {
 		} else {
 			labels.add(p);
 		}
+	}
+
+	@Override
+	public void remove(Widget widget) {
 	}
 
 }

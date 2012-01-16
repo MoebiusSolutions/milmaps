@@ -40,7 +40,6 @@ public class TiledImageLayer {
 	private final MapView m_mapView;
 	/** Marked as priority when this image layer is the best for the scale */
 	private boolean m_priority = false;
-	private boolean m_allTilesLoaded = false;
 	
 	private class MyTileImageEngineListener implements TileImageEngineListener {
 		@Override

@@ -24,7 +24,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Provider;
@@ -64,7 +63,7 @@ public class DeclutterEngineTest {
 	private ViewPort m_viewport = new ViewPort();
 	private DeclutterEngine engine;
 	private IconEngine iconEngine;
-	private RecordingIconPlacer iconPlacer = new RecordingIconPlacer();
+	private RecordingIconPlacer widgetPositioner = new RecordingIconPlacer();
 
 	@Before
 	public void before() {
@@ -76,6 +75,7 @@ public class DeclutterEngineTest {
 		m_imageMock = mock(Image.class);
 		when(m_mapView.getViewport()).thenReturn(m_viewport);
 		when(m_mapView.getProjection()).thenReturn(m_projection);
+		when(m_mapView.getWidgetPositioner()).thenReturn(widgetPositioner);
 		m_viewport.setProjection(m_projection);
 		when(m_labelMock.getOffsetHeight()).thenReturn(16);
 		when(m_labelMock.getOffsetWidth()).thenReturn(48);
@@ -405,29 +405,26 @@ public class DeclutterEngineTest {
 			}
 		}
 
-		AbsolutePanel iconPanel = mock(AbsolutePanel.class);
-		iconEngine.iconPlacer = iconPlacer;
-
 		for (Icon icon : icons) {
-			iconEngine.positionOneIconOn(icon, iconPanel);
+			iconEngine.positionOneIcon(icon);
 		}
 
 		graphics.setColor(Color.RED);
-		for (Placement p : iconPlacer.images) {
+		for (Placement p : widgetPositioner.images) {
 			graphics.drawRect(p.x, p.y, p.width, p.height);
 		}
 
 		graphics.setColor(Color.YELLOW);
-		for (Placement p : iconPlacer.labels) {
+		for (Placement p : widgetPositioner.labels) {
 			graphics.drawRect(p.x, p.y, p.width, p.height);
 		}
 
 		// 1-pixel lines, anti-alias
 		graphics.setStroke(new BasicStroke(1.0f));
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		for (int i = 0; i < iconPlacer.images.size(); i++) {
-			Placement pImage = iconPlacer.images.get(i);
-			Placement pLabel = iconPlacer.labels.get(i);
+		for (int i = 0; i < widgetPositioner.images.size(); i++) {
+			Placement pImage = widgetPositioner.images.get(i);
+			Placement pLabel = widgetPositioner.labels.get(i);
 
 			int imageHalfWidth = pImage.width / 2;
 			int imageHalfHeight = pImage.height / 2;

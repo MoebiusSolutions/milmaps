@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
+import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.IProjection.ZoomFlag;
 import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.units.AngleUnit;
@@ -28,6 +29,7 @@ import com.moesol.gwt.maps.client.units.Degrees;
 import com.moesol.gwt.maps.shared.BoundingBox;
 
 public class MapView extends Composite implements IMapView, SourcesChangeEvents {
+	private static final Logger logger = Logger.getLogger(MapView.class.getName());
 	private static final double BBOX_ZOOM_BUFFER = 2.0;
 	private static final long ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
 	//private final AbsolutePanel m_iconsOverTilesPanel = new AbsolutePanel();
@@ -61,9 +63,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private double m_defLng = 0;
 	private final EventBus m_eventBus;
 	private final DynamicUpdateEngine m_dynamicUpdateEngine;
+	private WidgetPositioner m_widgetPositioner;
 
 	MapsClientBundle clientBundle = GWT.create(MapsClientBundle.class);
-	private static final Logger logger = Logger.getLogger(MapView.class.getName());
+	
 
 	public MapView() {
 		this(Projection.T.CylEquiDist, new SimpleEventBus());
@@ -799,7 +802,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		return m_focusPanel;
 	}
 	
-	@Override
 	public AbsolutePanel getIconPanel() {
 		return m_tileLayersPanel;
 	}
@@ -811,6 +813,27 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	void drawIcons(double scale, double offsetX, double offsetY) {
 		m_iconEngine.drawIcons(scale, offsetX, offsetY);
+	}
+	
+	@Override
+	public WidgetPositioner getWidgetPositioner() {
+		if (m_widgetPositioner == null) {
+			m_widgetPositioner = new WidgetPositioner() {
+				@Override
+				public void place(Widget widget, int x, int y) {
+					if (widget.getParent() == null) {
+						getIconPanel().add(widget, x, y);
+					} else {
+						getIconPanel().setWidgetPosition(widget, x, y);
+					}
+				}
+				@Override
+				public void remove(Widget widget) {
+					getIconPanel().remove(widget);
+				}
+			};
+		}
+		return m_widgetPositioner;
 	}
 	
 }

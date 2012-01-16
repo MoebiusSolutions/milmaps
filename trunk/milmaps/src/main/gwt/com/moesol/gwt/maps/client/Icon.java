@@ -49,7 +49,10 @@ public class Icon {
 	private String m_clickUrl;
 	private Label m_label = null;
 	private Image m_image = IMAGE_PROVIDER.get();
+	private Image m_labelLeaderImage = null;
+	private String m_labelLeaderImageUrl = null;
 	private int m_zIndex = 2010;
+	
 	private HandlerRegistration loadRegistration;
 	private HandlerRegistration errorRegistration;
 	private final LoadHandler m_loadHandler = new LoadHandler() {
@@ -139,7 +142,23 @@ public class Icon {
 	public Label getLabel(){
 		return m_label;
 	}
+	
+	public Image getLabelLeaderImage() {
+		return m_labelLeaderImage;
+	}
 
+	public void setLabelLeaderImage(Image labelLeaderImage) {
+		m_labelLeaderImage = labelLeaderImage;
+	}
+	
+	public String getLabelLeaderImageUrl() {
+		return m_labelLeaderImageUrl;
+	}
+
+	public void setLabelLeaderImageUrl(String url) {
+		m_labelLeaderImageUrl = url;
+	}
+	
 	public ViewCoords getIconOffset() {
 		return m_iconOffset;
 	}
@@ -159,6 +178,13 @@ public class Icon {
 	}
 	public void setDeclutterOffset(ViewCoords offset) {
 		m_declutterOffset = offset;
+	}
+
+	public int getZIndex() {
+		return m_zIndex;
+	}
+	public void setZIndex(int zIndex) {
+		m_zIndex = zIndex;
 	}
 
 }
