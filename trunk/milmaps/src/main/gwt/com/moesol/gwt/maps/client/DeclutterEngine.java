@@ -313,7 +313,10 @@ public class DeclutterEngine {
 			img.removeFromParent();
 			Stats.decrementLabelLeaderImageOutstanding();
 		}
-		img = new Image(url, i * LEADER_IMAGE_WIDTH, 0, LEADER_IMAGE_WIDTH, LEADER_IMAGE_HEIGHT);
+		img = new Image(url, 
+				icon.getOffsetWithInLabelLeaderImage().getX() + i * LEADER_IMAGE_WIDTH, 
+				icon.getOffsetWithInLabelLeaderImage().getY(), 
+				LEADER_IMAGE_WIDTH, LEADER_IMAGE_HEIGHT);
 		Stats.incrementLabelLeaderImageOutstanding();
 		img.getElement().getStyle().setZIndex(icon.getZIndex());
 		icon.setLabelLeaderImage(img);
