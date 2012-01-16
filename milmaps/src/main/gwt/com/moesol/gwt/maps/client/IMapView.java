@@ -1,6 +1,5 @@
 package com.moesol.gwt.maps.client;
 
-import com.google.gwt.user.client.ui.AbsolutePanel;
 
 
 public interface IMapView {
@@ -11,6 +10,5 @@ public interface IMapView {
 	void doUpdateView();
 	void setCenter(GeodeticCoords geodeticCoords);
 	IconLayer getIconLayer();
-	
-	AbsolutePanel getIconPanel();
+	WidgetPositioner getWidgetPositioner();
 }

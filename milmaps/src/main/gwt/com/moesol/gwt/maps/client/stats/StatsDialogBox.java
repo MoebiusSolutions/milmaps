@@ -23,6 +23,8 @@ public class StatsDialogBox extends DialogBox {
 		addRow("new WorldCoord calls:", Stats.getNumNewWorldCoords());
 		addRow("new ViewCoord calls:", Stats.getNumNewViewCoords());
 		addSeperator();
+		addRow("label leaders outstanding: ", Stats.getNumLabelLeaderImageOutstanding());
+		addSeperator();
 		for (Sample s : Sample.values()) {
 			addRow(s.toString(), 
 					s.getNumCalls() + " calls, avg " + 

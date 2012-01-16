@@ -2,32 +2,18 @@ package com.moesol.gwt.maps.client;
 
 import java.util.List;
 
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.IProjection.ZoomFlag;
 import com.moesol.gwt.maps.client.stats.Sample;
 
 public class IconEngine {
 	private final IMapView m_mapView;
-	IconPlacer iconPlacer = new IconPlacer() {
-		@Override
-		public void place(Widget widget, int x, int y) {
-			if (widget.getParent() == null) {
-				m_mapView.getIconPanel().add(widget, x, y);
-			} else {
-				m_mapView.getIconPanel().setWidgetPosition(widget, x, y);
-			}
-		}
-	};
+	private final WidgetPositioner widgetPositioner;
 	
-	interface IconPlacer {
-		void place(Widget widget, int x, int y);
-	}
-
 	public IconEngine(IMapView mv) {
 		m_mapView = mv;
+		widgetPositioner = mv.getWidgetPositioner();
 	}
 
 	// RFH: drawIcons is basically the same as positionIcons with extra scale,
@@ -63,48 +49,61 @@ public class IconEngine {
 	// offsetX, offsetY
 	// If animation just called doUpdateView then drawIcon could be removed.
 	private void drawIcon(Icon icon, double scale, double offsetX, double offsetY) {
-		AbsolutePanel iconPanel = m_mapView.getIconPanel();
 		IProjection tempProj = m_mapView.getTempProjection();
 		ViewPort viewPort = m_mapView.getViewport();
 		
-		WorldCoords w = tempProj.geodeticToWorld(icon.getLocation());
-		ViewCoords vc = viewPort.worldToView(w, false);
+		WorldCoords wc = tempProj.geodeticToWorld(icon.getLocation());
+		ViewCoords vc = viewPort.worldToView(wc, false);
+		
+		int baseX = (int) (scale * vc.getX() - offsetX);
+		int baseY = (int) (scale * vc.getY() - offsetY);
+		
 		Image image = icon.getImage();
-		int x = (int) (scale * vc.getX() - offsetX)
-				+ icon.getIconOffset().getX();
-		int y = (int) (scale * vc.getY() - offsetY)
-				+ icon.getIconOffset().getY();
-		iconPanel.setWidgetPosition(image, x, y);
+		if (image != null) {
+			widgetPositioner.place(image, 
+					baseX + icon.getIconOffset().getX(), 
+					baseY + icon.getIconOffset().getY());
+		}
+		
 		Label label = icon.getLabel();
 		if (label != null) {
-			x -= icon.getIconOffset().getX();
-			y -= icon.getIconOffset().getY();
-			x += icon.getDeclutterOffset().getX();
-			y += icon.getDeclutterOffset().getY();
-			iconPanel.setWidgetPosition(label, x, y);
+			widgetPositioner.place(label, 
+					baseX + icon.getDeclutterOffset().getX(), 
+					baseY + icon.getDeclutterOffset().getY());
+		}
+
+		Image leader = icon.getLabelLeaderImage();
+		if (leader != null) {
+			widgetPositioner.place(leader, 
+					baseX - DeclutterEngine.LEADER_IMAGE_WIDTH / 2, 
+					baseY - DeclutterEngine.LEADER_IMAGE_HEIGHT / 2);
 		}
 	}
 
 	public void positionOneIcon(Icon icon) {
-		AbsolutePanel iconPanel = m_mapView.getIconPanel();
-		positionOneIconOn(icon, iconPanel);
-	}
-
-	void positionOneIconOn(Icon icon, AbsolutePanel iconPanel) {
 		IProjection projection = m_mapView.getProjection();
-		WorldCoords v = projection.geodeticToWorld(icon.getLocation());
-		ViewCoords portCoords = m_mapView.getViewport().worldToView(v, true);
+		WorldCoords wc = projection.geodeticToWorld(icon.getLocation());
+		ViewCoords vc = m_mapView.getViewport().worldToView(wc, true);
+		
 		Image image = icon.getImage();
-		int x = portCoords.getX() + icon.getIconOffset().getX();
-		int y = portCoords.getY() + icon.getIconOffset().getY();
-		iconPlacer.place(image, x, y);
+		if (image != null) {
+			widgetPositioner.place(image, 
+					vc.getX() + icon.getIconOffset().getX(), 
+					vc.getY() + icon.getIconOffset().getY());
+		}
+		
 		Label label = icon.getLabel();
 		if (label != null) {
-			x -= icon.getIconOffset().getX();
-			y -= icon.getIconOffset().getY();
-			x += icon.getDeclutterOffset().getX();
-			y += icon.getDeclutterOffset().getY();
-			iconPlacer.place(label, x, y);
+			widgetPositioner.place(label, 
+					vc.getX() + icon.getDeclutterOffset().getX(), 
+					vc.getY() + icon.getDeclutterOffset().getY());
+		}
+		
+		Image leader = icon.getLabelLeaderImage();
+		if (leader != null) {
+			widgetPositioner.place(leader, 
+					vc.getX() - DeclutterEngine.LEADER_IMAGE_WIDTH / 2, 
+					vc.getY() - DeclutterEngine.LEADER_IMAGE_HEIGHT / 2);
 		}
 	}
 
