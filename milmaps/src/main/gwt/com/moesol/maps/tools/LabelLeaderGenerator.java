@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
@@ -21,12 +22,13 @@ import com.moesol.gwt.maps.client.DeclutterEngine;
  * @author <a href="http://www.moesol.com">Moebius Solutions, Inc.</a>
  */
 public class LabelLeaderGenerator {
-	private static Map<String, Color> COLORS = new HashMap<String, Color>();
+	private static Map<String, Color> COLORS = new TreeMap<String, Color>();
 	static {
-		COLORS.put("red", Color.RED);
 		COLORS.put("cyan", Color.CYAN);
+		COLORS.put("red", Color.RED);
 		COLORS.put("green", Color.GREEN.brighter());
 		COLORS.put("yellow", Color.YELLOW);
+		COLORS.put("magenta", Color.MAGENTA);
 	}
 
 	/**
@@ -72,6 +74,8 @@ public class LabelLeaderGenerator {
 //		int imageNumber = 0;
 		for (String colorName : COLORS.keySet()) {
 			Color color = COLORS.get(colorName);
+			System.out.printf("map.put(\"%s\",%d);%n", colorName, centerX - oneImageWidth / 2);
+			
 			for (int i = 0; i < engine.searchRowOffsets.length; i++) {
 				int rowOffset = engine.searchRowOffsets[i];
 				int colOffset = engine.searchColOffsets[i];

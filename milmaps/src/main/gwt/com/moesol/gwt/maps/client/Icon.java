@@ -9,6 +9,12 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Provider;
 
+/**
+ * Icon and label. When enabled the label for the icon will be decluttered on the map.
+ * 
+ * @author <a href="http://www.moesol.com">Moebius Solutions, Inc.</a>
+ * @author hastings
+ */
 public class Icon {
 	static Provider<Image> IMAGE_PROVIDER = new Provider<Image>() {
 		@Override
@@ -48,10 +54,11 @@ public class Icon {
 	private String m_iconUrl;
 	private String m_clickUrl;
 	private Label m_label = null;
+	private int m_zIndex = 2010;
 	private Image m_image = IMAGE_PROVIDER.get();
 	private Image m_labelLeaderImage = null;
 	private String m_labelLeaderImageUrl = null;
-	private int m_zIndex = 2010;
+	private ViewCoords m_offsetWithInLabelLeaderImage = new ViewCoords();
 	
 	private HandlerRegistration loadRegistration;
 	private HandlerRegistration errorRegistration;
@@ -187,4 +194,12 @@ public class Icon {
 		m_zIndex = zIndex;
 	}
 
+	public ViewCoords getOffsetWithInLabelLeaderImage() {
+		return m_offsetWithInLabelLeaderImage;
+	}
+
+	public void setOffsetWithinLabelLeaderImage(ViewCoords offsetWithInLabelLeaderImage) {
+		m_offsetWithInLabelLeaderImage = offsetWithInLabelLeaderImage;
+	}
+	
 }
