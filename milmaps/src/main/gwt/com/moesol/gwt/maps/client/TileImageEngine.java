@@ -3,13 +3,16 @@ package com.moesol.gwt.maps.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.stats.Sample;
 
 public class TileImageEngine {
-	private static class TileInfo {
+	static class TileInfo {
 		long m_lastUsedMillis;
 		int m_x;
 		int m_y;
@@ -31,6 +34,7 @@ public class TileImageEngine {
 	}
 	
 	public final static int MAX_CACHE_SIZE = 64;
+	private final Map<String, List<TileInfo>> m_lookup = new HashMap<String, List<TileInfo>>();
 	private final ArrayList<TileInfo> m_infoCache = new ArrayList<TileInfo>();
 	private final TileImageEngineListener m_listener;
 	private final TiledImageLayer m_imgLayer;
@@ -71,24 +75,36 @@ public class TileImageEngine {
 	}
 	
 	public Object findOrCreateImage(TileCoords tileCoords) {
-		int iSize = m_infoCache.size();
-		for (int i = 0; i < iSize; i++) {
-		  TileInfo tileInfo = m_infoCache.get(i);
-		  if (isMatch(tileInfo, tileCoords)) {
-			if (tileInfo.m_placed) {
-				continue;
-			}
-			
-			Sample.USE_IMAGE.beginSample();
-			m_listener.useImage(tileCoords, tileInfo.m_image);
-			Sample.USE_IMAGE.endSample();
-			
-			tileInfo.m_placed = true;
-			tileInfo.m_lastUsedMillis = System.currentTimeMillis();
+		Sample.TILE_IMG_ENGINE_FIND_OR_CREATE.beginSample();
+		try {
+			return _findOrCreateImage(tileCoords);
+		} finally {
+			Sample.TILE_IMG_ENGINE_FIND_OR_CREATE.endSample();
+		}
+	}
+
+	private Object _findOrCreateImage(TileCoords tileCoords) {
+		TileInfo tileInfo = lookupTileInfo(tileCoords);
+		if (tileInfo != null) {
+			useTileInfo(tileCoords, tileInfo);
 			return tileInfo.m_image;
-		  }
 		}
 		
+		TileInfo result = makeTileInfo(tileCoords);
+		addTileInfo(result);
+		return result.m_image;
+	}
+
+	private void useTileInfo(TileCoords tileCoords, TileInfo tileInfo) {
+		Sample.USE_IMAGE.beginSample();
+		m_listener.useImage(tileCoords, tileInfo.m_image);
+		Sample.USE_IMAGE.endSample();
+		
+		tileInfo.m_placed = true;
+		tileInfo.m_lastUsedMillis = System.currentTimeMillis();
+	}
+
+	private TileInfo makeTileInfo(TileCoords tileCoords) {
 		TileInfo result = new TileInfo();
 		
 		Sample.CREATE_IMAGE.beginSample();
@@ -101,10 +117,53 @@ public class TileImageEngine {
 		result.m_placed = true;
 		result.m_x = tileCoords.getX();
 		result.m_y = tileCoords.getY();
+		return result;
+	}
+
+	TileInfo lookupTileInfo(TileCoords tileCoords) {
+		String key = buildKey(tileCoords);
+		List<TileInfo> list = m_lookup.get(key);
+		if (list == null) {
+			return null;
+		}
+		for (TileInfo info : list) {
+			if (!info.m_placed) {
+				return info;
+			}
+		}
+		return null;
+	}
+
+	void addTileInfo(TileInfo result) {
+		String key = buildKey(result);
+		List<TileInfo> list = m_lookup.get(key);
+		if (list == null) {
+			list = new ArrayList<TileInfo>();
+			m_lookup.put(key, list);
+		}
+		list.add(result);
 		m_infoCache.add(result);
-		return result.m_image;
 	}
 	
+	void removeTileInfo(int idx) {
+		TileInfo info = m_infoCache.remove(idx);
+		String key = buildKey(info);
+		List<TileInfo> list = m_lookup.get(key);
+		if (list != null) {
+			list.remove(info);
+			if (list.isEmpty()) {
+				m_lookup.remove(key);
+			}
+		}
+	}
+	
+	private String buildKey(TileInfo result) {
+		return result.m_level +  "," + result.m_y + "," + result.m_x;
+	}
+	private String buildKey(TileCoords tileCoords) {
+		return levelOrZero(tileCoords) + "," + tileCoords.getY() + "," + tileCoords.getX();
+	}
+
 	public void clear() {
 		for (TileInfo info : m_infoCache) {
 			m_listener.destroyImage(info.m_image);
@@ -165,14 +224,14 @@ public class TileImageEngine {
 			TileInfo tileInfo = m_infoCache.get(i);
 			if (!tileInfo.m_placed) {
 				m_listener.destroyImage(tileInfo.m_image);
-				m_infoCache.remove(i);
+				removeTileInfo(i);
 				removed++;
 			} else {
 				i++;
 			}
 		}
 	}
-	
+
 	private boolean isMatch(TileInfo tileInfo, TileCoords tileCoords) {
 		if (tileInfo.m_level != levelOrZero(tileCoords)) {
 			return false;

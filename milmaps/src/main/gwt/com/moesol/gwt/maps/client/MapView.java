@@ -430,7 +430,12 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 
 	void preUpdateView() {
-		computeLevelsAndTileCoords();
+		Sample.MAP_PRE_UPDATE_VIEW.beginSample();
+		try {
+			computeLevelsAndTileCoords();
+		} finally {
+			Sample.MAP_PRE_UPDATE_VIEW.endSample();
+		}
 	}
 
 /*

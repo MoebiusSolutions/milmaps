@@ -25,12 +25,22 @@ public class StatsDialogBox extends DialogBox {
 		addSeperator();
 		addRow("label leaders outstanding: ", Stats.getNumLabelLeaderImageOutstanding());
 		addSeperator();
-		for (Sample s : Sample.values()) {
-			addRow(s.toString(), 
-					s.getNumCalls() + " calls, avg " + 
-					s.getAvgCallMillis() + " millis, total " + 
-					s.getMillisSum() + " millis");
-		}
+		
+		Sample.accept(new SampleVisitor() {
+			@Override
+			public void visit(int indent, Sample node) {
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < indent; i++) {
+					sb.append('-');
+				}
+				sb.append(node);
+
+				addRow(sb.toString(), 
+						node.getNumCalls() + " calls, avg " + 
+						node.getAvgCallMillis() + " millis, total " + 
+						node.getMillisSum() + " millis");
+			}
+		});
 		
 		addButton(new Button("Close", new ClickHandler() {
 			@Override

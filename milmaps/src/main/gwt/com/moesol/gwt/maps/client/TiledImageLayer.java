@@ -169,9 +169,7 @@ public class TiledImageLayer {
 			return;
 		}
 		
-		Sample.TILE_IMG_ENGINE_FIND_OR_CREATE.beginSample();
 		Image image = (Image)m_tileImageEngine.findOrCreateImage(tileCoords);
-		Sample.TILE_IMG_ENGINE_FIND_OR_CREATE.endSample();
 		
 		if ( m_layerSet.isAlwaysDraw() == false ){
 			image.getElement().getStyle().setOpacity(m_mapView.getMapBrightness());

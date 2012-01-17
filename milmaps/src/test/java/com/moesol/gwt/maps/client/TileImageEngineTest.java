@@ -1,10 +1,12 @@
 package com.moesol.gwt.maps.client;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.moesol.gwt.maps.client.TileImageEngine.TileInfo;
 
 public class TileImageEngineTest {
 	private TileImageEngine m_engine;
@@ -119,6 +121,60 @@ public class TileImageEngineTest {
 		m_engine.hideUnplacedImages();
 		
 		EasyMock.verify(new Object[] { m_listener });
+	}
+	
+	@Test
+	public void testLookupNegativeLevel() {
+		TileInfo info = makeTileInfo(0, 2, 1);
+		m_engine.addTileInfo(info);
+		
+		TileCoords tileCoords = makeTileCoords(-1, 2, 1);
+		TileInfo result = m_engine.lookupTileInfo(tileCoords);
+		
+		assertSame(info, result);
+		
+		m_engine.removeTileInfo(0);
+		result = m_engine.lookupTileInfo(tileCoords);
+		assertNull(result);
+	}
+
+	@Test
+	public void testLookupTwoSameKey() {
+		TileInfo info = makeTileInfo(0, 2, 1);
+		TileInfo info2 = makeTileInfo(0, 2, 1);
+		m_engine.addTileInfo(info);
+		m_engine.addTileInfo(info2);
+		
+		TileCoords tileCoords = makeTileCoords(-1, 2, 1);
+		TileInfo result = m_engine.lookupTileInfo(tileCoords);
+		assertSame(info, result);
+		result.m_placed = true;
+		result = m_engine.lookupTileInfo(tileCoords);
+		assertSame(info2, result);
+		
+		m_engine.removeTileInfo(0);
+		result = m_engine.lookupTileInfo(tileCoords);
+		assertSame(info2, result);
+		
+		m_engine.removeTileInfo(0);
+		result = m_engine.lookupTileInfo(tileCoords);
+		assertNull(result);
+	}
+
+	private TileCoords makeTileCoords(int level, int y, int x) {
+		TileCoords tileCoords = new TileCoords();
+		tileCoords.setLevel(level);
+		tileCoords.setY(y);
+		tileCoords.setX(x);
+		return tileCoords;
+	}
+
+	private TileInfo makeTileInfo(int level, int y, int x) {
+		TileInfo info = new TileInfo();
+		info.m_level = level;
+		info.m_y = y;
+		info.m_x = x;
+		return info;
 	}
 
 }
