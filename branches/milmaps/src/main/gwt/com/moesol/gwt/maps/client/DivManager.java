@@ -155,15 +155,10 @@ public class DivManager {
 		}
 	}
 	
-	public void doUpdateDivs( int n, double eqScale ){
-		//if (zoomFlag == ZoomFlag.NONE && !m_firstSearch) {
-			// optimize pans etc.
-		//	return;
-		//}
-		int start = ( m_currentLevel-n < 0 ? 0 : m_currentLevel-n );
-		int end = ( m_currentLevel+n > m_numDivs-1 ? m_numDivs-n : m_currentLevel+n );
+	public void doUpdateDivs( int levelRange, double eqScale ){
+		int n = Math.max(0, m_currentLevel - levelRange);
 		GeodeticCoords gc = m_vpWorker.getGeoCenter(); 
-		for ( int i = start; i <= end; i++ ){
+		for( int i = n; i <= m_currentLevel; i++ ){
 			if ( m_dpArray[i].upadteViewCenter(gc) ){
 				m_dpArray[i].doUpdate(eqScale);
 			}
@@ -180,7 +175,7 @@ public class DivManager {
 		}
 		for( int i = n; i <= m_currentLevel; i++ ){
 			m_dpArray[i].setVisible(true);
-			m_dpArray[m_currentLevel].placeInViewPanel(panel, true);
+			m_dpArray[i].placeInViewPanel(panel, true);
 		}
 		for ( int i = m_currentLevel+1; i < m_numDivs-1 ; i++ ){
 			m_dpArray[i].setVisible(false);
