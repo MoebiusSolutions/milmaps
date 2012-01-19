@@ -9,9 +9,11 @@ package com.moesol.gwt.maps.client;
 public class DivWorker {
 	private GeodeticCoords m_geoCenter = new GeodeticCoords();
 	private final DivCoords m_returnedDivCoords = new DivCoords();
+	private final WorldCoords m_wc = new WorldCoords();
 	private final WorldCoords m_divCenterWc = new WorldCoords(); // viewport center in wc.
 	private final MapCoords m_divCenterMc = new MapCoords(); // viewport center in wc.
 	private final DivDimensions m_baseDims = new DivDimensions();
+	private final PixelXY m_topLeft = new PixelXY();
 	private double m_eqScale;
 	private double m_offsetInMcX;
 	private double m_offsetInMcY;
@@ -53,6 +55,7 @@ public class DivWorker {
 	public void setProjection( IProjection p ){ 
 		m_proj = p; 
 	}
+	
 	public IProjection getProjection(){ return m_proj; }
 	
 	public void setMapLevel(int mapLevel) {
@@ -203,6 +206,33 @@ public class DivWorker {
 		m_boxBounds.bot   = dcYToPercent(y+height)*100;
 		m_boxBounds.right = dcXToPercent(x+width)*100;
 		return m_boxBounds;
+	}
+	
+	public PixelXY computeOffsetInView( 
+		IProjection mapProj, ViewWorker vw, 
+		DivDimensions dim,  boolean show )
+	{
+		int viewOx = vw.getOffsetInWcX();
+		int viewOy = vw.getOffsetInWcY();
+		int left;
+		int top;
+		if ( show ){
+			double scale = mapProj.getEquatorialScale();
+			double factor = scale/m_proj.getEquatorialScale();
+			dim.setWidth((int)(m_baseDims.getWidth()*factor + 0.5));
+			dim.setHeight((int)(m_baseDims.getHeight()*factor + 0.5));
+			m_wc.copyFrom(mapProj.geodeticToWorld(m_geoCenter));
+			left = (m_wc.getX()- dim.getWidth()/2) - viewOx;
+			top  = viewOy - (m_wc.getY()+ dim.getHeight()/2);
+		}
+		else{
+			ViewDimension vd = vw.getDimension();
+			left = viewOx + vd.getWidth();
+			top  = viewOy + vd.getHeight();
+		}
+		m_topLeft.m_x = left;
+		m_topLeft.m_y = top;
+		return m_topLeft;
 	}
 	
 	@Override

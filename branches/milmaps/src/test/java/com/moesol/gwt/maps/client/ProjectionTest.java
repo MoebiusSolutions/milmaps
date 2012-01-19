@@ -156,48 +156,6 @@ public class ProjectionTest {
 		return ((mpp * Math.pow(2, level)) / l_mpp);
 	}
 	
-	/* 
-	@Test
-	public void testScaleAdjustSize(){
-		double fudge = 0.5;
-		for ( int i = 0; i < 4; i++ ){
-			double dFactor = Math.pow(2,i) + fudge;
-			m_proj.zoomByFactor(dFactor);
-			int level = computeLevel( 0, m_proj.getScale() );
-			int width  = m_proj.adjustSize(level, 512);
-			int scaledWidth =  m_proj.adjustSize(512);
-			assertEquals( scaledWidth, width, 1 );
-		}
-	}
-
-	@Test
-	public void testAdjustSize(){
-		double fudge = 0.5;
-		for ( int i = 0; i < 4; i++ ){
-			double dFactor = Math.pow(2,i) + fudge;
-			m_proj.zoomByFactor(dFactor);
-			int level = computeLevel( 0, m_proj.getScale() );
-			int width  = m_proj.adjustSize(level, 512);
-			double dZ = (1 + fudge/Math.pow(2,i));
-			int expValue = (int)(dZ*512);
-			m_proj.zoomByFactor(1.0/dFactor);
-			assertEquals( expValue, width, 1 );
-		}
-		// this next loop checks for negative levels
-		fudge = 0.2;
-		for ( int i = 0; i < 4; i++ ){
-			int j = -1*i;
-			double dFactor = Math.pow(2,j) + fudge;
-			m_proj.zoomByFactor(dFactor);
-			int level = computeLevel( 0, m_proj.getScale() );
-			int width  = m_proj.adjustSize( level, 512 );
-			double dZ = (Math.pow(2,j)+fudge);
-			int expValue = (int)(dZ*512);
-			m_proj.zoomByFactor(1.0/dFactor);
-			assertEquals( expValue, width, 1 );
-		}
-	}
-	*/
 	
 	@Test
 	public void testgGeoToPixel(){

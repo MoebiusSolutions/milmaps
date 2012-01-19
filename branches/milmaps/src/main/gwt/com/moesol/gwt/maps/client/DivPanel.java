@@ -11,7 +11,6 @@ public class DivPanel extends AbsolutePanel {
 	private final DivWorker m_divWorker = new DivWorker();
 	private final TileBuilder m_tileBuilder = new TileBuilder();
 	private final DivDimensions m_dims = new DivDimensions();
-	private final WorldCoords m_wc = new WorldCoords();
 	private MapView m_map = null;
 	private boolean m_firstSearch = true;
 	private boolean m_firstCenter = true;
@@ -90,13 +89,6 @@ public class DivPanel extends AbsolutePanel {
 		super.setPixelSize(d.getWidth(), d.getHeight());
 	}
 	
-	public void zoomByFactor( double factor ){
-		//m_divWorker.zoomByFactor(factor);
-		//DivDimensions dd = m_divWorker.getDivDimension();
-		//super.setPixelSize(dd.getWidth(), dd.getHeight());
-		return;
-	}
-	
 	public DivWorker getDivWorker(){ return m_divWorker; }
 	
 	public LayoutPanel getTileLayerPanel(){ return m_tileLayersPanel; }
@@ -167,30 +159,13 @@ public class DivPanel extends AbsolutePanel {
 		m_tileBuilder.computeTileCoords(vd,eqScale,true);
 	}
 	
+	
 	public void placeInViewPanel( AbsolutePanel panel, boolean show ){
+		IProjection mp = m_map.getProjection();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
-		int viewOx = vw.getOffsetInWcX();
-		int viewOy = vw.getOffsetInWcY();
-		int left;
-		int top;
-		if ( show ){
-			IProjection mapProj = m_map.getProjection();
-			double scale = mapProj.getEquatorialScale();
-			double factor = scale/m_proj.getEquatorialScale();
-			DivDimensions d = m_divWorker.getDivBaseDimensions();
-			int width = (int)(d.getWidth()*factor + 0.5);
-			int height = (int)(d.getHeight()*factor + 0.5);
-			setPixelSize(width, height);
-			m_wc.copyFrom(mapProj.geodeticToWorld(m_divWorker.getGeoCenter()));
-			left = (m_wc.getX()- width/2) - viewOx;
-			top  = viewOy - (m_wc.getY()+ height/2);
-		}
-		else{
-			ViewDimension vd = vw.getDimension();
-			left = viewOx + vd.getWidth();
-			top  = viewOy + vd.getHeight();
-		}
-		panel.setWidgetPosition(this, left, top);
+		PixelXY tl = m_divWorker.computeOffsetInView(mp, vw, m_dims, show);
+		super.setPixelSize(m_dims.getWidth(), m_dims.getHeight());
+		panel.setWidgetPosition(this, tl.m_x, tl.m_y);
 	}
 	
 	public void resize( int w, int h ){

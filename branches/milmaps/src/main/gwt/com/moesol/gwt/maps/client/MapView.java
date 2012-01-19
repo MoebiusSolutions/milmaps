@@ -315,7 +315,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		m_constrained.copyFrom(worldCenter);
 		m_viewPort.constrainAsWorldCenter(m_constrained);
 		m_viewPort.getVpWorker().setVpCenterInWc(m_constrained);
-		placeDivPanels(ZoomFlag.NONE);
+		placeDivPanels();
 	}
 
 	private Timer m_updateTimer = null;
@@ -351,7 +351,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		m_divMgr.doUpdateDivs( 2, m_proj.getEquatorialScale() );
 		ZoomFlag zoomFlag = m_proj.getZoomFlag();
 		m_proj.setZoomFlag(ZoomFlag.NONE);
-		placeDivPanels(zoomFlag);
+		placeDivPanels();
 
 		//positionIcons();
 		m_changeListeners.fireChange(this);
@@ -359,8 +359,8 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		ProjectionValues.writeCookies(m_proj);
 	}
 	
-	public void placeDivPanels(ZoomFlag zoomFlag){
-		m_divMgr.placeDivPanels( m_viewPanel, zoomFlag );	
+	public void placeDivPanels(){
+		m_divMgr.placeDivPanels( m_viewPanel, 2 );	
 	}
 	/*
 	public void updateDivPanel(){

@@ -1,7 +1,7 @@
 package com.moesol.gwt.maps.client;
 
 public class ViewWorker {
-	private final ViewDimension m_dims = new ViewDimension(1000, 800);
+	private final ViewDimension m_dims = new ViewDimension(400, 600);
 	private final ViewCoords m_returnedViewCoords = new ViewCoords();
 	private final WorldCoords m_returnedWc = new WorldCoords();
 	private final GeodeticCoords m_geoCenter = new GeodeticCoords(); // view-port center

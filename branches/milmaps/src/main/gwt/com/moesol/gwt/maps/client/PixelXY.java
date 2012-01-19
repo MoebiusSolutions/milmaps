@@ -5,7 +5,6 @@ public class PixelXY {
 	public int m_y;
 	
 	public PixelXY() {
-		super();
 	}
 	
 	public PixelXY(int x, int y) {

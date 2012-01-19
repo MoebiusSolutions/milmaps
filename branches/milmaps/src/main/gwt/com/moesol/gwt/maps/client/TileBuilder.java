@@ -217,8 +217,8 @@ public class TileBuilder {
 	public TileCoords[] arrangeTiles( int level, LayerSet ls, double lsScale ) {
 		//if ( level == m_oldLevel )
 		//	return null;
-		int tilePixWidth  = ls.getPixelWidth();
-		int tilePixHeight = ls.getPixelHeight();
+		//int tilePixWidth  = ls.getPixelWidth();
+		//int tilePixHeight = ls.getPixelHeight();
 		int tLevel = level - ls.getStartLevel();
 
 		double degFactor = ( tLevel < 1 ? 1 : Math.pow(2, tLevel) );

@@ -6,7 +6,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TileImageEngineTest {
+public class TileImageMgrTest {
 	private TileImageManager m_engine;
 	private TileImageEngineListener m_listener = EasyMock.createMock(TileImageEngineListener.class);
 

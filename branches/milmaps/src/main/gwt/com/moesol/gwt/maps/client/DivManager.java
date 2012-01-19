@@ -17,7 +17,7 @@ public class DivManager {
 		m_map = map;
 		for( int i = 0; i < m_numDivs; i++ ){
 			m_dpArray[i] = new DivPanel();
-			m_dpArray[i].getElement().getStyle().setZIndex(2000);
+			m_dpArray[i].getElement().getStyle().setZIndex(i);
 		}
 	}
 	
@@ -171,36 +171,21 @@ public class DivManager {
 	}
 	
 	
-	public void placeDivPanels( AbsolutePanel panel, ZoomFlag zoomFlag  ){
+	public void placeDivPanels( AbsolutePanel panel, int levelRange ){
 		setCurrentLevelFromMapScale();
-		int start = Math.max(0, m_currentLevel-1);
-		int end = Math.min(m_numDivs-1, m_currentLevel+1);
-		if ( zoomFlag == ZoomFlag.IN ){
-			if ( start != m_currentLevel ){
-				m_dpArray[start].getElement().getStyle().setZIndex(2001);
-				m_dpArray[start].placeInViewPanel(panel, true);
-			}
-			if ( end != m_currentLevel ){
-				m_dpArray[end].getElement().getStyle().setZIndex(2000);
-				m_dpArray[end].placeInViewPanel(panel, false);
-			}
-			
-		}else if ( zoomFlag == ZoomFlag.OUT ){
-			if ( start != m_currentLevel ){
-				m_dpArray[start].getElement().getStyle().setZIndex(2000);
-				m_dpArray[start].placeInViewPanel(panel, false);
-			}
-			if ( end != m_currentLevel ){
-				m_dpArray[end].getElement().getStyle().setZIndex(2001);
-				m_dpArray[end].placeInViewPanel(panel, true);
-			}
+		int n = Math.max(0, m_currentLevel - levelRange);
+		for ( int i = 0; i < n; i++ ){
+			m_dpArray[i].setVisible(false);
+		
 		}
-		else{
-			m_dpArray[end].getElement().getStyle().setZIndex(2001);
-			m_dpArray[end].placeInViewPanel(panel, true);		
+		for( int i = n; i <= m_currentLevel; i++ ){
+			m_dpArray[i].setVisible(true);
+			m_dpArray[m_currentLevel].placeInViewPanel(panel, true);
 		}
-		m_dpArray[m_currentLevel].getElement().getStyle().setZIndex(2002);
-		m_dpArray[m_currentLevel].placeInViewPanel(panel, true);
+		for ( int i = m_currentLevel+1; i < m_numDivs-1 ; i++ ){
+			m_dpArray[i].setVisible(false);
+		}		
+		
 	}
 	
 	public void resizeDivs(int w, int h ){
