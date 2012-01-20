@@ -28,7 +28,7 @@ public class DivWorkerTest {
 		GeodeticCoords gc = new GeodeticCoords();
 		m_vw.setGeoCenter(gc);
 		m_vw.update(true);
-		m_dw.setDiv(gc, true);
+		m_dw.setDiv(gc);
 	}
 	
 	
