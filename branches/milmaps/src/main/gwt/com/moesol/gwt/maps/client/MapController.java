@@ -138,7 +138,7 @@ public class MapController implements
 
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
-		m_hoverTimer .cancel();
+		m_hoverTimer.cancel();
 	}
 	
 	@Override
@@ -155,7 +155,7 @@ public class MapController implements
 			if ( m_movedMap ){
 				m_movedMap = false;
 				m_map.computeGeoCenter();
-				m_map.updateView();
+				m_map.doUpdateView();
 			}
 		} finally {
 			m_dragTracker = null;
