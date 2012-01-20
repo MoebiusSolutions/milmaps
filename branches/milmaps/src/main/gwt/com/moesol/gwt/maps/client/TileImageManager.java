@@ -132,6 +132,13 @@ public class TileImageManager {
 		}
 	}
 
+	public void hideAllImages() {
+		for (int i = 0; i < m_infoCache.size(); i++) {
+			TileInfo tileInfo = m_infoCache.get(i);
+			m_listener.hideImage(tileInfo.m_image);
+		}
+	}
+	
 	private void removeStaleEntries() {
 		if (m_infoCache.size() <= MAX_CACHE_SIZE) {
 			return;
@@ -219,4 +226,5 @@ public class TileImageManager {
 			img.getElement().getStyle().setProperty("zIndex", zindex + "");
 		}
 	}
+
 }

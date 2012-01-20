@@ -134,6 +134,10 @@ public class TiledImageLayer {
 		}
 	}
 	
+	public void hideAllTiles() {
+		m_tileImageMgr.hideAllImages();
+	}
+	
 	/**
 	 * Draw scaled images. Only called from animation.
 	 */
@@ -252,5 +256,5 @@ public class TiledImageLayer {
 		// we want to return ( (mpp*2^n)/(l_mpp) );
 		return ((mpp * Math.pow(2, level)) / l_mpp);
 	}
-	
+
 }

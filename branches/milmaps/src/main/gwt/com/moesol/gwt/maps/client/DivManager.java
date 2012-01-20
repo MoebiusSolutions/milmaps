@@ -159,9 +159,8 @@ public class DivManager {
 		int n = Math.max(0, m_currentLevel - levelRange);
 		GeodeticCoords gc = m_vpWorker.getGeoCenter(); 
 		for( int i = n; i <= m_currentLevel; i++ ){
-			if ( m_dpArray[i].upadteViewCenter(gc) ){
-				m_dpArray[i].doUpdate(eqScale);
-			}
+			m_dpArray[i].updateViewCenter(gc);
+			m_dpArray[i].doUpdate(eqScale);
 		}
 	}
 	
@@ -173,10 +172,11 @@ public class DivManager {
 			m_dpArray[i].setVisible(false);
 		}
 		for( int i = n; i <= m_currentLevel; i++ ){
-			m_dpArray[i].setVisible(true);
 			m_dpArray[i].placeInViewPanel(panel, true);
+			m_dpArray[i].setVisible(true);
 		}
 		for ( int i = m_currentLevel+1; i < m_numDivs-1 ; i++ ){
+			m_dpArray[i].hideAllTiles();
 			m_dpArray[i].setVisible(false);
 		}		
 		
@@ -187,6 +187,7 @@ public class DivManager {
 		setCurrentLevelFromMapScale();
 		int n = Math.max(0, m_currentLevel - levelRange);
 		for( int i = n; i <= m_currentLevel; i++ ){
+			System.out.println("moving: " + i);
 			m_dpArray[i].moveOffsetsInViewPanel(panel, deltaX, deltaY);
 		}			
 	}

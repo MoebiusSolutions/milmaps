@@ -113,13 +113,11 @@ public class DivWorker {
 		}
 	}
 	
-	public void setDiv( GeodeticCoords gc, boolean bComputePixels ){
+	public void setDiv( GeodeticCoords gc ){
 		m_geoCenter.copyFrom(gc);
-		if ( bComputePixels ){
-			m_divCenterMc.copyFrom(m_proj.geodeticToMapCoords(m_geoCenter));
-			m_divCenterWc.copyFrom(m_divCenterMc);
-			computeOffsets();
-		}
+		m_divCenterMc.copyFrom(m_proj.geodeticToMapCoords(m_geoCenter));
+		m_divCenterWc.copyFrom(m_divCenterMc);
+		computeOffsets();
 	}
 	
 	public void computeOffsets(){

@@ -358,7 +358,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		ProjectionValues.writeCookies(m_proj);
 	}
 	
-	public void placeDivPanels(){
+	private void placeDivPanels(){
 		m_divMgr.placeDivPanels( m_viewPanel, 2 );	
 	}
 	

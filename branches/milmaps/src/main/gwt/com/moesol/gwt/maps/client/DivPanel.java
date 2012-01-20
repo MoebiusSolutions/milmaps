@@ -43,12 +43,12 @@ public class DivPanel extends AbsolutePanel {
 	
 	public IProjection getProjection(){ return m_proj; }
 	
-	public boolean upadteViewCenter( GeodeticCoords gc ){
+	public boolean updateViewCenter( GeodeticCoords gc ){
 		boolean bRtn = m_tileBuilder.upadteViewCenter(gc);
 		if ( m_firstCenter || bRtn ){
 			bRtn = true;
 			m_firstCenter = false;
-			m_divWorker.setDiv(gc, true);
+			m_divWorker.setDiv(gc);
 		}
 		return bRtn;
 	}
@@ -139,6 +139,12 @@ public class DivPanel extends AbsolutePanel {
 			}
 		}
 		return true;
+	}
+	
+	public void hideAllTiles() {
+		for (TiledImageLayer layer : m_tiledImageLayers) {
+			layer.hideAllTiles();
+		}
 	}
 	
 	public void hideAnimatedTiles() {
