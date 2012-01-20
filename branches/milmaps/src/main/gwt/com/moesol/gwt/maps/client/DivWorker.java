@@ -201,8 +201,8 @@ public class DivWorker {
 		
 		m_boxBounds.top   = dcYToPercent(y)*100;
 		m_boxBounds.left  = dcXToPercent(x)*100;
-		m_boxBounds.bot   = dcYToPercent(y+height)*100;
-		m_boxBounds.right = dcXToPercent(x+width)*100;
+		m_boxBounds.bot   = dcYToPercent(y+height+1)*100;
+		m_boxBounds.right = dcXToPercent(x+width+1)*100;
 		return m_boxBounds;
 	}
 	
