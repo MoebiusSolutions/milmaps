@@ -2,6 +2,7 @@ package com.moesol.gwt.maps.client;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.moesol.gwt.maps.client.IProjection.ZoomFlag;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 public class DivManager {
 	private int m_currentLevel = 0;
@@ -168,6 +169,7 @@ public class DivManager {
 	public void placeDivPanels( AbsolutePanel panel, int levelRange ){
 		setCurrentLevelFromMapScale();
 		int n = Math.max(0, m_currentLevel - levelRange);
+		GeodeticCoords forceUpdate = new GeodeticCoords(-181, -91, Degrees.DEGREES);
 		for ( int i = 0; i < n; i++ ){
 			m_dpArray[i].setVisible(false);
 		}
@@ -176,6 +178,7 @@ public class DivManager {
 			m_dpArray[i].setVisible(true);
 		}
 		for ( int i = m_currentLevel+1; i < m_numDivs-1 ; i++ ){
+			m_dpArray[i].updateViewCenter(forceUpdate);
 			m_dpArray[i].hideAllTiles();
 			m_dpArray[i].setVisible(false);
 		}		
