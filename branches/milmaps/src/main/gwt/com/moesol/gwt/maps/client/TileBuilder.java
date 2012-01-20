@@ -2,8 +2,6 @@ package com.moesol.gwt.maps.client;
 
 import java.util.ArrayList;
 
-import com.moesol.gwt.maps.client.IProjection.ZoomFlag;
-
 public class TileBuilder {
 	private int m_leftTiles;
 	private int m_topTiles;
@@ -21,7 +19,7 @@ public class TileBuilder {
 	
 	private ArrayList<TiledImageLayer> m_tiledImageLayers;
 
-	private ViewWorker m_vp = new ViewWorker();
+	private ViewWorker m_tileViewWork = new ViewWorker();
 	private TileCoords m_centerTile;
 	
 	IProjection m_divProj = null;
@@ -37,11 +35,11 @@ public class TileBuilder {
 	public void setProjection( IProjection proj){ 
 		m_divProj = proj;
 		m_lsWorker.setProjection(proj);
-		m_vp.setProjection(proj);
+		m_tileViewWork.setProjection(proj);
 	}
 	
 	public void setViewCenterWc(WorldCoords wc){
-		m_vp.setVpCenterInWc(wc);
+		m_tileViewWork.setVpCenterInWc(wc);
 	}
 	
 	public IProjection getProjection(){ return m_divProj; }
@@ -55,9 +53,9 @@ public class TileBuilder {
 	}
 	
 	public boolean upadteViewCenter(GeodeticCoords gc){
-		GeodeticCoords g = m_vp.getGeoCenter();
+		GeodeticCoords g = m_tileViewWork.getGeoCenter();
 		if ( g.equals(gc) == false ){
-			m_vp.setGeoCenter( gc );
+			m_tileViewWork.setGeoCenter( gc );
 			return true;
 		}
 		return false;
@@ -87,7 +85,7 @@ public class TileBuilder {
 	private void computeHowManyXTiles( int dimWidth ) {
 		int tileWidth = m_centerTile.getTileWidth();
 		int wcX = m_divWorker.dcXtoWcX( m_centerTile.getOffsetX());
-		int leftDist = m_vp.wcXtoVcX(wcX);
+		int leftDist = m_tileViewWork.wcXtoVcX(wcX);
 		int rightDist = dimWidth - (leftDist + tileWidth);
 		
 		m_leftTiles = leftDist <= 0 ? 0 : (leftDist + tileWidth - 1) / tileWidth;
@@ -98,7 +96,7 @@ public class TileBuilder {
 	private void computeHowManyYTiles( int dimHeight ) {
 		int tileHeight = m_centerTile.getTileHeight();
 		int wcY = m_divWorker.dcYtoWcY( m_centerTile.getOffsetY());
-		int topDist = m_vp.wcYtoVcY(wcY);
+		int topDist = m_tileViewWork.wcYtoVcY(wcY);
 		int bottomDist = dimHeight - (topDist + tileHeight);
 		
 		m_topTiles = topDist <= 0 ? 0 : (topDist + tileHeight - 1) / tileHeight;
@@ -224,7 +222,7 @@ public class TileBuilder {
 		double degFactor = ( tLevel < 1 ? 1 : Math.pow(2, tLevel) );
 		m_tileDegWidth = ls.getStartLevelTileWidthInDeg()/degFactor;
 		m_tileDegHeight = ls.getStartLevelTileHeightInDeg()/degFactor;
-		GeodeticCoords gc = m_vp.getGeoCenter();
+		GeodeticCoords gc = m_tileViewWork.getGeoCenter();
 		if ( m_divProj.getEquatorialScale() == 0.0 ){
 			m_divProj.setEquatorialScale(lsScale);
 		}
@@ -259,8 +257,8 @@ public class TileBuilder {
 		double dFactor = eqScale/projScale;
 		m_scaledViewDims.setWidth((int)(vd.getWidth()/dFactor));
 		m_scaledViewDims.setHeight((int)(vd.getHeight()/dFactor));
-		m_vp.setDimension(m_scaledViewDims);
-		m_vp.update(true);
+		m_tileViewWork.setDimension(m_scaledViewDims);
+		m_tileViewWork.update(true);
 		if (m_tiledImageLayers.size() > 0) {
 			int dpi = m_divProj.getScrnDpi();
 			for (TiledImageLayer layer : m_tiledImageLayers) {
