@@ -85,7 +85,7 @@ public class TileBuilder {
 	// Note, in all these routines Use the div projection that has a 
 	// fixed scale and is designed to be used at the level natural scale.
 	private void computeHowManyXTiles( int dimWidth ) {
-		int tileWidth = m_centerTile.getDrawTileWidth();
+		int tileWidth = m_centerTile.getTileWidth();
 		int wcX = m_divWorker.dcXtoWcX( m_centerTile.getOffsetX());
 		int leftDist = m_vp.wcXtoVcX(wcX);
 		int rightDist = dimWidth - (leftDist + tileWidth);
@@ -96,7 +96,7 @@ public class TileBuilder {
 	}
 
 	private void computeHowManyYTiles( int dimHeight ) {
-		int tileHeight = m_centerTile.getDrawTileHeight();
+		int tileHeight = m_centerTile.getTileHeight();
 		int wcY = m_divWorker.dcYtoWcY( m_centerTile.getOffsetY());
 		int topDist = m_vp.wcYtoVcY(wcY);
 		int bottomDist = dimHeight - (topDist + tileHeight);
@@ -116,8 +116,8 @@ public class TileBuilder {
 	}
 	
 	private TileCoords makeTilePositionedFromCenter( int tx, int ty, boolean zeroTop ) {
-		int tileWidth  = m_centerTile.getDrawTileWidth();
-		int tileHeight = m_centerTile.getDrawTileHeight();
+		int tileWidth  = m_centerTile.getTileWidth();
+		int tileHeight = m_centerTile.getTileHeight();
 		int centerOffsetXIdx = tx - m_leftTiles;
 		int centerOffsetYIdx = ty - m_topTiles;
 		int centTileX = m_centerTile.getX();
@@ -143,8 +143,8 @@ public class TileBuilder {
 		tc.setOffsetY(offsetY);
 		tc.setTileWidth(m_centerTile.getTileWidth());
 		tc.setTileHeight(m_centerTile.getTileHeight());
-		tc.setDrawTileWidth(m_centerTile.getDrawTileWidth());
-		tc.setDrawTileHeight(m_centerTile.getDrawTileHeight());
+		//tc.setDrawTileWidth(m_centerTile.getDrawTileWidth());
+		//tc.setDrawTileHeight(m_centerTile.getDrawTileHeight());
 		tc.setInViewPort( true );//computeInViewPort(tc));
 		tc.setDegWidth(m_centerTile.getDegWidth());
 		tc.setDegHeight(m_centerTile.getDegHeight());
@@ -243,7 +243,6 @@ public class TileBuilder {
 	}
 	
 	private void placeTiles( int level, TiledImageLayer layer, boolean bUpdateView ) {
-		//LayerSet ls = layer.getLayerSet();
 		TileCoords[] tileCoords = arrangeTiles( level, layer);
 		if ( tileCoords != null ){
 			if (layer.getLayerSet().isAlwaysDraw() || layer.isPriority()) {
@@ -256,7 +255,6 @@ public class TileBuilder {
 	}
 
 	public void computeTileCoords( ViewDimension vd, double eqScale, boolean bUpdateView ) {
-		//m_mapEqScale = eqScale;
 		double projScale = m_divProj.getEquatorialScale();
 		double dFactor = eqScale/projScale;
 		m_scaledViewDims.setWidth((int)(vd.getWidth()/dFactor));

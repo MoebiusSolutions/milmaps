@@ -94,6 +94,21 @@ public class MercatorTest {
 			}
 		}
 	}
+	
+	@Test
+	public void testSpecialLatLng() {
+		GeodeticCoords gc;
+		WorldCoords wc;
+		m_proj.zoomByFactor(4.0);
+		double lat, lng;
+		lng = -120;
+		lat = -60;
+		gc = new GeodeticCoords(lng, lat, AngleUnit.DEGREES);
+		wc = m_proj.geodeticToWorld(gc);
+		GeodeticCoords gc2 = m_proj.worldToGeodetic(wc);
+		compareGeoPos(gc, gc2, 0.7);
+		m_proj.zoomByFactor(0.25);
+	}
 
 	@Test
 	public void testGeodeticToWorld() {

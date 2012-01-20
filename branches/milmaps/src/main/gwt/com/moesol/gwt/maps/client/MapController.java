@@ -154,9 +154,8 @@ public class MapController implements
 			m_map.setFocus(true);
 			if ( m_movedMap ){
 				m_movedMap = false;
-				m_map.computeGeoCenterAndUpdate();
-				//m_map.updateDivPanel();
-				//m_map.updateView();
+				m_map.computeGeoCenter();
+				m_map.updateView();
 			}
 		} finally {
 			m_dragTracker = null;
@@ -169,15 +168,13 @@ public class MapController implements
 			return;
 		}
 		WorldCoords newWorldCenter = m_dragTracker.update(x, y);
+		ViewCoords deltalPix = m_dragTracker.getDelta();
 		if (m_dragTracker.isSameAsLast()) {
 			return;
 		}
 		m_map.setWorldCenter(newWorldCenter);
-		//m_map.updateDivPanel();
-		//m_map.updateView();
+		m_map.moveDivPanelsOffset( deltalPix.getX(), deltalPix.getY());
 		m_movedMap = true;
-		//TODO KBT need to incorporate Div stuff.
-		//m_map.updateView();
 	}
 	private void maybeHover(MouseMoveEvent event) {
 		m_hoverTimer .cancel();
@@ -339,7 +336,6 @@ public class MapController implements
 		m_wc.setX(m_wc.getX() + xdist * x);
 		m_wc.setY(m_wc.getY() + ydist * y);
 		m_map.setWorldCenter(m_wc);
-		m_map.updateView();
 	}
 
 	@Override

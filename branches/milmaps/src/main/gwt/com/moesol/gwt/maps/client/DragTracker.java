@@ -37,6 +37,10 @@ public class DragTracker {
 		return m_returnedWorld;
 	}
 	
+	public ViewCoords getDelta(){
+		return m_deltaPort;
+	}
+	
 	public ViewCoords updateView(int x, int y) {
 		int newDeltaPortX = x - m_origPort.getX();
 		int newDeltaPortY = m_origPort.getY() - y;  // Flip y axis

@@ -171,7 +171,6 @@ public class DivManager {
 		int n = Math.max(0, m_currentLevel - levelRange);
 		for ( int i = 0; i < n; i++ ){
 			m_dpArray[i].setVisible(false);
-		
 		}
 		for( int i = n; i <= m_currentLevel; i++ ){
 			m_dpArray[i].setVisible(true);
@@ -181,6 +180,15 @@ public class DivManager {
 			m_dpArray[i].setVisible(false);
 		}		
 		
+	}
+	
+	public void moveDivPanelsOffset( AbsolutePanel panel, int levelRange, 
+									 int deltaX, int deltaY ){
+		setCurrentLevelFromMapScale();
+		int n = Math.max(0, m_currentLevel - levelRange);
+		for( int i = n; i <= m_currentLevel; i++ ){
+			m_dpArray[i].moveOffsetsInViewPanel(panel, deltaX, deltaY);
+		}			
 	}
 	
 	public void resizeDivs(int w, int h ){

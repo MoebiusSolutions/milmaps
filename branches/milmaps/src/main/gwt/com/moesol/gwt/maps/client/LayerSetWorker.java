@@ -13,17 +13,11 @@ public class LayerSetWorker {
 		
 	}
 	
-	public LayerSetWorker( IProjection p ){
-		m_proj = p;
-	}
+	public LayerSetWorker( IProjection p ){ m_proj = p; }
 	
-	public void setProjection( IProjection p ){
-		m_proj = p;
-	}
+	public void setProjection( IProjection p ){ m_proj = p; }
 	
-	public IProjection getProjection(){
-		return m_proj;
-	}
+	public IProjection getProjection(){ return m_proj; }
 	
     protected double clip(double n, double minValue, double maxValue)
     {
@@ -59,7 +53,64 @@ public class LayerSetWorker {
     	double minLat = -1*(numRows*ls.getStartLevelTileHeightInDeg())/2.0;
     	return minLat;
     }
-
+    
+	public TileXY cyleGeoPosToTileXY( int level, int pixWidth, 
+			  					  double degW, double degH, GeodeticCoords g  )
+	{
+		// This computes the tile (x,y) with y = 0 as the bottom tile.
+		int tLevel = Math.max(0,level);
+		double degCellWidth = degW/Math.pow(2.0,tLevel);
+		double degCellHeight = degH/Math.pow(2.0,tLevel);
+		double degMag = Math.abs(g.getLambda(AngleUnit.DEGREES)+180);
+		m_tile.m_x = (int)(degMag/degCellWidth);
+		degMag = Math.abs(g.getPhi(AngleUnit.DEGREES)+90);
+		m_tile.m_y = (int)(degMag/degCellHeight);
+		return m_tile;
+}
+    
+	public TileXY mercGeoPosToTileXY( int level, int pixSize,  
+			  					  double degW, double degH, GeodeticCoords g ){
+		double minLat = m_proj.getMinLat();
+		double maxLat = m_proj.getMaxLat();
+		double lat = clip(g.getPhi(AngleUnit.DEGREES),   minLat, maxLat);
+		double lng = clip(g.getLambda(AngleUnit.DEGREES), -180.0, 180.0);
+		
+		double x = (lng + 180) / 360; 
+		double sinLat = Math.sin(lat * Math.PI / 180);
+		// The original equation with y = 0 at the top of the map is
+		// y = 0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI);
+		// but since we want y = 0 at the bottom of the map we will subtract the 
+		// above equation from 1 which gives us:
+		double y = 0.5 + Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI) ;
+		
+		int mapSize = (int) ( pixSize << level );
+		double pixX = clip(x * mapSize + 0.5, 0, mapSize);
+		double pixY = clip(y * mapSize + 0.5, 0, mapSize);
+		m_tile.m_x =  (int)Math.floor(pixX/ pixSize);
+		m_tile.m_y =  (int)Math.floor(pixY/pixSize);
+		// translate so it is based on row zero at the bottom of the map
+		//int j = (1<<level) - 1;
+		//m_tile.m_y = j - m_tile.m_y;
+		return m_tile;
+	}
+	
+	public TileXY geoPosToTileXY( LayerSet ls, int level, GeodeticCoords g  )
+	{
+		// This computes the tile (x,y) with y = 0 as the bottom tile.
+		int pixWidth = ls.getPixelWidth();
+		double degW = ls.getStartLevelTileWidthInDeg(); 
+		double degH = ls.getStartLevelTileHeightInDeg();
+		int tLevel = Math.max(0,level);
+		if ( m_proj.getType() == IProjection.T.Mercator ){
+			return  mercGeoPosToTileXY( tLevel, pixWidth, degW, degH,  g  );
+		}
+		else{
+			return  cyleGeoPosToTileXY( tLevel, pixWidth, degW, degH,  g  );
+		}
+	}
+	
+	
+/*
 	public TileXY geoPosToTileXY( LayerSet ls,  GeodeticCoords g ){
 		// This is based on zero row at the bottom of the map
 		//level = Math.max(0, level);
@@ -74,7 +125,7 @@ public class LayerSetWorker {
         m_tile.m_y = pixY/ls.getDrawPixelHeight();
         return m_tile;
 	}
-    
+*/    
 	/**
 	 * tileXY2TopLeftXY: computes the (i,j) tile's top left corner in Map World Coords.
 	 * @param ls: The layer set for the given tiles
@@ -99,8 +150,8 @@ public class LayerSetWorker {
     
     public WorldCoords tileXYToTopLeftXY( LayerSet ls, boolean zeroTop, int level, int tileX, int tileY ){
     	
-    	int drawWidth  = ls.getDrawPixelHeight();
-    	int drawHeight = ls.getDrawPixelWidth();
+    	int drawWidth  = ls.getPixelWidth();
+    	int drawHeight = ls.getPixelHeight();
     	int numRows = getNumberOfRows(ls, level);
     	return tileXY2TopLeftXY( zeroTop, numRows, tileX, tileY, drawWidth, drawHeight );
     }
@@ -141,12 +192,12 @@ public class LayerSetWorker {
     		double tileDegHeight, 
     		GeodeticCoords gc ) 
     {
-    	//TODO we might want to change the next two line back at some point.
-    	int drawPixWidth  = compTileDrawWidth( ls, level );
-    	int drawPixHeight = compTileDrawHeight( ls, level );
-    	ls.setDrawPixelWidth(drawPixWidth);
-    	ls.setDrawPixelHeight(drawPixHeight);
-    	TileXY tile = geoPosToTileXY(ls, gc);
+    	//int drawPixWidth  = compTileDrawWidth( ls, level );
+    	//int drawPixHeight = compTileDrawHeight( ls, level );
+ 
+    	//ls.setDrawPixelWidth(drawPixWidth);
+    	//ls.setDrawPixelHeight(drawPixHeight);
+    	TileXY tile = geoPosToTileXY(ls, level, gc);
     	int modX = tile.m_x;
     	int modY = tile.m_y;
     	TileCoords tileCoords = new TileCoords( modX, modY );
@@ -158,8 +209,8 @@ public class LayerSetWorker {
     	tileCoords.setTileWidth( ls.getPixelWidth() );
     	tileCoords.setTileHeight( ls.getPixelHeight() );   
 		
-    	tileCoords.setDrawTileWidth( drawPixWidth );
-    	tileCoords.setDrawTileHeight( drawPixHeight );
+    	//tileCoords.setDrawTileWidth( drawPixWidth );
+    	//tileCoords.setDrawTileHeight( drawPixHeight );
     
     	tileCoords.setDegWidth(tileDegWidth);
     	tileCoords.setDegHeight(tileDegHeight);

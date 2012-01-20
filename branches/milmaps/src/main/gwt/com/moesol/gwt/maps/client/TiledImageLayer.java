@@ -166,8 +166,8 @@ public class TiledImageLayer {
 		setImageZIndex(image, REAL_ZOFFSET + m_layerSet.getZIndex());
 		int x = tileCoords.getOffsetX();
 		int y = tileCoords.getOffsetY();
-		int width = tileCoords.getDrawTileWidth();
-		int height = tileCoords.getDrawTileHeight();
+		int width = tileCoords.getTileWidth();
+		int height = tileCoords.getTileHeight();
 		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(x, y, width, height);
 		m_layoutPanel.setWidgetLeftRight(image, b.left, Unit.PCT, 100-b.right, Unit.PCT);
 		m_layoutPanel.setWidgetTopBottom(image, b.top, Unit.PCT, 100-b.bot, Unit.PCT);

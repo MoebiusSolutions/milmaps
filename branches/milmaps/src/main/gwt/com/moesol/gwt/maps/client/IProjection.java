@@ -175,17 +175,6 @@ public interface IProjection {
 	 */
 	public abstract int getNumYtiles( double tileDegWidth );
 	
-	/**
-	 * geoPosToTileXY() converts world coordinates to tile coordinates
-	 * 
-	 * * @param levelOfDetail
-	 * 		map level
-	 * @param g
-	 * 		GeodeticCoords structure.
-	 * @return
-	 * 		TileXY based on the Microsoft way of doing things.
-	 *  see: http://msdn.microsoft.com/en-us/library/bb259689.aspx
-	 */
 	
 	/**
 	 * Returns the original scale that is computed when the projection 

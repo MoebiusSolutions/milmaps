@@ -167,9 +167,8 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		return m_dpi;
 	}
 	
-	public void computeGeoCenterAndUpdate(){
+	public void computeGeoCenter(){
 		m_viewPort.getVpWorker().computeGeoCenter();
-		updateView();
 	}
 
 	private GeodeticCoords recoverCenter(double defLng, double defLat) {
@@ -315,7 +314,8 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		m_constrained.copyFrom(worldCenter);
 		m_viewPort.constrainAsWorldCenter(m_constrained);
 		m_viewPort.getVpWorker().setVpCenterInWc(m_constrained);
-		placeDivPanels();
+		m_viewPort.getVpWorker().computeGeoCenter();
+		m_divMgr.setCenter(m_viewPort.getVpWorker().getGeoCenter());
 	}
 
 	private Timer m_updateTimer = null;
@@ -349,7 +349,6 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	void doUpdateView() {
 		m_viewPort.getVpWorker().update(true);
 		m_divMgr.doUpdateDivs( 2, m_proj.getEquatorialScale() );
-		ZoomFlag zoomFlag = m_proj.getZoomFlag();
 		m_proj.setZoomFlag(ZoomFlag.NONE);
 		placeDivPanels();
 
@@ -362,16 +361,11 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	public void placeDivPanels(){
 		m_divMgr.placeDivPanels( m_viewPanel, 2 );	
 	}
-	/*
-	public void updateDivPanel(){
-		m_viewPort.getVpWorker().computeGeoCenter();
-		// After updating the div center, we have to call placedivPanel
-		// to recompute the div's offsets in WC's and place it in the view
-		// relative to the view's offsets in WC's
-		m_divMgr.doUpdateDivs(2, m_proj.getEquatorialScale());
-		placeDivPanels();
+	
+	
+	public void moveDivPanelsOffset( int deltaX, int deltaY ){
+		m_divMgr.moveDivPanelsOffset( m_viewPanel, 2, deltaX, deltaY );
 	}
-	*/
 	
 	public void udateAfterZooming(){
 		updateView();

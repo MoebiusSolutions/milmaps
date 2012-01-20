@@ -168,6 +168,15 @@ public class DivPanel extends AbsolutePanel {
 		panel.setWidgetPosition(this, tl.m_x, tl.m_y);
 	}
 	
+	public void moveOffsetsInViewPanel( AbsolutePanel panel, int deltaX, int deltaY ){
+		IProjection mp = m_map.getProjection();
+		ViewWorker vw = m_map.getViewport().getVpWorker();
+		PixelXY tl = m_divWorker.computeOffsetInView(mp, vw, m_dims, true);
+		tl.m_x += deltaX;
+		tl.m_y -= deltaY;
+		panel.setWidgetPosition(this, tl.m_x, tl.m_y);
+	}
+	
 	public void resize( int w, int h ){
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();	
 		int dW = dd.getWidth();
