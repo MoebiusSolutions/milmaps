@@ -206,7 +206,7 @@ public class DivWorker {
 		return m_boxBounds;
 	}
 	
-	public PixelXY computeOffsetInView( 
+	public PixelXY computeDivLayoutInView( 
 		IProjection mapProj, ViewWorker vw, 
 		DivDimensions dim,  boolean show )
 	{

@@ -570,9 +570,6 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	 * Non-animated zoom in.
 	 */
 	public void zoomByFactor(double zoomFactor) {
-		if (!allTilesLoaded()) {
-			return;
-		}
 		m_proj.zoomByFactor(zoomFactor);
 		ViewWorker vp = m_viewPort.getVpWorker();
 		vp.setVpCenterInWc(m_proj.geodeticToWorld(vp.getGeoCenter()));
@@ -587,13 +584,11 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		m_wc.setX(offsetX + vd.getWidth()/2);
 		m_wc.setY(offsetY - vd.getHeight()/2);
 		vpWorker.setVpCenterInWc(m_wc);
-		updateView();
+		m_viewPort.getVpWorker().computeGeoCenter();
+		placeDivPanels();
 	}
 
 	public void zoom(double dScale) {
-		//if (!allTilesLoaded()) {
-		//	return;
-		//}
 		m_proj.setEquatorialScale(dScale);
 		updateView();
 	}
@@ -686,10 +681,6 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		return m_animateEngine.getDurationInSecs();
 	}
 
-	public boolean allTilesLoaded() {
-		return m_divMgr.allTilesLoaded(1);
-	}
-
 	public void timerZoom(final boolean zoomIn, final double scaleFactor) {
 		final int INTERVAL_MILSECS = 100;
 		Timer timer = new Timer() {
@@ -699,14 +690,9 @@ public class MapView extends Composite implements SourcesChangeEvents {
 			@Override
 			public void run() {
 				iCount++;
-				if (allTilesLoaded()) {
+				if (iCount > TIMER_COUNT) {
+					zoomByFactor(scaleFactor);
 					cancel();
-					animateZoom(scaleFactor);
-				} else {
-					if (iCount > TIMER_COUNT) {
-						zoomByFactor(scaleFactor);
-						cancel();
-					}
 				}
 			}
 		};

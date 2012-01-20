@@ -141,12 +141,13 @@ public class DivManager {
 	}
 	
 	public boolean allTilesLoaded( int n ) {
-		int start = ( m_currentLevel-n < 0 ? 0 : m_currentLevel-n );
-		int end = ( m_currentLevel+n > m_numDivs-1 ? m_numDivs-n : m_currentLevel+1 );
-		for ( int i = start; i <= end; i++ ){
-			if ( m_dpArray[i].allTilesLoaded() == false )
-				return false;
-		}
+		// TODO KBT we may want to use this, not sure!
+		//int start = ( m_currentLevel-n < 0 ? 0 : m_currentLevel-n );
+		//int end = ( m_currentLevel+n > m_numDivs-1 ? m_numDivs-n : m_currentLevel+1 );
+		//for ( int i = start; i <= end; i++ ){
+		//	if ( m_dpArray[i].allTilesLoaded() == false )
+		//		return false;
+		//}
 		return true;
 	}
 
@@ -190,7 +191,7 @@ public class DivManager {
 		setCurrentLevelFromMapScale();
 		int n = Math.max(0, m_currentLevel - levelRange);
 		for( int i = n; i <= m_currentLevel; i++ ){
-			System.out.println("moving: " + i);
+			//System.out.println("moving: " + i);
 			m_dpArray[i].moveOffsetsInViewPanel(panel, deltaX, deltaY);
 		}			
 	}

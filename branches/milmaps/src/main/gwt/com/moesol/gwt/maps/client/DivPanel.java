@@ -132,15 +132,6 @@ public class DivPanel extends AbsolutePanel {
 		return false;
 	}
 	
-	public boolean allTilesLoaded() {
-		for (TiledImageLayer layer : m_tiledImageLayers) {
-			if (layer.areAllLoaded() == false) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	public void hideAllTiles() {
 		for (TiledImageLayer layer : m_tiledImageLayers) {
 			layer.hideAllTiles();
@@ -169,7 +160,7 @@ public class DivPanel extends AbsolutePanel {
 	public void placeInViewPanel( AbsolutePanel panel, boolean show ){
 		IProjection mp = m_map.getProjection();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
-		PixelXY tl = m_divWorker.computeOffsetInView(mp, vw, m_dims, show);
+		PixelXY tl = m_divWorker.computeDivLayoutInView(mp, vw, m_dims, show);
 		super.setPixelSize(m_dims.getWidth(), m_dims.getHeight());
 		panel.setWidgetPosition(this, tl.m_x, tl.m_y);
 	}
@@ -177,7 +168,7 @@ public class DivPanel extends AbsolutePanel {
 	public void moveOffsetsInViewPanel( AbsolutePanel panel, int deltaX, int deltaY ){
 		IProjection mp = m_map.getProjection();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
-		PixelXY tl = m_divWorker.computeOffsetInView(mp, vw, m_dims, true);
+		PixelXY tl = m_divWorker.computeDivLayoutInView(mp, vw, m_dims, true);
 		tl.m_x += deltaX;
 		tl.m_y -= deltaY;
 		panel.setWidgetPosition(this, tl.m_x, tl.m_y);
