@@ -41,7 +41,7 @@ public class DivWorker {
 	public void copyFrom( DivWorker dw ){
 		setDivBaseDimensions(dw.getDivBaseDimensions());
 		setGeoCenter(dw.getGeoCenter());
-		setDivCentInWc(dw.getDivCenterInWc(),true);
+		setDivCentInWc(dw.getDivCenterInWc());
 	}
 	
 	public void setDivBaseDimensions( DivDimensions dd ){ m_baseDims.copyFrom(dd); }
@@ -105,12 +105,10 @@ public class DivWorker {
 		m_offsetInMcY = m_divCenterMc.getY()+ m_baseDims.getHeight()/2;
 	}
 	
-	public void setDivCentInWc( WorldCoords cent, boolean bCompOffsets) {
+	private void setDivCentInWc( WorldCoords cent ) {
 		m_divCenterMc.copyFrom(cent);
 		m_divCenterWc.copyFrom(cent);
-		if ( bCompOffsets ){
-			computeOffsets();
-		}
+		computeOffsets();
 	}
 	
 	public void setDiv( GeodeticCoords gc ){
@@ -206,28 +204,17 @@ public class DivWorker {
 		return m_boxBounds;
 	}
 	
-	public PixelXY computeDivLayoutInView( 
-		IProjection mapProj, ViewWorker vw, 
-		DivDimensions dim,  boolean show )
-	{
+	public PixelXY computeDivLayoutInView( IProjection mapProj, 
+										   ViewWorker vw, DivDimensions dim ){
 		int viewOx = vw.getOffsetInWcX();
 		int viewOy = vw.getOffsetInWcY();
-		int left;
-		int top;
-		if ( show ){
-			double scale = mapProj.getEquatorialScale();
-			double factor = scale/m_proj.getEquatorialScale();
-			dim.setWidth((int)(m_baseDims.getWidth()*factor + 0.5));
-			dim.setHeight((int)(m_baseDims.getHeight()*factor + 0.5));
-			m_wc.copyFrom(mapProj.geodeticToWorld(m_geoCenter));
-			left = (m_wc.getX()- dim.getWidth()/2) - viewOx;
-			top  = viewOy - (m_wc.getY()+ dim.getHeight()/2);
-		}
-		else{
-			ViewDimension vd = vw.getDimension();
-			left = viewOx + vd.getWidth();
-			top  = viewOy + vd.getHeight();
-		}
+		double scale = mapProj.getEquatorialScale();
+		double factor = scale/m_proj.getEquatorialScale();
+		dim.setWidth((int)(m_baseDims.getWidth()*factor + 0.5));
+		dim.setHeight((int)(m_baseDims.getHeight()*factor + 0.5));
+		m_wc.copyFrom(mapProj.geodeticToWorld(m_geoCenter));
+		int left = (m_wc.getX()- dim.getWidth()/2) - viewOx;
+		int top  = viewOy - (m_wc.getY()+ dim.getHeight()/2);
 		m_topLeft.m_x = left;
 		m_topLeft.m_y = top;
 		return m_topLeft;
