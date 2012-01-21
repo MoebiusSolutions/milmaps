@@ -233,7 +233,7 @@ public class Driver implements EntryPoint {
 		//count = hp.getWidgetCount();
 		//hp.setWidgetLeftWidth(mapFillPanel,0, Style.Unit.PCT, 100, Style.Unit.PCT);
 		// The map controls
-		MapPanZoomControl mapControls = new MapPanZoomControl(m_map, 15, 100);
+		MapPanZoomControl mapControls = new MapPanZoomControl(m_map, 15, 10);
 		mapControls.getElement().getStyle().setZIndex(100000);
 		lp.add(mapControls);
 		lp.setWidgetLeftWidth(mapControls,0, Style.Unit.PX, 56, Style.Unit.PX);
