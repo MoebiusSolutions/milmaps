@@ -15,6 +15,7 @@ public class AnimationEngine extends Animation {
 	private double m_startEqScale;
 	private double m_nextScale;
 	private double m_scaleDiff;
+	private boolean m_bZoomingIn;
 	private int m_durationInSecs = 750;
 	  
 	public AnimationEngine( MapView mv ) {
@@ -22,7 +23,8 @@ public class AnimationEngine extends Animation {
 	   m_proj = m_mapView.getProjection();
 	} 
 	
-	public void animateZoomMap( final double tagX, final double tagY, final double scaleFactor ) {
+	public void animateZoomMap( final double tagX, final double tagY, final double scaleFactor ){
+		m_bZoomingIn = ( scaleFactor > 1.0);
 		m_proj = m_mapView.getProjection();
 		m_viewPort = m_mapView.getViewport();
 		m_vpWorker = m_viewPort.getVpWorker(); 
@@ -59,7 +61,7 @@ public class AnimationEngine extends Animation {
 	protected void onComplete(){
 		super.onComplete();
 		double fudge = 2.000000001;
-		if ( m_nextScale < fudge*m_startEqScale ){
+		if ( m_bZoomingIn && ( m_nextScale < fudge*m_startEqScale ) ){
 			zoom( fudge*m_startEqScale );
 		}
 		m_mapView.setSuspendFlag(false);
