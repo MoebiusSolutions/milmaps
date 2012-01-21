@@ -8,7 +8,7 @@ import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class ProjectionTest {
 	
-	private IProjection m_proj = new CylEquiDistProj();// 512, 180, 180);
+	private IProjection m_proj = Projection.createProj(IProjection.T.CylEquiDist);
 	private CylProj m_cylProj = new CylProj(512,180);
 	
 	public double EarthRadius = 6378137;
@@ -21,7 +21,7 @@ public class ProjectionTest {
 	protected double m_orgTileWidthInDeg = 180;
 	
 	public ProjectionTest(){
-
+		m_proj.initialize(512, 180, 180);
 	}
 	
 	@Test
@@ -74,6 +74,20 @@ public class ProjectionTest {
 		m_proj.zoomByFactor(2);
 		m_proj.zoomByFactor(2);
 		checkViewToWorld(2);
+	}
+	
+	@Test
+	public void testComputeLevel() {
+		double dScale = m_proj.getOrigEquatorialScale();
+		double inc;
+		for( int j = 1; j < 10; j++ ){
+			inc = (1/10.2)*j;
+			for( int i = 0; i < 20; i ++){
+				double f = (1<<i) + inc;
+				int level = m_proj.getLevelFromScale(dScale*f);
+				assertEquals(i, level);
+			}
+		}
 	}
 
 	@Test

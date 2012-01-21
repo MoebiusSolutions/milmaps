@@ -54,6 +54,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	private boolean m_bProjSet = false;
 	private double m_defLat = 0;
 	private double m_defLng = 0;
+	private double m_previousEqScale;
 	private Date m_date = new Date();
 	
 	public MapView(){
@@ -115,6 +116,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 
 	public void setProjection(IProjection proj){
 		m_proj = proj;
+		m_previousEqScale = proj.getEquatorialScale()*8.0;
 		m_viewPort.setProjection(proj);
 		m_tempProj = proj.cloneProj();
 	}
@@ -341,25 +343,24 @@ public class MapView extends Composite implements SourcesChangeEvents {
 	}
 
 
-	//void preUpdateView() {
-		//computeLevelsAndTileCoords(false);
-	//}
-	
+	private boolean shouldUpdateDivs(){
+		int prevLevel = m_proj.getLevelFromScale(m_previousEqScale);
+		double scale = m_proj.getEquatorialScale();
+		int currentLevel = m_proj.getLevelFromScale(scale);
+		m_previousEqScale = m_proj.getEquatorialScale();
+		return true;//( prevLevel != currentLevel);
+	}
 	
 	void doUpdateView() {
-		m_viewPort.getVpWorker().update(true);
-		m_divMgr.doUpdateDivs( 2, m_proj.getEquatorialScale() );
-		m_proj.setZoomFlag(ZoomFlag.NONE);
-		placeDivPanels();
-
+		if ( shouldUpdateDivs() ){
+			m_viewPort.getVpWorker().update(true);
+			m_divMgr.doUpdateDivs( 2, m_proj.getEquatorialScale() );
+		}
+		m_divMgr.placeDivPanels( m_viewPanel, 2 );
 		//positionIcons();
 		m_changeListeners.fireChange(this);
 		recordCenter();
 		ProjectionValues.writeCookies(m_proj);
-	}
-	
-	private void placeDivPanels(){
-		m_divMgr.placeDivPanels( m_viewPanel, 2 );	
 	}
 	
 	
@@ -585,7 +586,7 @@ public class MapView extends Composite implements SourcesChangeEvents {
 		m_wc.setY(offsetY - vd.getHeight()/2);
 		vpWorker.setVpCenterInWc(m_wc);
 		m_viewPort.getVpWorker().computeGeoCenter();
-		placeDivPanels();
+		m_divMgr.placeDivPanels( m_viewPanel, 2 );
 	}
 
 	public void zoom(double dScale) {

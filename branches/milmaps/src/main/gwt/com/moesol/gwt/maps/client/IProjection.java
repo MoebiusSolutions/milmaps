@@ -198,5 +198,13 @@ public interface IProjection {
 	 * @return int, the number of pixels
 	 */
 	public abstract int compHeightInPixels(double lat1, double lat2);
+	
+	/**
+	 * getLevelFromScale: computes the level using the original scale 
+	 * as a reference value.
+	 * @param eqScale
+	 * @return int, level corresponding to the scale.
+	 */
+	public abstract int getLevelFromScale( double eqScale );
 
 }

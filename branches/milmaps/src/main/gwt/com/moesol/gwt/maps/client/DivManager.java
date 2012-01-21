@@ -47,10 +47,10 @@ public class DivManager {
 	}
 	
 	protected void initDivDivPanels(){
-		double dScale = m_proj.getOrigEquatorialScale();
+		double eqScale = m_proj.getOrigEquatorialScale();
 		for( int i = 0; i < m_numDivs; i++ ){
-			double val = dScale*(1<<i);
-			m_dpArray[i].initialize(i, m_map, m_proj.getType(),val);
+			double scale = eqScale*(1<<i);
+			m_dpArray[i].initialize(i, m_map, m_proj.getType(),scale);
 		}	
 	}
 	

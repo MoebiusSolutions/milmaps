@@ -223,4 +223,11 @@ public abstract class AbstractProjection implements IProjection {
     public double getOrigEquatorialScale(){ 
     	return m_origEqScale; 
     }
+    
+    @Override
+    public int getLevelFromScale( double eqScale ){
+		double level = ( Math.log(eqScale) - Math.log(m_origEqScale))/Math.log(2);
+		level = Math.max(level, 0);
+		return (int)level;
+    }
 }
