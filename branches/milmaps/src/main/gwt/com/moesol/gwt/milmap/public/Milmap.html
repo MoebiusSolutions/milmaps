@@ -24,9 +24,10 @@
 			wmscURL: "http://localhost/geowebcache/service/wms"
 		};
 		
+		var myOrigin = window.location.protocol + '//' + window.location.host;
 		var layerSets = [
 			{  
-				 server: "http://localhost:8080/milmapsCache/rs/mapcache",
+				 server: myOrigin + "/milmapsCache/rs/mapcache",
 				 data: "I3_Imagery_Prime_World_2D",
 				 urlPattern: "{server}/{data}/{epsg}/{imgSize}/{level}/{x}/{y}",
 				 epsg: 4326,
