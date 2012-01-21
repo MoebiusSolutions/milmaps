@@ -29,7 +29,7 @@ public class TileImageManager {
 		}
 	}
 	
-	public final static int MAX_CACHE_SIZE = 64;
+	public final static int MAX_CACHE_SIZE = 2;
 	private final ArrayList<TileInfo> m_infoCache = new ArrayList<TileInfo>();
 	private final TileImageEngineListener m_listener;
 	private final TiledImageLayer m_imgLayer;
@@ -136,6 +136,8 @@ public class TileImageManager {
 		for (int i = 0; i < m_infoCache.size(); i++) {
 			TileInfo tileInfo = m_infoCache.get(i);
 			m_listener.hideImage(tileInfo.m_image);
+			m_listener.destroyImage(tileInfo.m_image);
+			m_infoCache.remove(i);
 		}
 	}
 	
