@@ -45,7 +45,7 @@ public class DivWorkerTest {
 	@Test
 	public void computeOffsetTest(){
 		zoomIn2X();
-		PixelXY pix = m_dw.computeDivLayoutInView(m_mapProj, m_vw, m_dims, true);
+		PixelXY pix = m_dw.computeDivLayoutInView(m_mapProj, m_vw, m_dims);
 		assertEquals(pix.m_x,-900);
 		assertEquals(pix.m_y,-600);
 	}
