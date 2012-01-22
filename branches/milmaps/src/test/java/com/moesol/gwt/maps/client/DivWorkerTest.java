@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.gwt.event.shared.HandlerRegistration;
-
 public class DivWorkerTest {
 	private DivWorker m_dw = new DivWorker();
 	private ViewWorker m_vw = new ViewWorker();
@@ -45,8 +43,8 @@ public class DivWorkerTest {
 	@Test
 	public void computeOffsetTest(){
 		zoomIn2X();
-		PixelXY pix = m_dw.computeDivLayoutInView(m_mapProj, m_vw, m_dims);
-		assertEquals(pix.m_x,-900);
-		assertEquals(pix.m_y,-600);
+		ViewCoords pix = m_dw.computeDivLayoutInView(m_mapProj, m_vw, m_dims);
+		assertEquals(pix.getX(),-900);
+		assertEquals(pix.getY(),-600);
 	}
 }

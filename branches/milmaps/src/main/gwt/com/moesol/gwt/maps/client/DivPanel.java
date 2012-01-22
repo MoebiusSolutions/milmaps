@@ -1,7 +1,6 @@
 package com.moesol.gwt.maps.client;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -15,7 +14,6 @@ public class DivPanel extends AbsolutePanel {
 	private boolean m_firstSearch = true;
 	private boolean m_firstCenter = true;
 	private final ArrayList<TiledImageLayer> m_tiledImageLayers = new ArrayList<TiledImageLayer>();
-	private int m_level = 0;
 	protected IProjection m_proj = null;
 	
 	public DivPanel(){
@@ -32,7 +30,6 @@ public class DivPanel extends AbsolutePanel {
 	}
 	
 	public void initialize( int level, MapView map, IProjection.T type, double eqScale){
-		m_level = level;
 		m_map = map;
 		m_proj = Projection.createProj(type);
 		m_proj.setEquatorialScale(eqScale);
@@ -51,10 +48,6 @@ public class DivPanel extends AbsolutePanel {
 			m_divWorker.setDiv(gc);
 		}
 		return bRtn;
-	}
-	
-	public void setLevel( int level ){
-		m_level = level;
 	}
 	
 	public long getDynamicCounter() {
@@ -160,18 +153,17 @@ public class DivPanel extends AbsolutePanel {
 	public void placeInViewPanel( AbsolutePanel panel, boolean show ){
 		IProjection mp = m_map.getProjection();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
-		PixelXY tl = m_divWorker.computeDivLayoutInView(mp, vw, m_dims);
+		ViewCoords tl = m_divWorker.computeDivLayoutInView(mp, vw, m_dims);
 		super.setPixelSize(m_dims.getWidth(), m_dims.getHeight());
-		panel.setWidgetPosition(this, tl.m_x, tl.m_y);
+		panel.setWidgetPosition(this, tl.getX(), tl.getY());
 	}
 	
 	public void moveOffsetsInViewPanel( AbsolutePanel panel, int deltaX, int deltaY ){
 		IProjection mp = m_map.getProjection();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
-		PixelXY tl = m_divWorker.computeDivLayoutInView(mp, vw, m_dims);
-		tl.m_x += deltaX;
-		tl.m_y -= deltaY;
-		panel.setWidgetPosition(this, tl.m_x, tl.m_y);
+		ViewCoords tl = m_divWorker.computeDivLayoutInView(mp, vw, m_dims);
+		tl = tl.translate(deltaX, deltaY);
+		panel.setWidgetPosition(this, tl.getX(), tl.getY());
 	}
 	
 	public void resize( int w, int h ){

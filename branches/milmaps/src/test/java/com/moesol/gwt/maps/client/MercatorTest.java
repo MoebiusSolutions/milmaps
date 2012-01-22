@@ -160,8 +160,8 @@ public class MercatorTest {
 	protected TileXY findTile( GeodeticCoords gc, int level ){
 		double lat = gc.getPhi(AngleUnit.DEGREES);
 		double lng = gc.getLambda(AngleUnit.DEGREES);
-		PixelXY pixel = m_mercProj.latLngToPixelXY( level, lat, lng );
-		TileXY tile = m_mercProj.pixelXYToTileXY(level,pixel.m_x, pixel.m_y ).clone();
+		WorldCoords pixel = m_mercProj.latLngToPixelXY( level, lat, lng );
+		TileXY tile = m_mercProj.pixelXYToTileXY(level,pixel.getX(), pixel.getY() ).clone();
     	m_tile.m_x = tile.m_x;
     	m_tile.m_y = tile.m_y;	
     	return m_tile;

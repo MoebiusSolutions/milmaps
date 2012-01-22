@@ -362,7 +362,14 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_viewPort.getVpWorker().setCenterInWc(wc);
 	}
 
-	private Timer m_updateTimer = null;
+	private final Timer m_updateTimer = new Timer() {
+		@Override
+		public void run() {
+			m_isUpdateTimerScheduled = false;
+			doUpdateView();
+		}
+	};
+	private boolean m_isUpdateTimerScheduled = false;
 
 	/**
 	 * Match the view to the model data.
@@ -371,18 +378,13 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		if (m_declutterEngine != null) {
 			m_declutterEngine.cancelIncrementalDeclutter();
 		}
-		
-		if (m_updateTimer != null) {
+		m_animateEngine.cancel();
+
+		if (m_isUpdateTimerScheduled) {
 			return;
 		}
-		m_updateTimer = new Timer() {
-			@Override
-			public void run() {
-				m_updateTimer = null;
-				doUpdateView();
-			}
-		};
-		m_updateTimer.schedule(1000 / 30);
+		m_updateTimer.schedule(1000/30);
+		m_isUpdateTimerScheduled = true;
 	}
 
 	private boolean hasLevelChanged(){
@@ -399,32 +401,34 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		DivWorker dw = dp.getDivWorker();
 		ViewWorker vw = m_viewPort.getVpWorker();
 		DivDimensions dim = dp.getDimensions();
-		PixelXY tl = dw.computeDivLayoutInView(m_proj, vw, dim);
-		PixelXY br = new PixelXY(tl.m_x+dim.getWidth(), tl.m_y+dim.getHeight());
+		ViewCoords tl = dw.computeDivLayoutInView(m_proj, vw, dim);
+		ViewCoords br = new ViewCoords(tl.getX()+dim.getWidth(), tl.getY()+dim.getHeight());
 		ViewDimension vd = vw.getDimension();
-		if( -10 < tl.m_x || br.m_x < vd.getWidth() + 20  || 
-			-10 < tl.m_y || br.m_y < vd.getHeight() + 20 )
+		if( -10 < tl.getX() || br.getX() < vd.getWidth() + 20  || 
+			-10 < tl.getY() || br.getY() < vd.getHeight() + 20 )
 			return true;
 		return false;
 	}
 	
 	public void doUpdateView() {
 		if ( hasLevelChanged() || hasDivMovedToFar() ){
-			System.out.println("doUpdateView: need to update");
-			m_divMgr.doUpdateDivs( 2, m_proj.getEquatorialScale() );
+			m_divMgr.doUpdateDivsCenterScale( m_proj.getEquatorialScale() );
+			m_divMgr.doUpdateDivsVisibility( m_viewPanel );
+		} else {
+			partialUpdateView();
 		}
-		m_divMgr.placeDivPanels( m_viewPanel, 2 );
 		//positionIcons();
 		m_changeListeners.fireChange(this);
-		// TODO move to idle handling...
+		
+// TODO move to idle handling...
 //		recordCenter();
-		ProjectionValues.writeCookies(m_proj);
+//		ProjectionValues.writeCookies(m_proj);
 	}
 	
-	public void moveDivPanelsOffset( int deltaX, int deltaY ){
-		m_divMgr.moveDivPanelsOffset( m_viewPanel, 2, deltaX, deltaY );
+	public void partialUpdateView() {
+		m_divMgr.placeDivsInViewPanel( m_viewPanel );
 	}
-
+	
 	public void hideAnimatedTiles() {
 		if (m_mapBrightness < 1.0) {
 			m_divMgr.hideAnimatedTiles();
@@ -499,7 +503,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public void moveMapByPixels(int dx, int dy) {
 		m_flyToEngine.getAnimation().cancel();
 		// TODO replace suspend flag with cancel animation.
-		if (m_bSuspendMapAction ) {
+		if ( m_bSuspendMapAction ) {
 			return;
 		}
 		ViewWorker vpWorker = this.getViewport().getVpWorker();
@@ -542,7 +546,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		final WorldCoords wc = new WorldCoords(offsetX + vd.getWidth()/2, offsetY - vd.getHeight()/2);
 		vpWorker.setCenterInWc(wc);
 		
-		m_divMgr.placeDivPanels( m_viewPanel, 2 );
+		partialUpdateView();
 	}
 
 	public void zoom(double dScale) {

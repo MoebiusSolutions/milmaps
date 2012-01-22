@@ -55,7 +55,6 @@ public class MapController implements
 	private int m_wheelAccum = 0;
 	private int m_keyVelocity = 1;
 	private boolean m_bUseDragTracker = true;
-	private boolean m_movedMap = false;
 	WorldCoords m_wc = new WorldCoords();
 	private HasText m_msg = new HasText() {
 		@Override
@@ -161,11 +160,8 @@ public class MapController implements
 
 		try {
 			maybeDragMap(x, y);
+			m_map.updateView();
 			m_map.setFocus(true);
-			if ( m_movedMap ){
-				m_movedMap = false;
-				m_map.updateView();
-			}
 		} finally {
 			m_dragTracker = null;
 		}
@@ -177,14 +173,11 @@ public class MapController implements
 			return;
 		}
 		WorldCoords newWorldCenter = m_dragTracker.update(x, y);
-		ViewCoords deltalPix = m_dragTracker.getDelta();
 		if (m_dragTracker.isSameAsLast()) {
 			return;
 		}
 		m_map.setWorldCenter(newWorldCenter);
-		m_map.doUpdateView();
-		
-		m_movedMap = true;
+		m_map.partialUpdateView();
 	}
 	private void maybeHover(MouseMoveEvent event) {
 		m_hoverTimer .cancel();
@@ -329,16 +322,16 @@ public class MapController implements
 	private void onKeyDownNoModifiers(int keyCode) {
 		switch (keyCode) {
 		case KeyCodes.KEY_LEFT:
-			moveMap(-10, 0);
+			moveMap(-1, 0);
 			break;
 		case KeyCodes.KEY_RIGHT:
-			moveMap(10, 0);
+			moveMap(1, 0);
 			break;
 		case KeyCodes.KEY_UP:
-			moveMap(0, 10);
+			moveMap(0, 1);
 			break;
 		case KeyCodes.KEY_DOWN:
-			moveMap(0, -10);
+			moveMap(0, -1);
 			break;
 		}
 		if (m_keyVelocity < 64) {
@@ -346,11 +339,11 @@ public class MapController implements
 		}
 	}
 
-	private void moveMap(int x, int y) {
+	private void moveMap(int directionX, int directionY) {
 		int xdist = m_keyVelocity;
 		int ydist = m_keyVelocity;
 		WorldCoords wc = m_map.getWorldCenter();
-		wc = wc.translate(x * xdist, y * ydist);
+		wc = wc.translate(directionX * xdist, directionY * ydist);
 		m_map.setWorldCenter(wc);
 		m_map.updateView();
 	}

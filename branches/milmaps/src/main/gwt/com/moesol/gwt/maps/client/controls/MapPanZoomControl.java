@@ -217,6 +217,7 @@ public class MapPanZoomControl extends Composite {
 		zoomTimer.cancel();
 		if ( m_doingMapAction ){
 			m_doingMapAction = false;
+			m_map.updateView();
 		}
 	}
 

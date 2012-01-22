@@ -12,7 +12,6 @@ public class DivWorker implements ProjectionChangedHandler {
 	private GeodeticCoords m_geoCenter = new GeodeticCoords();
 	private MapCoords m_divCenterMc = null; // viewport center in wc.
 	private final DivDimensions m_baseDims = new DivDimensions();
-	private final PixelXY m_topLeft = new PixelXY();
 	private double m_eqScale;
 	private double m_offsetInMcX;
 	private double m_offsetInMcY;
@@ -178,7 +177,7 @@ public class DivWorker implements ProjectionChangedHandler {
 		return m_boxBounds;
 	}
 	
-	public PixelXY computeDivLayoutInView( IProjection mapProj, 
+	public ViewCoords computeDivLayoutInView( IProjection mapProj, 
 										   ViewWorker vw, DivDimensions dim ){
 		int viewOx = vw.getOffsetInWcX();
 		int viewOy = vw.getOffsetInWcY();
@@ -189,9 +188,7 @@ public class DivWorker implements ProjectionChangedHandler {
 		WorldCoords wc = mapProj.geodeticToWorld(m_geoCenter);
 		int left = (wc.getX()- dim.getWidth()/2) - viewOx;
 		int top  = viewOy - (wc.getY()+ dim.getHeight()/2);
-		m_topLeft.m_x = left;
-		m_topLeft.m_y = top;
-		return m_topLeft;
+		return new ViewCoords(left, top);
 	}
 	
 	@Override
