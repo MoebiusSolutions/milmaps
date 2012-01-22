@@ -6,8 +6,7 @@ import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
 
 public class ViewWorker implements ProjectionChangedHandler {
 	private ViewDimension m_dims = new ViewDimension(400, 600);
-	//private GeodeticCoords m_geoCenter = new GeodeticCoords(); // view-port center
-	private WorldCoords m_centerInWc;
+	private GeodeticCoords m_geoCenter = new GeodeticCoords(); // view-port center
 	private int m_offsetInWcX;
 	private int m_offsetInWcY;
 	private IProjection m_proj = null;
@@ -16,9 +15,6 @@ public class ViewWorker implements ProjectionChangedHandler {
 	
 	public void setProjection( IProjection p ) {
 		m_proj = p;
-		if ( m_centerInWc == null ){
-			m_centerInWc = m_proj.geodeticToWorld(new GeodeticCoords());
-		}
 	}
 	
 	public IProjection getProjection() { return m_proj; }
@@ -26,8 +22,7 @@ public class ViewWorker implements ProjectionChangedHandler {
 	public void intialize( ViewDimension vd, IProjection proj ) {
 		 m_proj = proj;
 		 m_dims = vd;
-		 m_centerInWc = m_proj.geodeticToWorld(new GeodeticCoords());
-		 computeOffsets(m_centerInWc);
+		 computeOffsets(m_proj.geodeticToWorld(m_geoCenter));
 		 if (m_projectionChangedHandlerRegistration != null) {
 			 m_projectionChangedHandlerRegistration.removeHandler();
 		 }
@@ -36,26 +31,29 @@ public class ViewWorker implements ProjectionChangedHandler {
 	
 	public void setDimension( ViewDimension d ) {
 		m_dims = d;
-		computeOffsets(m_centerInWc);
+		computeOffsets(getVpCenterInWc());
 	}
 	
 	public ViewDimension getDimension() {
 		return m_dims;
 	}
 	
+	// TODO remove me, use word  coords only
 	public void setGeoCenter( GeodeticCoords gc ) {
-		m_centerInWc = m_proj.geodeticToWorld(gc);
-		computeOffsets(m_centerInWc);
+		m_geoCenter = gc;
+		
+		WorldCoords wc = m_proj.geodeticToWorld(m_geoCenter);
+		computeOffsets(wc);
 	}
 
-
+	// TODO remove me, use word  coords only
 	public GeodeticCoords getGeoCenter(){
-		return m_proj.worldToGeodetic(m_centerInWc);
+		return m_geoCenter;
 	}
 	
-	public void setCenterInWc(WorldCoords centerInWc) {
-		m_centerInWc = centerInWc;
-		computeOffsets(centerInWc);
+	public void setCenterInWc(WorldCoords cent) {
+		m_geoCenter = m_proj.worldToGeodetic(cent);
+		computeOffsets(cent);
 	}
 	
 	private void computeOffsets(WorldCoords wc) {
@@ -64,7 +62,7 @@ public class ViewWorker implements ProjectionChangedHandler {
 	}
 	
 	public WorldCoords getVpCenterInWc() {
-		return m_centerInWc;
+		return m_proj.geodeticToWorld(m_geoCenter);
 	}
 	
 	public int getOffsetInWcX() {
@@ -123,6 +121,6 @@ public class ViewWorker implements ProjectionChangedHandler {
 
 	@Override
 	public void onProjectionChanged(ProjectionChangedEvent event) {
-		computeOffsets(m_centerInWc);
+		computeOffsets(getVpCenterInWc());
 	}
 }
