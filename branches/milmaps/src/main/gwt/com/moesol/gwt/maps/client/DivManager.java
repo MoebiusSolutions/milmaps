@@ -1,7 +1,6 @@
 package com.moesol.gwt.maps.client;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.moesol.gwt.maps.client.units.Degrees;
 
 public class DivManager {
 	private static int LEVEL_RANGE = 2;
@@ -177,8 +176,23 @@ public class DivManager {
 	
 	public void resizeDivs( int w, int h ) {
 		for ( int i = 0; i < m_numDivs; i++ ) {
-			m_dpArray[i].resize( w, h );
+			m_dpArray[i].resize(w, h);
 		}
+	}
+	
+	public boolean hasDivMovedToFar(){
+		DivPanel dp = getCurrentDiv();
+		DivWorker dw = dp.getDivWorker();
+		ViewWorker vw = m_map.getViewport().getVpWorker();
+		DivDimensions dim = dp.getDimensions();
+		ViewCoords tl = dw.computeDivLayoutInView(m_proj, vw, dim);
+		DivCoordSpan ds = dp.getUsedDivSpan();
+		ViewCoords br = new ViewCoords(tl.getX()+ ds.getRight(), tl.getY()+dim.getHeight());
+		ViewDimension vd = vw.getDimension();
+		if( 0 < tl.getX() + ds.getLeft() || br.getX()  < vd.getWidth() || 
+			-10 < tl.getY() || br.getY() < vd.getHeight() + 10 )
+			return true;
+		return false;
 	}
 }
 

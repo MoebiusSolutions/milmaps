@@ -26,6 +26,7 @@ public class TiledImageLayer {
 	private final DivPanel m_divPanel;
 	/** Marked as priority when this image layer is the best for the scale */
 	private boolean m_priority = false;
+	int m_minLeft, m_maxRight;
 	
 	
 	private class MyTileImageEngineListener implements TileImageEngineListener {
@@ -35,23 +36,10 @@ public class TiledImageLayer {
 			image.addLoadListener(m_tileImageLoadListener);
 			String url = tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter());
 			image.setUrl(url);
-			//image.setStyleName("moesol-MapTile");
-			//m_absolutePanel.add(image);
-			m_layoutPanel.add(image);
-			return image;
-		}
-		/*
-		public Object createImage(TileCoords tileCoords) {
-			Image image = new Image();
-			image.addLoadListener(m_tileImageLoadListener);
-			String url = tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter());
-			image.setUrl(url);
 			image.setStyleName("moesol-MapTile");
-			//m_absolutePanel.add(image);
 			m_layoutPanel.add(image);
 			return image;
 		}
-		*/
 		@Override
 		public void destroyImage(Object object) {
 			ImageDiv image = (ImageDiv)object;
@@ -75,6 +63,10 @@ public class TiledImageLayer {
 			m_layoutPanel.setWidgetVisible(image, false);
 		}
 	};
+	
+	
+	public int getMinLeft(){ return m_minLeft; }
+	public int getMaxRight(){ return m_maxRight; }
 
 	public TiledImageLayer( DivPanel divPanel, LayerSet layerSet ) {
 		m_divPanel = divPanel;
@@ -136,6 +128,8 @@ public class TiledImageLayer {
 	}
 
 	private void positionImages() {
+		m_minLeft = Integer.MAX_VALUE;
+		m_maxRight = Integer.MIN_VALUE;
 		for (int i = 0; i < m_tileCoords.length; i++) {
 			positionOneImage(m_tileCoords[i]);
 		}
@@ -155,6 +149,9 @@ public class TiledImageLayer {
 		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(x, y, width, height);
 		m_layoutPanel.setWidgetLeftRight(image, b.left, Unit.PCT, 100-b.right, Unit.PCT);
 		m_layoutPanel.setWidgetTopBottom(image, b.top, Unit.PCT, 100-b.bot, Unit.PCT);
+		DivDimensions dd = m_divWorker.getDivBaseDimensions();
+		m_minLeft  = Math.max(0,Math.min(x, m_minLeft));
+		m_maxRight = Math.min(dd.getWidth(),Math.max(x, m_maxRight));
 	}
 
 	private void setImageZIndex(ImageDiv image, int zIndex) {

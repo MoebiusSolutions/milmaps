@@ -229,7 +229,7 @@ public class TileBuilder {
 		return r;
 	}
 	
-	private void placeTiles( int level, TiledImageLayer layer ) {
+	private void placeTilesForOneLayer( int level, TiledImageLayer layer ) {
 		TileCoords[] tileCoords = arrangeTiles( level, layer);
 		if (layer.getLayerSet().isAlwaysDraw() || layer.isPriority()) {
 			layer.setTileCoords(tileCoords);
@@ -257,7 +257,7 @@ public class TileBuilder {
 			}
 			if (ls.isAlwaysDraw() || layer.isPriority()) {
 				int level = layer.findLevel(dpi, projScale);
-				placeTiles(level, layer );
+				placeTilesForOneLayer(level, layer );
 			}
 		}
 	}

@@ -397,22 +397,9 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 
 	}
 	
-	private boolean hasDivMovedToFar(){
-		DivPanel dp = m_divMgr.getCurrentDiv();
-		DivWorker dw = dp.getDivWorker();
-		ViewWorker vw = m_viewPort.getVpWorker();
-		DivDimensions dim = dp.getDimensions();
-		ViewCoords tl = dw.computeDivLayoutInView(m_proj, vw, dim);
-		ViewCoords br = new ViewCoords(tl.getX()+dim.getWidth(), tl.getY()+dim.getHeight());
-		ViewDimension vd = vw.getDimension();
-		if( -10 < tl.getX() || br.getX() < vd.getWidth() + 20  || 
-			-10 < tl.getY() || br.getY() < vd.getHeight() + 20 )
-			return true;
-		return false;
-	}
 	
 	public void doUpdateView() {
-		if ( hasLevelChanged() || hasDivMovedToFar() ){
+		if ( hasLevelChanged() || m_divMgr.hasDivMovedToFar() ){
 			m_divMgr.doUpdateDivsCenterScale( m_proj.getEquatorialScale() );
 			m_divMgr.doUpdateDivsVisibility( m_viewPanel );
 		} else {

@@ -16,6 +16,7 @@ public class DivPanel extends AbsolutePanel {
 	private final ArrayList<TiledImageLayer> m_tiledImageLayers = new ArrayList<TiledImageLayer>();
 	protected IProjection m_proj = null;
 	
+	
 	public DivPanel(){
 		m_tileBuilder.setDivWorker(m_divWorker);
 		m_tileBuilder.setTileImageLayers(m_tiledImageLayers);
@@ -68,6 +69,16 @@ public class DivPanel extends AbsolutePanel {
 	
 	public DivDimensions getDimensions(){
 		return m_dims;
+	}
+	
+	public DivCoordSpan getUsedDivSpan() {
+		int minLeft = Integer.MAX_VALUE;
+		int maxRight = Integer.MIN_VALUE;
+		for (TiledImageLayer layer : m_tiledImageLayers) {
+			minLeft = Math.min(minLeft, layer.getMinLeft());
+			maxRight = Math.max(maxRight, layer.getMaxRight());
+		}
+		return new DivCoordSpan(minLeft, maxRight);
 	}
 	
 	@Override
