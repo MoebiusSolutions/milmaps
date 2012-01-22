@@ -5,21 +5,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.moesol.gwt.maps.client.stats.Sample;
 
 /**
- * Images are placed into an absolute panel. The z-index (zIndex) style is used
- * to ensure the images are layered correctly. We divide the z-index values
- * into three groups.
- * <ol>
- * <li>Real tiles for the current zoom level</li>
- * <li>Animated tiles being zoomed</li>
- * <li>Tiles not in use</li>
- * </ol>
- * Each group is separated by 1000 z-index values. That way within a group the z-index
- * defines which LayerSet has priority. Therefore we have:
- * <table>
- * <tr><td>Real</td><td>2000 - 2999</td></tr>
- * <tr><td>Animated</td><td>1000 - 1999</td></tr>
- * <tr><td>Not in Use</td><td>0 - 999</td></tr>
- * </table> 
+ * Images are placed into an absolute panel. 
  **/
 public class TiledImageLayer {
 	private final TileImageLoadListener m_tileImageLoadListener = new TileImageLoadListener();
@@ -28,7 +14,7 @@ public class TiledImageLayer {
 	private final LayerSet m_layerSet;
 	
 	private final LayoutPanel m_layoutPanel;
-	private final TileImageManager m_tileImageMgr = new TileImageManager(this,m_tileImageEngineListener);
+	private final TileImageManager m_tileImageMgr = new TileImageManager(m_tileImageEngineListener);
 	private final int REAL_ZOFFSET = 2000;
 	
 	private final double EarthCirMeters  = 2.0*Math.PI*6378137;
@@ -114,15 +100,6 @@ public class TiledImageLayer {
 	  return m_tileCoords;
 	}
 	
-	
-	public void hideAnimatedTiles(){
-		if ( m_divPanel.getMapBrightness() < 1.0 ){
-			if ( areAllLoaded() && !m_divPanel.isMapActionSuspended() ){
-				m_tileImageMgr.doHideAnimatedImages();
-			}	
-		}
-	}
-	
 	public void hideAllTiles() {
 		m_tileImageMgr.hideAllImages();
 	}
@@ -169,6 +146,7 @@ public class TiledImageLayer {
 			return;
 		}
 		ImageDiv image = (ImageDiv)m_tileImageMgr.findOrCreateImage(tileCoords);
+		// TODO review the need for zindex now that animation is done differently
 		setImageZIndex(image, REAL_ZOFFSET + m_layerSet.getZIndex());
 		int x = tileCoords.getOffsetX();
 		int y = tileCoords.getOffsetY();

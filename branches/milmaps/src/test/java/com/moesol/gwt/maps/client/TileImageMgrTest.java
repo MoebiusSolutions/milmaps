@@ -12,7 +12,7 @@ public class TileImageMgrTest {
 
 	@Before
 	public void setUp() throws Exception {
-		m_engine = new TileImageManager(null,m_listener);
+		m_engine = new TileImageManager(m_listener);
 	}
 	
 	@Test

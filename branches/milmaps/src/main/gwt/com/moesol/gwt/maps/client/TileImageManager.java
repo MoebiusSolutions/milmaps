@@ -17,10 +17,6 @@ public class TileImageManager {
 		Object m_image;
 		/* true if tile was placed/drawn for level */
 		boolean m_placed;
-		/* true if tile was zoomed/drawn during animation */
-		boolean m_animated;
-		/* scale of last animation */
-		double m_scale;
 		/* true if loaded */
 		boolean m_loaded;
 		
@@ -33,41 +29,15 @@ public class TileImageManager {
 	public static int MAX_CACHE_SIZE = 2;
 	private final ArrayList<TileInfo> m_infoCache = new ArrayList<TileInfo>();
 	private final TileImageEngineListener m_listener;
-	private final TiledImageLayer m_imgLayer;
-	public TileImageManager( TiledImageLayer imgLayer, TileImageEngineListener l) {
-		m_listener = l;
-		m_imgLayer = imgLayer;
+	public TileImageManager( TileImageEngineListener listener ) {
+		m_listener = listener;
 	}
 	
 	private void clearFlags() {
 		for (int i = 0; i < m_infoCache.size(); i++) {
 			TileInfo tileInfo = m_infoCache.get(i);
 			tileInfo.m_placed = false;
-			tileInfo.m_animated = false;
-			tileInfo.m_scale = Double.NaN;
 		}
-	}
-	
-	public Object findImage(TileCoords tileCoords, double scale, boolean placed, boolean animated) {
-		int iSize = m_infoCache.size();
-		for (int i = 0; i < iSize; i++) {
-			TileInfo tileInfo = (TileInfo) m_infoCache.get(i);
-			if (isMatch(tileInfo, tileCoords)) {
-				if (tileInfo.m_placed) {
-					continue;
-				}
-				if (tileInfo.m_scale == scale) {
-					continue;
-				}
-				m_listener.useImage(tileCoords, tileInfo.m_image);
-				tileInfo.m_placed = placed;
-				tileInfo.m_animated = animated;
-				tileInfo.m_scale = scale;
-				tileInfo.m_lastUsedMillis = System.currentTimeMillis();
-				return tileInfo.m_image;
-			}
-		}
-		return null;
 	}
 	
 	public Object findOrCreateImage(TileCoords tileCoords) {
@@ -122,22 +92,12 @@ public class TileImageManager {
 	private void doHideUnplacedImages() {
 		for (int i = 0; i < m_infoCache.size(); i++) {
 			TileInfo tileInfo = m_infoCache.get(i);
-			if (!tileInfo.m_placed && !tileInfo.m_animated) {
+			if (!tileInfo.m_placed) {
 				m_listener.hideImage(tileInfo.m_image);
 			}
 		}
 	}
 	
-	public void doHideAnimatedImages() {
-		for (int i = 0; i < m_infoCache.size(); i++) {
-			TileInfo tileInfo = m_infoCache.get(i);
-			if ( tileInfo.m_animated ) {
-				tileInfo.m_animated = false;
-				m_listener.hideImage(tileInfo.m_image);
-			}
-		}
-	}
-
 	public void hideAllImages() {
 		for (int i = 0; i < m_infoCache.size(); i++) {
 			TileInfo tileInfo = m_infoCache.get(i);
@@ -179,7 +139,6 @@ public class TileImageManager {
 		}
 	}
 	
-
 	private boolean isMatch(TileInfo tileInfo, TileCoords tileCoords) {
 		if (tileInfo.m_level != levelOrZero(tileCoords)) {
 			return false;
@@ -214,7 +173,6 @@ public class TileImageManager {
 				return;
 			}
 		}
-		m_imgLayer.hideAnimatedTiles();
 	}
 	
 	public Object firstUnloadedImage() {

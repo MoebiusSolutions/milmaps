@@ -102,13 +102,6 @@ public class DivPanel extends AbsolutePanel {
 		}
 	}
 	
-	public void removeAllTileImages(){
-		m_firstCenter = true;
-		for (TiledImageLayer layer : m_tiledImageLayers) {
-			layer.clearTileImages();
-		}	
-	}
-	
 	public void clearLayers() {
 		for (TiledImageLayer layer : m_tiledImageLayers) {
 			layer.destroy();
@@ -118,7 +111,11 @@ public class DivPanel extends AbsolutePanel {
 
 	public boolean hasAutoRefreshOnTimerLayers() {
 		for (TiledImageLayer layer : m_tiledImageLayers) {
-			if (layer.getLayerSet().isAutoRefreshOnTimer()) {
+			LayerSet layerSet = layer.getLayerSet();
+			if (!layerSet.isActive()) {
+				continue;
+			}
+			if (layerSet.isAutoRefreshOnTimer()) {
 				return true;
 			}
 		}
@@ -127,28 +124,22 @@ public class DivPanel extends AbsolutePanel {
 	
 	public void hideAllTiles() {
 		for (TiledImageLayer layer : m_tiledImageLayers) {
+			if (!layer.getLayerSet().isActive()) {
+				continue;
+			}
 			layer.hideAllTiles();
-		}
-	}
-	
-	public void hideAnimatedTiles() {
-		for (TiledImageLayer layer : m_tiledImageLayers) {
-			layer.hideAnimatedTiles();
 		}
 	}
 	
 	public void doUpdate( double eqScale ){
 		ViewPort vp = m_map.getViewport();
 		ViewDimension vd = vp.getVpWorker().getDimension();
-		//GeodeticCoords gc = vp.getVpWorker().getGeoCenter();
-		//m_divWorker.setDiv(gc, true);
-		if ( m_firstSearch ){
+		if ( m_firstSearch ) {
 			m_tileBuilder.setLayerBestSuitedForScale();
 			m_firstSearch = false;
 		}
-		m_tileBuilder.layoutTiles(vd,eqScale,true);
+		m_tileBuilder.layoutTiles( vd, eqScale );
 	}
-	
 	
 	public void placeInViewPanel( AbsolutePanel panel, boolean show ){
 		IProjection mp = m_map.getProjection();
@@ -166,6 +157,7 @@ public class DivPanel extends AbsolutePanel {
 		panel.setWidgetPosition(this, tl.getX(), tl.getY());
 	}
 	
+	// TODO unit test
 	public void resize( int w, int h ){
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();	
 		int dW = dd.getWidth();

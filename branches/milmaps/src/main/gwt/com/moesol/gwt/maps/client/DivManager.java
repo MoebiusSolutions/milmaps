@@ -151,12 +151,6 @@ public class DivManager {
 		return true;
 	}
 
-	public void hideAnimatedTiles() {
-		for( int i = 0; i < m_numDivs; i++ ){
-			m_dpArray[i].hideAnimatedTiles();
-		}
-	}
-	
 	public void doUpdateDivsCenterScale( double eqScale ){
 		int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
 		GeodeticCoords gc = m_vpWorker.getGeoCenter(); 

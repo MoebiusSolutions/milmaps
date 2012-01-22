@@ -72,9 +72,6 @@ public class TileBuilder {
 	public TileCoords[] arrangeTiles( int level, TiledImageLayer layer ) {
 		LayerSet ls = layer.getLayerSet();
 		int dpi = m_divProj.getScrnDpi();
-		// TODO KBT remove if statement when done testing
-		if (m_divLevel == 1 )
-			dpi += 0;
 		double lsScale = layer.findScale(dpi, level);
 		return arrangeTiles( level, ls, lsScale );
 	}
@@ -206,14 +203,9 @@ public class TileBuilder {
 	 * 
 	 * @param LayerSet
 	 * @param int level
-	 * @return array of tile coordinates
-	 * 
+	 * @return array of tile coordinates (never null)
 	 */
 	public TileCoords[] arrangeTiles( int level, LayerSet ls, double lsScale ) {
-		//if ( level == m_oldLevel )
-		//	return null;
-		//int tilePixWidth  = ls.getPixelWidth();
-		//int tilePixHeight = ls.getPixelHeight();
 		int tLevel = level - ls.getStartLevel();
 
 		double degFactor = ( tLevel < 1 ? 1 : Math.pow(2, tLevel) );
@@ -237,19 +229,17 @@ public class TileBuilder {
 		return r;
 	}
 	
-	private void placeTiles( int level, TiledImageLayer layer, boolean bUpdateView ) {
+	private void placeTiles( int level, TiledImageLayer layer ) {
 		TileCoords[] tileCoords = arrangeTiles( level, layer);
-		if ( tileCoords != null ){
-			if (layer.getLayerSet().isAlwaysDraw() || layer.isPriority()) {
-				layer.setTileCoords(tileCoords);
-				layer.setLevel(level);
-				if ( bUpdateView )
-					layer.updateView();
-			}
+		if (layer.getLayerSet().isAlwaysDraw() || layer.isPriority()) {
+			layer.setTileCoords(tileCoords);
+			layer.setLevel(level);
+			
+			layer.updateView();
 		}
 	}
 
-	public void layoutTiles( ViewDimension vd, double eqScale, boolean bUpdateView ) {
+	public void layoutTiles( ViewDimension vd, double eqScale ) {
 		double projScale = m_divProj.getEquatorialScale();
 		double dFactor = eqScale/projScale;
 		m_scaledViewDims = ViewDimension.builder()
@@ -257,23 +247,23 @@ public class TileBuilder {
 			.setHeight((int)(vd.getHeight()/dFactor)).build();
 		
 		m_tileViewWork.setDimension(m_scaledViewDims);
-		if (m_tiledImageLayers.size() > 0) {
-			int dpi = m_divProj.getScrnDpi();
-			for (TiledImageLayer layer : m_tiledImageLayers) {
-				LayerSet ls = layer.getLayerSet();
-				if (ls.isAlwaysDraw() || layer.isPriority()) {
-					int level = layer.findLevel(dpi, projScale);
-					placeTiles(level, layer, bUpdateView );
-				}
+		
+		int dpi = m_divProj.getScrnDpi();
+		for (TiledImageLayer layer : m_tiledImageLayers) {
+			LayerSet ls = layer.getLayerSet();
+			if (!ls.isActive()) {
+				layer.updateView(); // Force hiding inactive layers, but skip placing their tiles.
+				continue;
+			}
+			if (ls.isAlwaysDraw() || layer.isPriority()) {
+				int level = layer.findLevel(dpi, projScale);
+				placeTiles(level, layer );
 			}
 		}
 	}
 	
 	private boolean isLayerCandidateForScale(TiledImageLayer layer, int level) {
 		LayerSet layerSet = layer.getLayerSet();
-		if (!layerSet.isActive()) {
-			return false;
-		}
 		if (layerSet.isAlwaysDraw()) {
 			return false;
 		}
@@ -336,7 +326,6 @@ public class TileBuilder {
 		}
 		if (bestLayerSoFar != null) {
 			bestLayerSoFar.setPriority(true);
-			LayerSet ls = bestLayerSoFar.getLayerSet();
 		}
 	}
 }

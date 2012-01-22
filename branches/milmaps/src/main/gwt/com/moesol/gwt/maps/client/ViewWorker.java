@@ -89,7 +89,6 @@ public class ViewWorker implements ProjectionChangedHandler {
 	 * wcToVC converts World coordinates to view coordinates based on the view sizes
 	 * and where the view's center sits in the world coordinate system.`
 	 * @param wc
-	 * @param checkWrap
 	 * @return ViewCoords
 	 */
 	public ViewCoords wcToVC( WorldCoords wc ) {

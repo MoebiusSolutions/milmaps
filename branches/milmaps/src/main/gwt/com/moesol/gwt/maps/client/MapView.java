@@ -430,12 +430,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
 	}
 	
-	public void hideAnimatedTiles() {
-		if (m_mapBrightness < 1.0) {
-			m_divMgr.hideAnimatedTiles();
-		}
-	}
-
 	public boolean hasAutoRefreshOnTimerLayers() {
 		return m_divMgr.hasAutoRefreshOnTimerLayers();
 	}
