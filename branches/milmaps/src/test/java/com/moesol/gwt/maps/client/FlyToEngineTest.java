@@ -110,7 +110,7 @@ public class FlyToEngineTest {
 		ArgumentCaptor<GeodeticCoords> cap = ArgumentCaptor.forClass(GeodeticCoords.class);
 		verify(mapView).setCenter(cap.capture());
 		assertEquals(0.0, cap.getValue().getPhi(AngleUnit.DEGREES), 0.0);
-		assertEquals(-179.48054, cap.getValue().getLambda(AngleUnit.DEGREES), 0.00001);
+		assertEquals(-179.438992, cap.getValue().getLambda(AngleUnit.DEGREES), 0.00001);
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class FlyToEngineTest {
 		ArgumentCaptor<GeodeticCoords> cap = ArgumentCaptor.forClass(GeodeticCoords.class);
 		verify(mapView).setCenter(cap.capture());
 		assertEquals(0.0, cap.getValue().getPhi(AngleUnit.DEGREES), 0.0);
-		assertEquals(179.48054, cap.getValue().getLambda(AngleUnit.DEGREES), 0.00001);
+		assertEquals(179.438992, cap.getValue().getLambda(AngleUnit.DEGREES), 0.00001);
 	}
 
 	@Test
