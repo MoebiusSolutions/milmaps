@@ -21,6 +21,10 @@ public class WorldCoords {
 		public Builder setY(int y) { m_y = y; return this; }
 		public int getX() { return m_x; }
 		public int getY() { return m_y; }
+		@Override
+		public String toString() {
+			return "Builder [m_x=" + m_x + ", m_y=" + m_y + "]";
+		}
 	}
 	
 	public static Builder builder() {

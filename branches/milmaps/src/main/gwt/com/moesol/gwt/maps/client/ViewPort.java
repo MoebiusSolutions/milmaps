@@ -201,6 +201,8 @@ public class ViewPort implements ProjectionChangedHandler {
 			newWc.setY(hmid);
 		} if (worldCenter.getY() > dim.getHeight() - hmid) {
 			newWc.setY(dim.getHeight() - hmid);
+		} else {
+			newWc.setY(worldCenter.getY());
 		}
 		return newWc.build();
 	}
