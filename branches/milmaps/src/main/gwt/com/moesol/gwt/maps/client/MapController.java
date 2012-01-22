@@ -21,6 +21,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventPreview;
 import com.google.gwt.user.client.Timer;
@@ -249,13 +250,11 @@ public class MapController implements
 
 	@Override
 	public boolean onEventPreview(Event event) {
-
-//		if (m_map.getMapControls().handleEventPreview(event)) {
-//			return false;
-//		}
-
-		if (!DOM.isOrHasChild(m_map.getElement(), DOM.eventGetTarget(event))) {
-			return true;
+		Element target = DOM.eventGetTarget(event);
+		if (target != null) {
+			if (!DOM.isOrHasChild(m_map.getElement(), target)) {
+				return true;
+			}
 		}
 
 		onEventPreviewForMap(event);
