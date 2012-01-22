@@ -23,25 +23,25 @@ public class TileBuilder {
 	
 	IProjection m_divProj = null;
 	
-	public void setTileImageLayers( ArrayList<TiledImageLayer> tiledImageLayers ){
+	public void setTileImageLayers( ArrayList<TiledImageLayer> tiledImageLayers ) {
 		m_tiledImageLayers = tiledImageLayers;
 	}
 	
-	public void setDivWorker( DivWorker dw){
+	public void setDivWorker( DivWorker dw ) {
 		m_divWorker = dw; 
 	}
 	
-	public void setProjection( IProjection proj){ 
+	public void setProjection( IProjection proj ) { 
 		m_divProj = proj;
 		m_lsWorker.setProjection(proj);
 		m_tileViewWork.setProjection(proj);
 	}
 	
-	public void setViewCenterWc(WorldCoords wc){
+	public void setViewCenterWc( WorldCoords wc ) {
 		m_tileViewWork.setCenterInWc(wc);
 	}
 	
-	public IProjection getProjection(){ return m_divProj; }
+	public IProjection getProjection() { return m_divProj; }
 	
 	public void setDivLevel(int divLevel) {
 		this.m_divLevel = divLevel;

@@ -1,5 +1,6 @@
 package com.moesol.gwt.maps.client;
 
+// TODO Immutable
 public class DivDimensions {
 	public static final int WIDTH = 1200;
 	public static final int HEIGHT = 800;

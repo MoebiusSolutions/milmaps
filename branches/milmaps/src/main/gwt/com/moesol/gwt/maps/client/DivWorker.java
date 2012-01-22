@@ -177,18 +177,54 @@ public class DivWorker implements ProjectionChangedHandler {
 		return m_boxBounds;
 	}
 	
-	public ViewCoords computeDivLayoutInView( IProjection mapProj, 
-										   ViewWorker vw, DivDimensions dim ){
-		int viewOx = vw.getOffsetInWcX();
+	public ViewCoords computeDivLayoutInView( IProjection mapProj, ViewWorker vw, DivDimensions dim ) {
 		int viewOy = vw.getOffsetInWcY();
 		double scale = mapProj.getEquatorialScale();
 		double factor = scale/m_proj.getEquatorialScale();
 		dim.setWidth((int)(m_baseDims.getWidth()*factor + 0.5));
 		dim.setHeight((int)(m_baseDims.getHeight()*factor + 0.5));
 		WorldCoords wc = mapProj.geodeticToWorld(m_geoCenter);
-		int left = (wc.getX()- dim.getWidth()/2) - viewOx;
+		int left = computeDivLeft(wc, dim, vw, factor);
 		int top  = viewOy - (wc.getY()+ dim.getHeight()/2);
 		return new ViewCoords(left, top);
+	}
+
+	private int computeIntersect(int left1, int width1, int left2, int width2) {
+		int maxLeft = Math.max(left1, left2);
+		int minRight = Math.min(left1 + width1, left2 + width2);
+		return minRight - maxLeft;
+	}
+	
+	private int computeDivLeft(WorldCoords wc, DivDimensions div, ViewWorker vw, double factor) {
+		int worldWidth = (int)(factor * m_proj.getWorldDimension().getWidth() + 0.5);
+		int viewOx = vw.getOffsetInWcX();
+		ViewDimension view = vw.getDimension();
+		
+		int left = (wc.getX()- div.getWidth()/2) - viewOx;
+		if (left > 0) {
+			// Part of view empty, rotate?
+			//    0 ------------- vw
+			//       left----dw
+			//       left--------------dw
+			int oldIntersection = computeIntersect(0, view.getWidth(), left, div.getWidth());
+			int newLeft = left - worldWidth;
+			int newIntersection = computeIntersect(0, view.getWidth(), newLeft, div.getWidth());
+			if (newIntersection > oldIntersection) {
+				left = newLeft;
+			}
+		} else if (left + div.getWidth() < view.getWidth()) {
+			// Part of view empty, rotate?
+			//       0 ------------------ vw
+			//  left----------dw
+			//          left-------dw
+			int oldIntersection = computeIntersect(0, view.getWidth(), left, div.getWidth());
+			int newLeft = left + worldWidth;
+			int newIntersection = computeIntersect(0, view.getWidth(), newLeft, div.getWidth());
+			if (newIntersection > oldIntersection) {
+				left = newLeft;
+			}
+		}
+		return left;
 	}
 	
 	@Override
