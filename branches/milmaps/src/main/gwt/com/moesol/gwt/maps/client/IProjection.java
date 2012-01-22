@@ -75,51 +75,11 @@ public interface IProjection {
 	public abstract double getEquatorialScale();
 
 	/**
-	 * returns the previous equatorial scale when changed by a zoom or set scale
-	 * @return
-	 */
-	public abstract double getPrevEquatorialScale();
-
-	/**
-	 * sets the zoom in, out or none flag
-	 * @param flag
-	 */
-	public abstract void setZoomFlag(ZoomFlag flag);
-
-	/**
-	 * returns the zoom flag.
-	 * @return
-	 */
-	public abstract ZoomFlag getZoomFlag();
-
-	/**
-	 * This routine is used to zoom the map to a particular scale.
-	 * @param scale
-	 */
-	public abstract void zoom(double scale);
-
-	/**
 	 * This routine is used to zoom the map by a factor of the current scale.
 	 * @param scaleFactor
 	 */
 	public abstract void zoomByFactor(double scaleFactor);
 	
-	public abstract int lngDegToPixX( double deg );
-	
-	public abstract double xPixToDegLng( double pix );
-	
-	public abstract int latDegToPixY( double deg );
-	
-	public abstract double yPixToDegLat( double pix );
-
-	/**
-	 * This routine is used to handle the -180 and 180 boundary.
-	 * For example 182 degrees is would be converted to -178 degrees
-	 * @param lng
-	 * @return
-	 */
-	public abstract double wrapLng(double lng);
-
 	/**
 	 * Converts a world coordinate position to a geodetic position
 	 * @param w: world coordinate position.

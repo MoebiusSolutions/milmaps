@@ -65,13 +65,13 @@ public class DivManager {
 		}	
 	}
 	
-	private void setCurrentLevelFromMapScale(){
+	private void setCurrentLevelFromMapScale() {
 		double dMapEqScale = m_map.getProjection().getEquatorialScale();
 		double divBaseEqScale = m_proj.getEquatorialScale();
-		double logMess = Math.log(dMapEqScale) - Math.log(divBaseEqScale);
+		double logMess = Math.log( dMapEqScale ) - Math.log( divBaseEqScale );
 		double dN = logMess / Math.log(2); 
-		int level = (int)(dN);//(Math.rint(dN));
-		setCurrentLevel(level);
+		int level = (int)dN;
+		setCurrentLevel( level );
 	}
 	
 	public void setCurrentLevel(int currentLevel) {
@@ -169,25 +169,15 @@ public class DivManager {
 	
 	public void placeDivsInViewPanel( AbsolutePanel panel ) {
 		setCurrentLevelFromMapScale();
-		int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
-		for( int i = n; i <= m_currentLevel; i++ ){
+		int n = Math.max( 0, m_currentLevel - LEVEL_RANGE );
+		for ( int i = n; i <= m_currentLevel; i++ ) {
 			m_dpArray[i].placeInViewPanel(panel);
 		}
 	}
 	
-	public void moveDivPanelsOffset( AbsolutePanel panel, int levelRange, 
-									 int deltaX, int deltaY ){
-		setCurrentLevelFromMapScale();
-		int n = Math.max(0, m_currentLevel - levelRange);
-		for( int i = n; i <= m_currentLevel; i++ ){
-			//System.out.println("moving: " + i);
-			m_dpArray[i].moveOffsetsInViewPanel(panel, deltaX, deltaY);
-		}			
-	}
-	
-	public void resizeDivs(int w, int h ){
-		for( int i = 0; i < m_numDivs; i++ ){
-			m_dpArray[i].resize(w,h);
+	public void resizeDivs( int w, int h ) {
+		for ( int i = 0; i < m_numDivs; i++ ) {
+			m_dpArray[i].resize( w, h );
 		}
 	}
 }

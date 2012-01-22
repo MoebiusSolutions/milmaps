@@ -22,7 +22,6 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	protected double m_scrnMpp = 2.54/7500.0; // screen meter per pixel
 	
 	protected double m_eqScale = 0; // map scale
-	protected double m_prevEqScale;
 	protected double m_wholeWorldScale;
 	
 	protected int m_origMapWidthSize;
@@ -36,8 +35,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	//protected int 	 m_orgTilePixSize = 0;
 	//protected double m_origTileDegHeight = 0;
 	
-	protected ZoomFlag m_zoomFlag = ZoomFlag.NONE;
-	
+	// TODO remove me.
 	public static double RadToDeg = 57.29577951;
 	public static double DegToRad = 0.017453293;
 	
@@ -56,9 +54,14 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 		m_scrnMpp = 2.54 / (dpi * 100); // meters per pixel for physical screen
 	}
 	
-    protected double clip(double n, double minValue, double maxValue)
-    {
-        return Math.min(Math.max(n, minValue), maxValue);
+	public abstract int lngDegToPixX( double deg );
+	public abstract double xPixToDegLng( double pix );
+	
+	public abstract int latDegToPixY( double deg );
+	public abstract double yPixToDegLat( double pix );
+	
+    protected double clip( double n, double minValue, double maxValue ) {
+        return Math.min( Math.max( n, minValue ), maxValue );
     }
 	
 	
@@ -81,7 +84,6 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 		m_scrnMpp = 2.54 / (m_scrnDpi * 100); 
 		m_eqScale = (m_scrnMpp / earth_mpp);
 		m_origEqScale = m_eqScale;
-		m_prevEqScale = m_eqScale;	
 		//m_origMapWidthSize = (int)( tileSize*(360/degWidth) + 0.5);
 		computeWorldSize();
 	}
@@ -123,72 +125,30 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	
 
 	@Override
-	public void setEquatorialScale(double dScale) {
-		m_prevEqScale = m_eqScale;
+	public void setEquatorialScale( double dScale ) {
+		System.out.println("scale: " + dScale);
+		if ( dScale <= 0.0 ) {
+			throw new IllegalArgumentException("scale Factor less than zero");
+		}
 		m_eqScale = dScale;
 		computeWorldSize();
 	}
 
 	@Override
-	public double getPrevEquatorialScale() {
-		return m_prevEqScale;
-	}
-	
-
-	@Override
-	public void setZoomFlag(ZoomFlag flag) {
-		m_zoomFlag = flag;
-	}
-
-	@Override
-	public ZoomFlag getZoomFlag() {
-		return m_zoomFlag;
-	}
-	
-	@Override
-	public void zoom( double scale) {
-		if ( scale <= 0.0 ){
-			throw new IllegalArgumentException("scale Factor less than zero");
-		}
-		m_prevEqScale = m_eqScale;
-		m_eqScale = scale;
-		if ( scale == m_prevEqScale ){
-			m_zoomFlag = ZoomFlag.NONE;
-		}
-		else{
-			m_zoomFlag = ( scale < m_prevEqScale ? ZoomFlag.OUT : ZoomFlag.IN );
-		}
-		computeWorldSize();
-	}
-
-	
-	@Override
 	public void zoomByFactor( double scaleFactor ) {
 		if ( scaleFactor <= 0.0 ){
 			throw new IllegalArgumentException("scale Factor less than zero");
 		}
-		zoom(scaleFactor*m_eqScale);
+		setEquatorialScale(scaleFactor*m_eqScale);
 	}
 	
-
-	@Override
-	public double wrapLng(double lng) {
-		if (lng > 180.0) {
-			while (lng > 180.0)
-				lng -= 360.0;
-		} else if (lng < -180.0) {
-			while (lng < -180.0)
-				lng += 360.0;
-		}
-		return lng;
-	}
-	
-	
-	protected int modX(int x, int size){
-		if ( x < 0 )
+	protected int modX( int x, int size ) {
+		if ( x < 0 ) {
 			return (size+x);
-		if ( x > size )
+		}
+		if ( x > size ) {
 			return (x - size);
+		}
 		return x;
 	}
 	

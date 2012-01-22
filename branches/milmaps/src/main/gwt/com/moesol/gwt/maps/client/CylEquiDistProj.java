@@ -176,12 +176,11 @@ public class CylEquiDistProj extends AbstractProjection {
 				+ m_wdSize + ", EarthRadius=" + EarthRadius
 				+ ", EarthCirMeters=" + EarthCirMeters + ", MeterPerDeg="
 				+ MeterPerDeg + ", m_scrnDpi=" + m_scrnDpi + ", m_scrnMpp="
-				+ m_scrnMpp + ", m_eqScale=" + m_eqScale + ", m_prevEqScale="
-				+ m_prevEqScale + ", m_wholeWorldScale=" + m_wholeWorldScale
+				+ m_scrnMpp + ", m_eqScale=" + m_eqScale + ", m_wholeWorldScale=" + m_wholeWorldScale
 				+ ", m_origMapWidthSize=" + m_origMapWidthSize + ", m_minLat="
 				+ m_minLat + ", m_minLng=" + m_minLng + ", m_maxLat="
 				+ m_maxLat + ", m_maxLng=" + m_maxLng + ", m_origEqScale="
-				+ m_origEqScale + ", m_zoomFlag=" + m_zoomFlag + "]";
+				+ m_origEqScale + "]";
 	}
     
 }

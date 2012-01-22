@@ -29,17 +29,18 @@ public class ZoomTagWorkerTest {
 	}
 	
 	@Test
-	public void ProjectionTest(){
-		m_proj.zoomByFactor(128);
+	public void ProjectionTest() {
+		CylEquiDistProj proj = (CylEquiDistProj) m_proj;
+		proj.zoomByFactor(128);
 		int tagX = 10500;
 		int tagY = 499;
-		double lng = m_proj.xPixToDegLng(tagX);
-		double lat = m_proj.yPixToDegLat(tagY);
-		int pix = m_proj.lngDegToPixX(lng);
+		double lng = proj.xPixToDegLng(tagX);
+		double lat = proj.yPixToDegLat(tagY);
+		int pix = proj.lngDegToPixX(lng);
 		assertEquals(tagX, pix, 1);
-		pix = m_proj.latDegToPixY(lat);
+		pix = proj.latDegToPixY(lat);
 		assertEquals(tagY, pix, 1);
-		m_proj.zoomByFactor(1.0/128.0);
+		proj.zoomByFactor(1.0/128.0);
 	}
 	
 	private int compOffsetX( double oldScale, double newScale, int tagX ){

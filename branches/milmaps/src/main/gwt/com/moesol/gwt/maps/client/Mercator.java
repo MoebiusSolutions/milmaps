@@ -8,7 +8,6 @@ import com.moesol.gwt.maps.client.units.Degrees;
 // EPSG:3857 Mercator projection
 
 public class Mercator extends AbstractProjection {	
-	private static double DEG_ERROR = 10000;
 
 	public Mercator( ){
 		super();
@@ -201,7 +200,6 @@ public class Mercator extends AbstractProjection {
 	 * 		pixels in double value.
 	 */
 	protected double horizontalDist( double lng1, double lng2 ){
-		double dR   = EarthRadius*m_eqScale;
 		double x1 = lng2PixX( lng1 );
 		double x2 = lng2PixX( lng2 );
 		return Math.abs(x2 - x1);
