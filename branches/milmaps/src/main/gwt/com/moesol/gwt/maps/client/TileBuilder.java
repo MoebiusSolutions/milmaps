@@ -249,7 +249,7 @@ public class TileBuilder {
 		}
 	}
 
-	public void computeTileCoords( ViewDimension vd, double eqScale, boolean bUpdateView ) {
+	public void layoutTiles( ViewDimension vd, double eqScale, boolean bUpdateView ) {
 		double projScale = m_divProj.getEquatorialScale();
 		double dFactor = eqScale/projScale;
 		m_scaledViewDims = ViewDimension.builder()

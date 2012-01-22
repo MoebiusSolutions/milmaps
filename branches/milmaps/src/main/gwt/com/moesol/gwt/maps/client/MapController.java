@@ -164,7 +164,7 @@ public class MapController implements
 			m_map.setFocus(true);
 			if ( m_movedMap ){
 				m_movedMap = false;
-				m_map.doUpdateView();
+				m_map.updateView();
 			}
 		} finally {
 			m_dragTracker = null;
@@ -182,7 +182,7 @@ public class MapController implements
 			return;
 		}
 		m_map.setWorldCenter(newWorldCenter);
-		m_map.moveDivPanelsOffset( deltalPix.getX(), deltalPix.getY());
+		m_map.doUpdateView();
 		
 		m_movedMap = true;
 	}
@@ -329,16 +329,16 @@ public class MapController implements
 	private void onKeyDownNoModifiers(int keyCode) {
 		switch (keyCode) {
 		case KeyCodes.KEY_LEFT:
-			moveMap(-1, 0);
+			moveMap(-10, 0);
 			break;
 		case KeyCodes.KEY_RIGHT:
-			moveMap(1, 0);
+			moveMap(10, 0);
 			break;
 		case KeyCodes.KEY_UP:
-			moveMap(0, 1);
+			moveMap(0, 10);
 			break;
 		case KeyCodes.KEY_DOWN:
-			moveMap(0, -1);
+			moveMap(0, -10);
 			break;
 		}
 		if (m_keyVelocity < 64) {

@@ -153,7 +153,7 @@ public class DivPanel extends AbsolutePanel {
 			m_tileBuilder.setLayerBestSuitedForScale();
 			m_firstSearch = false;
 		}
-		m_tileBuilder.computeTileCoords(vd,eqScale,true);
+		m_tileBuilder.layoutTiles(vd,eqScale,true);
 	}
 	
 	

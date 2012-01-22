@@ -385,18 +385,32 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_updateTimer.schedule(1000 / 30);
 	}
 
-
-	private boolean shouldUpdateDivs() {
+	private boolean hasLevelChanged(){
 		int prevLevel = m_proj.getLevelFromScale(m_previousEqScale);
 		double scale = m_proj.getEquatorialScale();
 		int currentLevel = m_proj.getLevelFromScale(scale);
 		m_previousEqScale = m_proj.getEquatorialScale();
-		return true;//( prevLevel != currentLevel);
+		return ( prevLevel != currentLevel);
 
 	}
 	
+	private boolean hasDivMovedToFar(){
+		DivPanel dp = m_divMgr.getCurrentDiv();
+		DivWorker dw = dp.getDivWorker();
+		ViewWorker vw = m_viewPort.getVpWorker();
+		DivDimensions dim = dp.getDimensions();
+		PixelXY tl = dw.computeDivLayoutInView(m_proj, vw, dim);
+		PixelXY br = new PixelXY(tl.m_x+dim.getWidth(), tl.m_y+dim.getHeight());
+		ViewDimension vd = vw.getDimension();
+		if( -10 < tl.m_x || br.m_x < vd.getWidth() + 20  || 
+			-10 < tl.m_y || br.m_y < vd.getHeight() + 20 )
+			return true;
+		return false;
+	}
+	
 	public void doUpdateView() {
-		if ( shouldUpdateDivs() ) {
+		if ( hasLevelChanged() || hasDivMovedToFar() ){
+			System.out.println("doUpdateView: need to update");
 			m_divMgr.doUpdateDivs( 2, m_proj.getEquatorialScale() );
 		}
 		m_divMgr.placeDivPanels( m_viewPanel, 2 );
@@ -409,10 +423,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	public void moveDivPanelsOffset( int deltaX, int deltaY ){
 		m_divMgr.moveDivPanelsOffset( m_viewPanel, 2, deltaX, deltaY );
-	}
-
-	public void udateAfterZooming(){
-		updateView();
 	}
 
 	public void hideAnimatedTiles() {
@@ -489,7 +499,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public void moveMapByPixels(int dx, int dy) {
 		m_flyToEngine.getAnimation().cancel();
 		// TODO replace suspend flag with cancel animation.
-		if (m_bSuspendMapAction == false) {
+		if (m_bSuspendMapAction ) {
 			return;
 		}
 		ViewWorker vpWorker = this.getViewport().getVpWorker();
