@@ -23,5 +23,12 @@ public class GeodeticCoordsTest {
 				.build();
 		assertEquals(expected, result);
 	}
+	
+	@Test
+	public void testDSL() {
+		GeodeticCoords example = Degrees.geodetic(-117, 33);
+		assertEquals(-117, example.latitude().degrees(), 0.0);
+		assertEquals(33, example.longitude().degrees(), 0.0);
+	}
 
 }

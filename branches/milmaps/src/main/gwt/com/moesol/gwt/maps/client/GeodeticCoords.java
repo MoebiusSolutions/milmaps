@@ -38,7 +38,6 @@ public class GeodeticCoords implements IsSerializable {
 			return new GeodeticCoords(m_lambda, m_phi, m_angleUnit, m_altitude);
 		}
 	}
-	
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -73,6 +72,29 @@ public class GeodeticCoords implements IsSerializable {
 		m_lambda = angleUnit.toRadians(lambda);
 		m_phi = angleUnit.toRadians(phi);
 		m_altitude = altitude;
+	}
+	
+	public class GetLatitude {
+		public double degrees() {
+			return getPhi(AngleUnit.DEGREES);
+		}
+		public double radians() {
+			return getPhi(AngleUnit.RADIANS);
+		}
+	}
+	public class GetLongitude {
+		public double degrees() {
+			return getLambda(AngleUnit.DEGREES);
+		}
+		public double radians() {
+			return getLambda(AngleUnit.RADIANS);
+		}
+	}
+	public GetLatitude latitude() {
+		return new GetLatitude();
+	}
+	public GetLongitude longitude() {
+		return new GetLongitude();
 	}
 	
 	/**
