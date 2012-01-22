@@ -66,13 +66,14 @@ public class LayerSetWorker {
 		degMag = Math.abs(g.getPhi(AngleUnit.DEGREES)+90);
 		m_tile.m_y = (int)(degMag/degCellHeight);
 		return m_tile;
-}
+	}
     
+	// TODO move me to projection interface
 	public TileXY mercGeoPosToTileXY( int level, int pixSize,  
 			  					  double degW, double degH, GeodeticCoords g ){
-		double minLat = m_proj.getMinLat();
-		double maxLat = m_proj.getMaxLat();
-		double lat = clip(g.getPhi(AngleUnit.DEGREES),   minLat, maxLat);
+		double lat = clip(g.getPhi(AngleUnit.DEGREES), 
+				m_proj.getDegreeBoundingBox().bottom(), 
+				m_proj.getDegreeBoundingBox().top());
 		double lng = clip(g.getLambda(AngleUnit.DEGREES), -180.0, 180.0);
 		
 		double x = (lng + 180) / 360; 

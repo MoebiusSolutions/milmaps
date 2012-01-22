@@ -4,23 +4,22 @@ import com.moesol.gwt.maps.client.WorldCoords.Builder;
 import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
+import com.moesol.gwt.maps.shared.BoundingBox;
 
 // EPSG:3857 Mercator projection
 
 public class Mercator extends AbstractProjection {	
+	private static final BoundingBox BOUNDS 
+		= BoundingBox.builder().bottom(-85.05113).top(85.05113).left(-180).right(180).build();
 
 	public Mercator( ){
 		super();
-		m_minLat = -85.05113;
-		m_maxLat = 85.05113;
 		m_projType = IProjection.T.Mercator;
 		this.initialize(256, 360.0,  2*85.05113);
 	}
 	
 	public Mercator( int pixWidth, double degWidth, double degHeight) {
 		super();
-		m_minLat = -85.05113;
-		m_maxLat = 85.05113;
 		m_projType = IProjection.T.Mercator;
 		this.initialize(pixWidth, degWidth, degHeight);
 	}
@@ -45,7 +44,7 @@ public class Mercator extends AbstractProjection {
 	@Override
 	public WorldDimension getWorldDimension() {
 		int wdX  = (int)(mapSize()+0.5);
-		double height = verticalDist( m_minLat, m_maxLat);
+		double height = verticalDist(getDegreeBoundingBox().bottom(), getDegreeBoundingBox().top());
 		int wdY = (int) (height+ 0.5);
 
 		m_wdSize.setWidth(wdX);
@@ -53,6 +52,7 @@ public class Mercator extends AbstractProjection {
 		return m_wdSize;
 	}
 	
+	// TODO can this method be pulled up?
 	@Override
 	public GeodeticCoords worldToGeodetic(WorldCoords w) {
 		Stats.incrementWorldToGeodetic();
@@ -61,8 +61,9 @@ public class Mercator extends AbstractProjection {
 		// to extend the whole world
 		double pix = w.getX() % m_wdSize.getWidth();
 		double lng = xPixToDegLng(pix);
-		if (w.getX() > 10 && lng == m_minLng)
-			lng = m_maxLng;
+		if (w.getX() > 10 && lng == getDegreeBoundingBox().left()) {
+			lng = getDegreeBoundingBox().right();
+		}
 		double lat = yPixToDegLat( w.getY() );
 		return Degrees.geodetic(lat, lng);
 	}
@@ -88,8 +89,9 @@ public class Mercator extends AbstractProjection {
 		// to extend the whole world
 		
 		double lng = xPixToDegLng(w.getX() % m_wdSize.getWidth());
-		if (w.getX() > 10 && lng == m_minLng)
-			lng = m_maxLng;
+		if (w.getX() > 10 && lng == getDegreeBoundingBox().left()) {
+			lng = getDegreeBoundingBox().right();
+		}
 		double lat = yPixToDegLat(w.getY());
 		return Degrees.geodetic(lat, lng);
 	}
@@ -115,7 +117,7 @@ public class Mercator extends AbstractProjection {
 	 * @return a double (the y value).
 	 */
 	protected double lat2PixY( double dLat ){
-		dLat = clip(dLat, m_minLat, m_maxLat);
+		dLat = clip(dLat, getDegreeBoundingBox().bottom(), getDegreeBoundingBox().top());
         double sinLat = Math.sin(DegToRad*dLat);
         double y = 0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI);
         return (y * mapSize());
@@ -128,7 +130,7 @@ public class Mercator extends AbstractProjection {
 	 */
 	protected double lng2PixX( double dLng )
 	{
-		dLng = clip(dLng, m_minLng, m_maxLng);
+		dLng = clip(dLng, getDegreeBoundingBox().left(), getDegreeBoundingBox().right());
 		double x = (dLng + 180)/360;
 		return (x * mapSize());
 	}
@@ -245,5 +247,10 @@ public class Mercator extends AbstractProjection {
     public int getNumYtiles(double tileDegWidth){
     	return getNumXtiles(tileDegWidth);
     }
+
+	@Override
+	public BoundingBox getDegreeBoundingBox() {
+		return BOUNDS;
+	}
 
 }

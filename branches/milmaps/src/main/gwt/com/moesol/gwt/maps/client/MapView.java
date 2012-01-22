@@ -371,6 +371,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		}
 	};
 	private boolean m_isUpdateTimerScheduled = false;
+	private boolean m_resized = false;
 
 	/**
 	 * Match the view to the model data.
@@ -388,7 +389,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_isUpdateTimerScheduled = true;
 	}
 
-	private boolean hasLevelChanged(){
+	private boolean hasLevelChanged() {
 		int prevLevel = m_proj.getLevelFromScale(m_previousEqScale);
 		double scale = m_proj.getEquatorialScale();
 		int currentLevel = m_proj.getLevelFromScale(scale);
@@ -399,14 +400,18 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	
 	public void doUpdateView() {
-		if ( hasLevelChanged() || m_divMgr.hasDivMovedToFar() ){
+		if (m_resized || hasLevelChanged() || m_divMgr.hasDivMovedToFar()) {
+			System.out.println("full");
+			m_resized = false;
 			m_divMgr.doUpdateDivsCenterScale( m_proj.getEquatorialScale() );
 			m_divMgr.doUpdateDivsVisibility( m_viewPanel );
+			m_divMgr.placeDivsInViewPanel( m_viewPanel );
 		} else {
+			System.out.println("partial");
 			partialUpdateView();
 		}
 		//positionIcons();
-		m_changeListeners.fireChange(this);
+		m_changeListeners.fireChange( this );
 		
 // TODO move to idle handling...
 //		recordCenter();
@@ -431,7 +436,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 
 	@Override
-	public void setPixelSize(int width, int height) {
+	public void setPixelSize( int width, int height ) {
 		super.setPixelSize(width, height);
 		updateSize(width, height);
 	}
@@ -467,6 +472,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 * use.
 	 */
 	public void resizeMap(int w, int h) {
+		m_resized  = true;
 		m_focusPanel.setPixelSize(w, h);
 		m_viewPanel.setPixelSize(w, h);
 		m_viewPort.getVpWorker().setDimension(new ViewDimension(w, h));
@@ -528,7 +534,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		final WorldCoords wc = new WorldCoords(offsetX + vd.getWidth()/2, offsetY - vd.getHeight()/2);
 		vpWorker.setCenterInWc(wc);
 		
-		partialUpdateView();
+		doUpdateView();
+//		partialUpdateView();
 	}
 
 	public void zoom(double dScale) {

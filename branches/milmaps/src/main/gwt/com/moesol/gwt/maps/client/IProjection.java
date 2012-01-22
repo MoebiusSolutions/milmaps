@@ -2,6 +2,7 @@ package com.moesol.gwt.maps.client;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
+import com.moesol.gwt.maps.shared.BoundingBox;
 
 public interface IProjection {
 	public enum ZoomFlag {
@@ -11,12 +12,6 @@ public interface IProjection {
 	public enum T {
 		CylEquiDist, Mercator
 	}
-	
-	/**
-	 * Set the projection type. Example of type is Mercator
-	 * @param type
-	 */
-	public abstract void setType( IProjection.T type );
 	
 	/**
 	 * Gets the projection type. Example of type is Mercator
@@ -54,13 +49,8 @@ public interface IProjection {
 	 * @return
 	 */
 	public abstract int getScrnDpi();
-	
-	public abstract void setGeoBounds(double minLat, double minLng, 
-									  double maxLat, double maxLng );
-	public abstract double getMinLat();
-	public abstract double getMaxLat();
-	public abstract double getMinLng();
-	public abstract double getMaxLng();
+
+	BoundingBox getDegreeBoundingBox();
 
 	/**
 	 * sets the decimal equatorial scale of the projection
@@ -165,9 +155,10 @@ public interface IProjection {
 	 * getLevelFromScale: computes the level using the original scale 
 	 * as a reference value.
 	 * @param eqScale
-	 * @return int, level corresponding to the scale.
+	 * @return int, level corresponding to the scale, may be negative.
 	 */
-	public abstract int getLevelFromScale( double eqScale );
+	int getLevelFromScale(double eqScale);
+	double getScaleFromLevel(int level);
 
 	/**
 	 * Register a projection changed handler
@@ -175,5 +166,4 @@ public interface IProjection {
 	 * @return HandlerRegistration
 	 */
 	HandlerRegistration addProjectionChangedHandler(ProjectionChangedHandler handler);
-
 }

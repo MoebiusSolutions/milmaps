@@ -133,17 +133,29 @@ public class BoundingBox {
 	public double getTopLat() {
 		return m_topLat;
 	}
+	public double top() {
+		return getTopLat();
+	}
 
 	public double getLeftLon() {
 		return m_leftLon;
+	}
+	public double left() {
+		return getLeftLon();
 	}
 
 	public double getBotLat() {
 		return m_botLat;
 	}
+	public double bottom() {
+		return getBotLat();
+	}
 
 	public double getRightLon() {
 		return m_rightLon;
+	}
+	public double right() {
+		return getRightLon();
 	}
 
 	public double getLatSpan() {

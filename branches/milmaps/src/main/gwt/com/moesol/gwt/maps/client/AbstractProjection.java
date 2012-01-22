@@ -22,14 +22,8 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	protected double m_scrnMpp = 2.54/7500.0; // screen meter per pixel
 	
 	protected double m_eqScale = 0; // map scale
-	protected double m_wholeWorldScale;
 	
 	protected int m_origMapWidthSize;
-	
-	double m_minLat = -90.0;
-	double m_minLng = -180.0;
-	double m_maxLat = 90.0;
-	double m_maxLng = 180.0;
 	
 	protected double m_origEqScale = 0;
 	//protected int 	 m_orgTilePixSize = 0;
@@ -38,17 +32,13 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	// TODO remove me.
 	public static double RadToDeg = 57.29577951;
 	public static double DegToRad = 0.017453293;
+
+	@Override
+	public IProjection.T getType() { return m_projType; }
 	
-	public void setType( IProjection.T type ){
-		m_projType = type;
-	}
-	
-	public IProjection.T getType(){ return m_projType; }
-	
-	public AbstractProjection(){
+	public AbstractProjection() {
 		this(75);
 	}
-	
 	public AbstractProjection(int dpi) {
 		m_scrnDpi = dpi;
 		m_scrnMpp = 2.54 / (dpi * 100); // meters per pixel for physical screen
@@ -64,21 +54,20 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
         return Math.min( Math.max( n, minValue ), maxValue );
     }
 	
-	
 	public abstract WorldDimension getWorldDimension();
 	
 	// Map size in pixels
-	public double mapSize(){
+	public double mapSize() {
 		double pixels = (EarthCirMeters*m_eqScale/m_scrnMpp);
 		return pixels;
 	}
 	
-	public int iMapSize(){
+	public int iMapSize() {
 		return (int)(mapSize() + 0.5);
 	}
 	
 	@Override
-	public void initialize( int tileSize, double degWidth, double degHeight ){
+	public void initialize(int tileSize, double degWidth, double degHeight) {
 		double earth_mpp = degWidth * (MeterPerDeg / tileSize);
 		// meters per pixel for physical screen
 		m_scrnMpp = 2.54 / (m_scrnDpi * 100); 
@@ -89,27 +78,8 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	}
 
 	@Override
-	public void setGeoBounds(double minLat, double minLng, double maxLat, double maxLng ){
-		m_minLat = minLat;
-		m_minLng = minLng;
-		m_maxLat = maxLat;
-		m_maxLng = maxLng;
-	}
-	@Override
-	public double getMinLat(){ return m_minLat;}
-	@Override
-	public double getMaxLat(){ return m_maxLat; }
-	@Override
-	public double getMinLng(){ return m_minLng; }
-	@Override
-	public double getMaxLng(){ return m_maxLng; }
-	@Override
 	public void copyFrom(IProjection p) {
 		m_scrnDpi = p.getScrnDpi();
-		m_minLat = p.getMinLat();
-		m_minLng = p.getMinLng();
-		m_maxLat = p.getMaxLat();
-		m_maxLng = p.getMaxLng();
 		setEquatorialScale(p.getEquatorialScale());
 	}
 
@@ -122,13 +92,14 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	public double getEquatorialScale() {
 		return m_eqScale;
 	}
-	
 
 	@Override
-	public void setEquatorialScale( double dScale ) {
-		System.out.println("scale: " + dScale);
-		if ( dScale <= 0.0 ) {
+	public void setEquatorialScale(double dScale) {
+		if (dScale <= 0.0) {
 			throw new IllegalArgumentException("scale Factor less than zero");
+		}
+		if (getLevelFromScale(dScale) < 0) {
+			dScale = getScaleFromLevel(0);
 		}
 		m_eqScale = dScale;
 		computeWorldSize();
@@ -162,7 +133,6 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 		return m_wdSize;
 	}
 	
-    
     @Override
 	public int compWidthInPixels(double lng1, double lng2){
     	double mapSize = mapSize();
@@ -189,8 +159,11 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
     @Override
     public int getLevelFromScale( double eqScale ){
 		double level = ( Math.log(eqScale) - Math.log(m_origEqScale))/Math.log(2);
-		level = Math.max(level, 0);
 		return (int)level;
+    }
+    @Override
+    public double getScaleFromLevel(int level) {
+		return m_origEqScale * (1 << level); 
     }
 
 	@Override
@@ -198,8 +171,20 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 		m_handlerManager.fireEvent(event);
 	}
 	
+	@Override
 	public HandlerRegistration addProjectionChangedHandler(ProjectionChangedHandler handler) {
 		return m_handlerManager.addHandler(ProjectionChangedEvent.TYPE, handler);
+	}
+
+	@Override
+	public String toString() {
+		return "AbstractProjection [m_handlerManager=" + m_handlerManager
+				+ ", m_projType=" + m_projType + ", m_wdSize=" + m_wdSize
+				+ ", EarthRadius=" + EarthRadius + ", EarthCirMeters="
+				+ EarthCirMeters + ", MeterPerDeg=" + MeterPerDeg
+				+ ", m_scrnDpi=" + m_scrnDpi + ", m_scrnMpp=" + m_scrnMpp
+				+ ", m_eqScale=" + m_eqScale + ", m_wholeWorldScale="
+				+ m_origMapWidthSize + ", m_origEqScale=" + m_origEqScale + "]";
 	}
     
 }

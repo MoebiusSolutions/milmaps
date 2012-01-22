@@ -3,6 +3,7 @@ package com.moesol.gwt.maps.client;
 import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
+import com.moesol.gwt.maps.shared.BoundingBox;
 
 
 /**
@@ -15,19 +16,17 @@ import com.moesol.gwt.maps.client.units.Degrees;
  */
 
 public class CylEquiDistProj extends AbstractProjection {
+	private static final BoundingBox BOUNDS 
+		= BoundingBox.builder().bottom(-90).top(90).left(-180).right(180).build();
 
 	public CylEquiDistProj( ){
 		super();
-		m_minLat = -90.0;
-		m_maxLat = 90.0;
 		m_projType = IProjection.T.CylEquiDist;
 		this.initialize(512, 180, 180);	
 	}
 	
 	public CylEquiDistProj( int pixWidth, double degWidth, double degHeight ) {
 		super();
-		m_minLat = -90.0;
-		m_maxLat = 90.0;
 		m_projType = IProjection.T.CylEquiDist;
 		this.initialize(pixWidth, degWidth, degHeight);
 	}
@@ -49,7 +48,7 @@ public class CylEquiDistProj extends AbstractProjection {
 	}
 
 	protected double lngDegToMcX( double deg ){
-		deg = clip(deg,m_minLng,m_maxLng);
+		deg = clip(deg, getDegreeBoundingBox().left(), getDegreeBoundingBox().right());
 		double x = (deg/360) + 0.5;
 		double mapSize = mapSize();
 		// add 0.5 for roundoff error
@@ -70,7 +69,7 @@ public class CylEquiDistProj extends AbstractProjection {
 	} 
 	
 	protected double latDegToMcY( double deg ){
-		deg = clip(deg,m_minLat,m_maxLat);
+		deg = clip(deg, getDegreeBoundingBox().bottom(), getDegreeBoundingBox().top());
 		double y = (deg + 90)/180;
 		double mapHeightSize = mapSize()/2.0;
 		return (y * mapHeightSize);		
@@ -111,8 +110,8 @@ public class CylEquiDistProj extends AbstractProjection {
 		// we have to mod by world size in case we had
 		// to extend the whole world
 		double lng = xPixToDegLng(w.getX() % m_wdSize.getWidth());
-		if (w.getX() > 10 && lng == m_minLng) {
-			lng = m_maxLng;
+		if (w.getX() > 10 && lng == getDegreeBoundingBox().left()) {
+			lng = getDegreeBoundingBox().right();
 		}
 		double lat = yPixToDegLat(w.getY());
 		
@@ -140,8 +139,9 @@ public class CylEquiDistProj extends AbstractProjection {
 		// to extend the whole world
 		
 		double lng = xPixToDegLng(w.getX() % m_wdSize.getWidth());
-		if (w.getX() > 10 && lng == m_minLng)
-			lng = m_maxLng;
+		if (w.getX() > 10 && lng == getDegreeBoundingBox().left()) {
+			lng = getDegreeBoundingBox().right();
+		}
 		double lat = yPixToDegLat(w.getY());
 		return Degrees.geodetic(lat, lng);
 	}
@@ -171,16 +171,8 @@ public class CylEquiDistProj extends AbstractProjection {
     }
 
 	@Override
-	public String toString() {
-		return "CylEquiDistProj [m_projType=" + m_projType + ", m_wdSize="
-				+ m_wdSize + ", EarthRadius=" + EarthRadius
-				+ ", EarthCirMeters=" + EarthCirMeters + ", MeterPerDeg="
-				+ MeterPerDeg + ", m_scrnDpi=" + m_scrnDpi + ", m_scrnMpp="
-				+ m_scrnMpp + ", m_eqScale=" + m_eqScale + ", m_wholeWorldScale=" + m_wholeWorldScale
-				+ ", m_origMapWidthSize=" + m_origMapWidthSize + ", m_minLat="
-				+ m_minLat + ", m_minLng=" + m_minLng + ", m_maxLat="
-				+ m_maxLat + ", m_maxLng=" + m_maxLng + ", m_origEqScale="
-				+ m_origEqScale + "]";
+	public BoundingBox getDegreeBoundingBox() {
+		return BOUNDS;
 	}
-    
+
 }
