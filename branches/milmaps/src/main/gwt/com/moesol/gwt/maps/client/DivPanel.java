@@ -141,7 +141,7 @@ public class DivPanel extends AbsolutePanel {
 		m_tileBuilder.layoutTiles( vd, eqScale );
 	}
 	
-	public void placeInViewPanel( AbsolutePanel panel, boolean show ){
+	public void placeInViewPanel( AbsolutePanel panel ) {
 		IProjection mp = m_map.getProjection();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
 		ViewCoords tl = m_divWorker.computeDivLayoutInView(mp, vw, m_dims);

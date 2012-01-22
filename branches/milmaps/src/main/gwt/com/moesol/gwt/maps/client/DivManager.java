@@ -6,7 +6,6 @@ import com.moesol.gwt.maps.client.units.Degrees;
 public class DivManager {
 	private static int LEVEL_RANGE = 2;
 	private int m_currentLevel = 0;
-	private int m_animateLevel = 0;
 	private final int m_numDivs = 20;
 	private IProjection m_proj= null;
 	private final MapView m_map;
@@ -76,7 +75,6 @@ public class DivManager {
 	}
 	
 	public void setCurrentLevel(int currentLevel) {
-		m_animateLevel = m_currentLevel;
 		m_currentLevel = currentLevel;
 	}
 
@@ -84,17 +82,11 @@ public class DivManager {
 		return m_currentLevel;
 	}
 	
-	public int getAnimateLevel(){ return m_animateLevel; }
-	
 	public DivPanel getCurrentDiv(){
 		return getDiv(m_currentLevel);
 	}
 	
-	public DivPanel getAnimateDiv(){
-		return getDiv(m_animateLevel);
-	}
-
-	public DivPanel getDiv( int level ){
+	public DivPanel getDiv( int level ) {
 		if ( -1 < level && level < m_numDivs){
 			return m_dpArray[level];
 		}
@@ -163,16 +155,13 @@ public class DivManager {
 	public void doUpdateDivsVisibility( AbsolutePanel panel ){
 		setCurrentLevelFromMapScale();
 		int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
-		GeodeticCoords forceUpdate = new GeodeticCoords(-181, -91, Degrees.DEGREES);
 		for ( int i = 0; i < n; i++ ){
 			m_dpArray[i].setVisible(false);
 		}
 		for( int i = n; i <= m_currentLevel; i++ ){
-			m_dpArray[i].placeInViewPanel(panel, true);
 			m_dpArray[i].setVisible(true);
 		}
 		for ( int i = m_currentLevel+1; i < m_numDivs-1 ; i++ ){
-			// m_dpArray[i].updateViewCenter(forceUpdate);
 			m_dpArray[i].hideAllTiles();
 			m_dpArray[i].setVisible(false);
 		}		
@@ -182,7 +171,7 @@ public class DivManager {
 		setCurrentLevelFromMapScale();
 		int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
 		for( int i = n; i <= m_currentLevel; i++ ){
-			m_dpArray[i].placeInViewPanel(panel, true);
+			m_dpArray[i].placeInViewPanel(panel);
 		}
 	}
 	
