@@ -17,7 +17,9 @@
 
 	<properties>
 		<gwt.style>OBF</gwt.style>
+		<!-- <gwt.style>PRETTY</gwt.style> -->
 		<!-- gwt.compiler.skip -->
+		<gwt.version>2.4.0</gwt.version>
 	</properties>
 
 	<!-- Location of trunk source code This is used by "maven deploy". Note 
@@ -116,26 +118,26 @@
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
-			<version>2.1.1</version>
+			<version>${gwt.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
-			<version>2.1.1</version>
+			<version>${gwt.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-dev</artifactId>
-			<version>2.1.1</version>
+			<version>${gwt.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.googlecode.gwt.inject</groupId>
-			<artifactId>gin</artifactId>
-			<version>1.0</version>
-		</dependency>
+        <dependency>
+            <groupId>com.google.gwt.inject</groupId>
+            <artifactId>gin</artifactId>
+            <version>1.5.0</version>
+        </dependency>
 		<dependency>
 			<groupId>mil.geotransj</groupId>
 			<artifactId>geotransJ</artifactId>
@@ -157,6 +159,23 @@
    			<version>2.1.1</version>      
    			<scope>provided</scope>    
    		</dependency>
+   		<dependency>
+   			<groupId>org.mockito</groupId>
+   			<artifactId>mockito-all</artifactId>
+   			<version>1.8.5</version>
+   		</dependency>
+   		<dependency>
+   			<groupId>org.powermock</groupId>
+   			<artifactId>powermock-api-mockito</artifactId>
+   			<version>1.4.10</version>
+   			<scope>test</scope>
+   		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>1.4.10</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<reporting>
@@ -305,7 +324,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.1.0-1</version>
+				<version>2.4.0</version>
 				<executions>
 					<execution>
 						<id>gwtCompile</id>
@@ -318,7 +337,7 @@
 								<!--module>com.moesol.gwt.maps.Test</module-->
 								<!--module>com.moesol.gwt.maps.MCOP</module-->
 								<module>com.moesol.gwt.milmap.Milmap</module>
-								<module>com.moesol.gwt.xmilmaps.Xmilmaps</module>
+								<!--  <module>com.moesol.gwt.xmilmaps.Xmilmaps</module>  -->
 							</modules>
 						</configuration>
 						<goals>

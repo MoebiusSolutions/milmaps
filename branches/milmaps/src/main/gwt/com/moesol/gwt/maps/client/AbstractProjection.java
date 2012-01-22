@@ -1,18 +1,19 @@
 package com.moesol.gwt.maps.client;
 
-public abstract class AbstractProjection implements IProjection {
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.HasHandlers;
+import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
+import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
+
+
+public abstract class AbstractProjection implements IProjection, HasHandlers {
 	
+	private final HandlerManager m_handlerManager = new HandlerManager(this);
 	protected IProjection.T m_projType;
-	// private final GeodeticCoords m_lowerLeft;
 	protected final WorldDimension m_wdSize = new WorldDimension(); // Whole world
 																  // map size
-	protected final ViewCoords m_returnedViewCoords = new ViewCoords();
-	protected final WorldCoords m_returnedWorldCoords = new WorldCoords();
-	protected final MapCoords m_returnedMapCoords = new MapCoords();
-	protected final WorldCoords m_wc = new WorldCoords();
-	protected final MapCoords m_mc = new MapCoords();
-	protected final GeodeticCoords m_returnedGeodeticCoords = new GeodeticCoords();
-
 	public double EarthRadius = 6378137;
 	public double EarthCirMeters  = 2.0*Math.PI*6378137;
 	public double MeterPerDeg  = EarthCirMeters/360.0;
@@ -47,8 +48,7 @@ public abstract class AbstractProjection implements IProjection {
 	public IProjection.T getType(){ return m_projType; }
 	
 	public AbstractProjection(){
-		m_scrnDpi = 75;
-		m_scrnMpp = 2.54 / (75.0 * 100); // meters per pixel for physical screen
+		this(75);
 	}
 	
 	public AbstractProjection(int dpi) {
@@ -193,6 +193,8 @@ public abstract class AbstractProjection implements IProjection {
 	}
 	
 	protected void computeWorldSize() {
+		ProjectionChangedEvent pce = new ProjectionChangedEvent(this);
+		fireEvent(pce);
 		getWorldDimension();
 	}
 	
@@ -230,4 +232,14 @@ public abstract class AbstractProjection implements IProjection {
 		level = Math.max(level, 0);
 		return (int)level;
     }
+
+	@Override
+	public void fireEvent(GwtEvent<?> event) {
+		m_handlerManager.fireEvent(event);
+	}
+	
+	public HandlerRegistration addProjectionChangedHandler(ProjectionChangedHandler handler) {
+		return m_handlerManager.addHandler(ProjectionChangedEvent.TYPE, handler);
+	}
+    
 }

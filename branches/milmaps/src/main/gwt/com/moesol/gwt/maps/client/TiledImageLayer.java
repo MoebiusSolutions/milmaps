@@ -1,11 +1,8 @@
 package com.moesol.gwt.maps.client;
 
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.layout.client.Layout.Alignment;
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.Panel;
+import com.moesol.gwt.maps.client.stats.Sample;
 
 /**
  * Images are placed into an absolute panel. The z-index (zIndex) style is used
@@ -33,19 +30,14 @@ public class TiledImageLayer {
 	private final LayoutPanel m_layoutPanel;
 	private final TileImageManager m_tileImageMgr = new TileImageManager(this,m_tileImageEngineListener);
 	private final int REAL_ZOFFSET = 2000;
-	private final int ANIMATED_ZOFFSET = 1000;
-	private final int NOT_IN_USE_ZOFFSET = 0;
 	
 	private final double EarthCirMeters  = 2.0*Math.PI*6378137;
 	private final double MeterPerDeg  = EarthCirMeters/360.0;
 	
 	private TileCoords[] m_tileCoords;
 	private int m_level;
-	private IProjection m_proj;
-	private LayerSetWorker m_lsWorker;
 	private DivWorker m_divWorker;
 	private final DivPanel m_divPanel;
-	private final WorldCoords m_wc = new WorldCoords();
 	/** Marked as priority when this image layer is the best for the scale */
 	private boolean m_priority = false;
 	
@@ -84,7 +76,7 @@ public class TiledImageLayer {
 		@Override
 		public void useImage(TileCoords tileCoords, Object object) {
 			ImageDiv image = (ImageDiv)object;
-			// needed only for dynamic layers, but should not impact normal layers
+			// Better performance in IE7 to skip for non-auto update, but always setting fixes some IE7 issues.
 			image.setUrl(tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter()));
 			m_layoutPanel.setWidgetVisible(image, true);
 		}
@@ -101,8 +93,6 @@ public class TiledImageLayer {
 	public TiledImageLayer( DivPanel divPanel, LayerSet layerSet ) {
 		m_divPanel = divPanel;
 		m_layerSet = layerSet;
-		m_proj = divPanel.getProjection();
-		m_lsWorker = new LayerSetWorker(m_proj);
 		m_divWorker = divPanel.getDivWorker();
 		m_layoutPanel = divPanel.getTileLayerPanel();
 		m_tileImageLoadListener.setTileImageEngine(m_tileImageMgr);
@@ -143,22 +133,35 @@ public class TiledImageLayer {
 	
 
 	public void updateView() {
+		Sample.LAYER_UPDATE_VIEW.beginSample();
+		try {
+			_updateView();
+		} finally {
+			Sample.LAYER_UPDATE_VIEW.endSample();
+		}
+	}
+	
+	private void _updateView() {
 		if ( (m_layerSet.isAlwaysDraw() == false && isPriority() == false ) ){
 			m_tileImageMgr.hideUnplacedImages();
-			return; 
+			return;
 		}
 		if (!m_layerSet.isActive()) {
 			m_tileImageMgr.hideUnplacedImages();
 			return; // do nothing.
 		}
+		
+		Sample.LAYER_POSITION_IMAGES.beginSample();
 		positionImages();
+		Sample.LAYER_POSITION_IMAGES.endSample();
+		
+		m_tileImageMgr.hideUnplacedImages();
 	}
 
 	private void positionImages() {
 		for (int i = 0; i < m_tileCoords.length; i++) {
 			positionOneImage(m_tileCoords[i]);
 		}
-		m_tileImageMgr.hideUnplacedImages();
 	}
 
 	private void positionOneImage(TileCoords tileCoords) {

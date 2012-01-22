@@ -1,83 +1,74 @@
 package com.moesol.gwt.maps.client;
 
-public class ViewWorker {
-	private final ViewDimension m_dims = new ViewDimension(400, 600);
-	private final ViewCoords m_returnedViewCoords = new ViewCoords();
-	private final WorldCoords m_returnedWc = new WorldCoords();
-	private final GeodeticCoords m_geoCenter = new GeodeticCoords(); // view-port center
-	private final WorldCoords m_vpCenterWc = new WorldCoords(); // viewport center in wc.
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
+import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
+
+public class ViewWorker implements ProjectionChangedHandler {
+	private ViewDimension m_dims = new ViewDimension(400, 600);
+	private GeodeticCoords m_geoCenter = new GeodeticCoords(); // view-port center
 	private int m_offsetInWcX;
 	private int m_offsetInWcY;
 	private IProjection m_proj = null;
+	private HandlerRegistration m_projectionChangedHandlerRegistration;
 	
 	
-	public void setProjection( IProjection p ){
+	public void setProjection( IProjection p ) {
 		m_proj = p;
 	}
 	
-	public IProjection getProjection(){ return m_proj; }
+	public IProjection getProjection() { return m_proj; }
 	
-	public void intialize( ViewDimension vd, IProjection proj ){
+	public void intialize( ViewDimension vd, IProjection proj ) {
 		 m_proj = proj;
-		 m_dims.copyFrom(vd);
+		 m_dims = vd;
+		 computeOffsets(m_proj.geodeticToWorld(m_geoCenter));
+		 if (m_projectionChangedHandlerRegistration != null) {
+			 m_projectionChangedHandlerRegistration.removeHandler();
+		 }
+		 m_projectionChangedHandlerRegistration = proj.addProjectionChangedHandler(this);
 	}
 	
-	public void setDimension( ViewDimension d ){
-		m_dims.copyFrom(d);
+	public void setDimension( ViewDimension d ) {
+		m_dims = d;
+		computeOffsets(getVpCenterInWc());
 	}
 	
-	public ViewDimension getDimension(){
+	public ViewDimension getDimension() {
 		return m_dims;
 	}
 	
-	public void setGeoCenter( GeodeticCoords gc ){
-		m_geoCenter.copyFrom(gc);
+	// TODO remove me, use word  coords only
+	public void setGeoCenter( GeodeticCoords gc ) {
+		m_geoCenter = gc;
+		
+		WorldCoords wc = m_proj.geodeticToWorld(m_geoCenter);
+		computeOffsets(wc);
 	}
-	
+
+	// TODO remove me, use word  coords only
 	public GeodeticCoords getGeoCenter(){
 		return m_geoCenter;
 	}
 	
-	public void update(boolean bUseGeoCenter){
-		if ( bUseGeoCenter ){
-			m_vpCenterWc.copyFrom(m_proj.geodeticToMapCoords(m_geoCenter));
-		}
-		m_offsetInWcX = m_vpCenterWc.getX()- m_dims.getWidth()/2;
-		m_offsetInWcY = m_vpCenterWc.getY()+ m_dims.getHeight()/2;
+	public void setCenterInWc(WorldCoords cent) {
+		m_geoCenter = m_proj.worldToGeodetic(cent);
+		computeOffsets(cent);
 	}
 	
-	/**
-	 * computeGeoCenter: computes the view's geoCenter
-	 * from the view's stored center in Wcs
-	 * @return
-	 */
-	public GeodeticCoords computeGeoCenter(){
-		m_geoCenter.copyFrom(m_proj.worldToGeodetic(m_vpCenterWc));
-		return m_geoCenter;
-	}
-	
-	public void setVpCenterInWc( WorldCoords cent) {
-		m_vpCenterWc.copyFrom(cent);
-		m_offsetInWcX = cent.getX()- m_dims.getWidth()/2;
-		m_offsetInWcY = cent.getY()+ m_dims.getHeight()/2;
+	private void computeOffsets(WorldCoords wc) {
+		m_offsetInWcX = wc.getX()- m_dims.getWidth()/2;
+		m_offsetInWcY = wc.getY()+ m_dims.getHeight()/2;
 	}
 	
 	public WorldCoords getVpCenterInWc() {
-		return m_vpCenterWc;
+		return m_proj.geodeticToWorld(m_geoCenter);
 	}
 	
-	public void setOffsetInWcX(int offsetInWcX) {
-		m_offsetInWcX = offsetInWcX;
-	}
-
 	public int getOffsetInWcX() {
 		return m_offsetInWcX;
 	}
 	
-	public void setOffsetInWcY(int offsetInWcY) {
-		m_offsetInWcY = offsetInWcY;
-	}
-
 	public int getOffsetInWcY() {
 		return m_offsetInWcY;
 	}
@@ -102,9 +93,7 @@ public class ViewWorker {
 	 * @return ViewCoords
 	 */
 	public ViewCoords wcToVC( WorldCoords wc ) {
-		m_returnedViewCoords.setX(wcXtoVcX(wc.getX()));
-		m_returnedViewCoords.setY(wcYtoVcY(wc.getY()));
-		return m_returnedViewCoords;
+		return new ViewCoords(wcXtoVcX(wc.getX()), wcYtoVcY(wc.getY()));
 	}
 	
 	public int vcXtoWcX( int vcX ){
@@ -122,14 +111,17 @@ public class ViewWorker {
 	 * @param vc
 	 * @return
 	 */
-	public WorldCoords vcToWC( ViewCoords vc ) {
-		m_returnedWc.setX(vcXtoWcX(vc.getX()));
-		m_returnedWc.setY(vcYtoWcY(vc.getY()));
-		return m_returnedWc;
+	public WorldCoords viewToWorld( ViewCoords vc ) {
+		return new WorldCoords(vcXtoWcX(vc.getX()), vcYtoWcY(vc.getY()));
 	}
 	
-	public DivCoords viewCtoDivC( DivWorker divWorker, ViewCoords vc ){
-		WorldCoords wc = vcToWC(vc);
+	public DivCoords viewToDivCoords( DivWorker divWorker, ViewCoords vc ){
+		WorldCoords wc = viewToWorld(vc);
 		return divWorker.wcToDC(wc);
+	}
+
+	@Override
+	public void onProjectionChanged(ProjectionChangedEvent event) {
+		computeOffsets(getVpCenterInWc());
 	}
 }

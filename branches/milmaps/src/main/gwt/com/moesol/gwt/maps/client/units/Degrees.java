@@ -1,5 +1,7 @@
 package com.moesol.gwt.maps.client.units;
 
+import com.moesol.gwt.maps.client.GeodeticCoords;
+
 public class Degrees implements AngleUnit {
 	public static double asRadians(double d) {
 		return Math.PI * d / 180.0;
@@ -23,6 +25,10 @@ public class Degrees implements AngleUnit {
 	@Override
 	public double fromRadians(double v) {
 		return Radians.asDegrees(v);
+	}
+	
+	public static GeodeticCoords geodetic(double lat, double lng) {
+		return new GeodeticCoords(lng, lat, DEGREES);
 	}
 	
 }

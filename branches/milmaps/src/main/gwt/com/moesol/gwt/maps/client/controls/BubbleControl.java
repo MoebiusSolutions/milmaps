@@ -4,10 +4,15 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseWheelEvent;
+import com.google.gwt.event.dom.client.MouseWheelHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.moesol.gwt.maps.client.MapView;
+import com.moesol.gwt.maps.client.MapViewChangeEvent;
 
 /**
  * Animated bubble to show on map.
@@ -26,26 +31,71 @@ import com.moesol.gwt.maps.client.MapView;
 </pre>
  */
 public class BubbleControl extends DecoratedPopupPanel {
-	
+
 	private final HTML m_html;
 	private final int TOP_OFFSET = -20;
 	private final int LEFT_OFFSET = 20;
+	private boolean bound = false;
 	private int m_duration = 500;
 	private int m_initialX;
 	private int m_initialY;
+	private MapView m_map;
+	private HandlerRegistration m_mouseDownHandlerRegistration;
+	private HandlerRegistration m_mapViewChangeEventRegistration;
+	private HandlerRegistration m_mouseWheelHandlerRegistration;
 
-	public BubbleControl(MapView m) {
+	public BubbleControl(final MapView map) {
+		m_map = map;
 		setStylePrimaryName("map-BubbleControl");
 		m_html = new HTML("Loading...");
 		setWidget(m_html);
+		bind();
+	}
 
-		m.addDomHandler(new MouseDownHandler() {
+	public void bind()
+	{
+		if(bound)
+			return;
+
+		m_mouseDownHandlerRegistration = m_map.addDomHandler(new MouseDownHandler() {
 			@Override
 			public void onMouseDown(MouseDownEvent event) {
 				event.preventDefault();
 				hide();
 			}
 		}, MouseDownEvent.getType());
+
+		m_mouseWheelHandlerRegistration = m_map.addDomHandler(new MouseWheelHandler()
+		{
+			@Override
+			public void onMouseWheel(final MouseWheelEvent mouseWheelEvent)
+			{
+				hide();
+			}
+		}, MouseWheelEvent.getType());
+
+		m_mapViewChangeEventRegistration = MapViewChangeEvent.register(m_map.getEventBus(), new MapViewChangeEvent.Handler()
+		{
+			@Override
+			public void onMapViewChangeEvent(final MapViewChangeEvent mapViewValueChangeEvent)
+			{
+				hide();
+			}
+		});
+
+		bound = true;
+	}
+
+	public void unbind()
+	{
+		if(!bound)
+			return;
+
+		m_mouseDownHandlerRegistration.removeHandler();
+		m_mapViewChangeEventRegistration.removeHandler();
+		m_mouseWheelHandlerRegistration.removeHandler();
+
+		bound = false;
 	}
 
 	/**
@@ -61,25 +111,25 @@ public class BubbleControl extends DecoratedPopupPanel {
 	public void animateShow(int x, int y) {
 		m_initialX = x;
 		m_initialY = y;
-		
+
 		Animation a = new Animation() {
 			@Override
 			protected void onStart() {
-				getWidget().getElement().getStyle().setProperty("fontSize", 0.0 * 100.0 + "%");
+				//getWidget().getElement().getStyle().setProperty("fontSize", 0.0 * 100.0 + "%");
 				setPopupPosition(m_initialX, m_initialY);
 				show();
 			}
-			
+
 			@Override
 			protected void onUpdate(double progress) {
-				getWidget().getElement().getStyle().setProperty("fontSize", progress * 100.0 + "%");
+				//getWidget().getElement().getStyle().setProperty("fontSize", progress * 100.0 + "%");
 				int targetX = Math.min(m_initialX + (int)(LEFT_OFFSET * progress), Window.getClientWidth() - getOffsetWidth());
 				int targetY = m_initialY + (int)(TOP_OFFSET * progress) - getOffsetHeight();
 				targetY = Math.max(targetY, Document.get().getScrollTop());
 				setPopupPosition(targetX, targetY);
 			}
 		};
-		
+
 		a.run(m_duration);
 	}
 

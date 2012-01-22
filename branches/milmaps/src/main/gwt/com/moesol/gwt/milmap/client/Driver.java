@@ -46,6 +46,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.moesol.gwt.maps.client.DeclutterEngine;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ILayerConfig;
 import com.moesol.gwt.maps.client.ILayerConfigAsync;
@@ -56,24 +57,26 @@ import com.moesol.gwt.maps.client.LayerSetJson;
 import com.moesol.gwt.maps.client.MapLayersOnClient;
 import com.moesol.gwt.maps.client.MapPanel;
 import com.moesol.gwt.maps.client.MapView;
-import com.moesol.gwt.maps.client.controls.EdgeHoverPanControl;
+import com.moesol.gwt.maps.client.ViewCoords;
+import com.moesol.gwt.maps.client.WallClock;
+import com.moesol.gwt.maps.client.WidgetPositioner;
+import com.moesol.gwt.maps.client.WorldCoords;
 import com.moesol.gwt.maps.client.controls.FlyToController;
-import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
-import com.moesol.gwt.maps.client.controls.SearchControl;
 import com.moesol.gwt.maps.client.controls.MapDimmerControl;
+import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
 import com.moesol.gwt.maps.client.controls.PositionControl;
-import com.moesol.gwt.maps.client.controls.SearchEvent;
-import com.moesol.gwt.maps.client.controls.SearchHandler;
+import com.moesol.gwt.maps.client.controls.SearchControl;
 import com.moesol.gwt.maps.client.controls.TagControl;
 import com.moesol.gwt.maps.client.gin.MapsGinjector;
 import com.moesol.gwt.maps.client.place.MapsActivityMapper;
 import com.moesol.gwt.maps.client.place.MapsPlaceHistoryMapper;
+import com.moesol.gwt.maps.client.stats.StatsDialogBox;
 import com.moesol.gwt.maps.client.tms.TileMapServicePlace;
 import com.moesol.gwt.maps.client.tms.TileMapServiceView;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 public class Driver implements EntryPoint {
-
 	private static final int MAP_EDGE_HOVER_MAX_PAN_PER_INTERVAL_PIXELS = 10;
 	private static final int MAP_EDGE_HOVER_PAN_INTERVAL = 100;
 	private static final int MAP_EDGE_HOVER_RADIUS_PIXELS = 50;
@@ -195,11 +198,27 @@ public class Driver implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				moveIcons();
 			}});
+		Button showLeaders = new Button("Show Leaders", new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				showLeaders();
+			}
+		});
 		Button resizeMap = new Button("Fill Viewport", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				dockPanel.setHeight("100%");
 				dockPanel.setWidth("100%");
+			}});
+		Button benchmarks = new Button("Benchmarks", new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				runBenchmarks();
+			}});
+		Button stats = new Button("Stats", new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				stats();
 			}});
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
 		oracle.add("0");
@@ -217,7 +236,10 @@ public class Driver implements EntryPoint {
 		HorizontalPanel bar = new HorizontalPanel();
 		bar.add(removeIcons);
 		bar.add(moveIcons);
+		bar.add(showLeaders);
 		bar.add(resizeMap);
+		bar.add(benchmarks);
+		bar.add(stats);
 
 		dockPanel.addNorth(bar, 20);
 		
@@ -273,6 +295,16 @@ public class Driver implements EntryPoint {
 			db.show();
 		}
 
+	}
+
+	protected void showLeaders() {
+		WidgetPositioner widgetPositioner = m_map.getWidgetPositioner();
+		for (int i = 0; i < 34; i++) {
+			Image img = new Image("images/leader-images.png", i * DeclutterEngine.LEADER_IMAGE_WIDTH, 0,
+					DeclutterEngine.LEADER_IMAGE_WIDTH, DeclutterEngine.LEADER_IMAGE_HEIGHT);
+			img.getElement().getStyle().setZIndex(3020);
+			widgetPositioner.place(img, 200, 200);
+		}
 	}
 
 	private void addTileMapServiceView(Panel panel) {
@@ -390,9 +422,101 @@ public class Driver implements EntryPoint {
 		while (it.hasNext()) {
 			Icon icon = it.next();
 			GeodeticCoords location = icon.getLocation();
-			location.setLambda(location.getLambda(AngleUnit.DEGREES) + 1.0, AngleUnit.DEGREES);
+			double lat = location.getPhi(AngleUnit.DEGREES);
+			double lng = location.getLambda(AngleUnit.DEGREES) + 1.0;
+			icon.setLocation(Degrees.geodetic(lat, lng));
 		}
 		m_map.updateView();
+	}
+	
+	protected void runBenchmarks() {
+		int N = 10000;
+		
+		// Reusing geo and world coords
+		WallClock cl = new WallClock();
+		double perSec;
+		int sum = 0;
+		
+//		cl.start();
+//		GeodeticCoords geo = new GeodeticCoords();
+//		for (int i = 0; i < N; i++) {
+//			double lat = i % 90;
+//			double lng = i % 180;
+//			geo.setPhi(lat, AngleUnit.DEGREES);
+//			geo.setLambda(lng, AngleUnit.DEGREES);
+//			WorldCoords wc = m_map.getProjection().geodeticToWorld(geo);
+//			ViewCoords vc = m_map.getViewport().worldToView(wc, true);
+//			sum += vc.getX() + vc.getY();
+//		}
+//		cl.stop();
+//		perSec = cl.computeOperationsPersecond(N) / 1000;
+//		Window.alert("No new ops = " + cl + " or " + perSec + "k/sec");
+		
+		// Value objects
+		GeodeticCoords geo;
+		cl.start();
+		for (int i = 0; i < N; i++) {
+			double lat = i % 90;
+			double lng = i % 180;
+			geo = Degrees.geodetic(lat, lng);
+			WorldCoords wc = m_map.getProjection().geodeticToWorld(geo);
+			ViewCoords vc = m_map.getViewport().worldToView(wc, true);
+			sum += vc.getX() + vc.getY();
+		}
+		cl.stop();
+		perSec = cl.computeOperationsPersecond(N) / 1000;
+		Window.alert("New geo = " + cl + " or " + perSec + "k/sec");
+		
+		// Value objects
+		cl.start();
+		for (int i = 0; i < N; i++) {
+			double lat = i % 90;
+			double lng = i % 180;
+			geo = Degrees.geodetic(lat, lng);
+			WorldCoords wc = m_map.getProjection().geodeticToWorld(geo);
+			ViewCoords vc = m_map.getViewport().worldToView(wc, true);
+			sum += vc.getX() + vc.getY();
+		}
+		cl.stop();
+		perSec = cl.computeOperationsPersecond(N) / 1000;
+		Window.alert("New geo/world/view = " + cl + " or " + perSec + "k/sec");
+		
+
+		// Value objects with trival pools
+		GeodeticCoords[] gcPool = new GeodeticCoords[100];
+		for (int i = 0; i < gcPool.length; i++) {
+			gcPool[i] = new GeodeticCoords();
+		}
+		WorldCoords[] wcPool = new WorldCoords[100];
+		for (int i = 0; i < wcPool.length; i++) {
+			wcPool[i] = new WorldCoords();
+		}
+		ViewCoords[] vcPool = new ViewCoords[100];
+		for (int i = 0; i < vcPool.length; i++) {
+			vcPool[i] = new ViewCoords();
+		}
+				
+//		cl.start();
+//		for (int i = 0; i < N; i++) {
+//			double lat = i % 90;
+//			double lng = i % 180;
+//			geo = gcPool[i % 100];
+//			geo.set(lng, lat, AngleUnit.DEGREES);
+//			WorldCoords wc = wcPool[i % 100];
+//			wc.copyFrom(m_map.getProjection().geodeticToWorld(geo));
+//			ViewCoords vc = vcPool[i % 100];
+//			vc.copyFrom(m_map.getViewport().worldToView(wc, true));
+//			sum += vc.getX() + vc.getY();
+//		}
+//		cl.stop();
+//		perSec = cl.computeOperationsPersecond(N) / 1000;
+//		Window.alert("Pool geo/world/view = " + cl + " or " + perSec + "k/sec");
+		
+		Window.alert("Use sum: " + sum);
+	}
+	
+	public void stats() {
+		new StatsDialogBox().show();
 	}
 
 	protected void goRight() {

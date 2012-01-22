@@ -1,6 +1,8 @@
 package com.moesol.gwt.maps.client;
 
+import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 
 /**
@@ -104,25 +106,32 @@ public class CylEquiDistProj extends AbstractProjection {
 	
 	@Override
 	public GeodeticCoords worldToGeodetic(WorldCoords w) {
+		Stats.incrementWorldToGeodetic();
+		
 		// we have to mod by world size in case we had
 		// to extend the whole world
-		
 		double lng = xPixToDegLng(w.getX() % m_wdSize.getWidth());
-		if (w.getX() > 10 && lng == m_minLng)
+		if (w.getX() > 10 && lng == m_minLng) {
 			lng = m_maxLng;
+		}
 		double lat = yPixToDegLat(w.getY());
-		m_returnedGeodeticCoords.set(lng, lat, AngleUnit.DEGREES);
-		return m_returnedGeodeticCoords;
+		
+		return Degrees.geodetic(lat, lng);
 	}
 	
 
 	@Override
 	public WorldCoords geodeticToWorld(GeodeticCoords g) {
-		m_returnedWorldCoords
-				.setX(lngDegToPixX(g.getLambda(AngleUnit.DEGREES)));
-		m_returnedWorldCoords
-				.setY(latDegToPixY(g.getPhi(AngleUnit.DEGREES)));
-		return m_returnedWorldCoords;
+		Stats.incrementGeodeticToWorld();
+		
+		int x = lngDegToPixX(g.getLambda(AngleUnit.DEGREES));
+		int y = latDegToPixY(g.getPhi(AngleUnit.DEGREES));
+		return new WorldCoords(x, y);
+//		m_returnedWorldCoords
+//				.setX(lngDegToPixX(g.getLambda(AngleUnit.DEGREES)));
+//		m_returnedWorldCoords
+//				.setY(latDegToPixY(g.getPhi(AngleUnit.DEGREES)));
+//		return m_returnedWorldCoords;
 	}
 	
 	@Override
@@ -134,18 +143,15 @@ public class CylEquiDistProj extends AbstractProjection {
 		if (w.getX() > 10 && lng == m_minLng)
 			lng = m_maxLng;
 		double lat = yPixToDegLat(w.getY());
-		m_returnedGeodeticCoords.set(lng, lat, AngleUnit.DEGREES);
-		return m_returnedGeodeticCoords;
+		return Degrees.geodetic(lat, lng);
 	}
 	
 
 	@Override
 	public MapCoords geodeticToMapCoords(GeodeticCoords g) {
-		m_returnedMapCoords
-				.setX(lngDegToMcX(g.getLambda(AngleUnit.DEGREES)));
-		m_returnedMapCoords
-				.setY(latDegToMcY(g.getPhi(AngleUnit.DEGREES)));
-		return m_returnedMapCoords;
+		return MapCoords.builder()
+			.setX(lngDegToMcX(g.getLambda(AngleUnit.DEGREES)))
+			.setY(latDegToMcY(g.getPhi(AngleUnit.DEGREES))).build();
 	}
 
 	protected double computeScale(double deg, int pix) {
@@ -163,5 +169,19 @@ public class CylEquiDistProj extends AbstractProjection {
     public int getNumYtiles(double tileDegHeight){
     	return (int)(180.0/tileDegHeight);
     }
-}
 
+	@Override
+	public String toString() {
+		return "CylEquiDistProj [m_projType=" + m_projType + ", m_wdSize="
+				+ m_wdSize + ", EarthRadius=" + EarthRadius
+				+ ", EarthCirMeters=" + EarthCirMeters + ", MeterPerDeg="
+				+ MeterPerDeg + ", m_scrnDpi=" + m_scrnDpi + ", m_scrnMpp="
+				+ m_scrnMpp + ", m_eqScale=" + m_eqScale + ", m_prevEqScale="
+				+ m_prevEqScale + ", m_wholeWorldScale=" + m_wholeWorldScale
+				+ ", m_origMapWidthSize=" + m_origMapWidthSize + ", m_minLat="
+				+ m_minLat + ", m_minLng=" + m_minLng + ", m_maxLat="
+				+ m_maxLat + ", m_maxLng=" + m_maxLng + ", m_origEqScale="
+				+ m_origEqScale + ", m_zoomFlag=" + m_zoomFlag + "]";
+	}
+    
+}

@@ -8,7 +8,7 @@ import java.net.URLEncoder;
 
 import org.junit.Test;
 
-import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 public class ArrangeTileTest {
 	private URLProvider m_provider = new URLProvider() {
@@ -38,8 +38,6 @@ public class ArrangeTileTest {
 	
 	int m_dpi = 75;
 
-	private GeodeticCoords m_geo = new GeodeticCoords();
-	
 	public ArrangeTileTest(){
 		m_vp.setDivWorker(m_divWorker);
 		m_tb.setProjection(m_proj);
@@ -93,7 +91,7 @@ public class ArrangeTileTest {
 		m_vp.setSize(600,400);
 		for ( int j = 0; j < 3; j++ ){
 		    LayerSet ls = createLayerSet(j);
-			m_geo.set(0,0,AngleUnit.DEGREES);
+		    GeodeticCoords geo = Degrees.geodetic(0, 0);
 			//m_proj.setViewGeoCenter(m_geo);
 			for ( int level = 0; level < 3; level++){
 				double factor = ( level< 1 ? 1 : 2 );

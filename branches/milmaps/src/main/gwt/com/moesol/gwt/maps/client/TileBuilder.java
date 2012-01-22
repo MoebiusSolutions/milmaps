@@ -11,11 +11,10 @@ public class TileBuilder {
 	private double m_tileDegWidth;
 	private double m_tileDegHeight;
 	
-	private final ViewDimension m_scaledViewDims = new ViewDimension();
+	private ViewDimension m_scaledViewDims = new ViewDimension();
 	private LayerSetWorker m_lsWorker = new LayerSetWorker();
 	private DivWorker m_divWorker = null;
 	private int m_divLevel;
-	private final DivCoords m_divCoords = new DivCoords();
 	
 	private ArrayList<TiledImageLayer> m_tiledImageLayers;
 
@@ -39,7 +38,7 @@ public class TileBuilder {
 	}
 	
 	public void setViewCenterWc(WorldCoords wc){
-		m_tileViewWork.setVpCenterInWc(wc);
+		m_tileViewWork.setCenterInWc(wc);
 	}
 	
 	public IProjection getProjection(){ return m_divProj; }
@@ -161,9 +160,7 @@ public class TileBuilder {
 	}
 	
 	public DivCoords worldToDiv(int wcX, int wcY) {
-		DivCoords r = m_divCoords;
-		r.copyFrom(m_divWorker.wcToDC(wcX, wcY));
-		return r;
+		return m_divWorker.wcToDC(wcX, wcY);
 	}
 	
 	private boolean badYTile(int y) {
@@ -255,10 +252,11 @@ public class TileBuilder {
 	public void computeTileCoords( ViewDimension vd, double eqScale, boolean bUpdateView ) {
 		double projScale = m_divProj.getEquatorialScale();
 		double dFactor = eqScale/projScale;
-		m_scaledViewDims.setWidth((int)(vd.getWidth()/dFactor));
-		m_scaledViewDims.setHeight((int)(vd.getHeight()/dFactor));
+		m_scaledViewDims = ViewDimension.builder()
+			.setWidth((int)(vd.getWidth()/dFactor))
+			.setHeight((int)(vd.getHeight()/dFactor)).build();
+		
 		m_tileViewWork.setDimension(m_scaledViewDims);
-		m_tileViewWork.update(true);
 		if (m_tiledImageLayers.size() > 0) {
 			int dpi = m_divProj.getScrnDpi();
 			for (TiledImageLayer layer : m_tiledImageLayers) {
@@ -303,6 +301,9 @@ public class TileBuilder {
 		int LevelWithBestScaleSoFar = -10000;
 		double bestScaleSoFar = 0.0;
 		for (TiledImageLayer layer : m_tiledImageLayers) {
+			if (!layer.getLayerSet().isActive()) {
+				continue;
+			}
 			layer.setPriority(false);
 
 			int level = layer.findLevel(dpi, projScale);

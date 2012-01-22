@@ -8,11 +8,10 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.moesol.gwt.maps.client.GeodeticCoords;
-import com.moesol.gwt.maps.client.IProjection;
 import com.moesol.gwt.maps.client.LatLonString;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
-import com.moesol.gwt.maps.client.ViewWorker;
+import com.moesol.gwt.maps.client.WorldCoords;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
 /**
@@ -23,7 +22,6 @@ public class PositionControl extends Composite {
 	private final OutlinedLabel m_mousePosLabel = new OutlinedLabel();
 	private final Mgrs m_mgrs = new Mgrs();
 	private final Geodetic m_geo = new Geodetic();
-	private final ViewCoords m_vc = new ViewCoords();
 	
 	private MapView m_mapView = null;
 	
@@ -50,10 +48,9 @@ public class PositionControl extends Composite {
 	}
 	
 	public void mouseMove( int x, int y ) {
-		m_vc.set(x,y);
-		IProjection p = m_mapView.getProjection();
-		ViewWorker worker = m_mapView.getViewport().getVpWorker();
-		GeodeticCoords gc = p.worldToGeodetic(worker.vcToWC(m_vc));
+		ViewCoords vc = new ViewCoords(x, y);
+		WorldCoords wc = m_mapView.getViewport().getVpWorker().viewToWorld(vc);
+		GeodeticCoords gc = m_mapView.getProjection().worldToGeodetic(wc);
 		String pos = LatLonString.build(gc.getPhi(AngleUnit.DEGREES), 
 										gc.getLambda(AngleUnit.DEGREES));
 		String mgrsPos = "";

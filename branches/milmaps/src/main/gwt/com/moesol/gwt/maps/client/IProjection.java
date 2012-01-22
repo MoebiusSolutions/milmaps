@@ -1,5 +1,8 @@
 package com.moesol.gwt.maps.client;
 
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
+
 public interface IProjection {
 	public enum ZoomFlag {
 		OUT, NONE, IN
@@ -175,7 +178,6 @@ public interface IProjection {
 	 */
 	public abstract int getNumYtiles( double tileDegWidth );
 	
-	
 	/**
 	 * Returns the original scale that is computed when the projection 
 	 * is initialized with the layer data.
@@ -206,5 +208,12 @@ public interface IProjection {
 	 * @return int, level corresponding to the scale.
 	 */
 	public abstract int getLevelFromScale( double eqScale );
+
+	/**
+	 * Register a projection changed handler
+	 * @param handler
+	 * @return HandlerRegistration
+	 */
+	HandlerRegistration addProjectionChangedHandler(ProjectionChangedHandler handler);
 
 }

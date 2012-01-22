@@ -35,7 +35,6 @@ public class TagControl extends Composite implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private boolean m_bTagOn = false;
-    private final ViewCoords m_vc = new ViewCoords();
     private String m_name;
     GeodeticCoords m_gc;
     MapView m_mapView;
@@ -201,10 +200,10 @@ public class TagControl extends Composite implements Serializable {
 
     public void mouseDown(int x, int y) {
         if (m_bTagOn) {
-            m_vc.set(x, y);
+        	ViewCoords vc = new ViewCoords(x, y);
             m_mapView.setFocus(false);
             ViewWorker worker = m_mapView.getViewport().getVpWorker();
-            m_gc = m_mapView.getProjection().worldToGeodetic(worker.vcToWC(m_vc));
+            m_gc = m_mapView.getProjection().worldToGeodetic(worker.viewToWorld(vc));
             m_bTagOn = false;
             if (m_box == null) {
                 m_box = addDialogWidget("Add Tag");

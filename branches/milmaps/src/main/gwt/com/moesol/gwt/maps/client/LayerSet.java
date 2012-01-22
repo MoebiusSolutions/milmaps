@@ -1,7 +1,6 @@
 package com.moesol.gwt.maps.client;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.moesol.gwt.maps.client.units.AngleUnit;
 
 /**
  * Properties configuring a layer set for the map view.
@@ -107,12 +106,10 @@ public class LayerSet implements IsSerializable {
 	public void setAlwaysDraw(boolean flag) {
 		m_alwaysDraw = flag;
 	}
-	
 	public LayerSet withAlwaysDraw(boolean flag) {
 		setAlwaysDraw(flag);
 		return this;
 	}
-	
 	public boolean isAlwaysDraw() {
 		return m_alwaysDraw;
 	}

@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 public class ProjectionTest {
 	
@@ -25,13 +26,25 @@ public class ProjectionTest {
 	}
 	
 	@Test
+	public void testNumYTiles(){
+		double startDegs[] = {180 , 90, 45, 27.5 };
+		for( int i = 0; i < 1; i++ ){
+			for( int level = 0; level < 20; level++){
+				double degWidth = startDegs[i]/(1<<level);
+				int numTiles = m_proj.getNumYtiles(degWidth);
+				assertEquals(numTiles,(1<<(level+i)));
+			}
+		}
+		
+	}
+	
+	@Test
 	public void testWorldToGeo(){
 		GeodeticCoords gc1;
 		GeodeticCoords gc2;
-		WorldCoords wc = new WorldCoords() ;
 		for (int x = 2; x < 512; x += 2 ) {
 			for ( int y = 2; y < 512; y += 2 ) {
-				wc.setX(x); wc.setY(y);
+				WorldCoords wc = WorldCoords.builder().setX(x).setY(y).build();
 				gc1 = m_proj.worldToGeodetic(wc);
 				gc2 = m_cylProj.worldToGeodetic(wc);
 				compareGeoPos( gc1, gc2, 0.0001 );
@@ -49,7 +62,7 @@ public class ProjectionTest {
 		GeodeticCoords geo = new GeodeticCoords();
 		for (double lat = -90; lat <= 90; lat += 2.0) {
 			for (double lng = -180; lng <= 180; lng += 2.0) {
-				geo.set(lng, lat, AngleUnit.DEGREES);
+				geo = Degrees.geodetic(lat, lng);
 				v = m_proj.geodeticToWorld(geo);
 				w = m_cylProj.geodeticToWorld(geo);
 				if ( v.getX() != w.getX() || v.getY() != w.getY() )
@@ -137,7 +150,7 @@ public class ProjectionTest {
 		exp = new GeodeticCoords();
 		for (double phi = -90; phi <= 90; phi += 1.0) {
 			for (double lambda = -180; lambda <= 180; lambda += 1.0) {
-				exp.set(lambda, phi, AngleUnit.DEGREES);
+				exp = Degrees.geodetic(phi, lambda);
 				v = m_proj.geodeticToWorld(exp);
 				w = m_proj.worldToGeodetic(v);
 				double dist = 0.05;
@@ -178,7 +191,7 @@ public class ProjectionTest {
 		exp = new GeodeticCoords();
 		for (double phi = -90; phi <= 90; phi += 1.0) {
 			for (double lambda = -180; lambda <= 180; lambda += 1.0) {
-				exp.set(lambda, phi, AngleUnit.DEGREES);
+				exp = Degrees.geodetic(phi, lambda);
 				v = m_proj.geodeticToWorld(exp);
 				assertEquals(v.getX(),v.getX());
 			}

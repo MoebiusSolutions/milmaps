@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.gwt.event.shared.HandlerRegistration;
+
 public class DivWorkerTest {
 	private DivWorker m_dw = new DivWorker();
 	private ViewWorker m_vw = new ViewWorker();
@@ -27,7 +29,6 @@ public class DivWorkerTest {
 		//set view and divPanel center.
 		GeodeticCoords gc = new GeodeticCoords();
 		m_vw.setGeoCenter(gc);
-		m_vw.update(true);
 		m_dw.setDiv(gc);
 	}
 	
@@ -39,7 +40,6 @@ public class DivWorkerTest {
 	private void zoomIn2X(){
 		double eqScale = m_mapProj.getEquatorialScale()*2;
 		m_mapProj.setEquatorialScale(eqScale);
-		m_vw.update(true);	
 	}
 	
 	@Test

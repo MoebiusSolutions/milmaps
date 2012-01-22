@@ -17,6 +17,8 @@ public class TileImageMgrTest {
 	
 	@Test
 	public void testTileImageEngine() {
+		TileImageManager.MAX_CACHE_SIZE = 64;
+		
 		TileCoords[] coords = new TileCoords[] {
 				new TileCoords(0, 0),
 				new TileCoords(1, 1),
@@ -91,6 +93,8 @@ public class TileImageMgrTest {
 	
 	@Test
 	public void testKickOutOfCache() {
+		TileImageManager.MAX_CACHE_SIZE = 64;
+		
 		for (int i = 0; i < TileImageManager.MAX_CACHE_SIZE; i++) {
 			TileCoords tileCoords = new TileCoords(i, 0);
 			EasyMock.expect(m_listener.createImage(tileCoords)).andReturn("x=" + i);

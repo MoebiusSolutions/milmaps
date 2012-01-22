@@ -1,7 +1,5 @@
 package com.moesol.gwt.maps.client;
 
-import java.util.ArrayList;
-
 import com.google.gwt.animation.client.Animation;
 
 public class AnimationEngine extends Animation {
@@ -33,8 +31,7 @@ public class AnimationEngine extends Animation {
 		m_oldScale = m_startEqScale;
 		m_scaleDiff = (scaleFactor - 1.0)*m_startEqScale;
 		m_ztWorker.setViewOffsets(m_vpWorker.getOffsetInWcX(), m_vpWorker.getOffsetInWcY());
-		m_mapView.setSuspendFlag(true);
-		run(m_durationInSecs);
+	    run(m_durationInSecs);
 	}
 	
 	protected void zoom( double nextScale ){
@@ -43,7 +40,7 @@ public class AnimationEngine extends Animation {
 		double ox = m_ztWorker.getOffsetX();
 		double oy = m_ztWorker.getOffsetY();
 		m_ztWorker.setViewOffsets(ox, oy);
-		m_mapView.ZoomAndMove(f, (int)ox, (int)oy);
+		m_mapView.zoomAndMove(f, (int)ox, (int)oy);
 		m_oldScale = nextScale;
 		// TODO fix this soon.
 		//m_mapView.drawIcons();
@@ -56,22 +53,32 @@ public class AnimationEngine extends Animation {
 			zoom( m_nextScale );
 	}
 	
-	
-	@Override
-	protected void onComplete(){
-		super.onComplete();
-		double fudge = 2.000000001;
-		if ( m_bZoomingIn && ( m_nextScale < fudge*m_startEqScale ) ){
-			zoom( fudge*m_startEqScale );
-		}
-		m_mapView.setSuspendFlag(false);
-		m_mapView.doUpdateView();
+	protected void onStart() {
+		super.onStart();
+		m_mapView.setSuspendFlag(true);
 	}
 	
 	@Override
-	protected void onCancel(){
-		super.onCancel();
-		m_mapView.setSuspendFlag(false);
+	protected void onComplete(){
+		try {
+			super.onComplete();
+			double fudge = 2.000000001;
+			if ( m_bZoomingIn && ( m_nextScale < fudge*m_startEqScale ) ){
+				zoom( fudge*m_startEqScale );
+			}
+			m_mapView.doUpdateView();
+		} finally {
+			m_mapView.setSuspendFlag(false);
+		}
+	}
+	
+	@Override
+	protected void onCancel() {
+		try {
+			super.onCancel();
+		} finally {
+			m_mapView.setSuspendFlag(false);
+		}
 		m_mapView.doUpdateView();
 	}
 

@@ -39,10 +39,10 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title2", "title3" });
 
-		assertEquals(-10.0, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(-20.0, bbox.getMinLon(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLon(), EPSILON);
+		assertEquals(-10.0, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(-20.0, bbox.getLeftLon(), EPSILON);
+		assertEquals(20.0, bbox.getRightLon(), EPSILON);
 	}
 	
 	@Test
@@ -57,10 +57,10 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title2", "title3" });
 
-		assertEquals(-10.0, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(-20.0, bbox.getMinLon(), EPSILON);
-		assertEquals(30.0, bbox.getMaxLon(), EPSILON);
+		assertEquals(-10.0, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(-20.0, bbox.getLeftLon(), EPSILON);
+		assertEquals(30.0, bbox.getRightLon(), EPSILON);
 	}
 	
 	@Test
@@ -75,10 +75,10 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title2", "title3" });
 
-		assertEquals(-10.0, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(-30.0, bbox.getMinLon(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLon(), EPSILON);
+		assertEquals(-10.0, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(-30.0, bbox.getLeftLon(), EPSILON);
+		assertEquals(20.0, bbox.getRightLon(), EPSILON);
 	}
 	
 	@Test
@@ -93,10 +93,10 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title2", "title3" });
 
-		assertEquals(-10.0, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(170, bbox.getMinLon(), EPSILON);
-		assertEquals(200, bbox.getMaxLon(), EPSILON);
+		assertEquals(-10.0, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(170, bbox.getLeftLon(), EPSILON);
+		assertEquals(-180, bbox.getRightLon(), EPSILON);
 	}
 	
 	@Test
@@ -111,10 +111,10 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title2", "title3" });
 
-		assertEquals(-10.0, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(160.0, bbox.getMinLon(), EPSILON);
-		assertEquals(190.0, bbox.getMaxLon(), EPSILON);
+		assertEquals(-10.0, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(160.0, bbox.getLeftLon(), EPSILON);
+		assertEquals(-180.0, bbox.getRightLon(), EPSILON);
 	}
 	
 	@Test
@@ -129,10 +129,10 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title2", "title3" });
 
-		assertEquals(-10.0, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(160.0, bbox.getMinLon(), EPSILON);
-		assertEquals(200.0, bbox.getMaxLon(), EPSILON);
+		assertEquals(-10.0, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(160.0, bbox.getLeftLon(), EPSILON);
+		assertEquals(-180.0, bbox.getRightLon(), EPSILON);
 	}
 	
 	@Test
@@ -147,10 +147,10 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title2", "title3" });
 
-		assertEquals(-10.0, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(-170.0, bbox.getMinLon(), EPSILON);
-		assertEquals(-10.0, bbox.getMaxLon(), EPSILON);
+		assertEquals(-10.0, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(-170.0, bbox.getLeftLon(), EPSILON);
+		assertEquals(-10.0, bbox.getRightLon(), EPSILON);
 	}
 	
 	@Test
@@ -165,10 +165,10 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title2", "title3" });
 
-		assertEquals(-10.0, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(10.0, bbox.getMinLon(), EPSILON);
-		assertEquals(170.0, bbox.getMaxLon(), EPSILON);
+		assertEquals(-10.0, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(10.0, bbox.getLeftLon(), EPSILON);
+		assertEquals(170.0, bbox.getRightLon(), EPSILON);
 	}
 	
 	@Test
@@ -182,10 +182,10 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title3" });
 
-		assertEquals(-0.1, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(0.0, bbox.getMinLon(), EPSILON);
-		assertEquals(180.0, bbox.getMaxLon(), EPSILON);
+		assertEquals(-0.1, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(0.0, bbox.getLeftLon(), EPSILON);
+		assertEquals(180.0, bbox.getRightLon(), EPSILON);
 	}
 	
 	@Test
@@ -199,10 +199,10 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title3" });
 
-		assertEquals(-0.1, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(-180.0, bbox.getMinLon(), EPSILON);
-		assertEquals(0.0, bbox.getMaxLon(), EPSILON);
+		assertEquals(-0.1, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(-180.0, bbox.getLeftLon(), EPSILON);
+		assertEquals(0.0, bbox.getRightLon(), EPSILON);
 	}
 	
 	@Test
@@ -216,9 +216,9 @@ public class AbstractFeatureTileRendererTest {
 		BoundingBox bbox = m_renderer.getBoundingBoxForFeatures(
 				new String[] { "title", "title3" });
 
-		assertEquals(-0.1, bbox.getMinLat(), EPSILON);
-		assertEquals(20.0, bbox.getMaxLat(), EPSILON);
-		assertEquals(180.0, bbox.getMinLon(), EPSILON);
-		assertEquals(180.0, bbox.getMaxLon(), EPSILON);
+		assertEquals(-0.1, bbox.getBotLat(), EPSILON);
+		assertEquals(20.0, bbox.getTopLat(), EPSILON);
+		assertEquals(180.0, bbox.getLeftLon(), EPSILON);
+		assertEquals(-180.0, bbox.getRightLon(), EPSILON);
 	}
 }

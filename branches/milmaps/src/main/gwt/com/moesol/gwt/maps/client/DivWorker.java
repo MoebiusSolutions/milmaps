@@ -1,23 +1,22 @@
 package com.moesol.gwt.maps.client;
 
+import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
+import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
+
 /**
  * DivWorker class is used to help handle all tile placements. It works with just one projection
  * scale and original dimension. It should be used in conjunction with tile builder.
- * @author User
- *
+ * @author <a href="www.moesol.com">Moebius Solutions, Inc.</a>
  */
-public class DivWorker {
+public class DivWorker implements ProjectionChangedHandler {
 	private GeodeticCoords m_geoCenter = new GeodeticCoords();
-	private final DivCoords m_returnedDivCoords = new DivCoords();
-	private final WorldCoords m_wc = new WorldCoords();
-	private final WorldCoords m_divCenterWc = new WorldCoords(); // viewport center in wc.
-	private final MapCoords m_divCenterMc = new MapCoords(); // viewport center in wc.
+	private MapCoords m_divCenterMc = null; // viewport center in wc.
 	private final DivDimensions m_baseDims = new DivDimensions();
 	private final PixelXY m_topLeft = new PixelXY();
 	private double m_eqScale;
 	private double m_offsetInMcX;
 	private double m_offsetInMcY;
-	IProjection m_proj = null;
+	private IProjection m_proj = null;
 	
 	private int m_mapLevel;
 	
@@ -41,7 +40,6 @@ public class DivWorker {
 	public void copyFrom( DivWorker dw ){
 		setDivBaseDimensions(dw.getDivBaseDimensions());
 		setGeoCenter(dw.getGeoCenter());
-		setDivCentInWc(dw.getDivCenterInWc());
 	}
 	
 	public void setDivBaseDimensions( DivDimensions dd ){ m_baseDims.copyFrom(dd); }
@@ -73,7 +71,7 @@ public class DivWorker {
 	public double getEqScale(){ return m_eqScale; }
 	
 	public void setGeoCenter( GeodeticCoords gc ){
-		m_geoCenter.copyFrom(gc);
+		m_geoCenter = gc;
 	}
 	
 	public GeodeticCoords getGeoCenter(){
@@ -96,25 +94,9 @@ public class DivWorker {
 		return (int) Math.rint(m_offsetInMcY);
 	}
 	
-	public void update(boolean bUseGeoCenter){
-		if ( bUseGeoCenter ){
-			m_divCenterMc.copyFrom(m_proj.geodeticToMapCoords(m_geoCenter));
-			m_divCenterWc.copyFrom(m_divCenterMc);
-		}
-		m_offsetInMcX = m_divCenterMc.getX()- m_baseDims.getWidth()/2;
-		m_offsetInMcY = m_divCenterMc.getY()+ m_baseDims.getHeight()/2;
-	}
-	
-	private void setDivCentInWc( WorldCoords cent ) {
-		m_divCenterMc.copyFrom(cent);
-		m_divCenterWc.copyFrom(cent);
-		computeOffsets();
-	}
-	
 	public void setDiv( GeodeticCoords gc ){
-		m_geoCenter.copyFrom(gc);
-		m_divCenterMc.copyFrom(m_proj.geodeticToMapCoords(m_geoCenter));
-		m_divCenterWc.copyFrom(m_divCenterMc);
+		m_geoCenter = gc;
+		m_divCenterMc = m_proj.geodeticToMapCoords(m_geoCenter);
 		computeOffsets();
 	}
 	
@@ -123,10 +105,6 @@ public class DivWorker {
 		m_offsetInMcY = m_divCenterMc.getY()+ m_baseDims.getHeight()/2;
 	}
 	
-	public WorldCoords getDivCenterInWc() {
-		return m_divCenterWc;
-	}
-
 	public int wcXtoDcX(int wcX ){
 		return (int) Math.rint((wcX - m_offsetInMcX));
 	}
@@ -147,15 +125,11 @@ public class DivWorker {
 	 * @return ViewCoords
 	 */
 	public DivCoords wcToDC( WorldCoords wc ) {
-		m_returnedDivCoords.setX(wcXtoDcX(wc.getX()));
-		m_returnedDivCoords.setY(wcYtoDcY(wc.getY())); 
-		return m_returnedDivCoords;
+		return new DivCoords(wcXtoDcX(wc.getX()), wcYtoDcY(wc.getY()));
 	}
 	
 	public DivCoords wcToDC( int wcX, int wcY ) {
-		m_returnedDivCoords.setX(wcXtoDcX(wcX));
-		m_returnedDivCoords.setY(wcYtoDcY(wcY)); 
-		return m_returnedDivCoords;
+		return new DivCoords(wcXtoDcX(wcX), wcYtoDcY(wcY));
 	}
 	
 	public int dcXtoWcX( int dcX ){
@@ -212,9 +186,9 @@ public class DivWorker {
 		double factor = scale/m_proj.getEquatorialScale();
 		dim.setWidth((int)(m_baseDims.getWidth()*factor + 0.5));
 		dim.setHeight((int)(m_baseDims.getHeight()*factor + 0.5));
-		m_wc.copyFrom(mapProj.geodeticToWorld(m_geoCenter));
-		int left = (m_wc.getX()- dim.getWidth()/2) - viewOx;
-		int top  = viewOy - (m_wc.getY()+ dim.getHeight()/2);
+		WorldCoords wc = mapProj.geodeticToWorld(m_geoCenter);
+		int left = (wc.getX()- dim.getWidth()/2) - viewOx;
+		int top  = viewOy - (wc.getY()+ dim.getHeight()/2);
 		m_topLeft.m_x = left;
 		m_topLeft.m_y = top;
 		return m_topLeft;
@@ -225,6 +199,11 @@ public class DivWorker {
 		int oWcX = (int)Math.rint(m_offsetInMcX);
 		int oWcY = (int)Math.rint(m_offsetInMcY);
 		return "[" +" ox: "+ oWcX + ", oy: "+ oWcY + "]";
+	}
+
+	@Override
+	public void onProjectionChanged(ProjectionChangedEvent event) {
+		computeOffsets();
 	}
 	
 }

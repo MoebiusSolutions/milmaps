@@ -1,6 +1,9 @@
 package com.moesol.gwt.maps.client;
 
+import com.moesol.gwt.maps.client.WorldCoords.Builder;
+import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 // EPSG:3857 Mercator projection
 
@@ -53,6 +56,8 @@ public class Mercator extends AbstractProjection {
 	
 	@Override
 	public GeodeticCoords worldToGeodetic(WorldCoords w) {
+		Stats.incrementWorldToGeodetic();
+		
 		// we have to mod by world size in case we had
 		// to extend the whole world
 		double pix = w.getX() % m_wdSize.getWidth();
@@ -60,19 +65,22 @@ public class Mercator extends AbstractProjection {
 		if (w.getX() > 10 && lng == m_minLng)
 			lng = m_maxLng;
 		double lat = yPixToDegLat( w.getY() );
-		m_returnedGeodeticCoords.set(lng, lat, AngleUnit.DEGREES);
-		return m_returnedGeodeticCoords;
+		return Degrees.geodetic(lat, lng);
 	}
 	
 
 	@Override
 	public WorldCoords geodeticToWorld(GeodeticCoords g) {
+		Stats.incrementGeodeticToWorld();
+		
+		Builder builder = WorldCoords.builder();
+		
 		double deg = g.getLambda(AngleUnit.DEGREES);
-		m_returnedWorldCoords.setX((int)(lngDegToPixX(deg)+0.5));
+		builder.setX((int)(lngDegToPixX(deg)+0.5));
 
 		deg = g.getPhi(AngleUnit.DEGREES);
-		m_returnedWorldCoords.setY((int)(latDegToPixY(deg)+0.5));
-		return m_returnedWorldCoords;
+		builder.setY((int)(latDegToPixY(deg)+0.5));
+		return builder.build();
 	}
 	
 	@Override
@@ -84,18 +92,15 @@ public class Mercator extends AbstractProjection {
 		if (w.getX() > 10 && lng == m_minLng)
 			lng = m_maxLng;
 		double lat = yPixToDegLat(w.getY());
-		m_returnedGeodeticCoords.set(lng, lat, AngleUnit.DEGREES);
-		return m_returnedGeodeticCoords;
+		return Degrees.geodetic(lat, lng);
 	}
 	
 
 	@Override
 	public MapCoords geodeticToMapCoords(GeodeticCoords g) {
-		m_returnedMapCoords
-				.setX(lng2PixX(g.getLambda(AngleUnit.DEGREES)));
-		m_returnedMapCoords
-				.setY(lat2PixY(g.getPhi(AngleUnit.DEGREES)));
-		return m_returnedMapCoords;
+		return MapCoords.builder()
+				.setX(lng2PixX(g.getLambda(AngleUnit.DEGREES)))
+				.setY(lat2PixY(g.getPhi(AngleUnit.DEGREES))).build();
 	}
 	
 	//protected double degPixToScale(double deg, int pix) {
@@ -214,7 +219,7 @@ public class Mercator extends AbstractProjection {
 		return Math.abs(y2 - y1);
 	}
 
-	   /// <summary>
+	/// <summary>
     /// Determines the ground resolution (in meters per pixel) at a specified
     /// latitude and level of detail.
     /// </summary>
@@ -242,4 +247,5 @@ public class Mercator extends AbstractProjection {
     public int getNumYtiles(double tileDegWidth){
     	return getNumXtiles(tileDegWidth);
     }
+
 }

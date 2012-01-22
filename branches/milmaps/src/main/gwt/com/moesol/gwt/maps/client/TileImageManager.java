@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
+import com.moesol.gwt.maps.client.stats.Sample;
 
 public class TileImageManager {
 	private static class TileInfo {
@@ -29,7 +30,7 @@ public class TileImageManager {
 		}
 	}
 	
-	public final static int MAX_CACHE_SIZE = 2;
+	public static int MAX_CACHE_SIZE = 2;
 	private final ArrayList<TileInfo> m_infoCache = new ArrayList<TileInfo>();
 	private final TileImageEngineListener m_listener;
 	private final TiledImageLayer m_imgLayer;
@@ -108,9 +109,14 @@ public class TileImageManager {
 	}
 	
 	public void hideUnplacedImages() {
-		doHideUnplacedImages();
-		removeStaleEntries();
-		clearFlags();
+		Sample.LAYER_HIDE_IMAGES.beginSample();
+		try {
+			doHideUnplacedImages();
+			removeStaleEntries();
+			clearFlags();
+		} finally {
+			Sample.LAYER_HIDE_IMAGES.endSample();
+		}
 	}
 
 	private void doHideUnplacedImages() {

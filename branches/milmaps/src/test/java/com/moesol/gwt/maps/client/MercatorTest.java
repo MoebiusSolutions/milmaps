@@ -1,10 +1,11 @@
 package com.moesol.gwt.maps.client;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 
 public class MercatorTest {
@@ -14,7 +15,6 @@ public class MercatorTest {
 	
 	private TileXY m_tile = new TileXY();
 	
-	private GeodeticCoords m_geo = new GeodeticCoords();
 	//private ViewPort m_viewPort = new ViewPort(m_projection);
 	
 	public double EarthRadius = 6378137;
@@ -145,13 +145,11 @@ public class MercatorTest {
 	public void testWorldToGeodetic() {
 		GeodeticCoords gc1;
 		GeodeticCoords gc2;
-		WorldCoords wc = new WorldCoords() ;
 		m_proj.zoomByFactor(16);
 		int level = computeLevel( 0, m_proj.getEquatorialScale());
 		for (int x = 2; x < 512; x += 2 ) {
 			for ( int y = 2; y < 512; y += 2 ) {
-				wc.setX(x); wc.setY(y);
-				gc1 = m_proj.worldToGeodetic(wc);
+				gc1 = m_proj.worldToGeodetic(WorldCoords.builder().setX(x).setY(y).build());
 				gc2 = m_mercProj.pixelXYToLatLng(level, x, y);
 				compareGeoPos( gc1, gc2, 0.0001 );
 			}
@@ -169,7 +167,6 @@ public class MercatorTest {
     	return m_tile;
 	}
 
-
 	@Test
 	public void testCompareProjs(){
 		assertEquals(true, true);
@@ -183,7 +180,7 @@ public class MercatorTest {
 			double lat = -60.0 + latInc*60;
 			for ( int lngInc = 0; lngInc < 3; lngInc++ ){
 				double lng = -120.0 + lngInc*120;
-				m_geo.set(lng, lat, AngleUnit.DEGREES);
+				GeodeticCoords geo = Degrees.geodetic(lat, lng);
 				for ( int level = 1; level < 13; level++ ){	
 					for ( int j = 5; j < 10; j++ ){
 						double dFactor = Math.pow(2,level-1) + j*0.1;

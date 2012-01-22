@@ -1,139 +1,142 @@
 package com.moesol.gwt.maps.client;
 
 import com.google.gwt.animation.client.Animation;
+import com.moesol.gwt.maps.client.timing.interpolators.SplineInterpolator;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
-public class FlyToEngine extends Animation{
-	private final MapView m_mapView;
-	private int m_durationInSecs = 750;
+public class FlyToEngine {
+	static final double ZOOM_OUT_TARGET_SCALE = MapScale.parse("1:100M").asDouble();
+	static final SplineInterpolator EASE_IN_OUT = new SplineInterpolator(1.0, 0, 0.0, 1.0);
+	static double ZOOM_OUT_UNTIL = 0.30;
+	static double ZOOM_IN_AT = 0.40;
+	static double PAN_UNTIL = 0.45;
+	private final IMapView m_mapView;
+	private int m_durationInMilliSecs = 10000;
 	private double m_startLat;
 	private double m_startLng;
-	private double m_endLat;
-	private double m_endLng;
-	private double m_currentLat;
-	private double m_currentLng;
-	private double m_lngVector;
-	private double m_latVector;
-	private static double EPSILON = 0.00001;
-	private double m_scaleFactor;
-	private double m_projEqScale;
-	private int    m_zoomCount = 0;
-	private boolean m_zoomIn = true;
-	private boolean m_panning = true;
+	private double m_startScale;
+	private double m_deltaOutScale;
+	private double m_deltaLat;
+	private double m_deltaLng;
+	private double m_deltaInScale;
+	private Animation m_animationAdaptor;
 	
-	public FlyToEngine( MapView mv ) {
+	public FlyToEngine(IMapView mv) {
 		m_mapView = mv;
 	}
-	/*
-	public void flyTo( final double lat, final double lng, double projScale ) {
-		m_endLat = lat;
-		m_endLng = lng;
-		GeodeticCoords gc = m_p.getVpGeoCenter();
-		m_startLat = gc.getPhi(AngleUnit.DEGREES);
-		m_startLng = gc.getLambda(AngleUnit.DEGREES);
-		m_lngVector = getLngVector(m_startLng, lng);
-		m_latVector = lat - m_startLat;
-		m_mapView.setSuspendFlag(true);
-		run(m_durationInSecs);
-	}
-	*/
-	public void flyTo( final double lat, final double lng, final double scaleFactor) {
-		m_panning = true;
-		m_endLat = lat;
-		m_endLng = lng;
-		IProjection p = m_mapView.getProjection(); 
-		m_projEqScale = p.getEquatorialScale();
-		m_scaleFactor = scaleFactor;
-		m_zoomIn =  (m_scaleFactor < 1.0 ? false : true );
-		GeodeticCoords gc = m_mapView.getViewport().getVpWorker().getGeoCenter();
-		m_startLat = gc.getPhi(AngleUnit.DEGREES);
-		m_startLng = gc.getLambda(AngleUnit.DEGREES);
-		m_lngVector = getLngVector(p, m_startLng, lng);
-		m_latVector = lat - m_startLat;
-		m_mapView.setSuspendFlag(true);
-		run(m_durationInSecs);
-	}
 	
-	protected void moveTo( double lat, double lng, double scale ){ 
-		m_mapView.centerOn(lat,lng,scale);
-	}
-	/*
-	protected double getNewScale(double progress){
-		if ( m_zoomCount == 0 ){
-			return m_projScale;
-		}
-		if ( 0.5 <= progress && progress < 1.0 ){
-			int i = (int)(progress/m_zoomInc) + 1;
-			if ( m_zoomIn == false ){
-				i = -1*i;
-			}
-			return m_projScale*Math.pow(2.0, i);
-		}
-		return m_projScale;
-	}
-	*/
-	protected void moveMap( double progress ){
-		if ( m_panning == true ){
-			if ( 0 < progress  ){
-				m_currentLat = m_startLat + progress*m_latVector;
-				m_currentLng = m_startLng + progress*m_lngVector;
-				m_mapView.centerOn(m_currentLat, m_currentLng, 0.0);	
-			}
-		}
-	}
-	
-	protected void doFinalStep(){
-		if ( Math.abs(m_endLat-m_currentLat) > EPSILON ||
-			 Math.abs(m_endLng-m_currentLng) > EPSILON ){
-			m_mapView.centerOn(m_endLat, m_endLng, 0.0);
-		}
-		m_mapView.setSuspendFlag(false);
-		m_mapView.doUpdateView();
-		if ( m_scaleFactor > 0 ){
-			m_mapView.timerZoom(m_zoomIn,m_scaleFactor);
-		}
-	}
+	private class AnimationAdaptor extends Animation {
 
-	@Override
-	protected void onUpdate(double progress) {
-		moveMap( progress );
+		@Override
+		protected void onUpdate(double progress) {
+			FlyToEngine.this.onUpdate(progress);
+		}
+		
 	}
 	
-	@Override
-	protected void onComplete(){
-		super.onComplete();
-		doFinalStep();
+	public Animation getAnimation() {
+		// Instead of extending Animation we use an adaptor and lazy initialization
+		// so that we can create FlyToEngine in unit test.
+		if (m_animationAdaptor == null) {
+			m_animationAdaptor = new AnimationAdaptor();
+		}
+		return m_animationAdaptor;
 	}
 	
-	@Override
-	protected void onCancel(){
-		super.onCancel();
-		doFinalStep();
-	}
-
-	public int getDurationInSecs() {
-		return m_durationInSecs;
-	}
-
-	public void setDurationInSecs(int durationInSecs) {
-		m_durationInSecs = durationInSecs;
+	void initEngine(double endLat, double endLng, double projectionScale) {
+		m_startLat = m_mapView.getViewport().getVpWorker().getGeoCenter().getPhi(AngleUnit.DEGREES);
+		m_startLng = m_mapView.getViewport().getVpWorker().getGeoCenter().getLambda(AngleUnit.DEGREES);
+		m_startScale = m_mapView.getProjection().getEquatorialScale();
+		
+		// TODO TARGET OUT SCALE should be based on pan distance...
+		m_deltaOutScale = ZOOM_OUT_TARGET_SCALE - m_startScale;
+		m_deltaLat = endLat - m_startLat;
+		m_deltaLng = endLng - m_startLng;
+		// faster to go the other way
+		if (m_deltaLng > 180.0) {
+			m_deltaLng -= 360.0;
+		} else if (m_deltaLng < -180.0) {
+			m_deltaLng += 360.0;
+		}
+		m_deltaInScale = projectionScale - ZOOM_OUT_TARGET_SCALE;
 	}
 	
 	/**
-	 * This routine finds the shortest longitude distance 
-	 * and direction between to longitude values.
-	 * @param startLng ( start longitude )
-	 * @param endLng (end longitude )
-	 * @return shortest longitude distance
+	 * We divide the animation progress into three parts.  
+	 * <ol>
+	 * <li>Zoom out
+	 * <li>Pan
+	 * <li>Zoom in
+	 * </ol>
+	 * 
+	 * We pan the entire time. We zoom in for the first half and zoom in for the second half.
 	 */
-	private double getLngVector(IProjection p, double startLng, double endLng){
-		double diff = endLng - startLng; 
-		if ( (0.0 < startLng && 0.0 < endLng) || (startLng < 0.0 && endLng < 0.0 ) ){
-			return diff;
+	protected void onUpdate(double progress) {
+		if (progress <= PAN_UNTIL) {
+			double panProgress = progress / PAN_UNTIL;
+			panProgress = EASE_IN_OUT.interpolate(panProgress);
+			
+			pan(panProgress);
+		} else {
+			pan(1.0);
 		}
-		if ( Math.abs(diff) > 180.0 ){
-			return p.wrapLng(diff);
+		
+		if (progress <= ZOOM_OUT_UNTIL) {
+			double outProgress = progress / ZOOM_OUT_UNTIL;
+			zoomOut(outProgress);
+		} else if (progress >= ZOOM_IN_AT) {
+			double deltaZoomIn = 1.0 - ZOOM_IN_AT;
+			double inProgress = (progress - ZOOM_IN_AT) / deltaZoomIn;
+			zoomIn(inProgress);
 		}
-		return diff;
+		m_mapView.doUpdateView();
 	}
+	
+	void pan(double progress) {
+		double newLat = m_startLat + m_deltaLat * progress;
+		double newLng = m_startLng + m_deltaLng * progress;
+		if (newLng < -180) {
+			newLng = newLng + 360.0;
+		} else if (newLng > 180) {
+			newLng = newLng -360.0;
+		}
+		
+		m_mapView.setCenter(Degrees.geodetic(newLat, newLng));
+	}
+	
+	void zoomOut(double progress) {
+		progress = EASE_IN_OUT.interpolate(progress);
+		
+		double newScale = m_startScale + m_deltaOutScale * progress;
+		m_mapView.getProjection().setEquatorialScale(newScale);
+	}
+	void zoomIn(double progress) {
+		progress = EASE_IN_OUT.interpolate(progress);
+		
+		double newScale = ZOOM_OUT_TARGET_SCALE + m_deltaInScale * progress;
+		m_mapView.getProjection().setEquatorialScale(newScale);
+	}
+
+	/**
+	 * Start a flyTo animation.
+	 * 
+	 * @param endLat
+	 * @param endLng
+	 * @param projectionScale
+	 */
+	public void flyTo(double endLat, double endLng, double projectionScale) {
+		initEngine(endLat, endLng, projectionScale);
+		
+		getAnimation().run(m_durationInMilliSecs);
+	}
+
+	public int getDurationInSecs() {
+		return m_durationInMilliSecs;
+	}
+
+	public void setDurationInSecs(int durationInSecs) {
+		m_durationInMilliSecs = durationInSecs;
+	}
+	
 }

@@ -23,7 +23,7 @@ public class ZoomTagWorkerTest {
 	
 	public ZoomTagWorkerTest(){
 		m_vpWorker.intialize(m_viewDim, m_proj);
-		m_vpWorker.setVpCenterInWc(m_viewCentInWc);
+		m_vpWorker.setCenterInWc(m_viewCentInWc);
 		m_ztWorker = new ZoomTagWorker();
 		m_ztWorker2 = new ZoomTagWorker();
 	}

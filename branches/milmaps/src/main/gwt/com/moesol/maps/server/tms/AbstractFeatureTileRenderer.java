@@ -166,9 +166,10 @@ public abstract class AbstractFeatureTileRenderer implements
 
 		double featureLat = feature.getLat();
 		double featureLng = feature.getLng();
-		BoundingBox bbox = new BoundingBox(featureLat - halfIconLatSpan,
-				featureLng - halfIconLngSpan, featureLat + halfIconLatSpan,
-				featureLng + halfIconLngSpan);
+		BoundingBox bbox = new BoundingBox(featureLat + halfIconLatSpan,
+											featureLng - halfIconLngSpan,
+											featureLat - halfIconLatSpan,
+											featureLng + halfIconLngSpan);
 
 		return bbox.contains(lat, lng);
 	}

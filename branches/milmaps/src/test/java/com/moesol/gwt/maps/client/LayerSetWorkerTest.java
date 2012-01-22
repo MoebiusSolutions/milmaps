@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 
 public class LayerSetWorkerTest {
@@ -20,8 +20,6 @@ public class LayerSetWorkerTest {
 	};
 	
 	private TileXY m_tile = new TileXY();
-	private GeodeticCoords m_geo = new GeodeticCoords();
-	private WorldCoords m_wc = new WorldCoords();
 	private LayerSet[] m_ls = new LayerSet[2];
 	private P[] m_p = new P[27];
 	private LayerSetWorker m_lsWorker = new LayerSetWorker();
@@ -81,11 +79,11 @@ public class LayerSetWorkerTest {
 				double lat = -60.0 + latInc*60;
 				for ( int lngInc = 0; lngInc < 3; lngInc++ ){
 					double lng = -120.0 + lngInc*120;
-					m_geo.set(lng, lat, AngleUnit.DEGREES);
+					GeodeticCoords geo = Degrees.geodetic(lat, lng);
 					for ( int level = 1; level < 4; level++ ){
 						double dFactor = 1 << level;
 						proj.zoomByFactor(dFactor);
-						TileXY tile = m_lsWorker.geoPosToTileXY(m_ls[i], level, m_geo);
+						TileXY tile = m_lsWorker.geoPosToTileXY(m_ls[i], level, geo);
 						TileXY tile2 = findTile( proj, count, m_ls[i], level, maxLat[i],lat, lng );		
 						proj.zoomByFactor(1.0/dFactor);
 						if ( (tile.m_x != tile2.m_x) || (tile.m_y != tile2.m_y))
@@ -103,18 +101,18 @@ public class LayerSetWorkerTest {
 	
 	private WorldCoords findConerWc( IProjection proj, int count, LayerSet ls, 
 													   int level, TileXY tile ){
+		WorldCoords wc;
+		
 		if ( proj.getType() == IProjection.T.CylEquiDist ){
 			double d = 1 << level;
 			int width = ls.getPixelWidth();
 			int height = ls.getPixelHeight();
-			m_wc.setX(tile.m_x*width);
-			m_wc.setY((tile.m_y+1)*height);
+			wc = new WorldCoords(tile.m_x*width, (tile.m_y+1)*height);
 		}
 		else{
-			m_wc.setX(m_p[count].x*256);
-			m_wc.setY((m_p[count].y+1)*256);
+			wc = new WorldCoords(m_p[count].x*256, (m_p[count].y+1)*256);
 		}
-		return m_wc;
+		return wc;
 	}
 
 	@Test 
@@ -135,11 +133,11 @@ public class LayerSetWorkerTest {
 				double lat = -60.0 + latInc*60;
 				for ( int lngInc = 0; lngInc < 3; lngInc++ ){
 					double lng = -120.0 + lngInc*120;
-					m_geo.set(lng, lat, AngleUnit.DEGREES);
+					GeodeticCoords geo = Degrees.geodetic(lat, lng);
 					for ( int level = 1; level < 4; level++ ){
 						double dFactor = 1 << level;
 						proj.zoomByFactor(dFactor);
-						TileXY tile = m_lsWorker.geoPosToTileXY(m_ls[i],level, m_geo);		
+						TileXY tile = m_lsWorker.geoPosToTileXY(m_ls[i],level, geo);		
 						WorldCoords wc = m_lsWorker.tileXYToTopLeftXY( m_ls[i], zeroTop, level, tile  );
 						WorldCoords wc2 = findConerWc( proj, count, m_ls[i], level, tile );
 						proj.zoomByFactor(1.0/dFactor);

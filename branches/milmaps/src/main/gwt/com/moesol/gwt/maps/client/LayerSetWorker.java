@@ -1,6 +1,7 @@
 package com.moesol.gwt.maps.client;
 
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 public class LayerSetWorker {
 	private final double EarthCirMeters  = 2.0*Math.PI*6378137;
@@ -179,10 +180,7 @@ public class LayerSetWorker {
     	double dLat = m_proj.yPixToDegLat(pixY);
     	double dLng = m_proj.xPixToDegLng(pixX);
     	
-    	m_gc.setPhi(dLat, AngleUnit.DEGREES);
-    	m_gc.setLambda( dLng, AngleUnit.DEGREES);
-    	
-    	return m_proj.geodeticToWorld(m_gc);
+    	return m_proj.geodeticToWorld(Degrees.geodetic(dLat, dLng));
     }
     
     public TileCoords findTile( 

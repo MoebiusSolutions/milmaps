@@ -90,8 +90,8 @@ public abstract class AbstractFeatureTileResource extends AbstractTileResource {
 	String createBoundingBoxJson(BoundingBox boundingBox) {
 		String json = String
 				.format("{\"minLat\":%1$s,\"minLng\":%2$s,\"maxLat\":%3$s,\"maxLng\":%4$s}",
-						boundingBox.getMinLat(), boundingBox.getMinLon(),
-						boundingBox.getMaxLat(), boundingBox.getMaxLon());
+						boundingBox.getBotLat(), boundingBox.getLeftLon(),
+						boundingBox.getTopLat(), boundingBox.getRightLon());
 		return json;
 	}
 

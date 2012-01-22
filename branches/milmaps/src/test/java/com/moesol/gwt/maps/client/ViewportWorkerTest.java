@@ -5,36 +5,34 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 
 public class ViewportWorkerTest {
 	private final ViewDimension m_viewDimensions = new ViewDimension(600, 400);
 	private final ViewWorker m_vpWorker = new ViewWorker();
 	private final IProjection m_proj = new CylEquiDistProj();//512, 180, 180);
-	private final WorldCoords m_wc = new WorldCoords();
-	private final ViewCoords m_vc = new ViewCoords();
 	
 	@Test
 	public void  coordinateConverstionTest(){
 		m_vpWorker.intialize(m_viewDimensions, m_proj);
-		m_wc.setX(512);
-		m_wc.setY(256);
-		m_vpWorker.setVpCenterInWc(m_wc);
-		m_wc.setX(200);
-		m_wc.setY(500);
-		ViewCoords vc = m_vpWorker.wcToVC(m_wc);
+		WorldCoords wc = new WorldCoords(512, 256);
+		m_vpWorker.setCenterInWc(wc);
+		
+		wc = new WorldCoords(200, 500);
+		ViewCoords vc = m_vpWorker.wcToVC(wc);
 		assertEquals( vc.getX(), -12);
 		assertEquals( vc.getY(), -44);
-		WorldCoords wc = m_vpWorker.vcToWC(vc);
-		assertEquals( wc.getX(), m_wc.getX());
-		assertEquals( wc.getY(), m_wc.getY());
+		
+		wc = m_vpWorker.viewToWorld(vc);
+		assertEquals( wc.getX(), wc.getX());
+		assertEquals( wc.getY(), wc.getY());
 	}
 	
 	
 	@Test
-	public void updateTest(){
+	public void updateTest() {
 		m_vpWorker.intialize(m_viewDimensions, m_proj);
-		m_vpWorker.update(true);
 		int offsetWcX = m_vpWorker.getOffsetInWcX();
 		int offsetWcY = m_vpWorker.getOffsetInWcY();
 		assertEquals( offsetWcX, 212);
@@ -42,15 +40,14 @@ public class ViewportWorkerTest {
 		
 		GeodeticCoords gc = new GeodeticCoords( 90, 45, AngleUnit.DEGREES);
 		m_vpWorker.setGeoCenter(gc);
-		m_vpWorker.update(true);
 		offsetWcX = m_vpWorker.getOffsetInWcX();
 		offsetWcY = m_vpWorker.getOffsetInWcY();
 		assertEquals( offsetWcX, 468);
 		assertEquals( offsetWcY, 584);
 		
-		gc.set( -90, -45, AngleUnit.DEGREES);
+		gc = Degrees.geodetic(-45, -90);
+				
 		m_vpWorker.setGeoCenter(gc);
-		m_vpWorker.update(true);
 		offsetWcX = m_vpWorker.getOffsetInWcX();
 		offsetWcY = m_vpWorker.getOffsetInWcY();
 		assertEquals( offsetWcX, -44);
