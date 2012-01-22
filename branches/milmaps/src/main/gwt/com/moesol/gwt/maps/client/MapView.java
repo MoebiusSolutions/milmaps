@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
+import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
 import com.moesol.gwt.maps.shared.BoundingBox;
@@ -401,13 +402,13 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	public void doUpdateView() {
 		if (m_resized || hasLevelChanged() || m_divMgr.hasDivMovedToFar()) {
-			System.out.println("full");
+			Sample.MAP_FULL_UPDATE.beginSample();
 			m_resized = false;
 			m_divMgr.doUpdateDivsCenterScale( m_proj.getEquatorialScale() );
 			m_divMgr.doUpdateDivsVisibility( m_viewPanel );
 			m_divMgr.placeDivsInViewPanel( m_viewPanel );
+			Sample.MAP_FULL_UPDATE.endSample();
 		} else {
-			System.out.println("partial");
 			partialUpdateView();
 		}
 		//positionIcons();
@@ -419,7 +420,9 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 	
 	public void partialUpdateView() {
+		Sample.MAP_PARTIAL_UPDATE.beginSample();
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
+		Sample.MAP_PARTIAL_UPDATE.endSample();
 	}
 	
 	public boolean hasAutoRefreshOnTimerLayers() {
