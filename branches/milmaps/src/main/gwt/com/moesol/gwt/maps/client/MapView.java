@@ -357,9 +357,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 * Is does not force an update of the map tiles.
 	 * @param worldCenter
 	 */
-	public void setWorldCenter(WorldCoords worldCenter) {
+	public WorldCoords setWorldCenter(WorldCoords worldCenter) {
 		WorldCoords wc = m_viewPort.constrainAsWorldCenter(worldCenter);
 		m_viewPort.getVpWorker().setCenterInWc(wc);
+		return wc;
 	}
 
 	private final Timer m_updateTimer = new Timer() {

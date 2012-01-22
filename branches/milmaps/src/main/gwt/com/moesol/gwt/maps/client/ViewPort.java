@@ -81,7 +81,7 @@ public class ViewPort implements ProjectionChangedHandler {
 		}
 		return new ViewCoords(x, y);
 	}
-	
+
     public int getNumberOfRows( double degHeight, int level ){
     	return (int)((180.0 /degHeight)*(1<<level));
     }
@@ -148,10 +148,6 @@ public class ViewPort implements ProjectionChangedHandler {
 		return m_proj.getNumYtiles(m_tileDegHeight);
 	}
 
-	private int getCenterY() {
-		return m_viewDims.getHeight() / 2;
-	}
-	
 	/**
 	 * @return width in pixels
 	 */
@@ -188,22 +184,33 @@ public class ViewPort implements ProjectionChangedHandler {
 	 * @return worldCenter
 	 */
 	public WorldCoords constrainAsWorldCenter(WorldCoords worldCenter) {
-		WorldDimension dim = m_proj.getWorldDimension();
+		WorldDimension worldDimensions = m_proj.getWorldDimension();
 		Builder newWc = WorldCoords.builder();
 		if (worldCenter.getX() < 0) {
-			newWc.setX(dim.getWidth() + worldCenter.getX());
+			newWc.setX(worldDimensions.getWidth() + worldCenter.getX());
 		} else {
-			newWc.setX(worldCenter.getX() % dim.getWidth());
+			newWc.setX(worldCenter.getX() % worldDimensions.getWidth());
+		}
+
+		int viewCenterY = m_viewDims.getHeight() / 2;
+		if (worldDimensions.getHeight() > m_viewDims.getHeight()) {
+			if (worldCenter.getY() > worldDimensions.getHeight() - viewCenterY) {
+				newWc.setY(worldDimensions.getHeight() - viewCenterY);
+			} else if (worldCenter.getY() < 0 + viewCenterY) {
+				newWc.setY(viewCenterY);
+			} else {
+				newWc.setY(worldCenter.getY());
+			}
+		} else {
+			if (worldCenter.getY() < worldDimensions.getHeight() - viewCenterY) {
+				newWc.setY(worldDimensions.getHeight() - viewCenterY);
+			} else if (worldCenter.getY() > 0 + viewCenterY) {
+				newWc.setY(viewCenterY);
+			} else {
+				newWc.setY(worldCenter.getY());
+			}
 		}
 		
-		int hmid = getCenterY();
-		if (worldCenter.getY() < hmid) {
-			newWc.setY(hmid);
-		} if (worldCenter.getY() > dim.getHeight() - hmid) {
-			newWc.setY(dim.getHeight() - hmid);
-		} else {
-			newWc.setY(worldCenter.getY());
-		}
 		return newWc.build();
 	}
 
