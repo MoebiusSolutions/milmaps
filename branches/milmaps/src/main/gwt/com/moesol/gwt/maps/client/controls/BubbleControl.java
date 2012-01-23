@@ -12,7 +12,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.moesol.gwt.maps.client.MapView;
-import com.moesol.gwt.maps.client.MapViewChangeEvent;
+import com.moesol.gwt.maps.client.events.MapViewChangeEvent;
 
 /**
  * Animated bubble to show on map.
