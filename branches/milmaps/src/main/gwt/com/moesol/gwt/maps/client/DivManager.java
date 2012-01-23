@@ -8,6 +8,7 @@ public class DivManager {
 	private final int m_numDivs = 20;
 	private IProjection m_proj= null;
 	private final MapView m_map;
+	//int count = 0;
 	
 	private ViewWorker m_vpWorker = null;
 	DivPanel[] m_dpArray = new DivPanel[m_numDivs];
@@ -41,10 +42,10 @@ public class DivManager {
 								  IProjection.T projType ){
 		m_proj = Projection.createProj(projType);
 		m_proj.initialize(tilePixWidth, tileDegWidth, tileDegHeight);
-		initDivDivPanels();
+		initDivPanels();
 	}
 	
-	protected void initDivDivPanels(){
+	protected void initDivPanels(){
 		double eqScale = m_proj.getOrigEquatorialScale();
 		for( int i = 0; i < m_numDivs; i++ ){
 			double scale = eqScale*(1<<i);
@@ -185,13 +186,25 @@ public class DivManager {
 		DivWorker dw = dp.getDivWorker();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
 		DivDimensions dim = dp.getDimensions();
-		ViewCoords tl = dw.computeDivLayoutInView(m_proj, vw, dim);
+		IProjection mapProj = m_map.getProjection();
+		ViewCoords tl = dw.computeDivLayoutInView(mapProj, vw, dim);
+		double factor = dw.getScaleFactor(mapProj);
 		DivCoordSpan ds = dp.getUsedDivSpan();
-		ViewCoords br = new ViewCoords(tl.getX()+ ds.getRight(), tl.getY()+dim.getHeight());
-		ViewDimension vd = vw.getDimension();
-		if( 0 < tl.getX() + ds.getLeft() || br.getX()  < vd.getWidth() || 
-			-10 < tl.getY() || br.getY() < vd.getHeight() + 10 )
+		if( ds.isBad() ){
 			return true;
+		}
+		int imgLeft  = (int)(factor*ds.getLeft());
+		int imgRight = (int)(factor*ds.getRight());
+		//System.out.println("count: " + count);
+		//System.out.println("left : " + imgLeft + " right : " + imgRight);
+		//count++;
+		 
+		ViewCoords br = new ViewCoords(tl.getX()+ imgRight, tl.getY()+ dim.getHeight());
+		ViewDimension vd = vw.getDimension();
+		if( 0 < tl.getX() + imgLeft || br.getX() < vd.getWidth() || 
+			-10 < tl.getY() || br.getY() < vd.getHeight() + 10 ){
+			return true;
+		}
 		return false;
 	}
 	

@@ -77,9 +77,13 @@ public class DivPanel extends AbsolutePanel {
 		int minLeft = Integer.MAX_VALUE;
 		int maxRight = Integer.MIN_VALUE;
 		for (TiledImageLayer layer : m_tiledImageLayers) {
+			if (!layer.getLayerSet().isActive()){
+				continue;
+			}
 			minLeft = Math.min(minLeft, layer.getMinLeft());
 			maxRight = Math.max(maxRight, layer.getMaxRight());
 		}
+		//System.out.println("DivPanel minLeft: "+ minLeft + "  maxRight: " + maxRight);
 		return new DivCoordSpan(minLeft, maxRight);
 	}
 	

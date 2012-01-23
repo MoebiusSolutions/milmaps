@@ -1,7 +1,5 @@
 package com.moesol.gwt.maps.client;
 
-import com.moesol.gwt.maps.client.stats.Stats;
-
 public class DivCoordSpan {
 	private final int m_left;
 	private final int m_right;
@@ -23,18 +21,18 @@ public class DivCoordSpan {
 		return new Builder();
 	}
 	
-	public DivCoordSpan() {
-		Stats.incrementNewViewCoords();
-		
+	public DivCoordSpan() {		
 		m_left = Integer.MAX_VALUE;
 		m_right = Integer.MIN_VALUE;
 	}
 	
-	public DivCoordSpan(int left, int right) {
-		Stats.incrementNewViewCoords();
-		
+	public DivCoordSpan(int left, int right) {		
 		m_left = left;
 		m_right = right;
+	}
+	
+	public boolean isBad(){
+		return (m_left == Integer.MAX_VALUE || m_right == Integer.MIN_VALUE );
 	}
 	
 	public int getLeft() {

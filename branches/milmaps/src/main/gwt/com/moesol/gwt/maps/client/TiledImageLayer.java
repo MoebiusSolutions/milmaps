@@ -26,7 +26,8 @@ public class TiledImageLayer {
 	private final DivPanel m_divPanel;
 	/** Marked as priority when this image layer is the best for the scale */
 	private boolean m_priority = false;
-	int m_minLeft, m_maxRight;
+	int m_minLeft  = Integer.MAX_VALUE;
+	int m_maxRight = Integer.MIN_VALUE;
 	
 	
 	private class MyTileImageEngineListener implements TileImageEngineListener {
@@ -151,7 +152,7 @@ public class TiledImageLayer {
 		m_layoutPanel.setWidgetTopBottom(image, b.top, Unit.PCT, 100-b.bot, Unit.PCT);
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();
 		m_minLeft  = Math.max(0,Math.min(x, m_minLeft));
-		m_maxRight = Math.min(dd.getWidth(),Math.max(x, m_maxRight));
+		m_maxRight = Math.min(dd.getWidth(),Math.max(x+width, m_maxRight));
 	}
 
 	private void setImageZIndex(ImageDiv image, int zIndex) {

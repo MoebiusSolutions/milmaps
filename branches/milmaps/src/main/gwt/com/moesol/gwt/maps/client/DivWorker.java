@@ -180,10 +180,15 @@ public class DivWorker implements ProjectionChangedHandler {
 		return m_boxBounds;
 	}
 	
+	public double getScaleFactor(IProjection mapProj) {
+		double mapScale = mapProj.getEquatorialScale();
+		double divOrigScale = m_proj.getEquatorialScale();
+		return (mapScale/divOrigScale);
+	}
+	
 	public ViewCoords computeDivLayoutInView( IProjection mapProj, ViewWorker vw, DivDimensions dim ) {
 		int viewOy = vw.getOffsetInWcY();
-		double scale = mapProj.getEquatorialScale();
-		double factor = scale/m_proj.getEquatorialScale();
+		double factor = getScaleFactor(mapProj);
 		dim.setWidth((int)(m_baseDims.getWidth()*factor + 0.5));
 		dim.setHeight((int)(m_baseDims.getHeight()*factor + 0.5));
 		WorldCoords wc = mapProj.geodeticToWorld(m_geoCenter);
