@@ -8,48 +8,55 @@ import com.moesol.gwt.maps.client.stats.Sample;
 
 public class IconEngine {
 	private final IMapView m_mapView;
-	private final WidgetPositioner widgetPositioner;
 	
 	public IconEngine(IMapView mv) {
 		m_mapView = mv;
-		widgetPositioner = mv.getWidgetPositioner();
 	}
 
-	public void positionIcons() {
-		Sample.MAP_POSITION_ICONS.beginSample();
+	public void positionIcons(WidgetPositioner widgetPositioner, DivWorker divWorker) {
+		Sample.DIV_POSITION_ICONS.beginSample();
 		
 		List<Icon> icons = m_mapView.getIconLayer().getIcons();
 		for (Icon icon : icons) {
-			positionOneIcon(icon);
+			positionOneIcon(icon, widgetPositioner, divWorker);
 		}
 		
-		Sample.MAP_POSITION_ICONS.endSample();
+		Sample.DIV_POSITION_ICONS.endSample();
 	}
 
-	public void positionOneIcon(Icon icon) {
-		IProjection projection = m_mapView.getProjection();
+	public void positionOneIcon(Icon icon, WidgetPositioner widgetPositioner, DivWorker divWorker) {
+		IProjection projection = divWorker.getProjection();
 		WorldCoords wc = projection.geodeticToWorld(icon.getLocation());
-		ViewCoords vc = m_mapView.getViewport().worldToView(wc, true);
+		DivCoords dc = divWorker.wcToDC(wc);
 		
 		Image image = icon.getImage();
 		if (image != null) {
 			widgetPositioner.place(image, 
-					vc.getX() + icon.getIconOffset().getX(), 
-					vc.getY() + icon.getIconOffset().getY());
+					dc.getX() + icon.getIconOffset().getX(), 
+					dc.getY() + icon.getIconOffset().getY(), 
+					icon.getImageSize().getWidth(),
+					icon.getImageSize().getHeight(),
+					icon.getZIndex());
 		}
 		
 		Label label = icon.getLabel();
 		if (label != null) {
 			widgetPositioner.place(label, 
-					vc.getX() + icon.getDeclutterOffset().getX(), 
-					vc.getY() + icon.getDeclutterOffset().getY());
+					dc.getX() + icon.getDeclutterOffset().getX(), 
+					dc.getY() + icon.getDeclutterOffset().getY(),
+					label.getOffsetWidth(),
+					label.getOffsetHeight(),
+					icon.getZIndex());
 		}
 		
 		Image leader = icon.getLabelLeaderImage();
 		if (leader != null) {
 			widgetPositioner.place(leader, 
-					vc.getX() - DeclutterEngine.LEADER_IMAGE_WIDTH / 2, 
-					vc.getY() - DeclutterEngine.LEADER_IMAGE_HEIGHT / 2);
+					dc.getX() - DeclutterEngine.LEADER_IMAGE_WIDTH / 2, 
+					dc.getY() - DeclutterEngine.LEADER_IMAGE_HEIGHT / 2,
+					leader.getOffsetWidth(),
+					leader.getOffsetHeight(),
+					icon.getZIndex());
 		}
 	}
 

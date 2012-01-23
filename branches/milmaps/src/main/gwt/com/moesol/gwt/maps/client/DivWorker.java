@@ -1,7 +1,10 @@
 package com.moesol.gwt.maps.client;
 
+import java.util.List;
+
 import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
 import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
+import com.moesol.gwt.maps.client.stats.Sample;
 
 /**
  * DivWorker class is used to help handle all tile placements. It works with just one projection

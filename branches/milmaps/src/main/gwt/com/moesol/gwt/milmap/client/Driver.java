@@ -58,6 +58,7 @@ import com.moesol.gwt.maps.client.MapLayersOnClient;
 import com.moesol.gwt.maps.client.MapPanel;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
+import com.moesol.gwt.maps.client.ViewDimension;
 import com.moesol.gwt.maps.client.WallClock;
 import com.moesol.gwt.maps.client.WidgetPositioner;
 import com.moesol.gwt.maps.client.WorldCoords;
@@ -303,7 +304,11 @@ public class Driver implements EntryPoint {
 			Image img = new Image("images/leader-images.png", i * DeclutterEngine.LEADER_IMAGE_WIDTH, 0,
 					DeclutterEngine.LEADER_IMAGE_WIDTH, DeclutterEngine.LEADER_IMAGE_HEIGHT);
 			img.getElement().getStyle().setZIndex(3020);
-			widgetPositioner.place(img, 200, 200);
+			
+			widgetPositioner.place(img, 200, 200, 
+					DeclutterEngine.LEADER_IMAGE_WIDTH,
+					DeclutterEngine.LEADER_IMAGE_HEIGHT,
+					4000);
 		}
 	}
 
@@ -358,26 +363,24 @@ public class Driver implements EntryPoint {
 	}
 
 	private void addSomeIcons() {
-		//Icon icon = new Icon();
-		//icon.setIconUrl("http://www.moesol.com/icons/moesol_logo_small.jpg");
-		//icon.setLocation(new GeodeticCoords(0,0,AngleUnit.DEGREES));
-		//Image im = icon.getImage();
-		//im.setPixelSize(212/2, 86/2);
-		//im.getElement().getStyle().setZIndex(2010);
-		//m_map.getIconLayer().addIcon(icon);
+		Icon icon = new Icon();
+		icon.setIconUrl("http://www.moesol.com/icons/moesol_logo_small.jpg");
+		icon.setLocation(new GeodeticCoords(0,0,AngleUnit.DEGREES));
+		icon.getImage().setPixelSize(212/2, 86/2);
+		m_map.getIconLayer().addIcon(icon);
 
 		// int num = 1024, workable, sluggish
 		// int num = 512, better
 		// int num = 256, good
 		// int num = 128, rocking
-		int num = 128;
+		int num = 10;
 		double maxx = 360.0;
 		double maxy = 30.0;
 		double incx = maxx/num;
 		double incy = maxy/num;
 		double lat = 0.0;
-		double lng = 0.0;//-180.0;
-		for (int i = 0; i < 1; i++) {
+		double lng = -180.0;
+		for (int i = 0; i < num; i++) {
 			addOneIcon(lat, lng);
 			lat += incy;
 			lng += incx;
@@ -389,6 +392,7 @@ public class Driver implements EntryPoint {
 		icon = new Icon();
 		icon.setIconUrl("http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg");
 		icon.setLocation(new GeodeticCoords(lng, lat, AngleUnit.DEGREES));
+		icon.setImageSize(new ViewDimension(16, 16));
 		Image im = icon.getImage();
 		im.setPixelSize(16, 16);
 		im.getElement().getStyle().setZIndex(2010);

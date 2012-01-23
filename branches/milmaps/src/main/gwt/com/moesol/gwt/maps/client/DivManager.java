@@ -81,7 +81,7 @@ public class DivManager {
 		return m_currentLevel;
 	}
 	
-	public DivPanel getCurrentDiv(){
+	public DivPanel getCurrentDiv() {
 		return getDiv(m_currentLevel);
 	}
 	
@@ -180,7 +180,7 @@ public class DivManager {
 		}
 	}
 	
-	public boolean hasDivMovedToFar(){
+	public boolean hasDivMovedToFar() {
 		DivPanel dp = getCurrentDiv();
 		DivWorker dw = dp.getDivWorker();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
@@ -193,6 +193,14 @@ public class DivManager {
 			-10 < tl.getY() || br.getY() < vd.getHeight() + 10 )
 			return true;
 		return false;
+	}
+	
+	public void positionIcons() {
+		getCurrentDiv().positionIcons();
+	}
+
+	public WidgetPositioner getWidgetPositioner() {
+		return getCurrentDiv().getWidgetPositioner();
 	}
 }
 

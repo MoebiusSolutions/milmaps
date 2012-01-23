@@ -39,7 +39,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	private final AnimationEngine m_animateEngine = new AnimationEngine(this);
 	private final FlyToEngine m_flyToEngine = new FlyToEngine(this);
-	private final IconEngine m_iconEngine = new IconEngine(this);
+	final IconEngine m_iconEngine = new IconEngine(this);
 	private DeclutterEngine m_declutterEngine; // null unless needed
 	private final ChangeListenerCollection m_changeListeners = new ChangeListenerCollection();
 	// private final MapControls mapControls = new MapControls(this);
@@ -55,7 +55,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private double m_previousEqScale;
 	private final EventBus m_eventBus;
 	private final DynamicUpdateEngine m_dynamicUpdateEngine;
-	private WidgetPositioner m_widgetPositioner;
 
 	MapsClientBundle clientBundle = GWT.create(MapsClientBundle.class);
 
@@ -217,7 +216,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 
 		// View changed re-declutter
 		if (isDeclutterLabels()) {
-			getDeclutterEngine().incrementalDeclutter(getIconLayer().getIcons(), m_iconEngine);
+			// TODO
+			getDeclutterEngine().incrementalDeclutter(getIconLayer().getIcons(), m_iconEngine, null);
 		}
 	}
 	
@@ -237,7 +237,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		}
 		m_oldIconVersion = getIconLayer().getVersion();
 		
-		getDeclutterEngine().incrementalDeclutter(getIconLayer().getIcons(), m_iconEngine);
+		if (isDeclutterLabels()) {
+			// TODO
+			getDeclutterEngine().incrementalDeclutter(getIconLayer().getIcons(), m_iconEngine, null);
+		}
 	}
 	
 	private void recordCenter() {
@@ -399,7 +402,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 
 	}
 	
-	
 	public void doUpdateView() {
 		if (m_resized || hasLevelChanged() || m_divMgr.hasDivMovedToFar()) {
 			Sample.MAP_FULL_UPDATE.beginSample();
@@ -407,11 +409,12 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 			m_divMgr.doUpdateDivsCenterScale( m_proj.getEquatorialScale() );
 			m_divMgr.doUpdateDivsVisibility( m_viewPanel );
 			m_divMgr.placeDivsInViewPanel( m_viewPanel );
+			m_divMgr.positionIcons();
 			Sample.MAP_FULL_UPDATE.endSample();
 		} else {
 			partialUpdateView();
 		}
-		//positionIcons();
+		
 		m_changeListeners.fireChange( this );
 		
 // TODO move to idle handling...
@@ -644,30 +647,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		return m_tempProj;
 	}
 	
-	@Override
 	public WidgetPositioner getWidgetPositioner() {
-		return null;
+		return m_divMgr.getWidgetPositioner();
 	}
-	
-//	@Override
-//	public WidgetPositioner getWidgetPositioner() {
-//		if (m_widgetPositioner == null) {
-//			m_widgetPositioner = new WidgetPositioner() {
-//				@Override
-//				public void place(Widget widget, int x, int y) {
-//					if (widget.getParent() == null) {
-//						getIconPanel().add(widget, x, y);
-//					} else {
-//						getIconPanel().setWidgetPosition(widget, x, y);
-//					}
-//				}
-//				@Override
-//				public void remove(Widget widget) {
-//					getIconPanel().remove(widget);
-//				}
-//			};
-//		}
-//		return m_widgetPositioner;
-//	}
 	
 }

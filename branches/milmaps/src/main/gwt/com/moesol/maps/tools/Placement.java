@@ -12,4 +12,5 @@ public class Placement {
 	public int y;
 	public int width;
 	public int height;
+	public int zindex;
 }

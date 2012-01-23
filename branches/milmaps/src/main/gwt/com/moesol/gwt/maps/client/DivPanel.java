@@ -2,8 +2,10 @@ package com.moesol.gwt.maps.client;
 
 import java.util.ArrayList;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class DivPanel extends AbsolutePanel {
 	private final LayoutPanel m_tileLayersPanel = new LayoutPanel();
@@ -15,9 +17,9 @@ public class DivPanel extends AbsolutePanel {
 	private boolean m_firstCenter = true;
 	private final ArrayList<TiledImageLayer> m_tiledImageLayers = new ArrayList<TiledImageLayer>();
 	protected IProjection m_proj = null;
+	private WidgetPositioner m_widgetPositioner; // null unless needed
 	
-	
-	public DivPanel(){
+	public DivPanel() {
 		m_tileBuilder.setDivWorker(m_divWorker);
 		m_tileBuilder.setTileImageLayers(m_tiledImageLayers);
 		m_tileLayersPanel.setStylePrimaryName("tileLayerPanel");
@@ -30,7 +32,7 @@ public class DivPanel extends AbsolutePanel {
 		this.getElement().setClassName("DivPanelContainer");
 	}
 	
-	public void initialize( int level, MapView map, IProjection.T type, double eqScale){
+	public void initialize(int level, MapView map, IProjection.T type, double eqScale) {
 		m_map = map;
 		m_proj = Projection.createProj(type);
 		m_proj.setEquatorialScale(eqScale);
@@ -160,16 +162,8 @@ public class DivPanel extends AbsolutePanel {
 		panel.setWidgetPosition(this, tl.getX(), tl.getY());
 	}
 	
-	public void moveOffsetsInViewPanel( AbsolutePanel panel, int deltaX, int deltaY ){
-		IProjection mp = m_map.getProjection();
-		ViewWorker vw = m_map.getViewport().getVpWorker();
-		ViewCoords tl = m_divWorker.computeDivLayoutInView(mp, vw, m_dims);
-		tl = tl.translate(deltaX, deltaY);
-		panel.setWidgetPosition(this, tl.getX(), tl.getY());
-	}
-	
 	// TODO unit test
-	public void resize( int w, int h ){
+	public void resize(int w, int h) {
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();	
 		int dW = dd.getWidth();
 		int dH = dd.getHeight();
@@ -192,4 +186,38 @@ public class DivPanel extends AbsolutePanel {
 		dd.setWidth(dW);
 		dd.setHeight(dH);
 	}
+	
+	public void positionIcons() {
+		m_map.m_iconEngine.positionIcons(getWidgetPositioner(), m_divWorker);
+	}
+
+	public WidgetPositioner getWidgetPositioner() {
+		if (m_widgetPositioner == null) {
+			m_widgetPositioner = new WidgetPositioner() {
+				@Override
+				public void place(Widget widget, int divX, int divY, int width, int height, int z) {
+					placeIcon(widget, divX, divY, width, height, z);
+				}
+				@Override
+				public void remove(Widget widget) {
+					remove(widget);
+				}
+			};
+		}
+		return m_widgetPositioner;
+	}
+	
+	private void placeIcon(Widget widget, int dx, int dy, int dw, int dh, int z) {
+		if (widget.getParent() == null || widget.getParent() != getTileLayerPanel()) {
+			getTileLayerPanel().add(widget);
+		}
+		
+		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(dx, dy, 1, 1);
+		
+		widget.setPixelSize(dw, dh);
+		getTileLayerPanel().setWidgetLeftWidth(widget, b.left, Unit.PCT, dw, Unit.PX);
+		getTileLayerPanel().setWidgetTopHeight(widget, b.top, Unit.PCT, dh, Unit.PX);
+		getTileLayerPanel().getWidgetContainerElement(widget).getStyle().setZIndex(z);
+	}
+
 }

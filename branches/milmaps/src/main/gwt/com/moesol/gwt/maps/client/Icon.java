@@ -54,8 +54,9 @@ public class Icon {
 	private String m_iconUrl;
 	private String m_clickUrl;
 	private Label m_label = null;
-	private int m_zIndex = 2010;
+	private int m_zIndex = 4010;
 	private Image m_image = IMAGE_PROVIDER.get();
+	private ViewDimension m_imageSize = new ViewDimension(32, 32);
 	private Image m_labelLeaderImage = null;
 	private String m_labelLeaderImageUrl = null;
 	private ViewCoords m_offsetWithInLabelLeaderImage = new ViewCoords();
@@ -78,10 +79,20 @@ public class Icon {
 	};
 
     @Override
-    public String toString()
-    {
-        return "Icon{" + "m_location=" + m_location + ", m_iconOffset=" + m_iconOffset + ", m_label=" + m_label + ", m_zIndex=" + m_zIndex + '}';
-    }
+	public String toString() {
+		return "Icon [m_location=" + m_location + ", m_iconOffset="
+				+ m_iconOffset + ", m_declutterOffset=" + m_declutterOffset
+				+ ", m_iconUrl=" + m_iconUrl + ", m_clickUrl=" + m_clickUrl
+				+ ", m_label=" + m_label + ", m_zIndex=" + m_zIndex
+				+ ", m_image=" + m_image + ", m_imageSize=" + m_imageSize
+				+ ", m_labelLeaderImage=" + m_labelLeaderImage
+				+ ", m_labelLeaderImageUrl=" + m_labelLeaderImageUrl
+				+ ", m_offsetWithInLabelLeaderImage="
+				+ m_offsetWithInLabelLeaderImage + ", loadRegistration="
+				+ loadRegistration + ", errorRegistration=" + errorRegistration
+				+ ", m_loadHandler=" + m_loadHandler + ", m_errorHandler="
+				+ m_errorHandler + "]";
+	}
 
     public Icon() {
 	}
@@ -145,8 +156,22 @@ public class Icon {
 	public Image getImage() {
 		return m_image;
 	}
+	public void setImage(Image image) {
+		m_image = image;
+	}
+	public ViewDimension getImageSize() {
+		return m_imageSize;
+	}
+	/**
+	 * Image size in pixels. Used during declutter if no image is set.
+	 * Also used to force the layout of the image to this size.
+	 * @param size
+	 */
+	public void setImageSize(ViewDimension size) {
+		m_imageSize = size;
+	}
 	
-	public Label getLabel(){
+	public Label getLabel() {
 		return m_label;
 	}
 	
