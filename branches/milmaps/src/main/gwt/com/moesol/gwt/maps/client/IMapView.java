@@ -7,6 +7,7 @@ public interface IMapView {
 	IProjection getTempProjection();
 	ViewPort getViewport();
 	void setSuspendFlag(boolean b);
+	void updateView();
 	void doUpdateView();
 	void setCenter(GeodeticCoords geodeticCoords);
 	IconLayer getIconLayer();

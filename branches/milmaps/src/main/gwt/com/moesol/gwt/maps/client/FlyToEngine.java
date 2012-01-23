@@ -32,7 +32,11 @@ public class FlyToEngine {
 		protected void onUpdate(double progress) {
 			FlyToEngine.this.onUpdate(progress);
 		}
-		
+
+		@Override
+		protected void onCancel() {
+			FlyToEngine.this.onCancel();
+		}
 	}
 	
 	public Animation getAnimation() {
@@ -90,6 +94,11 @@ public class FlyToEngine {
 			double inProgress = (progress - ZOOM_IN_AT) / deltaZoomIn;
 			zoomIn(inProgress);
 		}
+		m_mapView.updateView();
+	}
+	
+	public void onCancel() {
+		// Overriden to prevent onComplete. We just stop the flyTo
 		m_mapView.doUpdateView();
 	}
 	
@@ -126,6 +135,8 @@ public class FlyToEngine {
 	 * @param projectionScale
 	 */
 	public void flyTo(double endLat, double endLng, double projectionScale) {
+		getAnimation().cancel();
+		
 		initEngine(endLat, endLng, projectionScale);
 		
 		getAnimation().run(m_durationInMilliSecs);
@@ -138,5 +149,5 @@ public class FlyToEngine {
 	public void setDurationInSecs(int durationInSecs) {
 		m_durationInMilliSecs = durationInSecs;
 	}
-	
+
 }

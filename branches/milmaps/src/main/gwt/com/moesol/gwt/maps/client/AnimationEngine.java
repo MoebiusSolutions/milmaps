@@ -53,13 +53,14 @@ public class AnimationEngine extends Animation {
 			zoom( m_nextScale );
 	}
 	
+	@Override
 	protected void onStart() {
 		super.onStart();
 		m_mapView.setSuspendFlag(true);
 	}
 	
 	@Override
-	protected void onComplete(){
+	protected void onComplete() {
 		try {
 			super.onComplete();
 			double fudge = 2.000000001;
@@ -74,11 +75,8 @@ public class AnimationEngine extends Animation {
 	
 	@Override
 	protected void onCancel() {
-		try {
-			super.onCancel();
-		} finally {
-			m_mapView.setSuspendFlag(false);
-		}
+		// Don't call super onCancel or it will call onComplete.
+		m_mapView.setSuspendFlag(false);
 		m_mapView.doUpdateView();
 	}
 

@@ -392,6 +392,11 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_updateTimer.schedule(1000/30);
 		m_isUpdateTimerScheduled = true;
 	}
+	
+	void cancelAnimations() {
+		m_animateEngine.cancel();
+		m_flyToEngine.getAnimation().cancel();
+	}
 
 	private boolean hasLevelChanged() {
 		int prevLevel = m_proj.getLevelFromScale(m_previousEqScale);

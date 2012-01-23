@@ -178,6 +178,8 @@ public class MapController implements
 		if (m_dragTracker.isSameAsLast()) {
 			return;
 		}
+		
+		m_map.cancelAnimations();
 		m_map.setWorldCenter(newWorldCenter);
 		m_map.partialUpdateView();
 	}
@@ -344,6 +346,8 @@ public class MapController implements
 		int ydist = m_keyVelocity;
 		WorldCoords wc = m_map.getWorldCenter();
 		wc = wc.translate(directionX * xdist, directionY * ydist);
+		
+		m_map.cancelAnimations();
 		m_map.setWorldCenter(wc);
 		m_map.updateView();
 	}
