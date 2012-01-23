@@ -1,4 +1,4 @@
-package com.moesol.gwt.maps.client;
+package com.moesol.gwt.maps.client.events;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.EventHandler;

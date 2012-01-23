@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.controls.HoverEvent;
 import com.moesol.gwt.maps.client.controls.HoverHandler;
+import com.moesol.gwt.maps.client.events.MapViewChangeEvent;
 import com.moesol.gwt.maps.client.stats.StatsDialogBox;
 import com.moesol.gwt.maps.client.touch.Touch;
 import com.moesol.gwt.maps.client.touch.TouchCancelEvent;
