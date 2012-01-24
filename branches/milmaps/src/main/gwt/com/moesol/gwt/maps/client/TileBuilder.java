@@ -80,7 +80,7 @@ public class TileBuilder {
 	// fixed scale and is designed to be used at the level natural scale.
 	private void computeHowManyXTiles( int dimWidth ) {
 		int tileWidth = m_centerTile.getTileWidth();
-		int wcX = m_divWorker.dcXtoWcX( m_centerTile.getOffsetX());
+		int wcX = m_divWorker.divToWorldX( m_centerTile.getOffsetX());
 		int leftDist = m_tileViewWork.wcXtoVcX(wcX);
 		int rightDist = dimWidth - (leftDist + tileWidth);
 		
@@ -91,7 +91,7 @@ public class TileBuilder {
 
 	private void computeHowManyYTiles( int dimHeight ) {
 		int tileHeight = m_centerTile.getTileHeight();
-		int wcY = m_divWorker.dcYtoWcY( m_centerTile.getOffsetY());
+		int wcY = m_divWorker.divToWorldY( m_centerTile.getOffsetY());
 		int topDist = m_tileViewWork.wcYtoVcY(wcY);
 		int bottomDist = dimHeight - (topDist + tileHeight);
 		
@@ -121,8 +121,8 @@ public class TileBuilder {
 		int y = centTileY - centerOffsetYIdx; // Flip y
 		if ( zeroTop  ){
 			// since tile is zero-top, we need to translate it.
-			int level = m_centerTile.getLevel();
-			y = ((1<<level) -y - 1);
+			int numYTiles = getNumYTiles();
+			y = (numYTiles - y - 1);
 		}
 		
 		if (badYTile(y)) {
@@ -157,7 +157,7 @@ public class TileBuilder {
 	}
 	
 	public DivCoords worldToDiv(int wcX, int wcY) {
-		return m_divWorker.wcToDC(wcX, wcY);
+		return m_divWorker.worldToDiv(wcX, wcY);
 	}
 	
 	private boolean badYTile(int y) {

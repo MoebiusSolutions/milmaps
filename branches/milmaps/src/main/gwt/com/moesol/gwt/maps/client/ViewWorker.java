@@ -116,7 +116,7 @@ public class ViewWorker implements ProjectionChangedHandler {
 	
 	public DivCoords viewToDivCoords( DivWorker divWorker, ViewCoords vc ){
 		WorldCoords wc = viewToWorld(vc);
-		return divWorker.wcToDC(wc);
+		return divWorker.worldToDiv(wc);
 	}
 
 	@Override

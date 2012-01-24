@@ -191,11 +191,6 @@ public class LayerSetWorker {
     		double tileDegHeight, 
     		GeodeticCoords gc ) 
     {
-    	//int drawPixWidth  = compTileDrawWidth( ls, level );
-    	//int drawPixHeight = compTileDrawHeight( ls, level );
- 
-    	//ls.setDrawPixelWidth(drawPixWidth);
-    	//ls.setDrawPixelHeight(drawPixHeight);
     	TileXY tile = geoPosToTileXY(ls, level, gc);
     	int modX = tile.m_x;
     	int modY = tile.m_y;
@@ -207,9 +202,6 @@ public class LayerSetWorker {
     	///////////
     	tileCoords.setTileWidth( ls.getPixelWidth() );
     	tileCoords.setTileHeight( ls.getPixelHeight() );   
-		
-    	//tileCoords.setDrawTileWidth( drawPixWidth );
-    	//tileCoords.setDrawTileHeight( drawPixHeight );
     
     	tileCoords.setDegWidth(tileDegWidth);
     	tileCoords.setDegHeight(tileDegHeight);

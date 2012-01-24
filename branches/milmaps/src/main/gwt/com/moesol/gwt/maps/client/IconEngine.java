@@ -27,7 +27,7 @@ public class IconEngine {
 	public void positionOneIcon(Icon icon, WidgetPositioner widgetPositioner, DivWorker divWorker) {
 		IProjection projection = divWorker.getProjection();
 		WorldCoords wc = projection.geodeticToWorld(icon.getLocation());
-		DivCoords dc = divWorker.wcToDC(wc);
+		DivCoords dc = divWorker.worldToDiv(wc);
 		
 		Image image = icon.getImage();
 		if (image != null) {

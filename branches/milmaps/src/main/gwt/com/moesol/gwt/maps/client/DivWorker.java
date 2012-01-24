@@ -107,11 +107,11 @@ public class DivWorker implements ProjectionChangedHandler {
 		m_offsetInMcY = m_divCenterMc.getY()+ m_baseDims.getHeight()/2;
 	}
 	
-	public int wcXtoDcX(int wcX ){
+	public int worldToDivX(int wcX ){
 		return (int) Math.rint((wcX - m_offsetInMcX));
 	}
 	
-	public int wcYtoDcY( int wcY ){
+	public int worldToDivY( int wcY ){
 		// Normally we would have vY = wc.getY() - m_offsetInWcY.
 		// But for the view y axis we want the y values changed to be relative to the 
 		// div's top. So we will subtract dY from the div's top. This will also
@@ -126,19 +126,19 @@ public class DivWorker implements ProjectionChangedHandler {
 	 * @param checkWrap
 	 * @return ViewCoords
 	 */
-	public DivCoords wcToDC( WorldCoords wc ) {
-		return new DivCoords(wcXtoDcX(wc.getX()), wcYtoDcY(wc.getY()));
+	public DivCoords worldToDiv( WorldCoords wc ) {
+		return new DivCoords(worldToDivX(wc.getX()), worldToDivY(wc.getY()));
 	}
 	
-	public DivCoords wcToDC( int wcX, int wcY ) {
-		return new DivCoords(wcXtoDcX(wcX), wcYtoDcY(wcY));
+	public DivCoords worldToDiv( int wcX, int wcY ) {
+		return new DivCoords(worldToDivX(wcX), worldToDivY(wcY));
 	}
 	
-	public int dcXtoWcX( int dcX ){
+	public int divToWorldX( int dcX ){
 		return (int) Math.rint((dcX + m_offsetInMcX));
 	}
 	
-	public int dcYtoWcY( int dcY ){
+	public int divToWorldY( int dcY ){
 		return (int) Math.rint((m_offsetInMcY - dcY));
 	}
 	
@@ -147,7 +147,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	 * @param vc
 	 * @return
 	 */
-	public double dcXToPercent( int dcX ) {
+	public double divXToPercent( int dcX ) {
 		double x = dcX;
 		return x/m_baseDims.getWidth();
 	}
@@ -157,7 +157,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	 * @param vc
 	 * @return
 	 */
-	public double dcYToPercent( int dcY ) {
+	public double divYToPercent( int dcY ) {
 		double y = dcY;
 		return y/m_baseDims.getHeight();
 	}
@@ -173,10 +173,10 @@ public class DivWorker implements ProjectionChangedHandler {
 	 */
 	public BoxBounds computePerccentBounds ( int x, int y, int width, int height ){
 		
-		m_boxBounds.top   = dcYToPercent(y)*100;
-		m_boxBounds.left  = dcXToPercent(x)*100;
-		m_boxBounds.bot   = dcYToPercent(y+height+1)*100;
-		m_boxBounds.right = dcXToPercent(x+width+1)*100;
+		m_boxBounds.top   = divYToPercent(y)*100;
+		m_boxBounds.left  = divXToPercent(x)*100;
+		m_boxBounds.bot   = divYToPercent(y+height+1)*100;
+		m_boxBounds.right = divXToPercent(x+width+1)*100;
 		return m_boxBounds;
 	}
 	
