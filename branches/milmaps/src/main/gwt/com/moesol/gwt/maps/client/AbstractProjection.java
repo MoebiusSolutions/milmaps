@@ -98,8 +98,12 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 		if (dScale <= 0.0) {
 			throw new IllegalArgumentException("scale Factor less than zero");
 		}
-		if (getLevelFromScale(dScale) < 0) {
+		int level = getLevelFromScale(dScale);
+		if (level < 0) {
 			dScale = getScaleFromLevel(0);
+		}
+		else if ( level > DivManager.NUMDIVS-1){
+			dScale = getScaleFromLevel(DivManager.NUMDIVS-1);
 		}
 		m_eqScale = dScale;
 		computeWorldSize();

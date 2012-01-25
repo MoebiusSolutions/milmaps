@@ -4,18 +4,18 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 
 public class DivManager {
 	private static int LEVEL_RANGE = 2;
+	public static final int NUMDIVS = 20;
 	private int m_currentLevel = 0;
-	private final int m_numDivs = 20;
 	private IProjection m_proj= null;
 	private final MapView m_map;
 	//int count = 0;
 	
 	private ViewWorker m_vpWorker = null;
-	DivPanel[] m_dpArray = new DivPanel[m_numDivs];
+	DivPanel[] m_dpArray = new DivPanel[NUMDIVS];
 	
 	public DivManager(MapView map){
 		m_map = map;
-		for( int i = 0; i < m_numDivs; i++ ){
+		for( int i = 0; i < NUMDIVS; i++ ){
 			m_dpArray[i] = new DivPanel();
 			m_dpArray[i].getElement().getStyle().setZIndex(i);
 		}
@@ -47,20 +47,20 @@ public class DivManager {
 	
 	protected void initDivPanels(){
 		double eqScale = m_proj.getOrigEquatorialScale();
-		for( int i = 0; i < m_numDivs; i++ ){
+		for( int i = 0; i < NUMDIVS; i++ ){
 			double scale = eqScale*(1<<i);
 			m_dpArray[i].initialize(i, m_map, m_proj.getType(),scale);
 		}	
 	}
 	
-	public int getNumDivs(){ return m_numDivs; }
+	public int getNumDivs(){ return NUMDIVS; }
 	
 	public void setViewWorker(ViewWorker vp){
 		m_vpWorker = vp;
 	}
 	
 	public void setCenter(GeodeticCoords gc){
-		for( int i = 0; i < m_numDivs; i++ ){
+		for( int i = 0; i < NUMDIVS; i++ ){
 			m_dpArray[i].getDivWorker().setGeoCenter(gc);
 		}	
 	}
@@ -87,7 +87,7 @@ public class DivManager {
 	}
 	
 	public DivPanel getDiv( int level ) {
-		if ( -1 < level && level < m_numDivs){
+		if ( -1 < level && level < NUMDIVS){
 			return m_dpArray[level];
 		}
 		return null;
@@ -95,37 +95,37 @@ public class DivManager {
 	
 	
 	public void attachDivsTo(AbsolutePanel lp){
-		for( int i = 0; i < m_numDivs; i++ ){
+		for( int i = 0; i < NUMDIVS; i++ ){
 			lp.add(m_dpArray[i]);
 		}
 	}
 	
 	public void setOpacity(double brightness){
-		for ( int j = 0; j < m_numDivs; j++ ){
+		for ( int j = 0; j < NUMDIVS; j++ ){
 			m_dpArray[j].getElement().getStyle().setOpacity(brightness);
 		}	
 	}
 	
 	public void addLayer(LayerSet layerSet) {
-		for( int i = 0; i < m_numDivs; i++ ){
+		for( int i = 0; i < NUMDIVS; i++ ){
 			m_dpArray[i].addLayer(layerSet);
 		}		
 	}
 	
 	public void removeLayer(LayerSet layerSet) {
-		for( int i = 0; i < m_numDivs; i++ ){
+		for( int i = 0; i < NUMDIVS; i++ ){
 			m_dpArray[i].removeLayer(layerSet);
 		}
 	}
 	
 	public void clearLayers() {
-		for( int i = 0; i < m_numDivs; i++ ){
+		for( int i = 0; i < NUMDIVS; i++ ){
 			m_dpArray[i].clearLayers();
 		}
 	}
 	
 	public boolean hasAutoRefreshOnTimerLayers() {
-		for( int i = 0; i < m_numDivs; i++ ){
+		for( int i = 0; i < NUMDIVS; i++ ){
 			if ( m_dpArray[i].hasAutoRefreshOnTimerLayers() )
 				return true;
 		}
@@ -161,7 +161,7 @@ public class DivManager {
 		for ( int i = n; i <= m_currentLevel; i++ ) {
 			m_dpArray[i].setVisible(true);
 		}
-		for ( int i = m_currentLevel+1; i < m_numDivs-1 ; i++ ) {
+		for ( int i = m_currentLevel+1; i <= NUMDIVS-1 ; i++ ) {
 			m_dpArray[i].hideAllTiles();
 			m_dpArray[i].setVisible(false);
 		}		
@@ -176,7 +176,7 @@ public class DivManager {
 	}
 	
 	public void resizeDivs( int w, int h ) {
-		for ( int i = 0; i < m_numDivs; i++ ) {
+		for ( int i = 0; i < NUMDIVS; i++ ) {
 			m_dpArray[i].resize(w, h);
 		}
 	}

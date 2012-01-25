@@ -522,7 +522,11 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 */
 	public boolean zoomOnPixel(int x, int y, double scaleFactor) {
 		if (m_bSuspendMapAction == false) {
-			m_animateEngine.animateZoomMap( x, y, scaleFactor);
+			double scale = m_proj.getEquatorialScale();
+			int level = m_proj.getLevelFromScale(scale*scaleFactor);
+			if (level < DivManager.NUMDIVS) {
+				m_animateEngine.animateZoomMap( x, y, scaleFactor);
+			}
 		}
 		return (m_bSuspendMapAction == false);
 	}
@@ -530,6 +534,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	/**
 	 * Non-animated zoom in.
 	 */
+	
 	public void zoomByFactor(double zoomFactor) {
 		m_proj.zoomByFactor(zoomFactor);
 		ViewWorker vp = m_viewPort.getVpWorker();

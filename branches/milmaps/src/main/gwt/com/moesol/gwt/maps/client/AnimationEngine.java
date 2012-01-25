@@ -12,6 +12,7 @@ public class AnimationEngine extends Animation {
 	private double m_oldScale;
 	private double m_startEqScale;
 	private double m_nextScale;
+	private double m_endScale;
 	private double m_scaleDiff;
 	private boolean m_bZoomingIn;
 	private int m_durationInSecs = 750;
@@ -20,6 +21,7 @@ public class AnimationEngine extends Animation {
 	   m_mapView = mv;
 	   m_proj = m_mapView.getProjection();
 	} 
+	
 	
 	public void animateZoomMap( final double tagX, final double tagY, final double scaleFactor ){
 		m_bZoomingIn = ( scaleFactor > 1.0);
@@ -34,7 +36,7 @@ public class AnimationEngine extends Animation {
 	    run(m_durationInSecs);
 	}
 	
-	protected void zoom( double nextScale ){
+	protected void zoom(double nextScale) {
 		double f = nextScale/m_oldScale;
 		m_ztWorker.compViewOffsets(f);
 		double ox = m_ztWorker.getOffsetX();
@@ -49,8 +51,9 @@ public class AnimationEngine extends Animation {
 	@Override
 	protected void onUpdate(double progress) {
 		m_nextScale = m_startEqScale + m_scaleDiff*Math.min(1.0, progress);
-		if ( progress != 0.0 )
+		if (progress != 0.0) {
 			zoom( m_nextScale );
+		}
 	}
 	
 	@Override
