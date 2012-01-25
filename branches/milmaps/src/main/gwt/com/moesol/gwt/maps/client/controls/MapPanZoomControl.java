@@ -175,7 +175,7 @@ public class MapPanZoomControl extends Composite {
 
 			m_dx = m_presenter.calculateDelta(panButtonWidth, eventRelativeX,
 					m_maxPanPixels);
-			m_dy = m_presenter.calculateDelta(panButtonHeight, eventRelativeY,
+			m_dy = -m_presenter.calculateDelta(panButtonHeight, eventRelativeY,
 					m_maxPanPixels);
 		}
 	}
