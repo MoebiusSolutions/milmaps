@@ -2,9 +2,9 @@ package com.moesol.gwt.maps.client.controls;
 
 import java.util.ArrayList;
 
+import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.MapScale;
 import com.moesol.gwt.maps.client.MapView;
-import com.moesol.gwt.maps.client.units.Degrees;
 
 /**
  * Handles search events to implement fly-to functionality. Encapsulating
@@ -96,7 +96,9 @@ public class FlyToController implements SearchHandler {
 			} else {
 				scale = MapScale.parse("1:1M");
 			}
-			m_map.flyTo(Degrees.geodetic(lng, lat), scale);
+			m_map.flyTo(GeodeticCoords.builder()
+						.latitude(lat).degrees()
+						.longitude(lng).degrees().build(), scale);
 		} else if (s.length == 1) {
 			zoomX = Double.parseDouble(s[0]);
 			m_map.animateZoom(zoomX);
