@@ -257,7 +257,7 @@ public class TileBuilder {
 			}
 			if (ls.isAlwaysDraw() || layer.isPriority()) {
 				int level = layer.findLevel(dpi, projScale);
-				placeTilesForOneLayer(level, layer );
+				placeTilesForOneLayer(level, layer);
 			}
 		}
 	}
