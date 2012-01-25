@@ -32,9 +32,24 @@ public class GeodeticCoords implements IsSerializable {
 		public double getPhi() { return m_phi; }
 		public double getLatitude() { return m_phi; }
 		public double getAltitude() { return m_altitude; }
-		public Builder degrees() { m_angleUnit = AngleUnit.DEGREES; return this; }
-		public Builder radians() { m_angleUnit = AngleUnit.RADIANS; return this; }
+		public Builder degrees() {
+			if (m_angleUnit != null && m_angleUnit != AngleUnit.DEGREES) {
+				throw new IllegalStateException("Angle unit cannot be changed");
+			}
+			m_angleUnit = AngleUnit.DEGREES; return this; 
+		}
+		public Builder radians() { 
+			if (m_angleUnit != null && m_angleUnit != AngleUnit.RADIANS) {
+				throw new IllegalStateException("Angle unit cannot be changed");
+			}
+			m_angleUnit = AngleUnit.RADIANS; return this; 
+		}
+		public Builder latitude(double lat) { return setLatitude(lat); }
+		public Builder longitude(double lng) { return setLongitude(lng); }
 		public GeodeticCoords build() {
+			if (m_angleUnit == null) {
+				throw new IllegalStateException("No angle unit specified, use degrees() or radians()");
+			}
 			return new GeodeticCoords(m_lambda, m_phi, m_angleUnit, m_altitude);
 		}
 	}
