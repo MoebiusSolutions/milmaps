@@ -109,6 +109,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public EventBus getEventBus() {
 		return m_eventBus;
 	}
+	
+	public DivManager getDivManager(){
+		return m_divMgr;
+	}
 
 	public void setProjection(IProjection proj) {
 		m_proj = proj;
