@@ -47,6 +47,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.DeclutterEngine;
+import com.moesol.gwt.maps.client.DivManager;
+import com.moesol.gwt.maps.client.DivPanel;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ILayerConfig;
 import com.moesol.gwt.maps.client.ILayerConfigAsync;
@@ -221,6 +223,11 @@ public class Driver implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				stats();
 			}});
+		Button memoryTest = new Button("Memory Test", new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				memoryTest();
+			}});
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
 		oracle.add("0");
 		oracle.add("01");
@@ -241,6 +248,7 @@ public class Driver implements EntryPoint {
 		bar.add(resizeMap);
 		bar.add(benchmarks);
 		bar.add(stats);
+		bar.add(memoryTest);
 
 		dockPanel.addNorth(bar, 20);
 		
@@ -521,6 +529,17 @@ public class Driver implements EntryPoint {
 	
 	public void stats() {
 		new StatsDialogBox().show();
+	}
+	
+	public void memoryTest(){
+		DivManager divMgr = m_map.getDivManager();
+		DivPanel dp = divMgr.getCurrentDiv();
+		IProjection proj = m_map.getProjection();
+		double eqScale = proj.getEquatorialScale();
+		for ( int i = 0; i < 100; i++){
+			dp.hideAllTiles();
+			dp.doUpdate(eqScale);
+		}
 	}
 
 	protected void goRight() {
