@@ -152,7 +152,7 @@ public class DivManager {
 		}
 	}
 	
-	public void doUpdateDivsVisibility( AbsolutePanel panel ) {
+	public void doUpdateDivsVisibility(AbsolutePanel panel) {
 		setCurrentLevelFromMapScale();
 		int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
 		for ( int i = 0; i < n; i++ ) {
@@ -161,7 +161,7 @@ public class DivManager {
 		for ( int i = n; i <= m_currentLevel; i++ ) {
 			m_dpArray[i].setVisible(true);
 		}
-		for ( int i = m_currentLevel+1; i <= NUMDIVS-1 ; i++ ) {
+		for ( int i = m_currentLevel+1; i < NUMDIVS; i++ ) {
 			m_dpArray[i].hideAllTiles();
 			m_dpArray[i].setVisible(false);
 		}		

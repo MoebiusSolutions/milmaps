@@ -31,17 +31,6 @@ public class DragTracker {
 	public ViewCoords getDelta(){
 		return m_deltaPort;
 	}
-	
-	public ViewCoords updateView(int x, int y) {
-		int newDeltaPortX = x - m_origPort.getX();
-		int newDeltaPortY = m_origPort.getY() - y;  // Flip y axis
-		computeSameAsLast(newDeltaPortX, newDeltaPortY);
-		m_deltaPort = new ViewCoords(newDeltaPortX, newDeltaPortY);
-		return ViewCoords.builder()
-			.setX(m_origWorld.getX() - m_deltaPort.getX())
-			.setY(m_origWorld.getY() - m_deltaPort.getY())
-			.build();
-	}
 
 	private void computeSameAsLast(int newDeltaPortX, int newDeltaPortY) {
 		if (newDeltaPortX != m_deltaPort.getX()) {
