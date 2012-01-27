@@ -141,10 +141,9 @@ public class DivPanel extends AbsolutePanel {
 	
 	public void hideAllTiles() {
 		for (TiledImageLayer layer : m_tiledImageLayers) {
-			if (!layer.getLayerSet().isActive()) {
-				continue;
+			if (layer.getLayerSet().isActive()) {
+				layer.hideAllTiles();
 			}
-			layer.hideAllTiles();
 		}
 	}
 	

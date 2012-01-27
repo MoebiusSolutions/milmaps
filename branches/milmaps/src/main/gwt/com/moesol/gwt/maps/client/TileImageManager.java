@@ -99,7 +99,9 @@ public class TileImageManager {
 	}
 	
 	public void hideAllImages() {
-		for (int i = 0; i < m_infoCache.size(); i++) {
+		// m_infoCache.remove(i) reduces the array size
+		// by one so we don't have to increment i.
+		for (int i = 0; i < m_infoCache.size();) {
 			TileInfo tileInfo = m_infoCache.get(i);
 			m_listener.hideImage(tileInfo.m_image);
 			m_listener.destroyImage(tileInfo.m_image);
