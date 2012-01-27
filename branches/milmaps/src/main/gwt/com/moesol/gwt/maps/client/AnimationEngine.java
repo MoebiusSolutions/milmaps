@@ -66,11 +66,19 @@ public class AnimationEngine extends Animation {
 	protected void onComplete() {
 		try {
 			super.onComplete();
-			double fudge = 2.000000001;
-			if ( m_bZoomingIn && ( m_nextScale < fudge*m_startEqScale ) ){
-				zoom( fudge*m_startEqScale );
+			double fudge = 2.0000001;
+			if (m_bZoomingIn) {
+				if (m_nextScale < fudge*m_startEqScale) {
+					zoom( 2.0*m_startEqScale );
+				}
 			}
-			m_mapView.doUpdateView();
+			else {
+				fudge = 0.499999999;
+				if ( m_nextScale > fudge*m_startEqScale) {
+					zoom( 0.5*m_startEqScale );
+				}
+			}
+			m_mapView.updateView();
 		} finally {
 			m_mapView.setSuspendFlag(false);
 		}
