@@ -98,6 +98,9 @@ public class DeclutterEngineTest {
 		Icon.LABEL_STYLER = mock(Icon.LabelStyler.class);
 		
 		divWorker.setProjection(m_projection);
+		divWorker.setDivBasePixelSize(512, 512);
+		divWorker.setOffsetInWcX(256);
+		divWorker.setOffsetInWcY(512);
 
 		/* Reset to match test in case we use different values later */
 		engine = new DeclutterEngine(m_mapView);
@@ -261,9 +264,6 @@ public class DeclutterEngineTest {
 		assertEquals(120, icons.get(n++).getDeclutterOffset().getY());
 	}
 
-	/*
-	 * TODO FIX ME, Declutter
-	 * 
 	@Test
 	public void testRenderAllLeftHandLabels() throws IOException {
 		m_viewport.setSize(512, 512);
@@ -454,9 +454,6 @@ public class DeclutterEngineTest {
 		
 		assertTrue(name, compareImages(expected, generated));
 	}
-	 *
-	 */
-
 
 	private IconListBuilder builder() {
 		return new IconListBuilder();

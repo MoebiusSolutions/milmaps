@@ -12,7 +12,7 @@ public class RecordingIconPlacer implements WidgetPositioner {
 	List<Placement> images = new ArrayList<Placement>();
 	List<Placement> labels = new ArrayList<Placement>();
 
-	public void place(Widget widget, int x, int y, int h, int w, int zindex) {
+	public void place(Widget widget, int x, int y, int w, int h, int zindex) {
 		Placement p = new Placement();
 		p.w = widget;
 		p.x = x;
