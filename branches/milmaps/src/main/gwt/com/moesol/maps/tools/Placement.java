@@ -13,4 +13,10 @@ public class Placement {
 	public int width;
 	public int height;
 	public int zindex;
+	
+	@Override
+	public String toString() {
+		return "Placement [w=" + w + ", x=" + x + ", y=" + y + ", width="
+				+ width + ", height=" + height + ", zindex=" + zindex + "]";
+	}
 }
