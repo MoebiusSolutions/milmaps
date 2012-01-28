@@ -182,12 +182,12 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 
 	@Override
 	public String toString() {
-		return "AbstractProjection [m_handlerManager=" + m_handlerManager
-				+ ", m_projType=" + m_projType + ", m_wdSize=" + m_wdSize
+		return "AbstractProjection ["
+				+ "m_projType=" + m_projType + ", m_wdSize=" + m_wdSize
 				+ ", EarthRadius=" + EarthRadius + ", EarthCirMeters="
 				+ EarthCirMeters + ", MeterPerDeg=" + MeterPerDeg
 				+ ", m_scrnDpi=" + m_scrnDpi + ", m_scrnMpp=" + m_scrnMpp
-				+ ", m_eqScale=" + m_eqScale + ", m_wholeWorldScale="
+				+ ", m_eqScale=" + m_eqScale + ", m_origMapWidthSize="
 				+ m_origMapWidthSize + ", m_origEqScale=" + m_origEqScale + "]";
 	}
     
