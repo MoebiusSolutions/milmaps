@@ -155,9 +155,10 @@ public interface IProjection {
 	 * getLevelFromScale: computes the level using the original scale 
 	 * as a reference value.
 	 * @param eqScale
+	 * @param roundValue
 	 * @return int, level corresponding to the scale, may be negative.
 	 */
-	int getLevelFromScale(double eqScale);
+	int getLevelFromScale(double eqScale, double roundValue );
 	double getScaleFromLevel(int level);
 
 	/**

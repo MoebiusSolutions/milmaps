@@ -142,6 +142,12 @@ public class DivManager {
 		//}
 		return true;
 	}
+	
+	public double getClosestLevelScale(){
+		IProjection proj = m_map.getProjection();
+		int level = proj.getLevelFromScale(proj.getEquatorialScale(), 0.5);
+		return proj.getScaleFromLevel(level);
+	}
 
 	public void doUpdateDivsCenterScale( double eqScale ){
 		int n = Math.max(0, m_currentLevel - LEVEL_RANGE);

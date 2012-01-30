@@ -98,7 +98,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 		if (dScale <= 0.0) {
 			throw new IllegalArgumentException("scale Factor less than zero");
 		}
-		int level = getLevelFromScale(dScale);
+		int level = getLevelFromScale(dScale, 0);
 		if (level < 0) {
 			dScale = getScaleFromLevel(0);
 		}
@@ -161,10 +161,11 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
     }
     
     @Override
-    public int getLevelFromScale( double eqScale ){
+    public int getLevelFromScale( double eqScale, double roundValue ){
 		double level = ( Math.log(eqScale) - Math.log(m_origEqScale))/Math.log(2);
-		return (int)level;
+		return (int)(level + roundValue);
     }
+  
     @Override
     public double getScaleFromLevel(int level) {
 		return m_origEqScale * (1 << level); 

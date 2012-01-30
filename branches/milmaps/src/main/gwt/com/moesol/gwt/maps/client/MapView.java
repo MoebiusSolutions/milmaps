@@ -403,9 +403,9 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 
 	private boolean hasLevelChanged() {
-		int prevLevel = m_proj.getLevelFromScale(m_previousEqScale);
+		int prevLevel = m_proj.getLevelFromScale(m_previousEqScale, 0);
 		double scale = m_proj.getEquatorialScale();
-		int currentLevel = m_proj.getLevelFromScale(scale);
+		int currentLevel = m_proj.getLevelFromScale(scale, 0);
 		m_previousEqScale = m_proj.getEquatorialScale();
 		return ( prevLevel != currentLevel);
 
@@ -490,10 +490,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_resized  = true;
 		m_focusPanel.setPixelSize(w, h);
 		m_viewPanel.setPixelSize(w, h);
-		m_viewPort.getVpWorker().setDimension(new ViewDimension(w, h));
-		m_divMgr.resizeDivs(w,h);
 		setPixelSize(w, h);
-		updateView();
+		//m_viewPort.getVpWorker().setDimension(new ViewDimension(w, h));
+		m_divMgr.resizeDivs(w,h);
+		//updateView();
 	}
 
 	/**
@@ -527,7 +527,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public boolean zoomOnPixel(int x, int y, double scaleFactor) {
 		if (m_bSuspendMapAction == false) {
 			double scale = m_proj.getEquatorialScale();
-			int level = m_proj.getLevelFromScale(scale*scaleFactor);
+			int level = m_proj.getLevelFromScale(scale*scaleFactor, 0);
 			if (level < DivManager.NUMDIVS) {
 				m_animateEngine.animateZoomMap( x, y, scaleFactor);
 			}
@@ -548,14 +548,15 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	//TODO
 	public void zoomAndMove( final double factor, final int offsetX, final int offsetY ) {
+		if (Math.abs(factor-1.0) < 0.00000001) {
+			return;
+		}
 		final ViewWorker vpWorker = this.getViewport().getVpWorker();
 		m_proj.zoomByFactor(factor);
 		final ViewDimension vd = vpWorker.getDimension();
 		final WorldCoords wc = new WorldCoords(offsetX + vd.getWidth()/2, offsetY - vd.getHeight()/2);
 		vpWorker.setCenterInWc(wc);
-		
 		doUpdateView();
-//		partialUpdateView();
 	}
 
 	public void zoom(double dScale) {
