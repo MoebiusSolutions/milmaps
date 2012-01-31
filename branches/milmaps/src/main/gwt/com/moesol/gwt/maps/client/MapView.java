@@ -23,10 +23,7 @@ import com.moesol.gwt.maps.client.units.Degrees;
 import com.moesol.gwt.maps.shared.BoundingBox;
 
 public class MapView extends Composite implements IMapView, SourcesChangeEvents {
-	private static final Logger logger = Logger.getLogger(MapView.class.getName());
-	private static final double BBOX_ZOOM_BUFFER = 2.0;
 	private static final long ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
-	//private final AbsolutePanel m_iconsOverTilesPanel = new AbsolutePanel();
 	
 	private final AbsolutePanel m_viewPanel = new AbsolutePanel();
 	private final FocusPanel m_focusPanel = new FocusPanel();
@@ -42,7 +39,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	final IconEngine m_iconEngine = new IconEngine(this);
 	private DeclutterEngine m_declutterEngine; // null unless needed
 	private final ChangeListenerCollection m_changeListeners = new ChangeListenerCollection();
-	// private final MapControls mapControls = new MapControls(this);
 
 	private final IconLayer m_iconLayer = new IconLayer();
 
@@ -56,12 +52,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private final EventBus m_eventBus;
 	private final DynamicUpdateEngine m_dynamicUpdateEngine;
 
-	MapsClientBundle clientBundle = GWT.create(MapsClientBundle.class);
-
 	public MapView() {
 		this(new SimpleEventBus());
 	}
-	public MapView(final EventBus eventBus){
+	public MapView(final EventBus eventBus) {
 		this(new CylEquiDistProj(), eventBus);
 	}
 	public MapView(final IProjection projection) {
@@ -81,7 +75,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		initialize(defaultCenter);
 	}
 
-	void initialize(GeodeticCoords defaultCenter) {
+	private void initialize(GeodeticCoords defaultCenter) {
 		ProjectionValues.readCookies(m_proj);
 		
 		setCenter(recoverCenter(defaultCenter.getLambda(AngleUnit.DEGREES), defaultCenter.getPhi(AngleUnit.DEGREES)));
@@ -110,7 +104,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		return m_eventBus;
 	}
 	
-	public DivManager getDivManager(){
+	public DivManager getDivManager() {
 		return m_divMgr;
 	}
 
@@ -121,17 +115,17 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_tempProj = proj.cloneProj();
 	}
 	
-	public boolean setProjFromLayerSet( LayerSet ls ){
+	private boolean setProjFromLayerSet(LayerSet ls) {
 		if (!ls.isActive()) {
 			return false;
 		}
-		if ( m_proj != null ){
+		if (m_proj != null) {
 			if ( m_proj.doesSupport(ls.getEpsg()) && m_bProjSet )
 				return true;
 		}
 
 		IProjection proj = Projection.getProj(ls);
-		if ( proj != null ){
+		if (proj != null) {
 			setProjection(proj);
 			return true;
 		}
@@ -220,8 +214,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 
 		// View changed re-declutter
 		if (isDeclutterLabels()) {
-			// TODO
-			getDeclutterEngine().incrementalDeclutter(getIconLayer().getIcons(), m_iconEngine, null);
+			getDeclutterEngine().incrementalDeclutter(
+					getIconLayer().getIcons(), 
+					m_iconEngine, 
+					m_divMgr.getCurrentDiv().getDivWorker());
 		}
 	}
 	
@@ -242,8 +238,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_oldIconVersion = getIconLayer().getVersion();
 		
 		if (isDeclutterLabels()) {
-			// TODO
-			getDeclutterEngine().incrementalDeclutter(getIconLayer().getIcons(), m_iconEngine, null);
+			getDeclutterEngine().incrementalDeclutter(
+					getIconLayer().getIcons(), 
+					m_iconEngine, 
+					m_divMgr.getCurrentDiv().getDivWorker());
 		}
 	}
 	
@@ -504,11 +502,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 * @return
 	 */
 	public void moveMapByPixels(int dx, int dy) {
-		m_flyToEngine.getAnimation().cancel();
-		// TODO replace suspend flag with cancel animation.
-		if ( m_bSuspendMapAction ) {
-			return;
-		}
+		cancelAnimations();
+		
 		ViewWorker vpWorker = this.getViewport().getVpWorker();
 		WorldCoords centerInWc = vpWorker.getVpCenterInWc();
 		setWorldCenter(centerInWc.translate(dx, dy));
@@ -538,9 +533,9 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	/**
 	 * Non-animated zoom in.
 	 */
-	
 	public void zoomByFactor(double zoomFactor) {
 		m_proj.zoomByFactor(zoomFactor);
+		// TODO confirm next two lines are needed.
 		ViewWorker vp = m_viewPort.getVpWorker();
 		vp.setCenterInWc(m_proj.geodeticToWorld(vp.getGeoCenter()));
 		updateView();
@@ -590,20 +585,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_flyToEngine.flyTo(box.getCenterLat(), box.getCenterLng(), Projections.findScaleFor(getViewport(), box));
 	}
 
-	/**
-	 * This routine centers on a position with a given scale.
-	 *
-	 * @param lat
-	 * @param lng
-	 * @param scale
-	 * 
-	 * @deprecated use GeodeticCoords instead.
-	 */
-	public void centerOn(double lat, double lng, double scale) {
-		setCenter(lat, lng);
-		updateView();
-	}
-
 	public int getDynamicRefreshMillis() {
 		return m_dynamicUpdateEngine.getDynamicRefreshMillis();
 	}
@@ -641,17 +622,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public int getAnimationDurationSeconds() {
 		return m_animateEngine.getDurationInSecs();
 	}
-
-	// TODO move to div manager.
-//	public ArrayList<TiledImageLayer> getActiveLayers() {
-//		ArrayList<TiledImageLayer> result = new ArrayList<TiledImageLayer>();
-//		for (TiledImageLayer layer : m_tiledImageLayers) {
-//			if (layer.getLayerSet().isActive()) {
-//				result.add(layer);
-//			}
-//		}
-//		return result;
-//	}
 
 	public FocusPanel getFocusPanel() {
 		return m_focusPanel;
