@@ -29,7 +29,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private final FocusPanel m_focusPanel = new FocusPanel();
 	private final MapController m_mapEventListener;
 
-	private IProjection m_proj = null;
+	private IProjection m_mapProj = null;
 	private IProjection m_tempProj;
 	private final ViewPort m_viewPort = new ViewPort();
 	private final DivManager m_divMgr = new DivManager(this);
@@ -76,7 +76,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 
 	private void initialize(GeodeticCoords defaultCenter) {
-		ProjectionValues.readCookies(m_proj);
+		ProjectionValues.readCookies(m_mapProj);
 		
 		setCenter(recoverCenter(defaultCenter.getLambda(AngleUnit.DEGREES), defaultCenter.getPhi(AngleUnit.DEGREES)));
 		updateSize(m_viewPort.getWidth(), m_viewPort.getHeight());
@@ -109,7 +109,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 
 	public void setProjection(IProjection proj) {
-		m_proj = proj;
+		m_mapProj = proj;
 		m_previousEqScale = proj.getEquatorialScale()*8.0;
 		m_viewPort.setProjection(proj);
 		m_tempProj = proj.cloneProj();
@@ -119,8 +119,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		if (!ls.isActive()) {
 			return false;
 		}
-		if (m_proj != null) {
-			if ( m_proj.doesSupport(ls.getEpsg()) && m_bProjSet )
+		if (m_mapProj != null) {
+			if ( m_mapProj.doesSupport(ls.getEpsg()) && m_bProjSet )
 				return true;
 		}
 
@@ -304,7 +304,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 
 	public IProjection getProjection() {
-		return m_proj;
+		return m_mapProj;
 	}
 
 	/**
@@ -332,7 +332,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public void setCenterScale(double latDegrees, double lngDegrees, double scale) {
 		GeodeticCoords center = Degrees.geodetic(latDegrees, lngDegrees);
 		if (scale > 0) {
-			m_proj.setEquatorialScale(scale);
+			m_mapProj.setEquatorialScale(scale);
 		}
 		setCenter(center);
 	}
@@ -401,23 +401,19 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 
 	private boolean hasLevelChanged() {
-		int prevLevel = m_proj.getLevelFromScale(m_previousEqScale, 0);
-		double scale = m_proj.getEquatorialScale();
-		int currentLevel = m_proj.getLevelFromScale(scale, 0);
-		m_previousEqScale = m_proj.getEquatorialScale();
+		int prevLevel = m_mapProj.getLevelFromScale(m_previousEqScale, 0);
+		double scale = m_mapProj.getEquatorialScale();
+		int currentLevel = m_mapProj.getLevelFromScale(scale, 0);
+		m_previousEqScale = m_mapProj.getEquatorialScale();
 		return ( prevLevel != currentLevel);
 
 	}
 	
+	
 	public void doUpdateView() {
 		if (m_resized || hasLevelChanged() || m_divMgr.hasDivMovedToFar()) {
-			Sample.MAP_FULL_UPDATE.beginSample();
 			m_resized = false;
-			m_divMgr.doUpdateDivsCenterScale( m_proj.getEquatorialScale() );
-			m_divMgr.doUpdateDivsVisibility( m_viewPanel );
-			m_divMgr.placeDivsInViewPanel( m_viewPanel );
-			m_divMgr.positionIcons();
-			Sample.MAP_FULL_UPDATE.endSample();
+			fullUpdateView();
 		} else {
 			partialUpdateView();
 		}
@@ -427,6 +423,16 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 // TODO move to idle handling...
 //		recordCenter();
 //		ProjectionValues.writeCookies(m_proj);
+	}
+	
+	public void fullUpdateView() {
+		Sample.MAP_FULL_UPDATE.beginSample();
+		m_divMgr.doUpdateDivsCenterScale( m_mapProj.getEquatorialScale() );
+		m_divMgr.doUpdateDivsVisibility( m_viewPanel );
+		m_divMgr.placeDivsInViewPanel( m_viewPanel );
+		m_divMgr.positionIcons();
+		Sample.MAP_FULL_UPDATE.endSample();
+		System.out.println("FullUpdateView");
 	}
 	
 	public void partialUpdateView() {
@@ -521,8 +527,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 */
 	public boolean zoomOnPixel(int x, int y, double scaleFactor) {
 		if (m_bSuspendMapAction == false) {
-			double scale = m_proj.getEquatorialScale();
-			int level = m_proj.getLevelFromScale(scale*scaleFactor, 0);
+			double scale = m_mapProj.getEquatorialScale();
+			int level = m_mapProj.getLevelFromScale(scale*scaleFactor, 0);
 			if (level < DivManager.NUMDIVS) {
 				m_animateEngine.animateZoomMap( x, y, scaleFactor);
 			}
@@ -534,10 +540,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 * Non-animated zoom in.
 	 */
 	public void zoomByFactor(double zoomFactor) {
-		m_proj.zoomByFactor(zoomFactor);
+		m_mapProj.zoomByFactor(zoomFactor);
 		// TODO confirm next two lines are needed.
 		ViewWorker vp = m_viewPort.getVpWorker();
-		vp.setCenterInWc(m_proj.geodeticToWorld(vp.getGeoCenter()));
+		vp.setCenterInWc(m_mapProj.geodeticToWorld(vp.getGeoCenter()));
 		updateView();
 	}
 	
@@ -547,7 +553,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 			return;
 		}
 		final ViewWorker vpWorker = this.getViewport().getVpWorker();
-		m_proj.zoomByFactor(factor);
+		m_mapProj.zoomByFactor(factor);
 		final ViewDimension vd = vpWorker.getDimension();
 		final WorldCoords wc = new WorldCoords(offsetX + vd.getWidth()/2, offsetY - vd.getHeight()/2);
 		vpWorker.setCenterInWc(wc);
@@ -555,7 +561,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 
 	public void zoom(double dScale) {
-		m_proj.setEquatorialScale(dScale);
+		m_mapProj.setEquatorialScale(dScale);
 		updateView();
 	}
 

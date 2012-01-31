@@ -1,5 +1,7 @@
 package com.moesol.gwt.maps.client;
 
+import java.awt.event.KeyEvent;
+
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -277,7 +279,6 @@ public class MapController implements
 			zoomAndCenter(m_doubleClickTracker.getX(), m_doubleClickTracker.getY(), true);
 			DOM.eventPreventDefault(event);
 			break;
-
 		case Event.ONKEYDOWN:
 		case Event.ONKEYUP:
 			switch (DOM.eventGetKeyCode(event)) {
@@ -335,6 +336,9 @@ public class MapController implements
 		case KeyCodes.KEY_DOWN:
 			moveMap(0, -1);
 			break;
+		case KeyEvent.VK_F:
+			m_map.fullUpdateView();
+			break;	
 		}
 		if (m_keyVelocity < 64) {
 			m_keyVelocity += 1;
