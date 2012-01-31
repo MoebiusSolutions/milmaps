@@ -37,7 +37,7 @@ public class MercatorTest {
 	@Test
 	public void testScaleToLevelAndBack() {
 		MapScale s = JmvMapScale.parse("1:1M");
-		int level = m_proj.getLevelFromScale(s.asDouble());
+		int level = m_proj.getLevelFromScale(s.asDouble(), 0);
 		System.out.println("level: " + level);
 		JmvMapScale ns = new JmvMapScale(m_proj.getScaleFromLevel(level));
 		System.out.println("scale: " + ns);
