@@ -143,10 +143,10 @@ public class DivManager {
 		return true;
 	}
 	
-	public double getClosestLevelScale(){
+	public double getClosestLevelScale(double eqScale) {
 		IProjection proj = m_map.getProjection();
-		int level = proj.getLevelFromScale(proj.getEquatorialScale(), 0.5);
-		return proj.getScaleFromLevel(level);
+		int level = proj.getLevelFromScale( eqScale, 0.5);
+		return proj.getScaleFromLevel(level);	
 	}
 
 	public void doUpdateDivsCenterScale( double eqScale ){
@@ -191,27 +191,10 @@ public class DivManager {
 		DivPanel dp = getCurrentDiv();
 		DivWorker dw = dp.getDivWorker();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
-		DivDimensions dim = dp.getDimensions();
+		DivDimensions dim = dp.getScaledDims();
 		IProjection mapProj = m_map.getProjection();
-		ViewCoords tl = dw.computeDivLayoutInView(mapProj, vw, dim);
-		double factor = dw.getScaleFactor(mapProj);
 		DivCoordSpan ds = dp.getUsedDivSpan();
-		if( ds.isBad() ){
-			return true;
-		}
-		int imgLeft  = (int)(factor*ds.getLeft());
-		int imgRight = (int)(factor*ds.getRight());
-		//System.out.println("count: " + count);
-		//System.out.println("left : " + imgLeft + " right : " + imgRight);
-		//count++;
-		 
-		ViewCoords br = new ViewCoords(tl.getX()+ imgRight, tl.getY()+ dim.getHeight());
-		ViewDimension vd = vw.getDimension();
-		if( 0 < tl.getX() + imgLeft || br.getX() < vd.getWidth() || 
-			-10 < tl.getY() || br.getY() < vd.getHeight() + 10 ){
-			return true;
-		}
-		return false;
+		return dw.hasDivMovedToFar(mapProj, vw, dim, ds);
 	}
 	
 	public void positionIcons() {

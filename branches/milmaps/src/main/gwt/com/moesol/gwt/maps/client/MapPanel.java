@@ -50,7 +50,6 @@ public class MapPanel extends Composite implements RequiresResize {
 		}
 		
 		m_mapView.resizeMap(width, height);
-		m_mapView.updateView();
 		
 		lastWidth = width;
 		lastHeight = height;

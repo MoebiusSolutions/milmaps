@@ -536,7 +536,7 @@ public class Driver implements EntryPoint {
 		DivPanel dp = divMgr.getCurrentDiv();
 		IProjection proj = m_map.getProjection();
 		double eqScale = proj.getEquatorialScale();
-		for ( int i = 0; i < 100; i++){
+		for ( int i = 0; i < 1; i++){
 			dp.hideAllTiles();
 			dp.doUpdate(eqScale);
 		}

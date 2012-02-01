@@ -11,12 +11,12 @@ public class DivPanel extends AbsolutePanel {
 	private final LayoutPanel m_tileLayersPanel = new LayoutPanel();
 	private final DivWorker m_divWorker = new DivWorker();
 	private final TileBuilder m_tileBuilder = new TileBuilder();
-	private final DivDimensions m_dims = new DivDimensions();
+	private final DivDimensions m_scaledDims = new DivDimensions();
 	private MapView m_map = null;
 	private boolean m_firstSearch = true;
 	private boolean m_firstCenter = true;
 	private final ArrayList<TiledImageLayer> m_tiledImageLayers = new ArrayList<TiledImageLayer>();
-	protected IProjection m_proj = null;
+	protected IProjection m_divProj = null;
 	private WidgetPositioner m_widgetPositioner; // null unless needed
 	
 	public DivPanel() {
@@ -34,14 +34,14 @@ public class DivPanel extends AbsolutePanel {
 	
 	public void initialize(int level, MapView map, IProjection.T type, double eqScale) {
 		m_map = map;
-		m_proj = Projection.createProj(type);
-		m_proj.setEquatorialScale(eqScale);
-		m_divWorker.setProjection(m_proj);
-		m_tileBuilder.setProjection(m_proj);
+		m_divProj = Projection.createProj(type);
+		m_divProj.setEquatorialScale(eqScale);
+		m_divWorker.setProjection(m_divProj);
+		m_tileBuilder.setProjection(m_divProj);
 		m_tileBuilder.setDivLevel(level);
 	}
 	
-	public IProjection getProjection(){ return m_proj; }
+	public IProjection getProjection(){ return m_divProj; }
 	
 	public boolean updateViewCenter( GeodeticCoords gc ){
 		boolean bRtn = m_tileBuilder.upadteViewCenter(gc);
@@ -66,11 +66,11 @@ public class DivPanel extends AbsolutePanel {
 	}
 	
 	public void setDivBaseSize(int width, int height ){
-		m_divWorker.setDivBasePixelSize(width, height);
+		m_divWorker.setDivBaseDimensions(width, height);
 	}
 	
-	public DivDimensions getDimensions(){
-		return m_dims;
+	public DivDimensions getScaledDims(){
+		return m_scaledDims;
 	}
 	
 	public DivCoordSpan getUsedDivSpan() {
@@ -83,19 +83,18 @@ public class DivPanel extends AbsolutePanel {
 			minLeft = Math.min(minLeft, layer.getMinLeft());
 			maxRight = Math.max(maxRight, layer.getMaxRight());
 		}
-		//System.out.println("DivPanel minLeft: "+ minLeft + "  maxRight: " + maxRight);
 		return new DivCoordSpan(minLeft, maxRight);
 	}
 	
 	@Override
 	public void setPixelSize( int width, int height){
-		m_dims.setWidth(width);
-		m_dims.setHeight(height);
+		m_scaledDims.setWidth(width);
+		m_scaledDims.setHeight(height);
 		super.setPixelSize(width, height);
 	}
 	
 	public void setDimensions(DivDimensions d){
-		m_dims.copyFrom(d);
+		m_scaledDims.copyFrom(d);
 		super.setPixelSize(d.getWidth(), d.getHeight());
 	}
 	
@@ -160,34 +159,26 @@ public class DivPanel extends AbsolutePanel {
 	public void placeInViewPanel( AbsolutePanel panel ) {
 		IProjection mp = m_map.getProjection();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
-		ViewCoords tl = m_divWorker.computeDivLayoutInView(mp, vw, m_dims);
-		super.setPixelSize(m_dims.getWidth(), m_dims.getHeight());
+		ViewCoords tl = m_divWorker.computeDivLayoutInView(mp, vw, m_scaledDims);
+		super.setPixelSize(m_scaledDims.getWidth(), m_scaledDims.getHeight());
 		panel.setWidgetPosition(this, tl.getX(), tl.getY());
 	}
 	
 	// TODO unit test
 	public void resize(int w, int h) {
-		DivDimensions dd = m_divWorker.getDivBaseDimensions();	
+		DivDimensions dd = m_divWorker.getDivBaseDimensions();
 		int dW = dd.getWidth();
 		int dH = dd.getHeight();
 		if ( dW <= w ){
-			int tW = dW;
-			for( int i = 1; i < 3; i++ ){
-				dW += tW;
-				if ( dW > w )
-					break;
-			}
+			int f = (w/dW) + 1;
+			dW *= f; 
 		}
 		if ( dH<= h ){
-			int tH = dH;
-			for( int i = 1; i < 3; i++ ){
-				dH += tH;
-				if ( dH > h )
-					break;
-			}
+			int f = (h/dH) + 1;
+			dH *= f;
 		}
-		dd.setWidth(dW);
-		dd.setHeight(dH);
+		m_divWorker.setDivBaseDimensions( dW, dH);
+		m_divWorker.updateDivWithCurrentGeoCenter();
 	}
 	
 	public void positionIcons() {

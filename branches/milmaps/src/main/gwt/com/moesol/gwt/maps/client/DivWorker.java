@@ -18,7 +18,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	private double m_eqScale;
 	private double m_offsetInMcX;
 	private double m_offsetInMcY;
-	private IProjection m_proj = null;
+	private IProjection m_divProj = null;
 	
 	private int m_mapLevel;
 	
@@ -44,19 +44,22 @@ public class DivWorker implements ProjectionChangedHandler {
 		setGeoCenter(dw.getGeoCenter());
 	}
 	
-	public void setDivBaseDimensions( DivDimensions dd ){ m_baseDims.copyFrom(dd); }
+	public void setDivBaseDimensions( DivDimensions dd ){ 
+		m_baseDims.copyFrom(dd); 
+	}
+	
 	public DivDimensions getDivBaseDimensions(){ return m_baseDims; }
 	
-	public void setDivBasePixelSize( int width, int height){
+	public void setDivBaseDimensions( int width, int height){
 		m_baseDims.setWidth(width);
 		m_baseDims.setHeight(height);
 	}
 	
 	public void setProjection( IProjection p ){ 
-		m_proj = p; 
+		m_divProj = p; 
 	}
 	
-	public IProjection getProjection(){ return m_proj; }
+	public IProjection getProjection(){ return m_divProj; }
 	
 	public void setMapLevel(int mapLevel) {
 		this.m_mapLevel = mapLevel;
@@ -98,8 +101,13 @@ public class DivWorker implements ProjectionChangedHandler {
 	
 	public void setDiv( GeodeticCoords gc ){
 		m_geoCenter = gc;
-		m_divCenterMc = m_proj.geodeticToMapCoords(m_geoCenter);
+		m_divCenterMc = m_divProj.geodeticToMapCoords(m_geoCenter);
 		computeOffsets();
+	}
+	
+	public void updateDivWithCurrentGeoCenter(){
+		m_divCenterMc = m_divProj.geodeticToMapCoords(m_geoCenter);
+		computeOffsets();		
 	}
 	
 	public void computeOffsets(){
@@ -182,7 +190,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	
 	public double getScaleFactor(IProjection mapProj) {
 		double mapScale = mapProj.getEquatorialScale();
-		double divOrigScale = m_proj.getEquatorialScale();
+		double divOrigScale = m_divProj.getEquatorialScale();
 		return (mapScale/divOrigScale);
 	}
 	
@@ -204,7 +212,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	}
 	
 	private int computeDivLeft(WorldCoords wc, DivDimensions div, ViewWorker vw, double factor) {
-		int worldWidth = (int)(factor * m_proj.getWorldDimension().getWidth() + 0.5);
+		int worldWidth = (int)(factor * m_divProj.getWorldDimension().getWidth() + 0.5);
 		int viewOx = vw.getOffsetInWcX();
 		ViewDimension view = vw.getDimension();
 		
@@ -233,6 +241,25 @@ public class DivWorker implements ProjectionChangedHandler {
 			}
 		}
 		return left;
+	}
+	
+	public boolean hasDivMovedToFar(IProjection mapProj, ViewWorker vw, 
+									DivDimensions dim, DivCoordSpan ds) {
+		ViewCoords tl = computeDivLayoutInView(mapProj, vw, dim);
+		double factor = getScaleFactor(mapProj);
+		if( ds.isBad() ){
+			return true;
+		}
+		int imgLeft  = (int)(factor*ds.getLeft());
+		int imgRight = (int)(factor*ds.getRight());
+		
+		ViewCoords br = new ViewCoords(tl.getX()+ imgRight, tl.getY()+ dim.getHeight());
+		ViewDimension vd = vw.getDimension();
+		if( 0 < tl.getX() + imgLeft || br.getX() < vd.getWidth() || 
+		-10 < tl.getY() || br.getY() < vd.getHeight() + 10 ){
+		return true;
+		}
+		return false;
 	}
 	
 	@Override

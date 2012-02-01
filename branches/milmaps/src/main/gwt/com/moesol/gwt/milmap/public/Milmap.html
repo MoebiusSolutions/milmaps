@@ -25,6 +25,7 @@
 		};
 		
 		var myOrigin = window.location.protocol + '//' + window.location.host;
+		//var myOrigin = "http://192.168.1.108:8080";
 		var layerSets = [
 			{  
 				 server: myOrigin + "/milmapsCache/rs/mapcache",
@@ -51,7 +52,7 @@
 				 startLevelTileWidthInDeg:180,
 				 startLevelTileHeightInDeg:180,
 				 pixelWidth: 512,
-				 active: false
+				 active: true
 			}
 			,
 			// Google
@@ -97,7 +98,7 @@
 				startLevelTileHeightInDeg:180,
 				pixelHeight: 512,
 				pixelWidth: 512,
-				active: true
+				active: false
 			}
 	        ,
 	        // MGRS

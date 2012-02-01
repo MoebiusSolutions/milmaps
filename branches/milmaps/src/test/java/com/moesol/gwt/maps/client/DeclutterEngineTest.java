@@ -98,7 +98,7 @@ public class DeclutterEngineTest {
 		Icon.LABEL_STYLER = mock(Icon.LabelStyler.class);
 		
 		divWorker.setProjection(m_projection);
-		divWorker.setDivBasePixelSize(512, 512);
+		divWorker.setDivBaseDimensions(512, 512);
 		divWorker.setOffsetInWcX(256);
 		divWorker.setOffsetInWcY(512);
 

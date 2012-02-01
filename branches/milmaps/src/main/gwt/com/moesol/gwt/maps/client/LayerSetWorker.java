@@ -109,24 +109,7 @@ public class LayerSetWorker {
 			return  cyleGeoPosToTileXY( tLevel, pixWidth, degW, degH,  g  );
 		}
 	}
-	
-	
-/*
-	public TileXY geoPosToTileXY( LayerSet ls,  GeodeticCoords g ){
-		// This is based on zero row at the bottom of the map
-		//level = Math.max(0, level);
-		double minLat = computeMinLat(ls);
-		double maxLat = -1*minLat;
-        double lat = clip(g.getPhi(AngleUnit.DEGREES), minLat, maxLat);
-        double lng = clip(g.getLambda(AngleUnit.DEGREES), -180.0, 180.0);
-        // based on zero bottom
-        int pixX = m_proj.lngDegToPixX(lng);
-        int pixY = m_proj.latDegToPixY(lat);
-        m_tile.m_x = pixX/ls.getDrawPixelWidth();
-        m_tile.m_y = pixY/ls.getDrawPixelHeight();
-        return m_tile;
-	}
-*/    
+	   
 	/**
 	 * tileXY2TopLeftXY: computes the (i,j) tile's top left corner in Map World Coords.
 	 * @param ls: The layer set for the given tiles

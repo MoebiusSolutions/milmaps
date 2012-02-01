@@ -11,6 +11,7 @@ public class AnimationEngine extends Animation {
 	// Tag coordinates in View Coordinates
 	private double m_oldScale;
 	private double m_startEqScale;
+	private double m_endEqScale;
 	private double m_nextScale;
 	private double m_scaleDiff;
 	private int m_durationInSecs = 750;
@@ -28,21 +29,23 @@ public class AnimationEngine extends Animation {
 		m_ztWorker.setTagInVC((int)tagX, (int)tagY);
 		m_startEqScale = m_proj.getEquatorialScale();
 		m_oldScale = m_startEqScale;
-		m_scaleDiff = (scaleFactor - 1.0)*m_startEqScale;
+		m_endEqScale = getClosestLevelScale(m_startEqScale*scaleFactor);	
+		m_scaleDiff = m_endEqScale - m_startEqScale;
 		m_ztWorker.setViewOffsets(m_vpWorker.getOffsetInWcX(), m_vpWorker.getOffsetInWcY());
 	    run(m_durationInSecs);
 	}
 	
 	protected void zoom(double nextScale) {
 		double f = nextScale/m_oldScale;
+		if (f == 1.0) {
+			return;
+		}
 		m_ztWorker.compViewOffsets(f);
 		double ox = m_ztWorker.getOffsetX();
 		double oy = m_ztWorker.getOffsetY();
 		m_ztWorker.setViewOffsets(ox, oy);
 		m_mapView.zoomAndMove(f, (int)ox, (int)oy);
 		m_oldScale = nextScale;
-		// TODO fix this soon.
-		//m_mapView.drawIcons();
 	}
 	
 	@Override
@@ -59,16 +62,18 @@ public class AnimationEngine extends Animation {
 		m_mapView.setSuspendFlag(true);
 	}
 	
-	private double getClosestLevelScale() {
+	private double getClosestLevelScale(double eqScale) {
 		DivManager divMgr = m_mapView.getDivManager();
-		return divMgr.getClosestLevelScale();
+		return divMgr.getClosestLevelScale(eqScale);
 	}
 	
 	@Override
 	protected void onComplete() {
 		try {
 			super.onComplete();
-			zoom(getClosestLevelScale());
+			IProjection proj = m_mapView.getProjection();
+			double scale = proj.getEquatorialScale();
+			zoom(getClosestLevelScale(scale));
 			m_mapView.doUpdateView();
 		} finally {
 			m_mapView.setSuspendFlag(false);

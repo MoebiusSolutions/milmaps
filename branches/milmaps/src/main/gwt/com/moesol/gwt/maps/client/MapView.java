@@ -470,6 +470,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private void updateSize(int width, int height) {
 		m_viewPort.setSize(width, height);
 		//m_iconsOverTilesPanel.setPixelSize(width, height);
+		m_viewPanel.setPixelSize(width, height);
 		m_focusPanel.setPixelSize(width, height);
 	}
 
@@ -492,12 +493,11 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 */
 	public void resizeMap(int w, int h) {
 		m_resized  = true;
-		m_focusPanel.setPixelSize(w, h);
-		m_viewPanel.setPixelSize(w, h);
 		setPixelSize(w, h);
-		//m_viewPort.getVpWorker().setDimension(new ViewDimension(w, h));
 		m_divMgr.resizeDivs(w,h);
-		//updateView();
+		WorldCoords wc = m_viewPort.getVpWorker().getVpCenterInWc();
+		setWorldCenter(wc);
+		updateView();
 	}
 
 	/**

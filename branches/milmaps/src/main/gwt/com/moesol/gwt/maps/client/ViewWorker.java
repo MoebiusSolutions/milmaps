@@ -3,6 +3,7 @@ package com.moesol.gwt.maps.client;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
 import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
+import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class ViewWorker implements ProjectionChangedHandler {
 	private ViewDimension m_dims = new ViewDimension(400, 600);
@@ -38,7 +39,6 @@ public class ViewWorker implements ProjectionChangedHandler {
 		return m_dims;
 	}
 	
-	// TODO remove me, use word  coords only
 	public void setGeoCenter( GeodeticCoords gc ) {
 		m_geoCenter = gc;
 		
@@ -46,7 +46,6 @@ public class ViewWorker implements ProjectionChangedHandler {
 		computeOffsets(wc);
 	}
 
-	// TODO remove me, use word  coords only
 	public GeodeticCoords getGeoCenter(){
 		return m_geoCenter;
 	}
