@@ -45,6 +45,7 @@ public class TiledImageLayer {
 		public void destroyImage(Object object) {
 			ImageDiv image = (ImageDiv)object;
 			image.removeLoadListener(m_tileImageLoadListener);
+			image.removeImage();
 			image.removeFromParent();
 		}
 		
@@ -174,7 +175,7 @@ public class TiledImageLayer {
 	
 	public boolean areAllLoaded() {
 		ImageDiv image = (ImageDiv)m_tileImageMgr.firstUnloadedImage();
-		if (image != null) {
+		if (image!= null) {
 			System.out.println("Waiting for " + image.getUrl());
 		}
 		return image == null;

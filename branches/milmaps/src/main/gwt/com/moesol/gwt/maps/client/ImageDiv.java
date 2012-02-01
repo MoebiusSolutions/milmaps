@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 
 public class ImageDiv extends AbsolutePanel{
-	public final Image image;
+	public Image image;
 	
 	public ImageDiv(){
 		this.getElement().setClassName("imagediv");
@@ -15,29 +15,45 @@ public class ImageDiv extends AbsolutePanel{
 		add(image);
 	}
 	
+	public void removeImage(){
+		remove(image);
+		image = null;
+	}
+	
 	public Image getImage(){
 		return image;
 	}
 	
 	public void setUrl( String url ){
-		image.setUrl(url);
+		if (image != null) {
+			image.setUrl(url);
+		}
 	}
 	
 	public String getUrl(){
-		return image.getUrl();
+		if (image != null) {
+			return image.getUrl();
+		}
+		return null;
 	}
 	
 	public void setStyleName( String name ){
-		image.setStyleName(name);
+		if (image != null) {
+			image.setStyleName(name);
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
 	public void addLoadListener(TileImageLoadListener ll){
-		image.addLoadListener(ll);
+		if (image != null) {
+			image.addLoadListener(ll);
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
 	public void removeLoadListener(TileImageLoadListener ll){
-		image.removeLoadListener(ll);
+		if (image != null) {
+			image.removeLoadListener(ll);
+		}
 	}
 }
