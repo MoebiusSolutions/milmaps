@@ -76,7 +76,7 @@ public class LayerSet implements IsSerializable {
 		m_startLevel = level;
 	}
 	
-	public void setBackGroundMapFlag( boolean flag ){
+	public void setBackgroundMapFlag( boolean flag ){
 		m_isBackgroundMap = flag;
 	}
 	
@@ -330,7 +330,7 @@ public class LayerSet implements IsSerializable {
 	}
 
 	public LayerSet withSetBackGroundMapFlag(boolean backGroundMap) {
-		setBackGroundMapFlag(backGroundMap);
+		setBackgroundMapFlag(backGroundMap);
 		return this;
 	}
 
