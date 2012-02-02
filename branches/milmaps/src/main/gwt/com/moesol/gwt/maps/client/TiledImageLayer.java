@@ -15,7 +15,6 @@ public class TiledImageLayer {
 	
 	private final LayoutPanel m_layoutPanel;
 	private final TileImageManager m_tileImageMgr = new TileImageManager(m_tileImageEngineListener);
-	private final int REAL_ZOFFSET = 2000;
 	
 	private final double EarthCirMeters  = 2.0*Math.PI*6378137;
 	private final double MeterPerDeg  = EarthCirMeters/360.0;
@@ -143,7 +142,8 @@ public class TiledImageLayer {
 		}
 		ImageDiv image = (ImageDiv)m_tileImageMgr.findOrCreateImage(tileCoords);
 		// TODO review the need for zindex now that animation is done differently
-		setImageZIndex(image, REAL_ZOFFSET + m_layerSet.getZIndex());
+		int divLevel = m_divPanel.getDivLevel();
+		setImageZIndex(image,  m_layerSet.getZIndex());
 		int x = tileCoords.getOffsetX();
 		int y = tileCoords.getOffsetY();
 		int width = tileCoords.getTileWidth();

@@ -8,7 +8,6 @@ public class DivManager {
 	private int m_currentLevel = 0;
 	private IProjection m_proj= null;
 	private final MapView m_map;
-	//int count = 0;
 	
 	private ViewWorker m_vpWorker = null;
 	DivPanel[] m_dpArray = new DivPanel[NUMDIVS];
@@ -16,7 +15,7 @@ public class DivManager {
 	public DivManager(MapView map){
 		m_map = map;
 		for( int i = 0; i < NUMDIVS; i++ ){
-			m_dpArray[i] = new DivPanel();
+			m_dpArray[i] = new DivPanel(i);
 			m_dpArray[i].getElement().getStyle().setZIndex(i);
 		}
 	}

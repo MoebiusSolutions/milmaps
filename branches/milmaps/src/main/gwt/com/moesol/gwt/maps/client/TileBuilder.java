@@ -239,7 +239,7 @@ public class TileBuilder {
 		}
 	}
 
-	public void layoutTiles( ViewDimension vd, double eqScale ) {
+	public void layoutTiles( ViewDimension vd, double eqScale, int currentLevel ) {
 		double projScale = m_divProj.getEquatorialScale();
 		double dFactor = eqScale/projScale;
 		m_scaledViewDims = ViewDimension.builder()
@@ -255,9 +255,11 @@ public class TileBuilder {
 				layer.updateView(); // Force hiding inactive layers, but skip placing their tiles.
 				continue;
 			}
-			if (ls.isAlwaysDraw() || layer.isPriority()) {
-				int level = layer.findLevel(dpi, projScale);
-				placeTilesForOneLayer(level, layer);
+			if (ls.isbackgroungMap() || currentLevel == m_divLevel) {
+				if (ls.isAlwaysDraw() || layer.isPriority()) {
+					int level = layer.findLevel(dpi, projScale);
+					placeTilesForOneLayer(level, layer);
+				}
 			}
 		}
 	}
@@ -267,7 +269,7 @@ public class TileBuilder {
 		if (layerSet.isAlwaysDraw()) {
 			return false;
 		}
-		if (!layerSet.useToScale()) {
+		if (!layerSet.isbackgroungMap()) {
 			return false;
 		}
 		if (!layerSet.levelIsInRange(level)) {

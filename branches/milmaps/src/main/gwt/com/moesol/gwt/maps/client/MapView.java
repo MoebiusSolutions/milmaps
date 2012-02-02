@@ -432,7 +432,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
 		m_divMgr.positionIcons();
 		Sample.MAP_FULL_UPDATE.endSample();
-		System.out.println("FullUpdateView");
 	}
 	
 	public void partialUpdateView() {
@@ -549,9 +548,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	//TODO
 	public void zoomAndMove( final double factor, final int offsetX, final int offsetY ) {
-		if (Math.abs(factor-1.0) < 0.00000001) {
-			return;
-		}
 		final ViewWorker vpWorker = this.getViewport().getVpWorker();
 		m_mapProj.zoomByFactor(factor);
 		final ViewDimension vd = vpWorker.getDimension();

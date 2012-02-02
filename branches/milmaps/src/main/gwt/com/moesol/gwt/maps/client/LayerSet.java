@@ -14,7 +14,7 @@ public class LayerSet implements IsSerializable {
 	private boolean m_active = true; // If set to false engine will not render.
 	private boolean m_zeroTop = false;
 	private boolean m_alwaysDraw = false;
-	private boolean m_useToScale = true;
+	private boolean m_isBackgroundMap = true;
 	private boolean m_autoRefreshOnTimer = false;
 	private int m_epsg = 4326;
 	private int m_minLevel = -20;
@@ -76,12 +76,12 @@ public class LayerSet implements IsSerializable {
 		m_startLevel = level;
 	}
 	
-	public void setUseToScale( boolean flag ){
-		m_useToScale = flag;
+	public void setBackGroundMapFlag( boolean flag ){
+		m_isBackgroundMap = flag;
 	}
 	
-	public boolean useToScale(){
-		return m_useToScale;
+	public boolean isbackgroungMap(){
+		return m_isBackgroundMap;
 	}
 	
 	public void setZIndex(int index) {
@@ -329,8 +329,8 @@ public class LayerSet implements IsSerializable {
 		return this;
 	}
 
-	public LayerSet withUseToScale(boolean useToScale) {
-		setUseToScale(useToScale);
+	public LayerSet withSetBackGroundMapFlag(boolean backGroundMap) {
+		setBackGroundMapFlag(backGroundMap);
 		return this;
 	}
 

@@ -13,13 +13,15 @@ public class DivPanel extends AbsolutePanel {
 	private final TileBuilder m_tileBuilder = new TileBuilder();
 	private final DivDimensions m_scaledDims = new DivDimensions();
 	private MapView m_map = null;
+	private final int m_level;
 	private boolean m_firstSearch = true;
 	private boolean m_firstCenter = true;
 	private final ArrayList<TiledImageLayer> m_tiledImageLayers = new ArrayList<TiledImageLayer>();
 	protected IProjection m_divProj = null;
 	private WidgetPositioner m_widgetPositioner; // null unless needed
 	
-	public DivPanel() {
+	public DivPanel(int level) {
+		m_level = level;
 		m_tileBuilder.setDivWorker(m_divWorker);
 		m_tileBuilder.setTileImageLayers(m_tiledImageLayers);
 		m_tileLayersPanel.setStylePrimaryName("tileLayerPanel");
@@ -40,6 +42,8 @@ public class DivPanel extends AbsolutePanel {
 		m_tileBuilder.setProjection(m_divProj);
 		m_tileBuilder.setDivLevel(level);
 	}
+	
+	public int getDivLevel(){ return m_level; }
 	
 	public IProjection getProjection(){ return m_divProj; }
 	
@@ -153,7 +157,8 @@ public class DivPanel extends AbsolutePanel {
 			m_tileBuilder.setLayerBestSuitedForScale();
 			m_firstSearch = false;
 		}
-		m_tileBuilder.layoutTiles( vd, eqScale );
+		int currentLevel = m_map.getDivManager().getCurrentLevel();
+		m_tileBuilder.layoutTiles(vd, eqScale, currentLevel);
 	}
 	
 	public void placeInViewPanel( AbsolutePanel panel ) {
