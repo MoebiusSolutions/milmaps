@@ -158,6 +158,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public void setDeclutterLabels(boolean bDeclutterLabels) {
 		m_bDeclutterLabels = bDeclutterLabels;
 	}
+	
 	public DeclutterEngine getDeclutterEngine() {
 		if (m_declutterEngine == null) {
 			m_declutterEngine = new DeclutterEngine(this);
@@ -200,7 +201,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 			return new GeodeticCoords(defLng, defLat, AngleUnit.DEGREES);
 		}
 	}
-
+	
 	/**
 	 * Called when map changed and idle, when this method is called onIdle is not called.
 	 */
@@ -417,7 +418,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		} else {
 			partialUpdateView();
 		}
-		
+		m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
 		m_changeListeners.fireChange( this );
 		
 // TODO move to idle handling...

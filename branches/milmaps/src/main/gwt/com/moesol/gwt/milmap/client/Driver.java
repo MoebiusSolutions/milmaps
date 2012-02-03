@@ -228,6 +228,12 @@ public class Driver implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				memoryTest();
 			}});
+		
+		Button declutter = new Button("Declutter", new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				declutterTest();
+			}});
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
 		oracle.add("0");
 		oracle.add("01");
@@ -246,6 +252,7 @@ public class Driver implements EntryPoint {
 		bar.add(moveIcons);
 		bar.add(showLeaders);
 		bar.add(resizeMap);
+		bar.add(declutter);
 		bar.add(benchmarks);
 		bar.add(stats);
 		bar.add(memoryTest);
@@ -389,15 +396,16 @@ public class Driver implements EntryPoint {
 		double lat = 0.0;
 		double lng = -180.0;
 		for (int i = 0; i < num; i++) {
-			addOneIcon(lat, lng);
+			addOneIcon(i, lat, lng);
 			lat += incy;
 			lng += incx;
 		}
 	}
 
-	private void addOneIcon(double lat, double lng) {
+	private void addOneIcon(int i, double lat, double lng) {
 		Icon icon;
 		icon = new Icon();
+		icon.setLabel("icon number " + i);
 		icon.setIconUrl("http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg");
 		icon.setLocation(new GeodeticCoords(lng, lat, AngleUnit.DEGREES));
 		icon.setImageSize(new ViewDimension(16, 16));
@@ -540,6 +548,12 @@ public class Driver implements EntryPoint {
 			dp.hideAllTiles();
 			dp.doUpdate(eqScale);
 		}
+	}
+	
+	public void declutterTest(){
+		boolean flag =  !m_map.isDeclutterLabels();
+		m_map.setDeclutterLabels(flag);
+		m_map.doUpdateView();
 	}
 
 	protected void goRight() {

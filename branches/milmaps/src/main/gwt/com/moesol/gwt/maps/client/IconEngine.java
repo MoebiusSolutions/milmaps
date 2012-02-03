@@ -7,6 +7,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.moesol.gwt.maps.client.stats.Sample;
 
 public class IconEngine {
+	private static double CharWidthInPixels = 10.0;
+	private static int CharHeightInPixels = 15; 
 	private final IMapView m_mapView;
 	
 	public IconEngine(IMapView mv) {
@@ -41,12 +43,22 @@ public class IconEngine {
 		
 		Label label = icon.getLabel();
 		if (label != null) {
+			// We may want to move this block of code
+			int width = 0;
+			int height = 0;
+			if (label.getOffsetWidth() > 0) {
+				width = label.getOffsetWidth();
+				height = label.getOffsetHeight();
+			}
+			else if (label.getText().length() > 0) {
+				width = (int)(label.getText().length()*CharWidthInPixels +0.5);
+				height = CharHeightInPixels;
+			}
+			//// End of block
 			widgetPositioner.place(label, 
 					dc.getX() + icon.getDeclutterOffset().getX(), 
 					dc.getY() + icon.getDeclutterOffset().getY(),
-					label.getOffsetWidth(),
-					label.getOffsetHeight(),
-					icon.getZIndex());
+					width, height,icon.getZIndex() );
 		}
 		
 		Image leader = icon.getLabelLeaderImage();

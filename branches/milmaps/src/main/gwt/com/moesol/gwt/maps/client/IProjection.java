@@ -5,6 +5,7 @@ import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
 import com.moesol.gwt.maps.shared.BoundingBox;
 
 public interface IProjection {
+	public static double EarthRadiusM = 6378137; // meters
 	public enum ZoomFlag {
 		OUT, NONE, IN
 	}

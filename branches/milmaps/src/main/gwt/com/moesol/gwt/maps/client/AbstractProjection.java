@@ -14,8 +14,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	protected IProjection.T m_projType;
 	protected final WorldDimension m_wdSize = new WorldDimension(); // Whole world
 																  // map size
-	public double EarthRadius = 6378137;
-	public double EarthCirMeters  = 2.0*Math.PI*6378137;
+	public double EarthCirMeters  = 2.0*Math.PI*IProjection.EarthRadiusM;
 	public double MeterPerDeg  = EarthCirMeters/360.0;
 	
 	protected int m_scrnDpi = 75;   // screen dot per inch
@@ -41,7 +40,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	}
 	public AbstractProjection(int dpi) {
 		m_scrnDpi = dpi;
-		m_scrnMpp = 2.54 / (dpi * 100); // meters per pixel for physical screen
+		m_scrnMpp = 2.54/(dpi*100); // meters per pixel for physical screen
 	}
 	
 	public abstract int lngDegToPixX( double deg );
@@ -68,9 +67,9 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	
 	@Override
 	public void initialize(int tileSize, double degWidth, double degHeight) {
-		double earth_mpp = degWidth * (MeterPerDeg / tileSize);
+		double earth_mpp = (degWidth * MeterPerDeg)/tileSize;
 		// meters per pixel for physical screen
-		m_scrnMpp = 2.54 / (m_scrnDpi * 100); 
+		m_scrnMpp = 2.54 / (m_scrnDpi * 100.0); 
 		m_eqScale = (m_scrnMpp / earth_mpp);
 		m_origEqScale = m_eqScale;
 		//m_origMapWidthSize = (int)( tileSize*(360/degWidth) + 0.5);
@@ -185,7 +184,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	public String toString() {
 		return "AbstractProjection ["
 				+ "m_projType=" + m_projType + ", m_wdSize=" + m_wdSize
-				+ ", EarthRadius=" + EarthRadius + ", EarthCirMeters="
+				+ ", EarthRadius=" + IProjection.EarthRadiusM + ", EarthCirMeters="
 				+ EarthCirMeters + ", MeterPerDeg=" + MeterPerDeg
 				+ ", m_scrnDpi=" + m_scrnDpi + ", m_scrnMpp=" + m_scrnMpp
 				+ ", m_eqScale=" + m_eqScale + ", m_origMapWidthSize="

@@ -16,7 +16,7 @@ public class TiledImageLayer {
 	private final LayoutPanel m_layoutPanel;
 	private final TileImageManager m_tileImageMgr = new TileImageManager(m_tileImageEngineListener);
 	
-	private final double EarthCirMeters  = 2.0*Math.PI*6378137;
+	private final double EarthCirMeters  = 2.0*Math.PI*IProjection.EarthRadiusM;
 	private final double MeterPerDeg  = EarthCirMeters/360.0;
 	
 	private TileCoords[] m_tileCoords;
@@ -217,7 +217,7 @@ public class TiledImageLayer {
 	public int findLevel(double dpi, double projScale) {
 		double mpp = 2.54 / (dpi * 100); // meters per pixel for physical screen
 		double m_dx = m_layerSet.getPixelWidth();
-		double l_mpp = m_layerSet.getStartLevelTileWidthInDeg()* (MeterPerDeg / m_dx);
+		double l_mpp = (m_layerSet.getStartLevelTileWidthInDeg()*MeterPerDeg)/m_dx;
 		// compute the best level.
 		if ( projScale == 0.0 ){
 			projScale = (mpp / l_mpp);
@@ -231,7 +231,7 @@ public class TiledImageLayer {
 	public double findScale( double dpi, int level ) {
 		double mpp = 2.54 / (dpi * 100);
 		double m_dx = m_layerSet.getPixelWidth();
-		double l_mpp = m_layerSet.getStartLevelTileWidthInDeg()* (MeterPerDeg / m_dx);
+		double l_mpp = (m_layerSet.getStartLevelTileWidthInDeg()*MeterPerDeg)/m_dx;
 		// we want to return ( (mpp*2^n)/(l_mpp) );
 		return ((mpp * Math.pow(2, level)) / l_mpp);
 	}
