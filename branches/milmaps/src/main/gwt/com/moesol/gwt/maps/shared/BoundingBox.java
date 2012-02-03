@@ -1,5 +1,7 @@
 package com.moesol.gwt.maps.shared;
 
+import com.moesol.gwt.maps.client.units.Radians;
+
 public class BoundingBox {
 	
 	// TODO make this class immutable
@@ -30,8 +32,31 @@ public class BoundingBox {
 			top = v;
 			return this;
 		}
+		public DegreesBuilder degrees() {
+			return new DegreesBuilder(this);
+		}
+		public RadiansBuilder radians() {
+			return new RadiansBuilder(this);
+		}
+	}
+	public static class DegreesBuilder extends Builder {
+		private final Builder builder;
+		
+		public DegreesBuilder(Builder b) {
+			builder = b;
+		}
 		public BoundingBox build() {
-			return new BoundingBox(top, left, bottom, right);
+			return new BoundingBox(builder.top, builder.left, builder.bottom, builder.right);
+		}
+	}
+	public static class RadiansBuilder extends Builder {
+		private final Builder builder;
+		
+		public RadiansBuilder(Builder b) {
+			builder = b;
+		}
+		public BoundingBox build() {
+			return new BoundingBox(Radians.asDegrees(builder.top), Radians.asDegrees(builder.left), Radians.asDegrees(builder.bottom), Radians.asDegrees(builder.right));
 		}
 	}
 	
@@ -41,7 +66,7 @@ public class BoundingBox {
 
 	// TODO consider just hidding this as package private or
 	// Using WMS order from BBOX left,bottom,right,top
-	public BoundingBox(double topLat, double leftLon, double botLat, double rightLon) {
+	private BoundingBox(double topLat, double leftLon, double botLat, double rightLon) {
 		if (topLat < botLat) {
 			throw new IllegalArgumentException(
 					"Top lat must be greater than bottom lat: top=" + topLat + " bottom=" + botLat);

@@ -31,7 +31,10 @@ public class BoundingBoxTest {
 
 	@Test
 	public void testContains_doesContain_positive() {
-		BoundingBox boundingBox = new BoundingBox(1.0, 0.0, 0.0, 1.0);
+		BoundingBox boundingBox = BoundingBox.builder()
+				.top(1.0).left(0.0)
+				.bottom(0.0).right(1.0)
+				.degrees().build();
 		assertTrue(boundingBox.contains(0.5, 0.5));
 		assertTrue(boundingBox.contains(0.0, 0.0));
 		assertTrue(boundingBox.contains(1.0, 1.0));
@@ -39,7 +42,10 @@ public class BoundingBoxTest {
 	
 	@Test
 	public void testContains_doesContain_negative() {
-		BoundingBox boundingBox = new BoundingBox(0.0, -1.0, -1.0, 0.0);
+		BoundingBox boundingBox = BoundingBox.builder()
+				.top(0.0).left(-1.0)
+				.bottom(-1.0).right(0.0)
+				.degrees().build();
 		assertTrue(boundingBox.contains(-0.5, -0.5));
 		assertTrue(boundingBox.contains(0.0, 0.0));
 		assertTrue(boundingBox.contains(-1.0, -1.0));
@@ -47,7 +53,7 @@ public class BoundingBoxTest {
 	
 	@Test
 	public void testContains_doesContain_straddlesAntimeridian_negative() {
-		BoundingBox boundingBox = new BoundingBox(4.0, -182.0, 0.0, -178.0);
+		BoundingBox boundingBox = BoundingBox.builder().top(4.0).left(-182.0).bottom(0.0).right(-178.0).degrees().build();
 		assertTrue(boundingBox.contains(0.5, 180.5));
 		assertTrue(boundingBox.contains(0.1, 180.0));
 		assertTrue(boundingBox.contains(0.1, 179.0));
@@ -57,7 +63,7 @@ public class BoundingBoxTest {
 	
 	@Test
 	public void testContains_doesContain_straddlesAntimeridian_positive() {
-		BoundingBox boundingBox = new BoundingBox(4.0, 178.0, 0.0, 182.0);
+		BoundingBox boundingBox = BoundingBox.builder().top(4.0).left(178.0).bottom(0.0).right(182.0).degrees().build();
 		assertTrue(boundingBox.contains(0.5, 180.5));
 		assertTrue(boundingBox.contains(0.1, 180.0));
 		assertTrue(boundingBox.contains(0.1, 179.0));
@@ -67,7 +73,7 @@ public class BoundingBoxTest {
 	
 	@Test
 	public void testContains_doesNotContain_positive() {
-		BoundingBox boundingBox = new BoundingBox(1.0, 0.0, 0.0, 1.0);
+		BoundingBox boundingBox = BoundingBox.builder().top(1.0).left(0.0).bottom(0.0).right(1.0).degrees().build();
 		assertFalse(boundingBox.contains(1.1, 1.1));
 		assertFalse(boundingBox.contains(-0.01, 0.0));
 		assertFalse(boundingBox.contains(1.0, 1.01));
@@ -75,7 +81,7 @@ public class BoundingBoxTest {
 	
 	@Test
 	public void testContains_doesNotContain_negative() {
-		BoundingBox boundingBox = new BoundingBox(0.0, -1.0, -1.0, 0.0);
+		BoundingBox boundingBox = BoundingBox.builder().top(0.0).left(-1.0).bottom(-1.0).right(0.0).degrees().build();
 		assertFalse(boundingBox.contains(-1.1, -1.1));
 		assertFalse(boundingBox.contains(0.01, 0.01));
 		assertFalse(boundingBox.contains(-1.1, -1.0));
@@ -83,7 +89,7 @@ public class BoundingBoxTest {
 	
 	@Test
 	public void testContains_doesNotContain_straddlesAntimeridian_negative() {
-		BoundingBox boundingBox = new BoundingBox(4.0, -182.0, 0.0, -178.0);
+		BoundingBox boundingBox = BoundingBox.builder().top(4.0).left(-182.0).bottom(0.0).right(-178.0).degrees().build();
 		assertFalse(boundingBox.contains(4.0, 182.1));
 		assertFalse(boundingBox.contains(4.0, -177.9));
 		assertFalse(boundingBox.contains(0.1, Math.nextAfter(178, Double.NEGATIVE_INFINITY)));
@@ -91,7 +97,7 @@ public class BoundingBoxTest {
 	
 	@Test
 	public void testContains_doesNotContain_straddlesAntimeridian_positive() {
-		BoundingBox boundingBox = new BoundingBox(4.0, 178.0, 0.0, 182.0);
+		BoundingBox boundingBox = BoundingBox.builder().top(4.0).left(178.0).bottom(0.0).right(182.0).degrees().build();
 		assertFalse(boundingBox.contains(4.0, 182.1));
 		assertFalse(boundingBox.contains(4.0, -177.9));
 		assertFalse(boundingBox.contains(0.1, Math.nextAfter(178, Double.NEGATIVE_INFINITY)));
@@ -99,37 +105,38 @@ public class BoundingBoxTest {
 	
 	@Test
 	public void testGetCenterLat_minAndMaxNegative() {
-		BoundingBox bbox = new BoundingBox(-60.0, 0.0, -80, 10.0);
+		BoundingBox bbox = BoundingBox.builder().top(-60.0).left(0.0).bottom(-80).right(10.0).degrees().build();
 		assertEquals(bbox.getCenterLat(), -70.0, EPSILON);
 	}
 	
 	@Test
 	public void testGetCenterLat_minAndMaxPositive() {
-		BoundingBox bbox = new BoundingBox(80.0, 0.0, 60, 10.0);
+		BoundingBox bbox = BoundingBox.builder().top(80.0).left(0.0).bottom(60).right(10.0).degrees().build();
 		assertEquals(bbox.getCenterLat(), 70.0, EPSILON);
 	}
 	
 	@Test
 	public void testGetCenterLat_minNegative_maxPositive() {
-		BoundingBox bbox = new BoundingBox(70.0, 0.0, -80, 10.0);
+		BoundingBox bbox = BoundingBox.builder().top(70.0).left(0.0).bottom(-80).right(10.0).degrees().build();
 		assertEquals(bbox.getCenterLat(), -5.0, EPSILON);
 	}
 	
 	@Test
 	public void testGetCenterLon_minAndMaxNegative() {
-		BoundingBox bbox = new BoundingBox(20.0, -50.0, 10.0, -20);
+		BoundingBox bbox = BoundingBox.builder().top(20.0).left(-50.0).bottom(10.0).right(-20).degrees().build();
 		assertEquals(bbox.getCenterLng(), -35.0, EPSILON);
 	}
 	
 	@Test
 	public void testGetCenterLon_minAndMaxPositive() {
-		BoundingBox bbox = new BoundingBox(0.1, 10.0, 0.0, 11.0);
+		BoundingBox bbox = BoundingBox.builder().top(0.1).left(10.0).bottom(0.0).right(11.0).degrees().build();
 		assertEquals(bbox.getCenterLng(), 10.5, EPSILON);
 	}
 	
 	@Test
 	public void testGetCenterLon_minNegative_maxPositive() {
-		BoundingBox bbox = new BoundingBox(70.0, -80.0, -80.0, 70.0);
+		BoundingBox bbox = BoundingBox.builder().top(70.0).left(-80.0).bottom(-80.0).right(70.0).degrees().build();
 		assertEquals(bbox.getCenterLng(), -5.0, EPSILON);
 	}
+	
 }

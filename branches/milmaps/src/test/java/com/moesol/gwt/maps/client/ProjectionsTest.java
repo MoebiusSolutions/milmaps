@@ -50,7 +50,7 @@ public class ProjectionsTest {
 	public void given_zoomed_out_when_find_small_box_then_larget_scale() {
 		recordViewPort();
 		
-		BoundingBox box = new BoundingBox(12, 10, 10, 12);
+		BoundingBox box = BoundingBox.builder().top(12).left(10).bottom(10).right(12).degrees().build();
 		double start = viewPort.getProjection().getEquatorialScale();
 		double found = Projections.findScaleFor(viewPort, box);
 		assertTrue(found > start);
@@ -61,7 +61,7 @@ public class ProjectionsTest {
 		recordViewPort();
 		
 		double wholeWorld = viewPort.getProjection().getEquatorialScale();
-		BoundingBox box = new BoundingBox(-80, 12, -80, 12);
+		BoundingBox box = BoundingBox.builder().top(-80).left(12).bottom(-80).right(12).degrees().build();
 		assertEquals(wholeWorld, Projections.findScaleFor(viewPort, box), 0.0);
 	}
 
@@ -73,7 +73,7 @@ public class ProjectionsTest {
 
 		recordViewPort();
 		
-		BoundingBox box = new BoundingBox(80, 12, -80, 12);
+		BoundingBox box = BoundingBox.builder().top(80).left(12).bottom(-80).right(12).degrees().build();
 		double start = viewPort.getProjection().getEquatorialScale();
 		double found = Projections.findScaleFor(viewPort, box);
 		assertTrue(found < start);

@@ -10,7 +10,7 @@ import com.moesol.gwt.maps.shared.BoundingBox;
 
 public class Mercator extends AbstractProjection {	
 	private static final BoundingBox BOUNDS 
-		= BoundingBox.builder().bottom(-85.05113).top(85.05113).left(-180).right(180).build();
+		= BoundingBox.builder().bottom(-85.05113).top(85.05113).left(-180).right(180).degrees().build();
 
 	public Mercator( ){
 		super();

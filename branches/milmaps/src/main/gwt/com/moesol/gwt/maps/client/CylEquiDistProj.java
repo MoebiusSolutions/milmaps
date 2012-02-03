@@ -17,7 +17,7 @@ import com.moesol.gwt.maps.shared.BoundingBox;
 
 public class CylEquiDistProj extends AbstractProjection {
 	private static final BoundingBox BOUNDS 
-		= BoundingBox.builder().bottom(-90).top(90).left(-180).right(180).build();
+		= BoundingBox.builder().bottom(-90).top(90).left(-180).right(180).degrees().build();
 
 	public CylEquiDistProj( ){
 		super();

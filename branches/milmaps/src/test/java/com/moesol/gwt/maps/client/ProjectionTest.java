@@ -97,7 +97,7 @@ public class ProjectionTest {
 			inc = (1/10.2)*j;
 			for( int i = 0; i < 20; i ++){
 				double f = (1<<i) + inc;
-				int level = m_proj.getLevelFromScale(dScale*f,0);
+				int level = m_proj.getLevelFromScale(dScale*f, 0);
 				assertEquals(i, level);
 			}
 		}
