@@ -15,7 +15,7 @@ public class LayerSetJson extends JavaScriptObject {
 	public final native String getUrlPattern(String def) /*-{ return this.urlPattern || def; }-*/;
 	public final native boolean isZeroTop(boolean def) /*-{ return this.zeroTop != undefined ? this.zeroTop : def; }-*/;
 	public final native boolean isAlwaysDraw(boolean def) /*-{ return this.alwaysDraw != undefined ? this.alwaysDraw : def; }-*/;
-	public final native boolean isBackgroundMap(boolean def) /*-{ return this.isbackgroundMap != undefined ? this.isbackgroundMap : def; }-*/;
+	public final native boolean isBackgroundMap(boolean def) /*-{ return this.isBackgroundMap != undefined ? this.isBackgroundMap : def; }-*/;
 	public final native boolean isAutoRefreshOnTimer(boolean def) /*-{ return this.autoRefreshOnTimer != undefined ? this.autoRefreshOnTimer : def; }-*/;
 	public final native boolean isActive(boolean def) /*-{ return this.active != undefined ? this.active : def; }-*/;
 	public final native int getEpsg(int def) /*-{ return this.epsg || def; }-*/;
@@ -39,7 +39,7 @@ public class LayerSetJson extends JavaScriptObject {
 			.withUrlPattern(getUrlPattern(layerSet.getUrlPattern()))
 			.withZeroTop(isZeroTop(layerSet.isZeroTop()))
 			.withAlwaysDraw(isAlwaysDraw(layerSet.isAlwaysDraw()))
-			.withSetBackGroundMapFlag(isBackgroundMap(layerSet.isbackgroungMap()))
+			.withSetBackGroundMapFlag(isBackgroundMap(layerSet.isBackgroundMap()))
 			.withAutoRefreshOnTimer(isAutoRefreshOnTimer(layerSet.isAutoRefreshOnTimer()))
 			.withActive(isActive(layerSet.isActive()))
 			.withEpsg(getEpsg(layerSet.getEpsg()))

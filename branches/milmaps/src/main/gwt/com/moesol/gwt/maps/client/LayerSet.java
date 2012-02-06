@@ -80,7 +80,7 @@ public class LayerSet implements IsSerializable {
 		m_isBackgroundMap = flag;
 	}
 	
-	public boolean isbackgroungMap(){
+	public boolean isBackgroundMap(){
 		return m_isBackgroundMap;
 	}
 	

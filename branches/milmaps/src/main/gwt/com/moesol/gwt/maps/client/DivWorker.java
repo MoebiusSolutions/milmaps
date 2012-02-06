@@ -155,9 +155,8 @@ public class DivWorker implements ProjectionChangedHandler {
 	 * @param vc
 	 * @return
 	 */
-	public double divXToPercent( int dcX ) {
-		double x = dcX;
-		return x/m_baseDims.getWidth();
+	public double divXToPercent( double dcX ) {
+		return dcX/m_baseDims.getWidth();
 	}
 	
 	/**
@@ -165,9 +164,8 @@ public class DivWorker implements ProjectionChangedHandler {
 	 * @param vc
 	 * @return
 	 */
-	public double divYToPercent( int dcY ) {
-		double y = dcY;
-		return y/m_baseDims.getHeight();
+	public double divYToPercent( double dcY ) {
+		return dcY/m_baseDims.getHeight();
 	}
 	
 	/**
@@ -179,12 +177,11 @@ public class DivWorker implements ProjectionChangedHandler {
 	 * @param height
 	 * @return
 	 */
-	public BoxBounds computePerccentBounds ( int x, int y, int width, int height ){
-		
+	public BoxBounds computePerccentBounds(int x, int y, int width, int height) {
 		m_boxBounds.top   = divYToPercent(y)*100;
 		m_boxBounds.left  = divXToPercent(x)*100;
-		m_boxBounds.bot   = divYToPercent(y+height+1)*100;
-		m_boxBounds.right = divXToPercent(x+width+1)*100;
+		m_boxBounds.bot   = divYToPercent(y+height)*100;
+		m_boxBounds.right = divXToPercent(x+width)*100;
 		return m_boxBounds;
 	}
 	
@@ -194,7 +191,7 @@ public class DivWorker implements ProjectionChangedHandler {
 		return (mapScale/divOrigScale);
 	}
 	
-	public ViewCoords computeDivLayoutInView( IProjection mapProj, ViewWorker vw, DivDimensions dim ) {
+	public ViewCoords computeDivLayoutInView(IProjection mapProj, ViewWorker vw, DivDimensions dim) {
 		int viewOy = vw.getOffsetInWcY();
 		double factor = getScaleFactor(mapProj);
 		dim.setWidth((int)(m_baseDims.getWidth()*factor + 0.5));
@@ -247,7 +244,7 @@ public class DivWorker implements ProjectionChangedHandler {
 									DivDimensions dim, DivCoordSpan ds) {
 		ViewCoords tl = computeDivLayoutInView(mapProj, vw, dim);
 		double factor = getScaleFactor(mapProj);
-		if( ds.isBad() ){
+		if (ds.isBad()) {
 			return true;
 		}
 		int imgLeft  = (int)(factor*ds.getLeft());
@@ -255,8 +252,8 @@ public class DivWorker implements ProjectionChangedHandler {
 		
 		ViewCoords br = new ViewCoords(tl.getX()+ imgRight, tl.getY()+ dim.getHeight());
 		ViewDimension vd = vw.getDimension();
-		if( 0 < tl.getX() + imgLeft || br.getX() < vd.getWidth() || 
-		-10 < tl.getY() || br.getY() < vd.getHeight() + 10 ){
+		if ( 0 < tl.getX() + imgLeft || br.getX() < vd.getWidth() || 
+		   -10 < tl.getY() || br.getY() < vd.getHeight() + 10 ) {
 		return true;
 		}
 		return false;

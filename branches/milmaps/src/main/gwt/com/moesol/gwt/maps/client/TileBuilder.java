@@ -255,7 +255,7 @@ public class TileBuilder {
 				layer.updateView(); // Force hiding inactive layers, but skip placing their tiles.
 				continue;
 			}
-			if (ls.isbackgroungMap() || currentLevel == m_divLevel) {
+			if (ls.isBackgroundMap() || currentLevel == m_divLevel) {
 				if (ls.isAlwaysDraw() || layer.isPriority()) {
 					int level = layer.findLevel(dpi, projScale);
 					placeTilesForOneLayer(level, layer);
@@ -269,7 +269,7 @@ public class TileBuilder {
 		if (layerSet.isAlwaysDraw()) {
 			return false;
 		}
-		if (!layerSet.isbackgroungMap()) {
+		if (!layerSet.isBackgroundMap()) {
 			return false;
 		}
 		if (!layerSet.levelIsInRange(level)) {
