@@ -163,27 +163,28 @@ public class MapController implements
 		DOM.releaseCapture(sender.getElement());
 
 		try {
-			maybeDragMap(x, y);
-			m_map.updateView();
+			if (!maybeDragMap(x, y) && m_dragTracker != null) {
+				m_map.doUpdateView();
+			}
 			m_map.setFocus(true);
 		} finally {
 			m_dragTracker = null;
 		}
 	}
 
-	private void maybeDragMap(int x, int y) {
+	private boolean maybeDragMap(int x, int y) {
 		if (m_dragTracker == null) {
-			// Not dragging
-			return;
+			return false; // Not dragging
 		}
 		WorldCoords newWorldCenter = m_dragTracker.update(x, y);
 		if (m_dragTracker.isSameAsLast()) {
-			return;
+			return false;
 		}
 		
 		m_map.cancelAnimations();
 		m_map.setWorldCenter(newWorldCenter);
 		m_map.partialUpdateView();
+		return true;
 	}
 	private void maybeHover(MouseMoveEvent event) {
 		m_hoverTimer .cancel();
