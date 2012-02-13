@@ -252,9 +252,11 @@ public class DivWorker implements ProjectionChangedHandler {
 		
 		ViewCoords br = new ViewCoords(tl.getX()+ imgRight, tl.getY()+ dim.getHeight());
 		ViewDimension vd = vw.getDimension();
-		if ( 0 < tl.getX() + imgLeft || br.getX() < vd.getWidth() || 
-		   -10 < tl.getY() || br.getY() < vd.getHeight() + 10 ) {
-		return true;
+		if (-20 < (tl.getX()+imgLeft)     || 
+			 br.getX() < vd.getWidth()+20 || 
+		    -10 < tl.getY()               || 
+		     br.getY() < vd.getHeight()+10) {
+			return true;
 		}
 		return false;
 	}

@@ -30,13 +30,12 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private final MapController m_mapEventListener;
 
 	private IProjection m_mapProj = null;
-	private IProjection m_tempProj;
 	private final ViewPort m_viewPort = new ViewPort();
 	private final DivManager m_divMgr = new DivManager(this);
 	
 	private final AnimationEngine m_animateEngine = new AnimationEngine(this);
 	private final FlyToEngine m_flyToEngine = new FlyToEngine(this);
-	final IconEngine m_iconEngine = new IconEngine(this);
+	private final IconEngine m_iconEngine = new IconEngine(this);
 	private DeclutterEngine m_declutterEngine; // null unless needed
 	private final ChangeListenerCollection m_changeListeners = new ChangeListenerCollection();
 
@@ -75,6 +74,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		initialize(defaultCenter);
 	}
 
+	
 	private void initialize(GeodeticCoords defaultCenter) {
 		ProjectionValues.readCookies(m_mapProj);
 		
@@ -100,6 +100,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		//doUpdateView();
 	}
 	
+	public IconEngine getIconEngine() { return m_iconEngine; }
+	
 	public EventBus getEventBus() {
 		return m_eventBus;
 	}
@@ -112,7 +114,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_mapProj = proj;
 		m_previousEqScale = proj.getEquatorialScale()*8.0;
 		m_viewPort.setProjection(proj);
-		m_tempProj = proj.cloneProj();
 	}
 	
 	private boolean setProjFromLayerSet(LayerSet ls) {
@@ -406,16 +407,17 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		double scale = m_mapProj.getEquatorialScale();
 		int currentLevel = m_mapProj.getLevelFromScale(scale, 0);
 		m_previousEqScale = m_mapProj.getEquatorialScale();
-		return ( prevLevel != currentLevel);
-
+		return (prevLevel != currentLevel);
 	}
 	
 	
 	public void doUpdateView() {
 		if (m_resized || hasLevelChanged() || m_divMgr.hasDivMovedToFar()) {
 			m_resized = false;
+			//System.out.println("fullUpdate");
 			fullUpdateView();
 		} else {
+			//System.out.println("partialUpdate");
 			partialUpdateView();
 		}
 		m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
@@ -428,8 +430,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	public void fullUpdateView() {
 		Sample.MAP_FULL_UPDATE.beginSample();
-		m_divMgr.doUpdateDivsCenterScale( m_mapProj.getEquatorialScale() );
+		// Do Not change the order of the next two
+		// methods are called in
 		m_divMgr.doUpdateDivsVisibility( m_viewPanel );
+		m_divMgr.doUpdateDivsCenterScale( m_mapProj.getEquatorialScale() );
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
 		m_divMgr.positionIcons();
 		Sample.MAP_FULL_UPDATE.endSample();
@@ -575,7 +579,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 * @param scale
 	 */
 	public void flyTo(GeodeticCoords center, MapScale scale) {
-		m_flyToEngine.flyTo(center.getPhi(AngleUnit.DEGREES), center.getLambda(AngleUnit.DEGREES), scale.asDouble());
+		m_flyToEngine.flyTo(center, scale.asDouble());
 	}
 	
 	/**
@@ -585,7 +589,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	 * @param box
 	 */
 	public void flyTo(BoundingBox box) {
-		m_flyToEngine.flyTo(box.getCenterLat(), box.getCenterLng(), Projections.findScaleFor(getViewport(), box));
+		GeodeticCoords gc = new GeodeticCoords( box.getCenterLng(),
+												box.getCenterLat(), 
+												AngleUnit.DEGREES);
+		m_flyToEngine.flyTo(gc, Projections.findScaleFor(getViewport(), box));
 	}
 
 	public int getDynamicRefreshMillis() {
@@ -632,7 +639,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	@Override
 	public IProjection getTempProjection() {
-		return m_tempProj;
+		return m_mapProj.cloneProj();
 	}
 	
 	public WidgetPositioner getWidgetPositioner() {

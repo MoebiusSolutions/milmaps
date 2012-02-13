@@ -24,7 +24,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	
 	protected int m_origMapWidthSize;
 	
-	protected double m_origEqScale = 0;
+	protected double m_baseEqScale = 0;
 	//protected int 	 m_orgTilePixSize = 0;
 	//protected double m_origTileDegHeight = 0;
 	
@@ -65,13 +65,24 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 		return (int)(mapSize() + 0.5);
 	}
 	
+	public static double wrapLng(double lng) {
+		if (lng > 180.0) {
+			while (lng > 180.0)
+				lng -= 360.0;
+		} else if (lng < -180.0) {
+			while (lng < -180.0)
+				lng += 360.0;
+		}
+		return lng;
+	}
+	
 	@Override
 	public void initialize(int tileSize, double degWidth, double degHeight) {
 		double earth_mpp = (degWidth * MeterPerDeg)/tileSize;
 		// meters per pixel for physical screen
 		m_scrnMpp = 2.54 / (m_scrnDpi * 100.0); 
 		m_eqScale = (m_scrnMpp / earth_mpp);
-		m_origEqScale = m_eqScale;
+		m_baseEqScale = m_eqScale;
 		//m_origMapWidthSize = (int)( tileSize*(360/degWidth) + 0.5);
 		computeWorldSize();
 	}
@@ -79,6 +90,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	@Override
 	public void copyFrom(IProjection p) {
 		m_scrnDpi = p.getScrnDpi();
+		m_baseEqScale = p.getBaseEquatorialScale();
 		setEquatorialScale(p.getEquatorialScale());
 	}
 
@@ -155,19 +167,19 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
     }
     
     @Override
-    public double getOrigEquatorialScale(){ 
-    	return m_origEqScale; 
+    public double getBaseEquatorialScale(){ 
+    	return m_baseEqScale; 
     }
     
     @Override
     public int getLevelFromScale( double eqScale, double roundValue ){
-		double level = ( Math.log(eqScale) - Math.log(m_origEqScale))/Math.log(2);
+		double level = ( Math.log(eqScale) - Math.log(m_baseEqScale))/Math.log(2);
 		return (int)(level + roundValue);
     }
   
     @Override
     public double getScaleFromLevel(int level) {
-		return m_origEqScale * (1 << level); 
+		return m_baseEqScale * (1 << level); 
     }
 
 	@Override
@@ -188,7 +200,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 				+ EarthCirMeters + ", MeterPerDeg=" + MeterPerDeg
 				+ ", m_scrnDpi=" + m_scrnDpi + ", m_scrnMpp=" + m_scrnMpp
 				+ ", m_eqScale=" + m_eqScale + ", m_origMapWidthSize="
-				+ m_origMapWidthSize + ", m_origEqScale=" + m_origEqScale + "]";
+				+ m_origMapWidthSize + ", m_origEqScale=" + m_baseEqScale + "]";
 	}
     
 }

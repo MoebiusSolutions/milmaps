@@ -7,18 +7,21 @@ public class DivManager {
 	public static final int NUMDIVS = 20;
 	private int m_currentLevel = 0;
 	private IProjection m_proj= null;
-	private final MapView m_map;
+	private final IMapView m_map;
 	//private Browser.Type m_browser;
 	
 	private ViewWorker m_vpWorker = null;
 	DivPanel[] m_dpArray = new DivPanel[NUMDIVS];
 	
-	public DivManager(MapView map){
+	public DivManager(IMapView map){
 		m_map = map;
-		//m_browser = Browser.getBrowser();
+	}
+	
+	public void attachDivsTo(AbsolutePanel lp){
 		for( int i = 0; i < NUMDIVS; i++ ){
 			m_dpArray[i] = new DivPanel(i);
 			m_dpArray[i].getElement().getStyle().setZIndex(i);
+			lp.add(m_dpArray[i]);
 		}
 	}
 	
@@ -47,7 +50,7 @@ public class DivManager {
 	}
 	
 	protected void initDivPanels(){
-		double eqScale = m_proj.getOrigEquatorialScale();
+		double eqScale = m_proj.getBaseEquatorialScale();
 		for( int i = 0; i < NUMDIVS; i++ ){
 			double scale = eqScale*(1<<i);
 			m_dpArray[i].initialize(i, m_map, m_proj.getType(),scale);
@@ -92,13 +95,6 @@ public class DivManager {
 			return m_dpArray[level];
 		}
 		return null;
-	}
-	
-	
-	public void attachDivsTo(AbsolutePanel lp){
-		for( int i = 0; i < NUMDIVS; i++ ){
-			lp.add(m_dpArray[i]);
-		}
 	}
 	
 	public void setOpacity(double brightness){

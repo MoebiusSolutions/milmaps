@@ -6,10 +6,16 @@ public interface IMapView {
 	IProjection getProjection();
 	IProjection getTempProjection();
 	ViewPort getViewport();
+	IconEngine getIconEngine();
 	void setSuspendFlag(boolean b);
 	void updateView();
 	void doUpdateView();
+	void partialUpdateView();
 	void setCenter(GeodeticCoords geodeticCoords);
+	DivManager getDivManager();
+	long getDynamicCounter();
+	double getMapBrightness();
+	boolean isMapActionSuspended();
 	IconLayer getIconLayer();
 	WidgetPositioner getWidgetPositioner();
 }

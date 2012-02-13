@@ -91,7 +91,7 @@ public class ProjectionTest {
 	
 	@Test
 	public void testComputeLevel() {
-		double dScale = m_proj.getOrigEquatorialScale();
+		double dScale = m_proj.getBaseEquatorialScale();
 		double inc;
 		for( int j = 1; j < 10; j++ ){
 			inc = (1/10.2)*j;

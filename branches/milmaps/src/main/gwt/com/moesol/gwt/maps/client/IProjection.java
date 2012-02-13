@@ -133,7 +133,7 @@ public interface IProjection {
 	 * Returns the original scale that is computed when the projection 
 	 * is initialized with the layer data.
 	 */
-	public abstract double getOrigEquatorialScale();
+	public abstract double getBaseEquatorialScale();
 	
 	
 	/**

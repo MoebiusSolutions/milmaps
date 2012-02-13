@@ -12,7 +12,7 @@ public class DivPanel extends AbsolutePanel {
 	private final DivWorker m_divWorker = new DivWorker();
 	private final TileBuilder m_tileBuilder = new TileBuilder();
 	private final DivDimensions m_scaledDims = new DivDimensions();
-	private MapView m_map = null;
+	private IMapView m_map = null;
 	private final int m_level;
 	private boolean m_firstSearch = true;
 	private boolean m_firstCenter = true;
@@ -34,7 +34,7 @@ public class DivPanel extends AbsolutePanel {
 		this.getElement().setClassName("DivPanelContainer");
 	}
 	
-	public void initialize(int level, MapView map, IProjection.T type, double eqScale) {
+	public void initialize(int level, IMapView map, IProjection.T type, double eqScale) {
 		m_map = map;
 		m_divProj = Projection.createProj(type);
 		m_divProj.setEquatorialScale(eqScale);
@@ -187,7 +187,7 @@ public class DivPanel extends AbsolutePanel {
 	}
 	
 	public void positionIcons() {
-		m_map.m_iconEngine.positionIcons(getWidgetPositioner(), m_divWorker);
+		m_map.getIconEngine().positionIcons(getWidgetPositioner(), m_divWorker);
 	}
 
 	public WidgetPositioner getWidgetPositioner() {
