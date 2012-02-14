@@ -120,6 +120,17 @@ public class FlyToEngine {
 		return (m_startLat+endLat)/2.0;
 	}
 	
+	protected double wrapLng(double lng) {
+		if (lng > 180.0) {
+			while (lng > 180.0)
+				lng -= 360.0;
+		} else if (lng < -180.0) {
+			while (lng < -180.0)
+				lng += 360.0;
+		}
+		return lng;
+	}
+	
 	protected void computeTeleportPt( GeodeticCoords endPt, double projScale){
 		IProjection proj = m_mapView.getProjection().cloneProj();
 		proj.setEquatorialScale(projScale);
@@ -138,7 +149,7 @@ public class FlyToEngine {
 			wc = new WorldCoords(wc.getX()+offset, wc.getY());
 			GeodeticCoords gc = proj.worldToGeodetic(wc);
 			m_teleportLat = gc.getPhi(AngleUnit.DEGREES);
-			m_teleportLng = gc.getLambda(AngleUnit.DEGREES);
+			m_teleportLng = wrapLng(gc.getLambda(AngleUnit.DEGREES));
 		}
 		m_teleportScale = proj.getScaleFromLevel(level);
 		m_postTeleportDeltaLat = endPt.getPhi(AngleUnit.DEGREES) - m_teleportLat;
@@ -154,9 +165,9 @@ public class FlyToEngine {
 		ViewDimension vd = vw.getDimension();
 		GeodeticCoords tl = viewToGeo(0,0);
 		GeodeticCoords br = viewToGeo(vd.getWidth(), vd.getHeight());
-		double preTelePortLng = getPreTeleportLng(tl.getLambda(AngleUnit.DEGREES), 
-										   		  centLng,
-										   		  br.getLambda(AngleUnit.DEGREES), 
+		double leftLng = wrapLng(tl.getLambda(AngleUnit.DEGREES));
+		double rightLng = wrapLng(br.getLambda(AngleUnit.DEGREES));
+		double preTelePortLng = getPreTeleportLng(leftLng, centLng, rightLng, 
 										   		  endPt.getLambda(AngleUnit.DEGREES));
 		double preTelePortLat = getPreTeleportLat(br.getPhi(AngleUnit.DEGREES), 
 							   			   		  tl.getPhi(AngleUnit.DEGREES),

@@ -64,7 +64,6 @@ public class Mercator extends AbstractProjection {
 		if (w.getX() > 10 && lng == getDegreeBoundingBox().left()) {
 			lng = getDegreeBoundingBox().right();
 		}
-		lng = wrapLng(lng);
 		double lat = yPixToDegLat( w.getY() );
 		return Degrees.geodetic(lat, lng);
 	}
@@ -93,7 +92,6 @@ public class Mercator extends AbstractProjection {
 		if (w.getX() > 10 && lng == getDegreeBoundingBox().left()) {
 			lng = getDegreeBoundingBox().right();
 		}
-		lng = wrapLng(lng);
 		double lat = yPixToDegLat(w.getY());
 		return Degrees.geodetic(lat, lng);
 	}

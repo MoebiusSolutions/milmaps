@@ -64,18 +64,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	public int iMapSize() {
 		return (int)(mapSize() + 0.5);
 	}
-	
-	public static double wrapLng(double lng) {
-		if (lng > 180.0) {
-			while (lng > 180.0)
-				lng -= 360.0;
-		} else if (lng < -180.0) {
-			while (lng < -180.0)
-				lng += 360.0;
-		}
-		return lng;
-	}
-	
+
 	@Override
 	public void initialize(int tileSize, double degWidth, double degHeight) {
 		double earth_mpp = (degWidth * MeterPerDeg)/tileSize;
