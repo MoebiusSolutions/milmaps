@@ -160,7 +160,20 @@ public interface IProjection {
 	 * @return int, level corresponding to the scale, may be negative.
 	 */
 	int getLevelFromScale(double eqScale, double roundValue );
+	
+	/**
+	 * getScaleFromLevel
+	 * @param level
+	 * @return double, the scale for the given level.
+	 */
 	double getScaleFromLevel(int level);
+	
+	/**
+	 * wrapLng keeps the longitude between -180 and 180.
+	 * @param lng
+	 * @return
+	 */
+	public double wrapLng(double lng);
 
 	/**
 	 * Register a projection changed handler
