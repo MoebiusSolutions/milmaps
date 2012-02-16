@@ -54,12 +54,12 @@
 		<repository>
 			<id>Moebius Artifactory</id>
 			<layout>default</layout>
-			<url>http://artifactory.moesol.com/artifactory/repo/</url>
+			<url>https://artifactory.moesol.com/artifactory/repo/</url>
 		</repository>
 		<repository>
 			<id>Moebius Artifactory SNAPSHOTS</id>
 			<layout>default</layout>
-			<url>http://artifactory.moesol.com/artifactory/libs-snapshots/</url>
+			<url>https://artifactory.moesol.com/artifactory/libs-snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -78,7 +78,7 @@
 		<pluginRepository>
 			<id>Moebius Artifactory</id>
 			<layout>default</layout>
-			<url>http://artifactory.moesol.com/artifactory/repo/</url>
+			<url>https://artifactory.moesol.com/artifactory/repo/</url>
 		</pluginRepository>
 	</pluginRepositories>
 
@@ -87,12 +87,12 @@
 		<!-- This is used by "maven deploy" (deploying a SNAPSHOT release) -->
 		<snapshotRepository>
 			<id>moesol.artifactory</id>
-			<url>http://artifactory.moesol.com/artifactory/libs-snapshots-local</url>
+			<url>https://artifactory.moesol.com/artifactory/libs-snapshots-local</url>
 		</snapshotRepository>
 		<!-- This is used by "maven deploy" (deploying a release) -->
 		<repository>
 			<id>moesol.artifactory</id>
-			<url>http://artifactory.moesol.com/artifactory/libs-releases-local</url>
+			<url>https://artifactory.moesol.com/artifactory/libs-releases-local</url>
 		</repository>
 		<!-- This is used by maven "site:deploy" (deploying release notes) -->
 		<site>
