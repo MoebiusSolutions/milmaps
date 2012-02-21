@@ -13,7 +13,7 @@ public class DivWorkerTest {
 	private IProjection m_proj, m_mapProj;
 	
 	@Before
-	public void setUp() throws Exception {
+	public void before() throws Exception {
 		// DivPanel projection
 		m_proj = Projection.createProj(IProjection.T.CylEquiDist);
 		m_proj.initialize(512, 180, 180);

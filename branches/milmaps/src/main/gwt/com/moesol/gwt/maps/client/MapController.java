@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.controls.HoverEvent;
 import com.moesol.gwt.maps.client.controls.HoverHandler;
 import com.moesol.gwt.maps.client.events.MapViewChangeEvent;
+import com.moesol.gwt.maps.client.stats.MapStateDialog;
 import com.moesol.gwt.maps.client.stats.StatsDialogBox;
 import com.moesol.gwt.maps.client.touch.Touch;
 import com.moesol.gwt.maps.client.touch.TouchCancelEvent;
@@ -339,6 +340,9 @@ public class MapController implements
 			break;
 		case KeyEvent.VK_F:
 			m_map.fullUpdateView();
+			break;
+		case KeyEvent.VK_S:
+			new MapStateDialog(m_map).show();
 			break;	
 		}
 		if (m_keyVelocity < 64) {
