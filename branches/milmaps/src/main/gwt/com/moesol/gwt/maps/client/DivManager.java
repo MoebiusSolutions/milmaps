@@ -23,6 +23,9 @@ public class DivManager {
 			m_dpArray[i].getElement().getStyle().setZIndex(i);
 			lp.add(m_dpArray[i]);
 		}
+		// we will initialize the projection, but the projection
+		// may change when the layer sets are loaded.
+		initProjections( 512, 512,180,180,IProjection.T.CylEquiDist);
 	}
 	
 	public boolean isProjectionSet(){
