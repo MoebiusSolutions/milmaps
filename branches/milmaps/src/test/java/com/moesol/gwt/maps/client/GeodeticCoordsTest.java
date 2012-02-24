@@ -30,5 +30,12 @@ public class GeodeticCoordsTest {
 		assertEquals(-117, example.latitude().degrees(), 0.0);
 		assertEquals(33, example.longitude().degrees(), 0.0);
 	}
+	
+	@Test
+	public void testLegacyUsage() {
+		GeodeticCoords example = Degrees.geodetic(-117, 33);
+		assertEquals(-117, example.getPhi(AngleUnit.DEGREES), 0.0);
+		assertEquals(33, example.getLambda(AngleUnit.DEGREES), 0.0);
+	}
 
 }
