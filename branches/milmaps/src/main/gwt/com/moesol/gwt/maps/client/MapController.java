@@ -1,32 +1,10 @@
 package com.moesol.gwt.maps.client;
 
-import java.awt.event.KeyEvent;
-
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.event.dom.client.MouseWheelEvent;
-import com.google.gwt.event.dom.client.MouseWheelHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventPreview;
-import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.*;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,7 +13,7 @@ import com.moesol.gwt.maps.client.controls.HoverHandler;
 import com.moesol.gwt.maps.client.events.MapViewChangeEvent;
 import com.moesol.gwt.maps.client.stats.MapStateDialog;
 import com.moesol.gwt.maps.client.stats.StatsDialogBox;
-import com.moesol.gwt.maps.client.touch.Touch;
+import com.moesol.gwt.maps.client.touch.*;
 import com.moesol.gwt.maps.client.touch.TouchCancelEvent;
 import com.moesol.gwt.maps.client.touch.TouchCancelHandler;
 import com.moesol.gwt.maps.client.touch.TouchEndEvent;
@@ -253,6 +231,9 @@ public class MapController implements
 			zoomAndCenter(vCoords.getX(), vCoords.getY(), false);
 		}
 		//MapViewChangeEvent.fire(m_eventBus, m_map);
+                
+                // Don't let containing elements in the browser catch the same scroll wheel event
+                DOM.eventPreventDefault(DOM.eventGetCurrentEvent());
 	}
 
 	@Override
@@ -338,10 +319,10 @@ public class MapController implements
 		case KeyCodes.KEY_DOWN:
 			moveMap(0, -1);
 			break;
-		case KeyEvent.VK_F:
+		case 'f':
 			m_map.fullUpdateView();
 			break;
-		case KeyEvent.VK_S:
+		case 's':
 			new MapStateDialog(m_map).show();
 			break;	
 		}
