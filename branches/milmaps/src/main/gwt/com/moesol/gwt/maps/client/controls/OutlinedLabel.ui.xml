@@ -2,22 +2,22 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder">
 	<div>
 		<div style="position:relative">
-			<div ui:field="text" style="position:absolute;z-index:1" class="map-OutlinedLabelText"></div>
-			<div ui:field="top" style="position:absolute;left:0px;top:-1px;"
+			<div ui:field="text" style="position:absolute;z-index:1;left:1px;top:0px" class="map-OutlinedLabelText"></div>
+			<div ui:field="top" style="position:absolute;left:1px;top:-1px;"
 				class="map-OutlinedLabelOutline"></div>
-			<div ui:field="bottom" style="position:absolute;left:-0px;top:1px;"
+			<div ui:field="bottom" style="position:absolute;left:1px;top:1px;"
 				class="map-OutlinedLabelOutline"></div>
-			<div ui:field="right" style="position:absolute;left:1px;top:0px"
+			<div ui:field="right" style="position:absolute;left:2px;top:0px"
 				class="map-OutlinedLabelOutline"></div>
-			<div ui:field="left" style="position:absolute;left:-1px;top:0px;"
+			<div ui:field="left" style="position:absolute;left:0px;top:0px;"
 				class="map-OutlinedLabelOutline"></div>
-			<div ui:field="topLeft" style="position:absolute;left:-1px;top:-1px;"
+			<div ui:field="topLeft" style="position:absolute;left:0px;top:-1px;"
 				class="map-OutlinedLabelOutline"></div>
-			<div ui:field="bottomLeft" style="position:absolute;left:-1px;top:1px;"
+			<div ui:field="bottomLeft" style="position:absolute;left:0px;top:1px;"
 				class="map-OutlinedLabelOutline"></div>
-			<div ui:field="topRight" style="position:absolute;left:1px;top:-1px"
+			<div ui:field="topRight" style="position:absolute;left:2px;top:-1px"
 				class="map-OutlinedLabelOutline"></div>
-			<div ui:field="bottomRight" style="position:absolute;left:1px;top:1px;"
+			<div ui:field="bottomRight" style="position:absolute;left:2px;top:1px;"
 				class="map-OutlinedLabelOutline"></div>
 		</div>
 	</div>

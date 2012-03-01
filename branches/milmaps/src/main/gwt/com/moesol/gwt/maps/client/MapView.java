@@ -11,12 +11,7 @@ import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ChangeListenerCollection;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.SourcesChangeEvents;
+import com.google.gwt.user.client.ui.*;
 import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
@@ -474,8 +469,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private void updateSize(int width, int height) {
 		m_viewPort.setSize(width, height);
 		//m_iconsOverTilesPanel.setPixelSize(width, height);
-		m_viewPanel.setPixelSize(width, height);
-		m_focusPanel.setPixelSize(width, height);
+		m_viewPanel.setPixelSize(width - 2, height - 2);
+		m_focusPanel.setPixelSize(width - 2, height - 2);
 	}
 
 	@Override
