@@ -130,8 +130,10 @@ public class MapPanZoomControlLegacy extends FlowPanel {
             zooms.setStyleName("map-PanZoomControlZoom");
             zoomInButton = new HTML();
             zoomInButton.setStyleName("map-PanZoomControlZoomInButton");
+            zoomInButton.getElement().getStyle().setProperty("marginLeft", "18px");
             zoomOutButton = new HTML();
             zoomOutButton.setStyleName("map-PanZoomControlZoomOutButton");
+            zoomOutButton.getElement().getStyle().setProperty("marginLeft", "18px");
             zooms.add(zoomInButton);
             zooms.add(zoomOutButton);
             this.add(zooms);
