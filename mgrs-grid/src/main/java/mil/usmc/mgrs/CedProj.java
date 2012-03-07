@@ -13,119 +13,102 @@ import mil.usmc.mgrs.objects.R2;
  * @author Moebius Solutions, Inc.
  */
 // Cylindrical Equal Distance projection (CedProj)
-public class CedProj implements IProjection {
+public class CedProj extends AbstractProjection {
     private static final double MinLatitude = -90;
     private static final double MaxLatitude = 90;
     private static final double MinLongitude = -180;
     private static final double MaxLongitude = 180;
     
-	public static double RadToDeg = 57.29577951;
-	public static double DegToRad = 0.017453293;
-    
-	protected int m_orgTilePixSize = 512;
-    
-    private Point m_geoPt = new Point();
-    private R2 m_pixel = new R2();
-    private R2 m_tile = new R2();
-    
 	public CedProj() {
-	}
-	
-	@Override
-	public void initialize( int tileSize ){	
-		m_orgTilePixSize = tileSize;
-	}   
-	
-    private double clip(double n, double minValue, double maxValue)
-    {
-        return Math.min(Math.max(n, minValue), maxValue);
-    }
+		m_orgTilePixWidth = 512;
+		m_orgTilePixHeight = 512;
+		m_orgTileDegWidth = 180.0;
+		m_orgTileDegHeight = 180.0;
+	}  
 	
     public int mapWidthSize(int levelOfDetail)
     {
-        return (int) m_orgTilePixSize << (levelOfDetail + 1);
-    }
-    
-    public int mapHeightSize(int levelOfDetail)
-    {
-        return mapWidthSize(levelOfDetail)/2;
-    }
-
-    @Override
-    public int mapSize( int level )
-    {
-    	return m_orgTilePixSize << (level+1);
+        return (int) m_orgTilePixWidth << (levelOfDetail + 1);
     }
     
     @Override
-	public int lngDegToPixX( int level, double deg ){
-		deg = clip(deg, MinLongitude, MaxLongitude);
-		double x = (deg + 180)/360;
-		return (int)((x * mapWidthSize(level))+0.5);
-	}
-	
-    @Override
-	public double xPixToDegLng( int level, double pix  )
-	{
-        double mapSize = mapWidthSize(level);
-        double x = (pix / mapSize) - 0.5;   
-        return (x*360);             
-	} 
-	
-    @Override
-	public int latDegToPixY( int level, double deg ){
-		deg = clip(deg, MinLatitude, MaxLatitude);
-		double y = (deg + 90)/180;
-		return (int)((y * mapHeightSize(level))+0.5);
-	}
-	
-    @Override
-	public double yPixToDegLat( int level, double pix  )
-	{
-        double mapSize = mapHeightSize(level);
-        double x = (pix / mapSize) - 0.5;   
-        return (x*180);             
-	} 
-	
-    @Override
-    public R2 latLngToPixelXY( int levelOfDetail, double lat, double lng )
+    public  double groundResolution(double latitude)
     {
-        m_pixel.m_x = (int) lngDegToPixX(levelOfDetail,lng);
-        m_pixel.m_y = (int) latDegToPixY(levelOfDetail,lat);
-        return m_pixel;
-    }
-    
-    @Override
-	public Point xyPixelToLatLng( int levelOfDetail, int x, int y) {
-		// we have to mod by world size in case we had
-		// to extend the whole world
-		m_geoPt.m_lat = yPixToDegLat(levelOfDetail,y);
-		m_geoPt.m_lng = xPixToDegLng(levelOfDetail,x);
-		return m_geoPt;
-	}
-
-    @Override
-	public R2 geoPosToTileXY( int level, double lat, double lng ){
-
-        double x = (lng + 180) / 360; 
-        double y = (lat + 90 ) / 180;
-
-        int mapWidthSize = mapWidthSize(level);
-        int mapHeightSize = mapHeightSize(level);
-        double pixX = clip(x * mapWidthSize + 0.5, 0, mapWidthSize);
-        double pixY = clip(y * mapHeightSize + 0.5, 0, mapHeightSize);
-		m_tile.m_x =  (int)Math.floor(pixX/ m_orgTilePixSize);
-		m_tile.m_y =  (int)Math.floor(pixY/m_orgTilePixSize);
-		return m_tile;
+        return (2 * Math.PI * IProjection.EARTH_RADIUS_METERS) / mapWidth();
+    } 
+	
+	private double translateLng(double lng){
+		if (lng < -180) {
+			lng += 360;
+		}
+		else if (lng > 180){
+			lng -= 360;
+		}
+		return lng;
 	}
 	
     @Override
     public R2 tileXYToTopLeftXY( int tileX, int tileY  ){
-    	m_pixel.m_x = tileX*m_orgTilePixSize;
-    	m_pixel.m_y = (tileY+1)*m_orgTilePixSize;
+    	m_pixel.m_x = tileX*m_orgTilePixWidth;
+    	m_pixel.m_y = (tileY+1)*m_orgTilePixHeight;
 
     	return m_pixel;
-    }	
+    }
+    
+    @Override
+    public int mapHeightInPix() {
+    	double width = mapWidth()/2.0;
+    	return (int)(width+0.5);
+    }
+	
+	@Override
+	public int lngDegToPixX(double deg) {
+		deg = clip(deg, MinLongitude, MaxLongitude);
+		deg = translateLng(deg - m_centLng);
+		double x = (deg)/180;
+		return (int)((x * mapWidthInPix()/2)+0.5);
+	}
+	
+	@Override
+	public double xPixToDegLng(double pix) {
+        double mapSize = mapWidth()/2;
+        double x = (pix / mapSize);   
+        return wrapLng(m_centLng + (x*180));
+	}
+
+	@Override
+	public int latDegToPixY(double deg) {
+		deg = clip(deg, MinLatitude, MaxLatitude);
+		double y = (deg + 90)/180;
+		return (int)((y * mapHeightInPix())+0.5);
+	}
+
+	@Override
+	public double yPixToDegLat(double pix) {
+		double mapSize =  mapWidth()/2.0;
+        double x = (pix / mapSize) - 0.5;   
+        return (x*180); 
+	}
+
+	@Override
+	public R2 latLngToPixelXY(double lat, double lng) {
+        m_pixel.m_x = (int) lngDegToPixX(lng);
+        m_pixel.m_y = (int) latDegToPixY(lat);
+        return m_pixel;
+	}
+
+	@Override
+	public Point xyPixelToLatLng(int x, int y) {
+		m_geoPt.m_lat = yPixToDegLat(y);
+		m_geoPt.m_lng = xPixToDegLng(x);
+		return m_geoPt;
+	}
+
+	@Override
+	public R2 geoPosToTileXY(double lat, double lng) {
+		// TODO Auto-generated method stub
+		return latLngToPixelXY(lat, lng);
+	}	
 }
 
 

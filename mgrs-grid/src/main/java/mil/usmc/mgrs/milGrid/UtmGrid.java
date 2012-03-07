@@ -34,34 +34,31 @@ public class UtmGrid {
 	protected IProjection m_proj;
 	//protected boolean m_bDrawToImage;
 	// Grid info.
-	protected int m_levelOfDetail;
 	protected boolean  m_bLabelOn;
 	// constant
 	
-	public UtmGrid( IProjection proj, int level )
+	public UtmGrid( IProjection proj )
 	{
 	  m_bLabelOn      = true;
 	  m_proj      	  = proj;
-	  m_levelOfDetail = level;
 	} 
 	
 	public boolean getCornerCell( ECellCorner eCorner, PixBoundingBox box, UtmCell cell )
 	{
 	  Point p = null;
-
 	  // Get TopLeft Lat/Lng
 	  switch ( eCorner ){
 	    case eTopLeft :
-	      p = m_proj.xyPixelToLatLng(m_levelOfDetail, box.getLeftX(), box.getTopY());
+	      p = m_proj.xyPixelToLatLng(box.getLeftX(), box.getTopY());
 	    break;
 	    case eTopRight :
-	      p = m_proj.xyPixelToLatLng(m_levelOfDetail, box.getRightX(), box.getTopY());
+	      p = m_proj.xyPixelToLatLng(box.getRightX(), box.getTopY());
 	    break;
 	    case eBotRight :
-	      p = m_proj.xyPixelToLatLng(m_levelOfDetail, box.getRightX(), box.getBottomY());
+	      p = m_proj.xyPixelToLatLng(box.getRightX(), box.getBottomY());
 	    break;
 	    case eBotLeft :
-	      p = m_proj.xyPixelToLatLng(m_levelOfDetail, box.getLeftX(), box.getBottomY());
+	      p = m_proj.xyPixelToLatLng(box.getLeftX(), box.getBottomY());
 	    break;
 	  }
 	  if ( p != null  ){
@@ -73,7 +70,7 @@ public class UtmGrid {
 	
 	protected R2 posToBoxPt( PixBoundingBox box, double lat, double lng ){
 		// get the map pixel coordinates for the lat, lng
-		m_r2Pt.copy(m_proj.latLngToPixelXY(m_levelOfDetail, lat, lng));
+		m_r2Pt.copy(m_proj.latLngToPixelXY(lat, lng));
 		// compute the xy value relative to the tile's offset
 		m_r2Pt.m_x = m_r2Pt.m_x - box.getLeftX();
 		m_r2Pt.m_y = box.getTopY() - m_r2Pt.m_y;

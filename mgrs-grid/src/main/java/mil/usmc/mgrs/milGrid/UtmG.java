@@ -69,20 +69,19 @@ public class UtmG {
     public void drawGrid(
     	Graphics2D g,
     	IProjection proj,
-    	int levelOfDetail,
     	PixBoundingBox box
     )
     {
     	double boxWidth = box.getWidth();
-    	m_dWidthDeg	= 360.0*( boxWidth /proj.mapSize(levelOfDetail));
+    	m_dWidthDeg	= 360.0*( boxWidth /proj.mapWidthInPix());
     		       
-    	if ( m_dWidthDeg < 5  ){// 15 degrees * 60 Nms * 1853 meters.
-    		_DrawNkGrid( g, proj, levelOfDetail, box );
+    	if ( m_dWidthDeg < 15  ){// 15 degrees * 60 Nms * 1853 meters.
+    		_DrawNkGrid( g, proj, box );
     	}
     	else { // Draw the UTM cell at zone level.
     		// We need to comment this back in when done.
     		int gridSize = widthToGridSpace();
-    		UtmGrid um = new UtmGrid( proj, levelOfDetail );
+    		UtmGrid um = new UtmGrid(proj);
     		um.drawGrid( g, box, gridSize );
     	 }
     }
@@ -94,7 +93,6 @@ public class UtmG {
     protected void  _DrawNkGrid(
     	Graphics2D g,
     	IProjection proj, 
-        int levelOfDetail,
         PixBoundingBox box
     )
     {
@@ -118,18 +116,17 @@ public class UtmG {
 		UtmPoint tl = new UtmPoint();
 		UtmPoint tr = new UtmPoint();
 		UtmPoint br = new UtmPoint();
-		if ( !Utmhelp.getUtmCornerPts(m_cm,proj,levelOfDetail,box,bl,tl,tr,br) )
+		if ( !Utmhelp.getUtmCornerPts(m_cm,proj,box,bl,tl,tr,br) )
 		    return;
 		UtmRegion  ur = new UtmRegion(bl,tl,tr,br);
 		m_nZones = ur.GetClipZones(m_caZoneList);
 		// Next we draw the lines in each zone.
-		_DrawClipZones( g, proj, levelOfDetail, box);
+		_DrawClipZones( g, proj, box);
     }
     
     protected void _DrawClipZones(
     	Graphics2D g,
     	IProjection proj, 
-        int levelOfDetail,
         PixBoundingBox box
     )
     {
@@ -137,7 +134,7 @@ public class UtmG {
     	for ( int i = 0; i < m_nZones; i++ ){
     		m_clipZone = m_caZoneList.get(i);
     		m_iZone = m_clipZone.getZone();
-    		_DrawClipZone(g, proj, levelOfDetail, box);
+    		_DrawClipZone(g, proj, box);
     	}
 	  return;
     }
@@ -145,7 +142,6 @@ public class UtmG {
     public void _DrawClipZone(
         	Graphics2D g,
         	IProjection proj,
-            int levelOfDetail,
             PixBoundingBox box
        	)
         {
@@ -158,18 +154,17 @@ public class UtmG {
     	    if ( sStartNs.eHem != sEndNs.eHem ){
     	      eHem  = sStartNs.eHem;
     	      iEndNs = 9999999;
-    	      _LoopNsAndDraw( g, proj, levelOfDetail, box, eHem, iStartNs, iEndNs );
+    	      _LoopNsAndDraw( g, proj, box, eHem, iStartNs, iEndNs );
     	      iStartNs = 0;
     	    }
     	    eHem  = sEndNs.eHem;
     	    iEndNs   = sEndNs.iNs;
-    	    _LoopNsAndDraw(g, proj, levelOfDetail, box, eHem, iStartNs, iEndNs );
+    	    _LoopNsAndDraw(g, proj, box, eHem, iStartNs, iEndNs );
         }
     
     public void _LoopNsAndDraw( 
         Graphics2D g,
         IProjection proj,
-        int levelOfDetail,
         PixBoundingBox box,
 	    EHemisphere eHem, 
 	    int iStartNs, 
@@ -180,7 +175,7 @@ public class UtmG {
     	iBotNs = iStartNs;
     	iTopNs = Utmhelp.getNextInc(iBotNs, iEndNs, m_gridSize);
     	while ( iBotNs < iEndNs ){
-    	    _DrawLines( g, proj, levelOfDetail, box, eHem ,iBotNs ,iTopNs );
+    	    _DrawLines( g, proj, box, eHem ,iBotNs ,iTopNs );
     		iBotNs = iTopNs;
     		iTopNs = Utmhelp.getNextInc(iBotNs, iEndNs, m_gridSize);
     	}  
@@ -190,7 +185,6 @@ public class UtmG {
     public void  _DrawLines( 
         	Graphics2D g,
             IProjection proj,
-            int levelOfDetail,
             PixBoundingBox box,
         	EHemisphere eHem,
         	int iBotNs, 
@@ -246,19 +240,19 @@ public class UtmG {
         	    int minY = 0;
         	    int maxY = 0;
         	    if ( Math.abs(iTopNextEw-iBotNextEw) < iInc/2 ){
-        	        p = Utmhelp.utmToWorldPix(m_cm, proj, levelOfDetail, utmPt[nTL]);
+        	        p = Utmhelp.utmToWorldPix(m_cm, proj, utmPt[nTL]);
         	        pt[nTL].copy(box.worldPixToBoxPt(p));
         	        minX = pt[nTL].m_x;
         	        maxX = pt[nTL].m_x;
         	        minY = pt[nTL].m_y;
         	        maxY = pt[nTL].m_y;
-        	        p = Utmhelp.utmToWorldPix(m_cm, proj, levelOfDetail, utmPt[nTR]);
+        	        p = Utmhelp.utmToWorldPix(m_cm, proj, utmPt[nTR]);
         	        pt[nTR].copy(box.worldPixToBoxPt(p));
         	        minX  = Math.min(pt[nTR].m_x, minX);
         	        maxX  = Math.max(pt[nTR].m_x, maxX);
         	        minY  = Math.min(pt[nTR].m_y, minY);
         	        maxY  = Math.max(pt[nTR].m_y, maxY);
-        	        p = Utmhelp.utmToWorldPix(m_cm, proj, levelOfDetail, utmPt[nBR]);
+        	        p = Utmhelp.utmToWorldPix(m_cm, proj, utmPt[nBR]);
         	        pt[nBR].copy(box.worldPixToBoxPt(p));
         	        minX  = Math.min(pt[nBR].m_x, minX);
         	        maxX  = Math.max(pt[nBR].m_x, maxX);
@@ -277,7 +271,7 @@ public class UtmG {
 	    	        	// Draw the top and right side of the cell.
 	    	        	Utmhelp.drawPolyline(g, pt, 3);
 	    	        	//
-	    	        	_DrawNkLabel( g, proj, levelOfDetail, box, m_iEndBotEw[0], utmPt, pt ); 
+	    	        	_DrawNkLabel( g, proj, box, m_iEndBotEw[0], utmPt, pt ); 
 	    	        }
         		}
         		if ( pt[nTR].m_x > iWidth || pt[nBR].m_x > iWidth )
@@ -313,7 +307,6 @@ public class UtmG {
 	protected void _DrawNkLabel(
 	    Graphics2D g,
 	    IProjection proj,
-	    int levelOfDetail,
 	    PixBoundingBox box,
 	    int        iEndBotEw,
 	    UtmPoint[] pUtm,
@@ -344,7 +337,7 @@ public class UtmG {
       			// Draw the label for the cell lower and left to this point
       			pt.m_x = pPt[nTR].m_x - 2;
       			pt.m_y = pPt[nTR].m_y + 2;
-      			csMgr = Utmhelp.boxPixToMgr(m_cm,proj,levelOfDetail,box,pt);
+      			csMgr = Utmhelp.boxPixToMgr(m_cm, proj, box, pt);
 	
       			if ( csMgr == null || csMgr.length() < 1 )
       				return;
@@ -372,7 +365,7 @@ public class UtmG {
 	      			if ( iLine >= iEndBotEw ) {
 	      				pt.m_x = pPt[nBR].m_x + 2;
 	      				pt.m_y = pPt[nBR].m_y - 2;
-	      				UtmPoint sUpt = Utmhelp.boxPixToUtm(m_cm, proj, levelOfDetail, box, pt);			
+	      				UtmPoint sUpt = Utmhelp.boxPixToUtm(m_cm, proj, box, pt);			
 	      				iLine = sUpt.iEasting;
 	      			}
 	      			iLine  = iLine % 100000;
@@ -414,7 +407,7 @@ public class UtmG {
 	        		if ( iLine >= iEndBotEw ) {
 	        			pt.m_x = pPt[nBR].m_x + 30;
 	        			pt.m_y = pPt[nBR].m_y - 2;
-	        			UtmPoint sUpt = Utmhelp.boxPixToUtm(m_cm, proj, levelOfDetail, box, pt);
+	        			UtmPoint sUpt = Utmhelp.boxPixToUtm(m_cm, proj, box, pt);
 	        			iLine = sUpt.iEasting;
 	        		}
 	        		iLine = iLine % iBase;

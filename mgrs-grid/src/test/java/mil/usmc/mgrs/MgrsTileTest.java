@@ -30,7 +30,7 @@ public class MgrsTileTest {
 	@Test
 	public void testGetBoundingBox(){
 		Color c = new Color(0,0,0,0);
-		MgrsTile mgrs = new MgrsTile(c,4326,512,512,0,0,0);
+		MgrsTile mgrs = new MgrsTile(c,"EPSG:4326",512,512,0,0,0);
 		// Once we get all grid levels working, we should
 		// remove the next 5 lines and comment back in the 
 		// rest of the test.
