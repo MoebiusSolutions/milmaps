@@ -116,7 +116,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 			return false;
 		}
 		if (m_mapProj != null) {
-			if ( m_mapProj.doesSupport(ls.getEpsg()) && m_bProjSet )
+			if ( m_mapProj.doesSupport(ls.getSrs()) && m_bProjSet )
 				return true;
 		}
 
@@ -469,8 +469,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private void updateSize(int width, int height) {
 		m_viewPort.setSize(width, height);
 		//m_iconsOverTilesPanel.setPixelSize(width, height);
-		m_viewPanel.setPixelSize(width - 2, height - 2);
-		m_focusPanel.setPixelSize(width - 2, height - 2);
+		m_viewPanel.setPixelSize(width, height);
+		m_focusPanel.setPixelSize(width, height);
 	}
 
 	@Override
@@ -527,7 +527,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public boolean zoomOnPixel(int x, int y, double scaleFactor) {
 		if (m_bSuspendMapAction == false) {
 			double scale = m_mapProj.getEquatorialScale();
-			int level = m_mapProj.getLevelFromScale(scale*scaleFactor, 0);
+			int level = m_mapProj.getLevelFromScale(scale*scaleFactor, 0.01);
 			if (level < DivManager.NUMDIVS) {
 				m_animateEngine.animateZoomMap( x, y, scaleFactor);
 			}

@@ -16,7 +16,7 @@ public class TiledImageLayer {
 	private final LayoutPanel m_layoutPanel;
 	private final TileImageManager m_tileImageMgr = new TileImageManager(m_tileImageEngineListener);
 	
-	private final double EarthCirMeters  = 2.0*Math.PI*IProjection.EarthRadiusM;
+	private final double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_MEERS;
 	private final double MeterPerDeg  = EarthCirMeters/360.0;
 	
 	private TileCoords[] m_tileCoords;
@@ -31,10 +31,10 @@ public class TiledImageLayer {
 	
 	private class MyTileImageEngineListener implements TileImageEngineListener {
 		@Override
-		public Object createImage(TileCoords tileCoords) {
+		public Object createImage(ViewBox vb, TileCoords tileCoords) {
 			ImageDiv image = new ImageDiv();
 			image.addLoadListener(m_tileImageLoadListener);
-			String url = tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter());
+			String url = tileCoords.makeTileURL(vb, getLayerSet(), getLevel(), getDynamicCounter());
 			image.setUrl(url);
 			image.setStyleName("moesol-MapTile");
 			m_layoutPanel.add(image);
@@ -49,10 +49,10 @@ public class TiledImageLayer {
 		}
 		
 		@Override
-		public void useImage(TileCoords tileCoords, Object object) {
+		public void useImage(ViewBox vb, TileCoords tileCoords, Object object) {
 			ImageDiv image = (ImageDiv)object;
 			// Better performance in IE7 to skip for non-auto update, but always setting fixes some IE7 issues.
-			image.setUrl(tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter()));
+			image.setUrl(tileCoords.makeTileURL(vb, getLayerSet(), getLevel(), getDynamicCounter()));
 			m_layoutPanel.setWidgetVisible(image, true);
 		}
 
@@ -102,16 +102,16 @@ public class TiledImageLayer {
 	 */
 	
 
-	public void updateView() {
+	public void updateView(ViewBox vb) {
 		Sample.LAYER_UPDATE_VIEW.beginSample();
 		try {
-			_updateView();
+			_updateView(vb);
 		} finally {
 			Sample.LAYER_UPDATE_VIEW.endSample();
 		}
 	}
 	
-	private void _updateView() {
+	private void _updateView(ViewBox vb) {
 		if ( (m_layerSet.isAlwaysDraw() == false && isPriority() == false ) ){
 			m_tileImageMgr.hideUnplacedImages();
 			return;
@@ -122,27 +122,27 @@ public class TiledImageLayer {
 		}
 		
 		Sample.LAYER_POSITION_IMAGES.beginSample();
-		positionImages();
+		positionImages(vb);
 		Sample.LAYER_POSITION_IMAGES.endSample();
 		
 		m_tileImageMgr.hideUnplacedImages();
 	}
 
-	private void positionImages() {
+	private void positionImages(ViewBox vb) {
 		m_minLeft = Integer.MAX_VALUE;
 		m_maxRight = Integer.MIN_VALUE;
 		for (int i = 0; i < m_tileCoords.length; i++) {
-			positionOneImage(m_tileCoords[i]);
+			positionOneImage(vb, m_tileCoords[i]);
 		}
 	}
 
-	private void positionOneImage(TileCoords tileCoords) {
+	private void positionOneImage(ViewBox vb, TileCoords tileCoords) {
 		if (tileCoords == null) {
 			return;
 		}
-		ImageDiv image = (ImageDiv)m_tileImageMgr.findOrCreateImage(tileCoords);
+		//String bboxStr = vw.getBoundingBoxStr(m_divWorker.getProjection());
+		ImageDiv image = (ImageDiv)m_tileImageMgr.findOrCreateImage(vb,tileCoords);
 		// TODO review the need for zindex now that animation is done differently
-		int divLevel = m_divPanel.getDivLevel();
 		setImageZIndex(image,  m_layerSet.getZIndex());
 		int x = tileCoords.getOffsetX();
 		int y = tileCoords.getOffsetY();

@@ -140,7 +140,7 @@ public class ArrangeTileTest {
 				for ( int y = 0; y < count; y++ ){
 					tc.setX(x);
 					tc.setY(y);
-					String url = tc.makeTileURL( ls, level, x+y);
+					String url = tc.makeTileURL( null, ls, level, x+y);
 					String expectedStr = getExpectedUrl( x, y );
 					assertEquals( expectedStr, url );
 				}
@@ -175,7 +175,7 @@ public class ArrangeTileTest {
 			ls.setServer("http://TestServer"); 
 			ls.setData("cylendrical");
 			ls.setUrlPattern("{server}/{data}/MapServer/tile/{level}/{y}/{x}");
-       	    ls.setEpsg(4326);
+       	    ls.setSrs("EPSG:4326");
        	    ls.setZeroTop(true);
        	    ls.setAutoRefreshOnTimer(false);
 			ls.setStartLevelTileHeightInDeg(90);
@@ -188,7 +188,7 @@ public class ArrangeTileTest {
 			ls.setServer("http://bv.moesol.com/rpf-ww-server"); 
 			ls.setData("BMNG (Shaded %2B Bathymetry) Tiled - 5.2004");
 			ls.setUrlPattern("{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}");
-       	    ls.setEpsg(4326);
+			ls.setSrs("EPSG:4326");
        	    ls.setZeroTop(false);
        	    ls.setAutoRefreshOnTimer(false);
 			ls.setStartLevelTileHeightInDeg(36);

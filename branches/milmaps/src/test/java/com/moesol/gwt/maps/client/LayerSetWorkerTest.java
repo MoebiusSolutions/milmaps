@@ -30,7 +30,7 @@ public class LayerSetWorkerTest {
 		m_ls[1].setPixelWidth(256);
 		m_ls[1].setPixelHeight(256);
 		m_ls[1].setStartLevelTileDimensionsInDeg(360, 170.10226);
-		m_ls[1].setEpsg(900913);
+		m_ls[1].setSrs("EPSG:900913");
 		for( int i = 0; i < 27; i++ ){
 			m_p[i] = new P();
 		}

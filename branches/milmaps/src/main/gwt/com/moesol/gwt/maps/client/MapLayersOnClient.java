@@ -26,7 +26,7 @@ public class MapLayersOnClient {
 	    	layerSet0.withPixelWidth(512).setPixelHeight(512);
 	    	layerSet0.setAutoRefreshOnTimer(false);
 	    	layerSet0.setZeroTop(true);
-	    	layerSet0.setEpsg(4326);
+	    	layerSet0.setSrs("EPSG:4326");
 	    	layerSet0.setStartLevel(0);		
 		}
 		else {
@@ -37,7 +37,7 @@ public class MapLayersOnClient {
 			layerSet0.withPixelWidth(512).setPixelHeight(512);
 			layerSet0.setAutoRefreshOnTimer(false);
 			layerSet0.setZeroTop(false);
-			layerSet0.setEpsg(4326);
+			layerSet0.setSrs("EPSG:4326");
 			layerSet0.setStartLevel(0);
 		}
 		//layerSet1 = new LayerSet();

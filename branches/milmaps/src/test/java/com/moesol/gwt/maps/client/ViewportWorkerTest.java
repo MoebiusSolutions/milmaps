@@ -53,4 +53,93 @@ public class ViewportWorkerTest {
 		assertEquals( offsetWcX, -44);
 		assertEquals( offsetWcY, 328);
 	}
+	
+	@Test
+	public void getViewBoxTest(){
+		m_vpWorker.intialize(m_viewDimensions, m_proj);
+		m_vpWorker.setGeoCenter(new GeodeticCoords(0,0,AngleUnit.DEGREES));
+		ViewBox vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(70.3124, vb.getTopLat(), 0.001);
+		assertEquals(-70.3124, vb.getBotLat(), 0.001);
+		assertEquals(-105.46875, vb.getLeftLon(), 0.001);
+		assertEquals(105.46875, vb.getRightLon(), 0.001);
+		
+		m_vpWorker.setGeoCenter(new GeodeticCoords(-90,0,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(70.3124, vb.getTopLat(), 0.001);
+		assertEquals(-70.3124, vb.getBotLat(), 0.001);
+		assertEquals(164.53125, vb.getLeftLon(), 0.001);
+		assertEquals(15.46875, vb.getRightLon(), 0.001);
+		
+		m_vpWorker.setGeoCenter(new GeodeticCoords(-180,0,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(70.3124, vb.getTopLat(), 0.001);
+		assertEquals(-70.3124, vb.getBotLat(), 0.001);
+		assertEquals(74.53125, vb.getLeftLon(), 0.001);
+		assertEquals(-74.53125, vb.getRightLon(), 0.001);
+		
+		m_vpWorker.setGeoCenter(new GeodeticCoords(90,0,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(70.3124, vb.getTopLat(), 0.001);
+		assertEquals(-70.3124, vb.getBotLat(), 0.001);
+		assertEquals(-15.46875, vb.getLeftLon(), 0.001);
+		assertEquals(-164.53125, vb.getRightLon(), 0.001);
+		
+		/////////////// Change Latitude /////////////////
+		m_vpWorker.setGeoCenter(new GeodeticCoords(0,15,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(85.4296875, vb.getTopLat(), 0.001);
+		assertEquals(-55.1953125, vb.getBotLat(), 0.001);
+		assertEquals(-105.46875, vb.getLeftLon(), 0.001);
+		assertEquals(105.46875, vb.getRightLon(), 0.001);
+		
+		m_vpWorker.setGeoCenter(new GeodeticCoords(-90,15,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(85.4296875, vb.getTopLat(), 0.001);
+		assertEquals(-55.1953125, vb.getBotLat(), 0.001);
+		assertEquals(164.53125, vb.getLeftLon(), 0.001);
+		assertEquals(15.46875, vb.getRightLon(), 0.001);
+		
+		m_vpWorker.setGeoCenter(new GeodeticCoords(-180,15,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(85.4296875, vb.getTopLat(), 0.001);
+		assertEquals(-55.1953125, vb.getBotLat(), 0.001);
+		assertEquals(74.53125, vb.getLeftLon(), 0.001);
+		assertEquals(-74.53125, vb.getRightLon(), 0.001);
+		
+		m_vpWorker.setGeoCenter(new GeodeticCoords(90,15,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(85.4296875, vb.getTopLat(), 0.001);
+		assertEquals(-55.1953125, vb.getBotLat(), 0.001);
+		assertEquals(-15.46875, vb.getLeftLon(), 0.001);
+		assertEquals(-164.53125, vb.getRightLon(), 0.001);
+		//
+		m_vpWorker.setGeoCenter(new GeodeticCoords(0,-15,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(55.1953125, vb.getTopLat(), 0.001);
+		assertEquals(-85.4296875, vb.getBotLat(), 0.001);
+		assertEquals(-105.46875, vb.getLeftLon(), 0.001);
+		assertEquals(105.46875, vb.getRightLon(), 0.001);
+		
+		m_vpWorker.setGeoCenter(new GeodeticCoords(-90,-15,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(55.1953125, vb.getTopLat(), 0.001);
+		assertEquals(-85.4296875, vb.getBotLat(), 0.001);
+		assertEquals(164.53125, vb.getLeftLon(), 0.001);
+		assertEquals(15.46875, vb.getRightLon(), 0.001);
+		
+		m_vpWorker.setGeoCenter(new GeodeticCoords(-180,-15,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(55.1953125, vb.getTopLat(), 0.001);
+		assertEquals(-85.4296875, vb.getBotLat(), 0.001);
+		assertEquals(74.53125, vb.getLeftLon(), 0.001);
+		assertEquals(-74.53125, vb.getRightLon(), 0.001);
+		
+		m_vpWorker.setGeoCenter(new GeodeticCoords(90,-15,AngleUnit.DEGREES));
+		vb = m_vpWorker.getViewBox(m_proj);
+		assertEquals(55.1953125, vb.getTopLat(), 0.001);
+		assertEquals(-85.4296875, vb.getBotLat(), 0.001);
+		assertEquals(-15.46875, vb.getLeftLon(), 0.001);
+		assertEquals(-164.53125, vb.getRightLon(), 0.001);
+	}
 }

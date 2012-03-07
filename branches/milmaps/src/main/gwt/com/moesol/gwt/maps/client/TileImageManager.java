@@ -40,7 +40,7 @@ public class TileImageManager {
 		}
 	}
 	
-	public Object findOrCreateImage(TileCoords tileCoords) {
+	public Object findOrCreateImage(ViewBox vb, TileCoords tileCoords) {
 		int iSize = m_infoCache.size();
 		for (int i = 0; i < iSize; i++) {
 		  TileInfo tileInfo = m_infoCache.get(i);
@@ -48,7 +48,7 @@ public class TileImageManager {
 			if (tileInfo.m_placed) {
 				continue;
 			}
-			m_listener.useImage(tileCoords, tileInfo.m_image);
+			m_listener.useImage(vb,  tileCoords, tileInfo.m_image);
 			tileInfo.m_placed = true;
 			tileInfo.m_lastUsedMillis = System.currentTimeMillis();
 			return tileInfo.m_image;
@@ -56,7 +56,7 @@ public class TileImageManager {
 		}
 		
 		TileInfo result = new TileInfo();
-		result.m_image = m_listener.createImage(tileCoords);
+		result.m_image = m_listener.createImage(vb, tileCoords);
 		result.m_lastUsedMillis = System.currentTimeMillis();
 		result.m_level = levelOrZero(tileCoords);
 		result.m_loaded = false;

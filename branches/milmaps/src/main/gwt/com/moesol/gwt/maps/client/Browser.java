@@ -1,5 +1,9 @@
 package com.moesol.gwt.maps.client;
 
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.ui.Label;
+
 public class Browser {
 	/**
 	 * Gets the navigator.appName.
@@ -13,6 +17,17 @@ public class Browser {
 		CHROME,
 		FF,
 		OTHER
+	}
+	
+	public static class FontSize{
+		private int width;
+		private int height;
+		public FontSize(int w, int h){
+			width = w;
+			height = h;
+		}
+		public int getWidth(){ return width; }
+		public int getHeight(){ return height; }
 	}
 	
 	public static native String userAgent() /*-{
@@ -65,5 +80,31 @@ public class Browser {
 			return true;
 		}
 		return false;
+	}
+	
+	public static native int getFontPixWidth(String str) /*-{
+		var h = document.getElementsByTagName("BODY")[0];
+		var d = document.createElement("DIV");
+		var s = document.createElement("SPAN");
+		d.appendChild(s);
+		//d.style.fontFamily = "sans";			//font for the parent element DIV.
+		//s.style.fontFamily = "sans";			//serif font used as a comparator.
+		//s.style.fontSize   = "72px";			//we test using 72px font size, we may use any size. I guess larger the better.
+		s.innerHTML        = "mmmmmmmmmmlil";	//we use m or w because these two characters take up the maximum width. 
+												//And we use a L so that the same matching fonts can get separated
+		h.appendChild(d);
+		var defaultWidth   = s.offsetWidth;		//now we have the defaultWidth
+		var defaultHeight  = s.offsetHeight;	//and the defaultHeight, we compare other fonts with these.
+		h.removeChild(d);
+		return defaultWidth;
+	}-*/;
+
+	public static FontSize getFontSize(){
+		Label l = new Label();
+		l.setText("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz");
+		Element e = l.getElement();
+		int width = e.getClientWidth()/52;
+		int height = e.getClientHeight();
+		return new FontSize(width,height);
 	}
 }

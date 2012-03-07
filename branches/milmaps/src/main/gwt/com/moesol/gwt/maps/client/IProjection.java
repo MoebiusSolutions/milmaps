@@ -5,10 +5,7 @@ import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
 import com.moesol.gwt.maps.shared.BoundingBox;
 
 public interface IProjection {
-	public static double EarthRadiusM = 6378137; // meters
-	public enum ZoomFlag {
-		OUT, NONE, IN
-	}
+	public static double EARTH_RADIUS_MEERS = 6378137; // meters
 	
 	public enum T {
 		CylEquiDist, Mercator
@@ -32,7 +29,7 @@ public interface IProjection {
 	 * @param espg
 	 * @return true or false
 	 */
-	public abstract boolean doesSupport( int espg );
+	public abstract boolean doesSupport( String srs );
 	
 	/**
 	 * Clone projection
@@ -169,11 +166,17 @@ public interface IProjection {
 	double getScaleFromLevel(int level);
 	
 	/**
+	 * whole world map width in pixels
+	 * @return
+	 */
+	public abstract int iMapWidth();
+	
+	/**
 	 * wrapLng keeps the longitude between -180 and 180.
 	 * @param lng
 	 * @return
 	 */
-	public double wrapLng(double lng);
+	public abstract double wrapLng(double lng);
 
 	/**
 	 * Register a projection changed handler

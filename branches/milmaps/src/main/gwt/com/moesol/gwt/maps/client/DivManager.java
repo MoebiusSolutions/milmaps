@@ -37,7 +37,7 @@ public class DivManager {
 		double degWidth  = ls.getStartLevelTileWidthInDeg();
 		double degHeight = ls.getStartLevelTileHeightInDeg();
 		if ( size != 0 && degWidth != 0 && degHeight != 0 ){
-			IProjection.T type = Projection.getType(ls.getEpsg());
+			IProjection.T type = Projection.getType(ls.getSrs());
 			initProjections( size, size, degWidth, degHeight, type );
 			return true;
 		}
@@ -77,7 +77,7 @@ public class DivManager {
 		double divBaseEqScale = m_proj.getEquatorialScale();
 		double logMess = Math.log( dMapEqScale ) - Math.log( divBaseEqScale );
 		double dN = logMess / Math.log(2); 
-		int level = (int)dN;
+		int level = Math.max(0,(int)dN);
 		setCurrentLevel( level );
 	}
 	

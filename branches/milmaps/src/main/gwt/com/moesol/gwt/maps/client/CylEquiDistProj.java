@@ -32,9 +32,8 @@ public class CylEquiDistProj extends AbstractProjection {
 	}
 	
 	@Override
-	public boolean doesSupport( int espg ){
-		switch ( espg ){
-		case 4326:
+	public boolean doesSupport( String srs ){
+		if ( srs.equals("EPSG:4326")){
 			return true;
 		}
 		return false;

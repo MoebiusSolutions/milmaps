@@ -6,15 +6,16 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
 import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
+import com.moesol.gwt.maps.shared.BoundingBox;
 
 
 public abstract class AbstractProjection implements IProjection, HasHandlers {
-	
+    
 	private final HandlerManager m_handlerManager = new HandlerManager(this);
 	protected IProjection.T m_projType;
 	protected final WorldDimension m_wdSize = new WorldDimension(); // Whole world
 																  // map size
-	public double EarthCirMeters  = 2.0*Math.PI*IProjection.EarthRadiusM;
+	public double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_MEERS;
 	public double MeterPerDeg  = EarthCirMeters/360.0;
 	
 	protected int m_scrnDpi = 75;   // screen dot per inch
@@ -61,16 +62,21 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 		return pixels;
 	}
 	
-	public int iMapSize() {
+	@Override
+	public int iMapWidth() {
 		return (int)(mapSize() + 0.5);
 	}
 	
+	@Override
 	public double wrapLng(double lng) {
+		int k = (int)Math.abs((lng/360));
 		if (lng > 180.0) {
-			while (lng > 180.0)
+			lng -= k*360;
+			if (lng > 180.0)
 				lng -= 360.0;
 		} else if (lng < -180.0) {
-			while (lng < -180.0)
+			lng += k*360;
+			if (lng < -180.0)
 				lng += 360.0;
 		}
 		return lng;
@@ -196,7 +202,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	public String toString() {
 		return "AbstractProjection ["
 				+ "m_projType=" + m_projType + ", m_wdSize=" + m_wdSize
-				+ ", EarthRadius=" + IProjection.EarthRadiusM + ", EarthCirMeters="
+				+ ", EarthRadius=" + IProjection.EARTH_RADIUS_MEERS + ", EarthCirMeters="
 				+ EarthCirMeters + ", MeterPerDeg=" + MeterPerDeg
 				+ ", m_scrnDpi=" + m_scrnDpi + ", m_scrnMpp=" + m_scrnMpp
 				+ ", m_eqScale=" + m_eqScale + ", m_origMapWidthSize="

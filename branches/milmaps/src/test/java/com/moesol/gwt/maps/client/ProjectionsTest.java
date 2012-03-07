@@ -79,4 +79,31 @@ public class ProjectionsTest {
 		assertTrue(found < start);
 	}
 	
+	private double wrapLng(double lng) {
+		if (lng > 180.0) {
+			while (lng > 180.0)
+				lng -= 360.0;
+		} else if (lng < -180.0) {
+			while (lng < -180.0)
+				lng += 360.0;
+		}
+		return lng;
+	}
+	
+	@Test
+	public void wrapLngTest(){
+		recordViewPort();
+		IProjection proj = viewPort.getProjection();
+		for (int lng = 0; lng < 1000000; lng += 45){
+			double lng1 = wrapLng(lng);
+			double lng2 = proj.wrapLng(lng);
+			assertEquals(lng1,lng2,0.0000001);
+		}
+		for (int lng = 0; lng > -1000000; lng -= 45){
+			double lng1 = wrapLng(lng);
+			double lng2 = proj.wrapLng(lng);
+			assertEquals(lng1,lng2,0.0000001);
+		}
+	}
+	
 }

@@ -117,6 +117,28 @@ public class ViewWorker implements ProjectionChangedHandler {
 		WorldCoords wc = viewToWorld(vc);
 		return divWorker.worldToDiv(wc);
 	}
+	
+	// this routine returns a viewbox with a maximum size of 360 degrees 
+	// in width.
+	public ViewBox getViewBox(IProjection proj){
+		int leftWx  = vcXtoWcX(0);
+		int topWy   = vcYtoWcY(0);
+		int rightWx = vcXtoWcX(m_dims.getWidth());
+		int botWy 	= vcYtoWcY(m_dims.getHeight());
+		WorldCoords tl = new WorldCoords(leftWx,topWy);
+		WorldCoords br = new WorldCoords(rightWx,botWy);
+		GeodeticCoords gtl = proj.worldToGeodetic(tl);
+		GeodeticCoords gbr = proj.worldToGeodetic(br);
+		ViewBox vb = 
+		ViewBox.builder().bottom(gbr.latitude().degrees())
+						 .top(gtl.latitude().degrees())
+						 .left(gtl.longitude().degrees())
+						 .right(gbr.longitude().degrees())
+						 .width(m_dims.getWidth()).height(m_dims.getHeight())
+						 .degrees().build();
+		vb.correctForMultipleMaps(proj);
+		return vb;
+	}
 
 	@Override
 	public void onProjectionChanged(ProjectionChangedEvent event) {

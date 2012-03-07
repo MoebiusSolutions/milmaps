@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.moesol.gwt.maps.client.Browser;
 import com.moesol.gwt.maps.client.DivManager;
 import com.moesol.gwt.maps.client.IProjection;
 import com.moesol.gwt.maps.client.MapView;
@@ -20,6 +21,8 @@ public class MapStateDialog extends DialogBox {
 		
 		addRow("Map Projection Scale: ", mapProj.getEquatorialScale());
 		addRow("Div Current Level: ", divMgr.getCurrentLevel() );
+		int s = Browser.getFontPixWidth("test");
+		addRow("Font Width: ", s);
 		addSeperator();
 		
 		addButton(new Button("Close", new ClickHandler() {

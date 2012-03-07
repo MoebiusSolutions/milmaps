@@ -31,6 +31,8 @@ public class MapController implements
 	TouchStartHandler, TouchMoveHandler, TouchEndHandler, TouchCancelHandler
 {
 	private static boolean s_previewInstalled = false;
+	private static final int sKey = 83;//(int)'s';
+	private static final int fKey = 70;//(int)'f';
 	private final MapView m_map;
 	private final DoubleClickTracker m_doubleClickTracker = new DoubleClickTracker();
 	private final MouseWheelTracker m_mouseWheelTracker = new MouseWheelTracker();
@@ -319,10 +321,10 @@ public class MapController implements
 		case KeyCodes.KEY_DOWN:
 			moveMap(0, -1);
 			break;
-		case 'f':
+		case fKey:
 			m_map.fullUpdateView();
 			break;
-		case 's':
+		case sKey:
 			new MapStateDialog(m_map).show();
 			break;	
 		}

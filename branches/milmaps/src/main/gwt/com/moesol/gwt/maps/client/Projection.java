@@ -2,13 +2,10 @@ package com.moesol.gwt.maps.client;
 
 public class Projection {
 	
-	public static IProjection.T getType( int espg ){
+	public static IProjection.T getType( String srs ){
 		IProjection.T type = IProjection.T.Mercator;
-		switch ( espg ){
-			case 2163:
-			case 4326:
-				type = IProjection.T.CylEquiDist;
-			break;
+		if ( srs.equals("EPSG:4326") || srs.equals("EPSG:2136")){
+			type = IProjection.T.CylEquiDist;
 		}
 		return type;
 	}
@@ -27,7 +24,7 @@ public class Projection {
 		IProjection proj = null;
 		if ( ls.isAutoRefreshOnTimer() == true )
 			return null;
-		IProjection.T type = getType(ls.getEpsg());
+		IProjection.T type = getType(ls.getSrs());
 		int size = ls.getPixelWidth();
 		double degWidth  = ls.getStartLevelTileWidthInDeg();
 		double degHeight = ls.getStartLevelTileHeightInDeg();

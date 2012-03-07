@@ -41,20 +41,20 @@ public class TileCoordsTest {
 		ls.setServer("server");
 		ls.setSkipLevels(0);
 		
-		String url = tc.doMakeTileURL(ls, 1, 1);
+		String url = tc.doMakeTileURL(null,ls, 1, 1);
 		assertEquals("server?T=data+with+space&L=1&X=2&Y=3", url);
 		
 		ls.setAutoRefreshOnTimer(true);
-		url = tc.doMakeTileURL(ls, 1, 23);
+		url = tc.doMakeTileURL(null, ls, 1, 23);
 		assertEquals("server?T=data+with+space&L=1&X=2&Y=3#23", url);
 		
 		ls.setAutoRefreshOnTimer(false);
 		ls.setUrlPattern("{server}/tileset/{data}/level/{level}/x/{x}/y/{y}");
-		url = tc.doMakeTileURL(ls, 1, 1);
+		url = tc.doMakeTileURL(null,ls, 1, 1);
 		assertEquals("server/tileset/data+with+space/level/1/x/2/y/3", url);
 		
 		ls.setAutoRefreshOnTimer(true);
-		url = tc.doMakeTileURL(ls, 1, 49);
+		url = tc.doMakeTileURL(null,ls, 1, 49);
 		assertEquals("server/tileset/data+with+space/level/1/x/2/y/3#49", url);
 	}
 

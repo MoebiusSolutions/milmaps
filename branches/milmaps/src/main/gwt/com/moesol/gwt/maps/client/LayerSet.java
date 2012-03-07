@@ -12,11 +12,12 @@ public class LayerSet implements IsSerializable {
 	private int m_skipLevels = 0;
 	private String m_urlPattern = "{server}?T={data}&L={level}&X={x}&Y={y}";
 	private boolean m_active = true; // If set to false engine will not render.
+	private boolean m_tiled = true;
 	private boolean m_zeroTop = false;
 	private boolean m_alwaysDraw = false;
 	private boolean m_isBackgroundMap = true;
 	private boolean m_autoRefreshOnTimer = false;
-	private int m_epsg = 4326;
+	private String m_srs = "EPSG:4326";
 	private int m_minLevel = -20;
 	private int m_maxLevel = 20;
 	private int m_zIndex = 4;
@@ -54,16 +55,16 @@ public class LayerSet implements IsSerializable {
 	}
 	
 	
-	public int getEpsg() {
-		return m_epsg;
+	public String getSrs() {
+		return m_srs;
 	}
 
-	public void setEpsg(int epsg) {
-		m_epsg = epsg;
+	public void setSrs(String srs) {
+		m_srs = srs;
 	}
 	
-	public LayerSet withEpsg(int epsg) {
-		setEpsg(epsg);
+	public LayerSet withSrs(String srs) {
+		setSrs(srs);
 		return this;
 	}
 
@@ -178,6 +179,21 @@ public class LayerSet implements IsSerializable {
 	}
 	public LayerSet withActive(boolean active) {
 		setActive(active); return this;
+	}
+	
+	/**
+	 * return true if each layer requires multiple tiles
+	 * @return
+	 */
+	public boolean isTiled() {
+		return m_tiled;
+	}
+	public void setTiled(boolean t) {
+		m_tiled = t;
+	}
+	public LayerSet withTiled(boolean t) {
+		setTiled(t);
+		return this;
 	}
 
 	/**

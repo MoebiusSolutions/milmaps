@@ -41,6 +41,7 @@ public class DivPanel extends AbsolutePanel {
 		m_divWorker.setProjection(m_divProj);
 		m_tileBuilder.setProjection(m_divProj);
 		m_tileBuilder.setDivLevel(level);
+		m_tileBuilder.setMapViewWorker(map.getViewport().getVpWorker());
 	}
 	
 	public int getDivLevel(){ return m_level; }

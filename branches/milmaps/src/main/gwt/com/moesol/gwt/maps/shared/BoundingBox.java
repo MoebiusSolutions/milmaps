@@ -114,11 +114,14 @@ public class BoundingBox {
 	}
 	
 	private static double wrapLon(double lng) {
+		int k = (int)Math.abs((lng/360));
 		if (lng > 180.0) {
-			while (lng > 180.0)
+			lng -= k*360;
+			if (lng > 180.0)
 				lng -= 360.0;
 		} else if (lng < -180.0) {
-			while (lng < -180.0)
+			lng += k*360;
+			if (lng < -180.0)
 				lng += 360.0;
 		}
 		return lng;
@@ -198,6 +201,10 @@ public class BoundingBox {
 			}
 		}
 		return dist;
+	}
+	
+	public String getWmsString(){
+		return m_leftLon + "," + m_botLat + "," + m_rightLon + "," + m_topLat;
 	}
 
 	@Override

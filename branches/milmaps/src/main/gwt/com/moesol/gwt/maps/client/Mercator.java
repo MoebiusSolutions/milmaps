@@ -9,6 +9,7 @@ import com.moesol.gwt.maps.shared.BoundingBox;
 // EPSG:3857 Mercator projection
 
 public class Mercator extends AbstractProjection {	
+
 	private static final BoundingBox BOUNDS 
 		= BoundingBox.builder().bottom(-85.05113).top(85.05113).left(-180).right(180).degrees().build();
 
@@ -25,9 +26,8 @@ public class Mercator extends AbstractProjection {
 	}
 	
 	@Override
-	public boolean doesSupport( int espg ){
-		switch ( espg ){
-		case 900913:
+	public boolean doesSupport( String srs ){
+		if (srs.equals("EPSG:900913")) {
 			return true;
 		}
 		return false;
