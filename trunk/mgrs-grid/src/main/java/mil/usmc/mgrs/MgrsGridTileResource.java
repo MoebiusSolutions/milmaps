@@ -41,14 +41,14 @@ public class MgrsGridTileResource {
 	*/
 	
 	@GET
-	@Path("{r: \\w{2}}{g: \\w{2}}{b: \\w{2}}{a: \\w{2}}/{epsg}/{width}/{height}/{zoomLevel}/{xTileCoord}/{yTileCoord}.{imageFormat}")
+	@Path("{r: \\w{2}}{g: \\w{2}}{b: \\w{2}}{a: \\w{2}}/{srs}/{width}/{height}/{zoomLevel}/{xTileCoord}/{yTileCoord}.{imageFormat}")
 	@Produces("image/*")
 	public Response getTileImage(
 			@PathParam("r") String R,
 			@PathParam("g") String G,
 			@PathParam("b") String B,
 			@PathParam("a") String A,
-			@PathParam("epsg") int epsg,
+			@PathParam("srs") String srs,
 			@PathParam("width") int width,
 			@PathParam("height") int height,
 			@PathParam("zoomLevel") int zoomLevel,
@@ -64,19 +64,58 @@ public class MgrsGridTileResource {
 			int a = Integer.parseInt(A, 16);
 			
 			Color c = new Color(r,g,b,a);
-			Image tileImage = createMgrsTile( c, epsg, width, height, zoomLevel, xTileCoord, yTileCoord );
+			Image tileImage = createMgrsTile( c, srs, width, height, zoomLevel, xTileCoord, yTileCoord );
 			return Response.ok(tileImage, new MediaType("image", imageFormat)).build();
 		} catch (Exception e) {
 			throw new WebApplicationException(e,
 					Response.Status.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@GET
+	@Path("{r: \\w{2}}{g: \\w{2}}{b: \\w{2}}{a: \\w{2}}/{srs}/{bbox}/{width}/{height}.{imageFormat}")
+	@Produces("image/*")
+	public Response getBBoxTileImage(
+			@PathParam("r") String R,
+			@PathParam("g") String G,
+			@PathParam("b") String B,
+			@PathParam("a") String A,
+			@PathParam("srs") String srs,
+			@PathParam("width") int width,
+			@PathParam("height") int height,
+			@PathParam("bbox") String bboxParam,
+			@PathParam("imageFormat") String imageFormat ) {
+		try {	
+			// create the tile given the TMS parameters and the list of unit
+			// positions
+			int r = Integer.parseInt(R, 16);
+			int g = Integer.parseInt(G, 16);
+			int b = Integer.parseInt(B, 16);
+			int a = Integer.parseInt(A, 16);
+			
+			WmsBoundingBox bbox = new WmsBoundingBox().parseValue(bboxParam);
+			
+			Color c = new Color(r,g,b,a);
+			Image tileImage = createBboxMgrsTile( c, srs, width, height, bbox );
+			return Response.ok(tileImage, new MediaType("image", imageFormat)).build();
+		} catch (Exception e) {
+			throw new WebApplicationException(e,
+					Response.Status.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	private Image createBboxMgrsTile( Color color, String srs, 
+									  int width, int height, WmsBoundingBox bbox  ) {
+		
+		MilgridTile tile = new MilgridTile( color, srs, width, height, bbox);
+		tile.drawBboxGrid();
+		return tile.getImage();
+	}
 
-	private Image createMgrsTile( Color color, int epsg, int width, int height,
+	private Image createMgrsTile( Color color, String srs, int width, int height,
 								  int zoomLevel, int xTileCoord, int yTileCoord ) {
-		//MgrsTile tile = new MgrsTile( color, epsg, width, height, 
-		//							  zoomLevel, xTileCoord, yTileCoord );
-		MilgridTile tile = new MilgridTile( color, epsg, width, height, 
+
+		MilgridTile tile = new MilgridTile( color, srs, width, height, 
 		 						  			zoomLevel, xTileCoord, yTileCoord );
 		tile.drawGrid();
 		return tile.getImage();

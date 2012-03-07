@@ -26,6 +26,7 @@ public class MilgridTile {
 	private double m_lat;
 	private double m_dlng;
 	private double m_dlat;
+	private WmsBoundingBox m_bbox;
 	private BufferedImage m_img = null;
 	private Graphics2D m_g;
 	protected Color m_bkgrColor = null;
@@ -42,17 +43,16 @@ public class MilgridTile {
 	 * @param yTileCoord
 	 *            The y coordinate of the requested tile in TMS tile space
 	 */
-	public MilgridTile( Color c, int epsg, int width, int height, int level, int tileX, int tileY ) {
+	public MilgridTile( Color c, String srs, int width, int height, int level, int tileX, int tileY ) {
 		m_bkgrColor = c;
-		m_bUseMerc = isMercator(epsg);
+		m_bUseMerc = isMercator(srs);
 		if ( m_bUseMerc ){
 			m_proj = new MercProj();
-			m_proj.initialize(width);
 		}
 		else{
 			m_proj = new CedProj();
-			m_proj.initialize(width);
 		}
+		m_proj.init(width, level, tileX, 180);
 		m_width = width;
 		m_height = height;
 		m_level = level;
@@ -61,13 +61,36 @@ public class MilgridTile {
 		createTileImage();
 	}
 	
-	protected boolean isMercator( int espg ){
+	/**
+	 * Constructor
+	 * 
+	 * @param zoomLevel
+	 *            The zoom level of the requested tile.
+	 * @param xTileCoord
+	 *            The x coordinate of the requested tile in TMS tile space
+	 * @param yTileCoord
+	 *            The y coordinate of the requested tile in TMS tile space
+	 */
+	public MilgridTile( Color c, String srs, int width, int height, WmsBoundingBox bbox ) {
+		m_bkgrColor = c;
+		m_bUseMerc = isMercator(srs);
+		if ( m_bUseMerc ){
+			m_proj = new MercProj();
+		}
+		else{
+			m_proj = new CedProj();
+		}
+		m_width = width;
+		m_height = height;
+		m_bbox = bbox;
+		m_proj.initUsingBbox(m_width, m_height, bbox);
+		createBboxTileImage();
+	}
+	
+	protected boolean isMercator( String srs ){
 		boolean bMercProj = true;
-		switch ( espg ){
-			case 2163:
-			case 4326:
-				bMercProj = false;
-			break;
+		if ( srs.equals("EPSG:4326") || srs.equals("EPSG:2136")){
+			bMercProj = false;
 		}
 		return bMercProj;
 	}
@@ -134,11 +157,29 @@ public class MilgridTile {
 		}
 		m_g.setColor(Color.YELLOW);
 	}
+	
+	private void createBboxTileImage() {
+		// Create a buffered image that supports transparency
+		m_img = new BufferedImage(m_width, m_height, BufferedImage.TYPE_INT_ARGB);
+		m_g = m_img.createGraphics();
+		
+		if( m_bkgrColor.getAlpha()> 0 ){
+			m_g.setColor(m_bkgrColor);
+			m_g.fillRect(0, 0, m_width, m_height);
+		}
+		m_g.setColor(Color.YELLOW);
+	}
+	
+	void drawBboxGrid() {
+		UtmG utm = new UtmG();
+		PixBoundingBox box = PixBoundingBox.create( m_proj, m_width, m_height, m_bbox);
+		utm.drawGrid(m_g, m_proj,box);
+	}
 
 
 	void drawGrid() {
 		UtmG utm = new UtmG();
 		PixBoundingBox box = PixBoundingBox.create( m_proj, m_width, m_height, m_tileX, m_tileY );
-		utm.drawGrid(m_g, m_proj, m_level, box);
+		utm.drawGrid(m_g, m_proj,box);
 	}
 }

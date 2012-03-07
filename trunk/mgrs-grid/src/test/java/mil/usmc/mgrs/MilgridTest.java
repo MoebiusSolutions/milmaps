@@ -26,15 +26,15 @@ public class MilgridTest {
 	@Test
 	public void testMilGrid(){
 		IProjection proj = new CedProj();
-		proj.initialize(512);
+		int level = 8;
+		int tX = 259;
+		int tY = 139;
+		proj.init(512, level, tX, 180);
 		PixBoundingBox box = new PixBoundingBox();
 		Point bl = new Point();
 		Point tr = new Point();
 		
 		// level: 8, x :259, y : 139
-		int level = 8;
-		int tX = 259;
-		int tY = 139;
 		//box.set( proj, 512, 512, tileX, tileY );
 		//assertEquals(tileX*512,box.getLeftX());
 		//assertEquals((tileY+1)*512,box.getTopY());
@@ -42,10 +42,10 @@ public class MilgridTest {
 		//assertEquals(tileY*512,box.getBottomY());
 		int x = box.getLeftX();
 		int y = box.getBottomY();
-		bl.copy(proj.xyPixelToLatLng(level, x, y));
+		bl.copy(proj.xyPixelToLatLng(x, y));
 		x = box.getRightX();
 		y = box.getTopY();
-		tr.copy(proj.xyPixelToLatLng(level, x, y));
+		tr.copy(proj.xyPixelToLatLng(x, y));
 		/////////////////////////////
 		createTileImage();
 		UtmG utm = new UtmG();
@@ -56,7 +56,7 @@ public class MilgridTest {
 		//	for ( int tileY = 0; tileY < k; tileY++ ){
 			//  ty = tileY;
 				box.set( proj, 512, 512, tX, tY );
-				utm.drawGrid( m_g, proj, level, box);
+				utm.drawGrid( m_g, proj,box);
 			//}
 		//}
 		//y = 0;

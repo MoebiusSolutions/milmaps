@@ -78,11 +78,10 @@ public class Utmhelp {
 	public static String worldPixToMgr(
 	  Madtran     cm,
 	  IProjection  proj,
-	  int 		   levelOfDetail,
 	  R2           pix
 	)
 	{
-	  Point gp = proj.xyPixelToLatLng(levelOfDetail, pix.m_x, pix.m_y);
+	  Point gp = proj.xyPixelToLatLng(pix.m_x, pix.m_y);
 	  if ( gp == null )
 		  return null;
 	  return latLngToMgr(cm,gp.m_lat,gp.m_lng);
@@ -91,22 +90,20 @@ public class Utmhelp {
 	public static String boxPixToMgr(
 		Madtran        cm,
 		IProjection    proj,
-		int 		   levelOfDetail,
 		PixBoundingBox box,
 		R2             pix
 	){
 		R2 p = box.boxPtToWordPix(pix);
-		return worldPixToMgr( cm, proj, levelOfDetail, p );
+		return worldPixToMgr( cm, proj, p );
 	}
 
 	public static UtmPoint worldPixToUtm(
 	  Madtran     cm,
 	  IProjection  pProj,
-	  int 		   levelOfDetail,
 	  R2           pt
 	)
 	{
-		Point gp = pProj.xyPixelToLatLng(levelOfDetail, pt.m_x, pt.m_y);
+		Point gp = pProj.xyPixelToLatLng(pt.m_x, pt.m_y);
 		//cm.Convert(gp, false);
 		return latLngToUtm(cm, gp.m_lat,gp.m_lng);
 	}
@@ -114,26 +111,24 @@ public class Utmhelp {
 	public static R2 utmToWorldPix(
 	  Madtran      cm,
 	  IProjection  pProj,
-	  int		   levelOfDetail,
 	  UtmPoint     uPt
 	)
 	{
 		Point geo = utmToLatLng(cm,uPt);
 		//cm.Convert(geo, true);
 		if ( geo != null )
-			return pProj.latLngToPixelXY(levelOfDetail, geo.m_lat, geo.m_lng);
+			return pProj.latLngToPixelXY(geo.m_lat, geo.m_lng);
 		return null;
 	}
 	
 	public static UtmPoint boxPixToUtm(
 		Madtran      	cm,
 		IProjection  	proj,
-		int 		 	levelOfDetail,
 		PixBoundingBox 	box,
 		R2           	pt
 	){
 		R2 p = box.boxPtToWordPix(pt);
-		return worldPixToUtm(cm,proj,levelOfDetail,p);
+		return worldPixToUtm(cm,proj,p);
 	}
 	
 	
@@ -142,7 +137,6 @@ public class Utmhelp {
 	public static boolean getUtmCornerPts(
 	  Madtran     	 cm,  
 	  IProjection  	 pProj,
-	  int		   	 levelOfDetail,
 	  PixBoundingBox box,
 	  UtmPoint     	 bl,
 	  UtmPoint       tl,
@@ -154,19 +148,19 @@ public class Utmhelp {
 		pt.m_x = box.getLeftX()-WINDEDGE;
 		pt.m_y = box.getBottomY() - WINDEDGE;
 		UtmPoint p;
-		p = worldPixToUtm(cm, pProj, levelOfDetail, pt);
+		p = worldPixToUtm(cm, pProj, pt);
 		if ( p != null ) {
 			bl.copy(p);
 			pt.m_y = box.getTopY() + WINDEDGE;
-			p = worldPixToUtm(cm, pProj, levelOfDetail, pt);
+			p = worldPixToUtm(cm, pProj, pt);
 			if ( p != null ) {
 				tl.copy(p);
 				pt.m_x = box.getRightX() + WINDEDGE;
-				p = worldPixToUtm(cm, pProj, levelOfDetail, pt);
+				p = worldPixToUtm(cm, pProj, pt);
 				if ( p != null) {
 					tr.copy(p);
 					pt.m_y = box.getBottomY() - WINDEDGE;
-					p = worldPixToUtm(cm, pProj, levelOfDetail, pt);
+					p = worldPixToUtm(cm, pProj, pt);
 					if ( p != null ) {
 						br.copy(p);
 						return true;
@@ -300,20 +294,21 @@ public class Utmhelp {
 	  return iEw;
 	}
 
-
-	public static Point getCenterLatLng(
-	  IProjection pProj,
-	  int levelOfDetail,
-	  PixBoundingBox pixBox
-	)
-	{
-	  
-		int centX = pixBox.getCenterX();
-		int centY = pixBox.getCenterY();
-		// Get Center Lat lng.
-		Point gp = pProj.xyPixelToLatLng( levelOfDetail, centX, centY);
-		return gp.clone();
-	}
+	//TODO
+	//public static Point getCenterLatLng(
+	//  IProjection pProj,
+	//  int tileSize,
+	//  int levelOfDetail,
+	//  PixBoundingBox pixBox
+	//)
+	//{
+	//	//pProj.initUsingSize_Level(tileSize, levelOfDetail);
+	//	int centX = pixBox.getCenterX();
+	//	int centY = pixBox.getCenterY();
+	//	// Get Center Lat lng.
+	//	Point gp = pProj.xyPixelToLatLng(centX, centY);
+	//	return gp.clone();
+	//}
 
 	public static int getNextInc(int iCurrent, int iEnd, int iInc)
 	{
@@ -404,8 +399,10 @@ public class Utmhelp {
 
 	// Computes the longitudes furthest from the center
 	// but still on the map.
+	/*
 	public static void furthestLng(
 	  IProjection 	 pProj,
+	  int 			 tileSize,
 	  int 			 levelOfDetail,
 	  PixBoundingBox pixBox,
 	  double[]   	 lng
@@ -416,46 +413,47 @@ public class Utmhelp {
 	  
 	  int x = pixBox.getCenterX();
 	  int y = pixBox.getCenterY();
+	  pProj.initUsingSize_Level(tileSize, levelOfDetail);
 	  // Get Center lng.
-	  Point fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  Point fgp = pProj.xyPixelToLatLng(x, y);
 	  dCentLng = fgp.getLng();
 	  // Get left lng.
 	  x = pixBox.getLeftX();
 	  y = pixBox.getCenterY();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dLeftLng = fgp.getLng();
 	  
 	  y = pixBox.getTopY();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dLng = fgp.getLng();
 	  
 	  dLeftLng = getLeftMost(dCentLng,dLeftLng,dLng);
 	  y = pixBox.getBottomY();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dLng = fgp.getLng();
 	  dLeftLng = getLeftMost(dCentLng,dLeftLng,dLng);
 	  
 	  // Get right lng.
 	  x = pixBox.getRightX();
 	  y = pixBox.getCenterY();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dRightLng = fgp.getLng();
 	  
 	  y = pixBox.getTopY();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dLng = fgp.getLng();
 	  
 	  dRightLng = getRightMost(dCentLng,dRightLng,dLng);
 	  
 	  y = pixBox.getBottomY();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dLng = fgp.getLng();  
 	  dRightLng = getRightMost(dCentLng,dRightLng,dLng);
 	  /////
 	  lng[0] = dLeftLng;
 	  lng[1] = dRightLng;
 	}
-
+	*/
 	// Computes the latitude furthest from the center
 	// but still on the map.
 	public static void furthestLat(
@@ -471,17 +469,17 @@ public class Utmhelp {
 	  int x = pixBox.getCenterX();
 	  int y = pixBox.getCenterY();
 	  // Get Center lat.
-	  Point fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  Point fgp = pProj.xyPixelToLatLng(x, y);
 	  dCentLat = fgp.getLat();
 
 	  // Get Bottom lat.
 	  x = pixBox.getLeftX();
 	  y = pixBox.getBottomY();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dBotLat = fgp.getLat();
 	  
 	  x = pixBox.getCenterX();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dLat = fgp.getLat();
 	  
 	  if( Math.abs( dBotLat - dCentLat ) < Math.abs( dLat - dCentLat ) )
@@ -490,15 +488,15 @@ public class Utmhelp {
 	  // Get Top lat.
 	  x = pixBox.getLeftX();
 	  y = pixBox.getTopY();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dTopLat = fgp.getLat();
 	  x = pixBox.getCenterX();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dLat = fgp.getLat();
 	  if ( Math.abs(dTopLat-dCentLat) < Math.abs(dLat - dCentLat) )
 		    dTopLat = dLat;
 	  x = pixBox.getRightX();
-	  fgp = pProj.xyPixelToLatLng( levelOfDetail, x, y );
+	  fgp = pProj.xyPixelToLatLng(x, y);
 	  dLat = fgp.getLat();	  
 	  if ( Math.abs(dTopLat-dCentLat) < Math.abs(dLat - dCentLat) )
 	    dTopLat = dLat;	  

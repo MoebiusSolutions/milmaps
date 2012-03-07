@@ -34,16 +34,15 @@ public class MgrsTile {
 	 * @param yTileCoord
 	 *            The y coordinate of the requested tile in TMS tile space
 	 */
-	public MgrsTile( Color c, int epsg, int width, int height, int level, int tileX, int tileY ) {
+	public MgrsTile( Color c, String srs, int width, int height, int level, int tileX, int tileY ) {
 		m_bkgrColor = c;
-		if ( isMercator(epsg) ){
+		if ( isMercator(srs) ){
 			m_proj = new MercProj();
-			m_proj.initialize(width);
 		}
 		else{
 			m_proj = new CedProj();
-			m_proj.initialize(width);
 		}
+		m_proj.init(width,level,tileX,180);
 		m_width = width;
 		m_height = height;
 		m_level = level;
@@ -52,14 +51,15 @@ public class MgrsTile {
 		m_box.set(m_proj, width, height, tileX, tileY);
 		createTileImage();
 	}
+	
+	public MgrsTile( Color c, int epsg, int width, int height,WmsBoundingBox bbox){
+		
+	}
 	// Mercator 3857
-	protected boolean isMercator( int espg ){
+	protected boolean isMercator( String srs ){
 		boolean bMercProj = true;
-		switch ( espg ){
-			case 2163:
-			case 4326:
-				bMercProj = false;
-			break;
+		if ( srs.equals("EPSG:4326") || srs.equals("EPSG:2136")){
+			bMercProj = false;
 		}
 		return bMercProj;
 	}
@@ -117,6 +117,6 @@ public class MgrsTile {
 
 	void drawGrid() {
 		UtmG utm = new UtmG();
-		utm.drawGrid( m_g, m_proj, m_level, m_box);
+		utm.drawGrid( m_g, m_proj,m_box);
 	}
 }
