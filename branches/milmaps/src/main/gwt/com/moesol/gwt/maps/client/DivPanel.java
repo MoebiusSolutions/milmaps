@@ -82,7 +82,8 @@ public class DivPanel extends AbsolutePanel {
 		int minLeft = Integer.MAX_VALUE;
 		int maxRight = Integer.MIN_VALUE;
 		for (TiledImageLayer layer : m_tiledImageLayers) {
-			if (!layer.getLayerSet().isActive()){
+			boolean bkgrndMap = layer.getLayerSet().isBackgroundMap();
+			if (!layer.getLayerSet().isActive() || !bkgrndMap){
 				continue;
 			}
 			minLeft = Math.min(minLeft, layer.getMinLeft());
