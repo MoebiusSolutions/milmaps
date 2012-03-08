@@ -23,6 +23,7 @@ public class PositionControlLegacy extends FlowPanel {
 	private final OutlinedLabelLegacy m_mousePosLabel = new OutlinedLabelLegacy();
 	private final Mgrs m_mgrs = new Mgrs();
 	private final Geodetic m_geo = new Geodetic();
+        private int prevMouseX, prevMouseY;
 	
 	private MapView m_mapView = null;
 	
@@ -41,7 +42,14 @@ public class PositionControlLegacy extends FlowPanel {
 		MouseMoveHandler handler = new MouseMoveHandler() {
 			@Override
 			public void onMouseMove(MouseMoveEvent event) {
-				mouseMove(event.getX(), event.getY());
+                            // This event occurs even when the cursor has not moved, at least in Internet Explorer.
+                            // Filter out to only new movements.
+                            if (event.getX() == prevMouseX && event.getY() == prevMouseY) {
+                                return;
+                            }
+                            prevMouseX = event.getX();
+                            prevMouseY = event.getY();
+                            mouseMove(event.getX(), event.getY());
 			}
 		};
 		addStyleName("map-PositionControl");
