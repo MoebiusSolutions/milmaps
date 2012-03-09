@@ -527,7 +527,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public boolean zoomOnPixel(int x, int y, double scaleFactor) {
 		if (m_bSuspendMapAction == false) {
 			double scale = m_mapProj.getEquatorialScale();
-			int level = m_mapProj.getLevelFromScale(scale*scaleFactor, 0.01);
+			int level = m_mapProj.getLevelFromScale(scale*scaleFactor, 0.05);
 			if (level < DivManager.NUMDIVS) {
 				m_animateEngine.animateZoomMap( x, y, scaleFactor);
 			}
