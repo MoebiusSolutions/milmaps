@@ -61,11 +61,11 @@ public class MapCacheTileResource {
 	*/
 	
 	@GET
-	@Path("{data}/{epsg}/{imgSize}/{level}/{xTile}/{yTile}")
+	@Path("{data}/{srs}/{imgSize}/{level}/{xTile}/{yTile}")
 	@Produces("image/*")
 	public Response getTileImage(
 			@PathParam("data") String data,
-			@PathParam("epsg") int epsg,
+			@PathParam("srs") String srs,
 			@PathParam("imgSize") int size,
 			@PathParam("level") int level,
 			@PathParam("xTile") int xTile,
@@ -74,7 +74,7 @@ public class MapCacheTileResource {
 			// create the tile given the TMS parameters and the list of unit
 			// positions
 			
-			BufferedImage tileImage = buildMapTile( m_server,m_urlPatern, data, epsg, 
+			BufferedImage tileImage = buildMapTile( m_server,m_urlPatern, data, srs, 
 												    size, level, xTile, yTile, m_imageFormat );
 
 			return Response.ok(tileImage, new MediaType("image", m_imageFormat))
@@ -96,14 +96,14 @@ public class MapCacheTileResource {
 	}
 
 	String buildUrl( String server, String urlPatern, String data,
-					 int epsg, int size, int level, int xTile, int yTile ){
+					 String srs, int size, int level, int xTile, int yTile ){
 		
 		Map<String, String> replacements = new HashMap<String, String>();
 
 		replacements.put("server", server );
 		replacements.put("data", data);
 		replacements.put("level", Integer.toString(level));
-		replacements.put("epsg", Integer.toString(epsg));
+		replacements.put("srs", srs);
 		replacements.put("width", Integer.toString(size));
 		replacements.put("height", Integer.toString(size));
 		replacements.put("x", Integer.toString(xTile));
@@ -147,7 +147,7 @@ public class MapCacheTileResource {
 	}
 
 	BufferedImage buildMapTile( String server, String urlPatern, String data,
-								int epsg, int size, int level, int xTile, int yTile,
+								String srs, int size, int level, int xTile, int yTile,
 								String imageFormat ) throws FileNotFoundException, MalformedURLException, IOException {
 		
 		BufferedImage img = null;
@@ -168,7 +168,7 @@ public class MapCacheTileResource {
 			}
 			if ( bGoodDir ){
 				// Get Image and write to file
-				String url = buildUrl( server, urlPatern, data, epsg, size, level, xTile, yTile );
+				String url = buildUrl( server, urlPatern, data, srs, size, level, xTile, yTile );
 				img = getImageFromURL(url,file);
 				splitFile(level, xTile, yTile, img );
 			}

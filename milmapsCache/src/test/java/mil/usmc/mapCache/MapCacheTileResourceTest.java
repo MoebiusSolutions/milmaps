@@ -22,12 +22,12 @@ public class MapCacheTileResourceTest {
 		String server = "http://services.arcgisonline.com/ArcGIS/rest/services";
 		String urlPatern = "{server}/{data}/MapServer/tile/{level}/{y}/{x}";
 		String data = "I3_Imagery_Prime_World_2D";
-		int epsg = 4326;
+		String srs = "EPSG:4326";
 		int width = 512;
 		int level = 1;
 		int xTile = 0;
 		int yTile = 1;
-		String csUrl = m_cache.buildUrl(server, urlPatern, data, epsg, width, level, xTile, yTile );
+		String csUrl = m_cache.buildUrl(server, urlPatern, data, srs, width, level, xTile, yTile );
 		
 		String ans = "http://services.arcgisonline.com/ArcGIS/rest/services/I3_Imagery_Prime_World_2D/MapServer/tile/1/1/0";
 		assertEquals(csUrl,ans );
