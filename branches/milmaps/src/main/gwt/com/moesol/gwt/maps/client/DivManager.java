@@ -7,9 +7,11 @@ public class DivManager {
 	private static int LEVEL_RANGE = 2;
 	public static final int NUMDIVS = 20;
 	private int m_currentLevel = 0;
+	private int m_oldLevel = 0;
 	private IProjection m_proj= null;
 	private final IMapView m_map;
 	private double m_opacity = 1.0;
+	private double m_oldOpacity = 1.0;
 	//private Browser.Type m_browser;
 	
 	private ViewWorker m_vpWorker = null;
@@ -85,6 +87,7 @@ public class DivManager {
 	}
 	
 	public void setCurrentLevel(int currentLevel) {
+		m_oldLevel = m_currentLevel;
 		m_currentLevel = currentLevel;
 	}
 
@@ -103,23 +106,45 @@ public class DivManager {
 		return null;
 	}
 	
+	private boolean nothingChanged(){
+		if (m_opacity == m_oldOpacity && m_currentLevel == m_oldLevel) {
+			System.out.println("nothing changed");
+			return true;
+		}
+		m_oldOpacity = m_opacity;
+		m_oldLevel = m_currentLevel;
+		return false;
+	}
+	
 	public void adjustOpacity(){
+		if (nothingChanged()) {
+			return;
+		}
 		if (m_currentLevel == 0) {
 			Element el = m_dpArray[0].getTileLayerPanel().getElement();
 			el.getStyle().setOpacity(m_opacity);			
 		}
 		else {
 			int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
-			double inc = ( n == 0 ? m_opacity/(m_currentLevel+1) : m_opacity/n);
-			for(int j = m_currentLevel; j > -1; j--){
-				double opacity = Math.max(0, m_opacity - (m_currentLevel-j)*inc);
-				Element el = m_dpArray[j].getTileLayerPanel().getElement();
-				el.getStyle().setOpacity(opacity);			
+			if (m_opacity == 1.0) {
+				for(int j = m_currentLevel; j >= n; j--){
+					Element el = m_dpArray[j].getTileLayerPanel().getElement();
+					el.getStyle().setOpacity(m_opacity);			
+				}				
+			}
+			else {
+				double inc = ( n == 0 ? m_opacity/(m_currentLevel+1) : m_opacity/LEVEL_RANGE);
+				for (int j = m_currentLevel; j >= n; j--) {
+					double opacity = Math.max(0, m_opacity - (m_currentLevel-j)*inc);
+					Element el = m_dpArray[j].getTileLayerPanel().getElement();
+					el.getStyle().setOpacity(opacity);			
+				}
 			}
 		}
 	}
 	
 	public void setOpacity(double opacity){
+		m_oldOpacity = m_opacity;
 		m_opacity = opacity;
 		adjustOpacity();
 	}
