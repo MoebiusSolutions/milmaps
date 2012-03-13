@@ -1,5 +1,6 @@
 package com.moesol.gwt.maps.client;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 
 public class DivManager {
@@ -8,6 +9,7 @@ public class DivManager {
 	private int m_currentLevel = 0;
 	private IProjection m_proj= null;
 	private final IMapView m_map;
+	private double m_opacity = 1.0;
 	//private Browser.Type m_browser;
 	
 	private ViewWorker m_vpWorker = null;
@@ -94,17 +96,32 @@ public class DivManager {
 		return getDiv(m_currentLevel);
 	}
 	
-	public DivPanel getDiv( int level ) {
-		if ( -1 < level && level < NUMDIVS){
-			return m_dpArray[level];
+	public DivPanel getDiv( int i ) {
+		if ( -1 < i && i < NUMDIVS){
+			return m_dpArray[i];
 		}
 		return null;
 	}
 	
-	public void setOpacity(double brightness){
-		for ( int j = 0; j < NUMDIVS; j++ ){
-			m_dpArray[j].getTileLayerPanel().getElement().getStyle().setOpacity(brightness);
-		}	
+	public void adjustOpacity(){
+		if (m_currentLevel == 0) {
+			Element el = m_dpArray[0].getTileLayerPanel().getElement();
+			el.getStyle().setOpacity(m_opacity);			
+		}
+		else {
+			int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
+			double inc = ( n == 0 ? m_opacity/(m_currentLevel+1) : m_opacity/n);
+			for(int j = m_currentLevel; j > -1; j--){
+				double opacity = Math.max(0, m_opacity - (m_currentLevel-j)*inc);
+				Element el = m_dpArray[j].getTileLayerPanel().getElement();
+				el.getStyle().setOpacity(opacity);			
+			}
+		}
+	}
+	
+	public void setOpacity(double opacity){
+		m_opacity = opacity;
+		adjustOpacity();
 	}
 	
 	public void addLayer(LayerSet layerSet) {
@@ -171,7 +188,8 @@ public class DivManager {
 		for ( int i = m_currentLevel+1; i < NUMDIVS; i++ ) {
 			m_dpArray[i].hideAllTiles();
 			m_dpArray[i].setVisible(false);
-		}		
+		}	
+		adjustOpacity();
 	}
 	
 	public void placeDivsInViewPanel( AbsolutePanel panel ) {
