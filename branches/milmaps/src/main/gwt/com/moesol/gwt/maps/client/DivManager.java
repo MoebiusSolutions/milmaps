@@ -23,6 +23,7 @@ public class DivManager {
 			m_dpArray[i].getElement().getStyle().setZIndex(i);
 			lp.add(m_dpArray[i]);
 		}
+		
 		// we will initialize the projection, but the projection
 		// may change when the layer sets are loaded.
 		initProjections( 512, 512,180,180,IProjection.T.CylEquiDist);
@@ -57,7 +58,7 @@ public class DivManager {
 		for( int i = 0; i < NUMDIVS; i++ ){
 			double scale = eqScale*(1<<i);
 			m_dpArray[i].initialize(i, m_map, m_proj.getType(),scale);
-		}	
+		}
 	}
 	
 	public int getNumDivs(){ return NUMDIVS; }
@@ -102,7 +103,7 @@ public class DivManager {
 	
 	public void setOpacity(double brightness){
 		for ( int j = 0; j < NUMDIVS; j++ ){
-			m_dpArray[j].getElement().getStyle().setOpacity(brightness);
+			m_dpArray[j].getTileLayerPanel().getElement().getStyle().setOpacity(brightness);
 		}	
 	}
 	

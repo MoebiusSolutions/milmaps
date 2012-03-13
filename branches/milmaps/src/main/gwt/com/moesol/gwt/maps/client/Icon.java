@@ -169,6 +169,7 @@ public class Icon {
 	 */
 	public void setImageSize(ViewDimension size) {
 		m_imageSize = size;
+		m_image.setPixelSize(size.getWidth(), size.getHeight());
 	}
 	
 	public Label getLabel() {
@@ -217,8 +218,9 @@ public class Icon {
 	}
 	public void setZIndex(int zIndex) {
 		m_zIndex = zIndex;
+		m_image.getElement().getStyle().setZIndex(zIndex);
 	}
-
+	
 	public ViewCoords getOffsetWithInLabelLeaderImage() {
 		return m_offsetWithInLabelLeaderImage;
 	}

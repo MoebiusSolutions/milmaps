@@ -56,7 +56,6 @@ import com.moesol.gwt.maps.client.IProjection;
 import com.moesol.gwt.maps.client.Icon;
 import com.moesol.gwt.maps.client.LayerSet;
 import com.moesol.gwt.maps.client.LayerSetJson;
-import com.moesol.gwt.maps.client.MapLayersOnClient;
 import com.moesol.gwt.maps.client.MapPanel;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
@@ -69,7 +68,6 @@ import com.moesol.gwt.maps.client.controls.MapDimmerControl;
 import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
 import com.moesol.gwt.maps.client.controls.PositionControl;
 import com.moesol.gwt.maps.client.controls.SearchControl;
-import com.moesol.gwt.maps.client.controls.TagControl;
 import com.moesol.gwt.maps.client.gin.MapsGinjector;
 import com.moesol.gwt.maps.client.place.MapsActivityMapper;
 import com.moesol.gwt.maps.client.place.MapsPlaceHistoryMapper;
@@ -320,7 +318,7 @@ public class Driver implements EntryPoint {
 					DeclutterEngine.LEADER_IMAGE_WIDTH, DeclutterEngine.LEADER_IMAGE_HEIGHT);
 			img.getElement().getStyle().setZIndex(3020);
 			
-			widgetPositioner.place(img, 200, 200, 
+			widgetPositioner.place(img, 200, 200,
 					DeclutterEngine.LEADER_IMAGE_WIDTH,
 					DeclutterEngine.LEADER_IMAGE_HEIGHT,
 					4000);
@@ -378,16 +376,16 @@ public class Driver implements EntryPoint {
 	}
 
 	private void addSomeIcons() {
-		Icon icon = new Icon();
-		icon.setIconUrl("http://www.moesol.com/icons/moesol_logo_small.jpg");
-		icon.setLocation(new GeodeticCoords(0,0,AngleUnit.DEGREES));
-		icon.getImage().setPixelSize(212/2, 86/2);
-		m_map.getIconLayer().addIcon(icon);
+		//Icon icon = new Icon();
+		//icon.setIconUrl("http://www.moesol.com/icons/moesol_logo_small.jpg");
+		//icon.setLocation(new GeodeticCoords(0,0,AngleUnit.DEGREES));
+		//icon.getImage().setPixelSize(212/2, 86/2);
+		//m_map.getIconLayer().addIcon(icon);
 
-		// int num = 1024, workable, sluggish
-		// int num = 512, better
-		// int num = 256, good
-		// int num = 128, rocking
+		 //int num = 1024; // workable, sluggish
+		 //int num = 512;  // better
+		 //int num = 256;  // good
+		 //int num = 128;  // rocking
 		int num = 10;
 		double maxx = 360.0;
 		double maxy = 30.0;
@@ -400,6 +398,8 @@ public class Driver implements EntryPoint {
 			lat += incy;
 			lng += incx;
 		}
+		//addOneIcon(0,0.0,0.0);
+		
 	}
 
 	private void addOneIcon(int i, double lat, double lng) {
@@ -408,11 +408,8 @@ public class Driver implements EntryPoint {
 		icon.setLabel("icon number " + i);
 		icon.setIconUrl("http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg");
 		icon.setLocation(new GeodeticCoords(lng, lat, AngleUnit.DEGREES));
-		icon.setImageSize(new ViewDimension(16, 16));
-		Image im = icon.getImage();
-		im.setPixelSize(16, 16);
-		im.getElement().getStyle().setZIndex(2010);
-		
+		icon.setImageSize(new ViewDimension(16,16));
+		icon.setZIndex(2010);
 		m_map.getIconLayer().addIcon(icon);
 	}
 
@@ -503,18 +500,18 @@ public class Driver implements EntryPoint {
 		
 
 		// Value objects with trival pools
-		GeodeticCoords[] gcPool = new GeodeticCoords[100];
-		for (int i = 0; i < gcPool.length; i++) {
-			gcPool[i] = new GeodeticCoords();
-		}
-		WorldCoords[] wcPool = new WorldCoords[100];
-		for (int i = 0; i < wcPool.length; i++) {
-			wcPool[i] = new WorldCoords();
-		}
-		ViewCoords[] vcPool = new ViewCoords[100];
-		for (int i = 0; i < vcPool.length; i++) {
-			vcPool[i] = new ViewCoords();
-		}
+		//GeodeticCoords[] gcPool = new GeodeticCoords[100];
+		//for (int i = 0; i < gcPool.length; i++) {
+		//	gcPool[i] = new GeodeticCoords();
+		//}
+		//WorldCoords[] wcPool = new WorldCoords[100];
+		//for (int i = 0; i < wcPool.length; i++) {
+		//	wcPool[i] = new WorldCoords();
+		//}
+		//ViewCoords[] vcPool = new ViewCoords[100];
+		//for (int i = 0; i < vcPool.length; i++) {
+		//	vcPool[i] = new ViewCoords();
+		//}
 				
 //		cl.start();
 //		for (int i = 0; i < N; i++) {

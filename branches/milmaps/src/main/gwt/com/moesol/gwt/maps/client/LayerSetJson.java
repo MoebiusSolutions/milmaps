@@ -14,6 +14,7 @@ public class LayerSetJson extends JavaScriptObject {
 	public final native int getSkipLevels(int def) /*-{ return this.skipLevels || def; }-*/;
 	public final native String getUrlPattern(String def) /*-{ return this.urlPattern || def; }-*/;
 	public final native boolean isTiled(boolean def) /*-{ return this.tiled != undefined ? this.tiled : def; }-*/;
+	public final native boolean isDimmable(boolean def) /*-{ return this.dimmable != undefined ? this.dimmable : def; }-*/;
 	public final native boolean isZeroTop(boolean def) /*-{ return this.zeroTop != undefined ? this.zeroTop : def; }-*/;
 	public final native boolean isAlwaysDraw(boolean def) /*-{ return this.alwaysDraw != undefined ? this.alwaysDraw : def; }-*/;
 	public final native boolean isBackgroundMap(boolean def) /*-{ return this.isBackgroundMap != undefined ? this.isBackgroundMap : def; }-*/;
@@ -39,6 +40,7 @@ public class LayerSetJson extends JavaScriptObject {
 			.withSkipLevels(getSkipLevels(layerSet.getSkipLevels()))
 			.withUrlPattern(getUrlPattern(layerSet.getUrlPattern()))
 			.withTiled(isTiled(layerSet.isTiled()))
+			.withDimmable(isTiled(layerSet.isDimmable()))
 			.withZeroTop(isZeroTop(layerSet.isZeroTop()))
 			.withAlwaysDraw(isAlwaysDraw(layerSet.isAlwaysDraw()))
 			.withSetBackGroundMapFlag(isBackgroundMap(layerSet.isBackgroundMap()))

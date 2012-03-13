@@ -13,6 +13,7 @@ public class LayerSet implements IsSerializable {
 	private String m_urlPattern = "{server}?T={data}&L={level}&X={x}&Y={y}";
 	private boolean m_active = true; // If set to false engine will not render.
 	private boolean m_tiled = true;
+	private boolean m_dimmable = true;
 	private boolean m_zeroTop = false;
 	private boolean m_alwaysDraw = false;
 	private boolean m_isBackgroundMap = true;
@@ -193,6 +194,21 @@ public class LayerSet implements IsSerializable {
 	}
 	public LayerSet withTiled(boolean t) {
 		setTiled(t);
+		return this;
+	}
+	
+	/**
+	 * return true if each layer requires multiple tiles
+	 * @return
+	 */
+	public boolean isDimmable() {
+		return m_dimmable;
+	}
+	public void setDimmable(boolean d) {
+		m_dimmable = d;
+	}
+	public LayerSet withDimmable(boolean d) {
+		setDimmable(d);
 		return this;
 	}
 

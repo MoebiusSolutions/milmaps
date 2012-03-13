@@ -2,13 +2,15 @@ package com.moesol.gwt.maps.client;
 
 import java.util.ArrayList;
 
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DivPanel extends AbsolutePanel {
-	private final LayoutPanel m_tileLayersPanel = new LayoutPanel();
+	private final LayoutPanel m_dimPanel = new LayoutPanel();
+	private final LayoutPanel m_nonDimPanel = new LayoutPanel();
 	private final DivWorker m_divWorker = new DivWorker();
 	private final TileBuilder m_tileBuilder = new TileBuilder();
 	private final DivDimensions m_scaledDims = new DivDimensions();
@@ -24,13 +26,22 @@ public class DivPanel extends AbsolutePanel {
 		m_level = level;
 		m_tileBuilder.setDivWorker(m_divWorker);
 		m_tileBuilder.setTileImageLayers(m_tiledImageLayers);
-		m_tileLayersPanel.setStylePrimaryName("tileLayerPanel");
-		m_tileLayersPanel.setWidth("100%");
-		m_tileLayersPanel.setHeight("100%");
-		m_tileLayersPanel.getElement().setClassName("tileLayerPanel"); 
+		m_dimPanel.setStylePrimaryName("tileLayerPanel");
+		m_dimPanel.setWidth("100%");
+		m_dimPanel.setHeight("100%");
+		m_dimPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		m_dimPanel.getElement().setClassName("tileLayerPanel"); 
+
+		m_nonDimPanel.setStylePrimaryName("nonDimTileLayerPanel");
+		m_nonDimPanel.setWidth("100%");
+		m_nonDimPanel.setHeight("100%");
+		m_nonDimPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		m_nonDimPanel.getElement().setClassName("nonDimTileLayerPanel"); 
+		
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();
 		super.setPixelSize(dd.getWidth(), dd.getHeight());
-		this.add(m_tileLayersPanel);
+		this.add(m_dimPanel);
+		this.add(m_nonDimPanel);
 		this.getElement().setClassName("DivPanelContainer");
 	}
 	
@@ -44,8 +55,18 @@ public class DivPanel extends AbsolutePanel {
 		m_tileBuilder.setMapViewWorker(map.getViewport().getVpWorker());
 	}
 	
+	public void initialize(IMapView map) {
+		m_map = map;
+		m_divProj = map.getProjection();
+		m_divWorker.setProjection(m_divProj);
+		m_tileBuilder.setProjection(m_divProj);
+		m_tileBuilder.setDivLevel(0);
+		m_tileBuilder.setMapViewWorker(map.getViewport().getVpWorker());
+	}
+	
 	public int getDivLevel(){ return m_level; }
 	
+	public void setProjection(IProjection proj){ m_divProj = proj; }
 	public IProjection getProjection(){ return m_divProj; }
 	
 	public boolean updateViewCenter( GeodeticCoords gc ){
@@ -106,7 +127,9 @@ public class DivPanel extends AbsolutePanel {
 	
 	public DivWorker getDivWorker(){ return m_divWorker; }
 	
-	public LayoutPanel getTileLayerPanel(){ return m_tileLayersPanel; }
+	public LayoutPanel getTileLayerPanel(){ return m_dimPanel; }
+	
+	public LayoutPanel getNonDimTileLayerPanel(){ return m_nonDimPanel; }
 	
 	public void addLayer(LayerSet layerSet) {
 		TiledImageLayer tiledImageLayer = new TiledImageLayer(this, layerSet);
@@ -209,16 +232,17 @@ public class DivPanel extends AbsolutePanel {
 	}
 	
 	private void placeIcon(Widget widget, int dx, int dy, int dw, int dh, int z) {
-		if (widget.getParent() == null || widget.getParent() != getTileLayerPanel()) {
-			getTileLayerPanel().add(widget);
+		LayoutPanel lp = getNonDimTileLayerPanel();
+		if (widget.getParent() == null || widget.getParent() != lp) {
+			lp.add(widget);
 		}
 		
 		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(dx, dy, 1, 1);
 		
 		widget.setPixelSize(dw, dh);
-		getTileLayerPanel().setWidgetLeftWidth(widget, b.left, Unit.PCT, dw, Unit.PX);
-		getTileLayerPanel().setWidgetTopHeight(widget, b.top, Unit.PCT, dh, Unit.PX);
-		getTileLayerPanel().getWidgetContainerElement(widget).getStyle().setZIndex(z);
+		lp.setWidgetLeftWidth(widget, b.left, Unit.PCT, dw, Unit.PX);
+		lp.setWidgetTopHeight(widget, b.top, Unit.PCT, dh, Unit.PX);
+		lp.getWidgetContainerElement(widget).getStyle().setZIndex(z);
 	}
 
 }

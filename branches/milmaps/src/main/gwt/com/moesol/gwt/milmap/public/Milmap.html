@@ -15,7 +15,7 @@
 		var milMap_options = {
 			showLayerPanel: "false",
 			showTestDialog: " false",
-			showSomeIcons: "false",
+			showSomeIcons: "true",
 			
 			useTmsBMNG: "false",
 			tmsURL: "http://localhost/geowebcache/service/tms/1.0.0",
@@ -40,14 +40,14 @@
 				 startLevelTileHeightInDeg:90,
 				 pixelWidth:256,
 				 pixelHeight:256,
-				 active: true
+				 active: false
 			}
 			,
 			// This version uses 512x512 with deg width of 180.
 			{  
 				 server: myOrigin + "/milmapsCache/rs/mapcache",
 				 data: "I3_Imagery_Prime_World_2D",
-				 urlPattern: "{server}/{data}/{epsg}/{imgSize}/{level}/{x}/{y}",
+				 urlPattern: "{server}/{data}/{srs}/{imgSize}/{level}/{x}/{y}",
 				 srs: "EPSG:4326",
 				 zeroTop: true,
 				 isBackgroundMap: true,
@@ -104,12 +104,12 @@
 				startLevelTileHeightInDeg:180,
 				pixelHeight: 512,
 				pixelWidth: 512,
-				active: false
+				active: true
 			}
 	        ,
 	        // MGRS
 			{ 
-				server: "http://localhost:8080/mgrs-grid", 
+				server: myOrigin + "/mgrs-grid", 
 				urlPattern: "{server}/rs/mgrstile/99999900/{srs}/{width}/{height}/{level}/{x}/{y}.png",
 				srs: "EPSG:4326",
 				tiled: true,
@@ -123,14 +123,15 @@
 				startLevelTileWidthInDeg:180,
 				pixelHeight: 512,
 				pixelWidth: 512,
-				active: true
+				active: false
 			} ,  
 	        // MGRS
 			{ 
-				server: "http://localhost:8080/mgrs-grid", 
+				server: myOrigin + "/mgrs-grid", 
 				urlPattern: "{server}/rs/mgrstile/99999900/{srs}/{bbox}/{width}/{height}.png",
 				srs: "EPSG:4326",
 				tiled: false,
+				dimmable: false,
 				zeroTop: false,
 				autoRefreshOnTimer: false,
 				alwaysDraw: true,

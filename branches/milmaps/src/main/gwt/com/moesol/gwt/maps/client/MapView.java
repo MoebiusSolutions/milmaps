@@ -486,7 +486,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	// /////////////////////////////////////////////////////////////////
 	// / User action calls /////////////////////////////////////////////
 	/**
-	 * Resize the map view to the width and height. Call this method with the
+	 * Resize the map view to the width and height. Call this method when the
 	 * map view is resized so that the internal view engine know what size to
 	 * use.
 	 */

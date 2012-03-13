@@ -13,7 +13,8 @@ public class TiledImageLayer {
 	/** The one and only layer set this tiled image layer will render */
 	private final LayerSet m_layerSet;
 	
-	private final LayoutPanel m_layoutPanel;
+	private final LayoutPanel m_dimLayoutPanel;
+	private final LayoutPanel m_nonDimLayoutPanel;
 	private final TileImageManager m_tileImageMgr = new TileImageManager(m_tileImageEngineListener);
 	
 	private final double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_MEERS;
@@ -37,7 +38,8 @@ public class TiledImageLayer {
 			String url = tileCoords.makeTileURL(vb, getLayerSet(), getLevel(), getDynamicCounter());
 			image.setUrl(url);
 			image.setStyleName("moesol-MapTile");
-			m_layoutPanel.add(image);
+
+			layoutPanel().add(image);
 			return image;
 		}
 		@Override
@@ -53,7 +55,7 @@ public class TiledImageLayer {
 			ImageDiv image = (ImageDiv)object;
 			// Better performance in IE7 to skip for non-auto update, but always setting fixes some IE7 issues.
 			image.setUrl(tileCoords.makeTileURL(vb, getLayerSet(), getLevel(), getDynamicCounter()));
-			m_layoutPanel.setWidgetVisible(image, true);
+			layoutPanel().setWidgetVisible(image, true);
 		}
 
 		@Override
@@ -61,7 +63,7 @@ public class TiledImageLayer {
 			ImageDiv image = (ImageDiv)object;
 			//image.setPixelSize(512, 512);
 			//m_absolutePanel.setWidgetPosition(image, -513, -513);
-			m_layoutPanel.setWidgetVisible(image, false);
+			layoutPanel().setWidgetVisible(image, false);
 		}
 	};
 	
@@ -73,7 +75,8 @@ public class TiledImageLayer {
 		m_divPanel = divPanel;
 		m_layerSet = layerSet;
 		m_divWorker = divPanel.getDivWorker();
-		m_layoutPanel = divPanel.getTileLayerPanel();
+		m_dimLayoutPanel = divPanel.getTileLayerPanel();
+		m_nonDimLayoutPanel = divPanel.getNonDimTileLayerPanel();
 		m_tileImageLoadListener.setTileImageEngine(m_tileImageMgr);
 	}
 	
@@ -83,6 +86,13 @@ public class TiledImageLayer {
 	
 	public long getDynamicCounter() {
 		return m_divPanel.getDynamicCounter();
+	}
+	
+	private LayoutPanel layoutPanel(){
+		if (m_layerSet.isDimmable()) {
+			return m_dimLayoutPanel;
+		}
+		return m_nonDimLayoutPanel;
 	}
 
 	public void setTileCoords(TileCoords[] tileCoords) {
@@ -149,8 +159,8 @@ public class TiledImageLayer {
 		int width = tileCoords.getTileWidth();
 		int height = tileCoords.getTileHeight();
 		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(x, y, width, height);
-		m_layoutPanel.setWidgetLeftRight(image, b.left, Unit.PCT, 100-b.right, Unit.PCT);
-		m_layoutPanel.setWidgetTopBottom(image, b.top, Unit.PCT, 100-b.bot, Unit.PCT);
+		layoutPanel().setWidgetLeftRight(image, b.left, Unit.PCT, 100-b.right, Unit.PCT);
+		layoutPanel().setWidgetTopBottom(image, b.top, Unit.PCT, 100-b.bot, Unit.PCT);
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();
 		m_minLeft  = Math.max(0,Math.min(x, m_minLeft));
 		m_maxRight = Math.min(dd.getWidth(),Math.max(x+width, m_maxRight));
