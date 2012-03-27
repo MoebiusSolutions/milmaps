@@ -130,10 +130,10 @@ public class MapPanZoomControlLegacy extends FlowPanel {
             zooms.setStyleName("map-PanZoomControlZoom");
             zoomInButton = new HTML();
             zoomInButton.setStyleName("map-PanZoomControlZoomInButton");
-            zoomInButton.getElement().getStyle().setProperty("marginLeft", "18px");
+//            zoomInButton.getElement().getStyle().setProperty("marginLeft", "18px");
             zoomOutButton = new HTML();
             zoomOutButton.setStyleName("map-PanZoomControlZoomOutButton");
-            zoomOutButton.getElement().getStyle().setProperty("marginLeft", "18px");
+//            zoomOutButton.getElement().getStyle().setProperty("marginLeft", "18px");
             zooms.add(zoomInButton);
             zooms.add(zoomOutButton);
             this.add(zooms);
@@ -178,7 +178,7 @@ public class MapPanZoomControlLegacy extends FlowPanel {
                 @Override
                 public void onMouseDown(MouseDownEvent e) {
                     e.preventDefault();
-                    zoomInButton.addStyleName("map-PanZoomControlZoomInButtonMouseDown");
+                    resetStyleNamesTo(zoomInButton, true, "map-PanZoomControlZoomInButtonMouse");
                     startZoomLoop(m_zoomInButtonTimer);
                 }
             });
@@ -187,7 +187,16 @@ public class MapPanZoomControlLegacy extends FlowPanel {
                 @Override
                 public void onMouseUp(MouseUpEvent e) {
                     e.preventDefault();
-                    zoomInButton.removeStyleName("map-PanZoomControlZoomInButtonMouseDown");
+                    resetStyleNamesTo(zoomInButton, true, "map-PanZoomControlZoomInButtonMouseOver");
+                    stopZoomLoop(m_zoomInButtonTimer);
+                }
+            });
+            
+            zoomInButton.addMouseOverHandler(new MouseOverHandler() {
+                @Override
+                public void onMouseOver(MouseOverEvent e) {
+                    e.preventDefault();
+                    resetStyleNamesTo(zoomInButton, true, "map-PanZoomControlZoomInButtonMouseOver");
                     stopZoomLoop(m_zoomInButtonTimer);
                 }
             });
@@ -195,9 +204,9 @@ public class MapPanZoomControlLegacy extends FlowPanel {
             zoomInButton.addMouseOutHandler(new MouseOutHandler() {
                 @Override
                 public void onMouseOut(MouseOutEvent e) {
-                        e.preventDefault();
-                        zoomInButton.removeStyleName("map-PanZoomControlZoomInButtonMouseDown");
-                        stopZoomLoop(m_zoomInButtonTimer);
+                    e.preventDefault();
+                    resetStyleNamesTo(zoomInButton, true, "map-PanZoomControlZoomInButtonMouse");
+                    stopZoomLoop(m_zoomInButtonTimer);
                 }
             });
             
@@ -205,7 +214,7 @@ public class MapPanZoomControlLegacy extends FlowPanel {
                 @Override
                 public void onMouseDown(MouseDownEvent e) {
                     e.preventDefault();
-                    zoomOutButton.addStyleName("map-PanZoomControlZoomOutButtonMouseDown");
+                    resetStyleNamesTo(zoomOutButton, false, "map-PanZoomControlZoomOutButtonMouse");
                     startZoomLoop(m_zoomOutButtonTimer);
                 }
             });
@@ -214,20 +223,50 @@ public class MapPanZoomControlLegacy extends FlowPanel {
                 @Override
                 public void onMouseUp(MouseUpEvent e) {
                     e.preventDefault();
-                    zoomOutButton.removeStyleName("map-PanZoomControlZoomOutButtonMouseDown");
+                    resetStyleNamesTo(zoomOutButton, false, "map-PanZoomControlZoomOutButtonMouseOver");
                     stopZoomLoop(m_zoomOutButtonTimer);
                 }
             });
             
+            zoomOutButton.addMouseOverHandler(new MouseOverHandler() {
+                @Override
+                public void onMouseOver(MouseOverEvent e) {
+                    e.preventDefault();
+		resetStyleNamesTo(zoomOutButton, false, "map-PanZoomControlZoomOutButtonMouseOver");
+		stopZoomLoop(m_zoomOutButtonTimer);
+                }
+            });
+        
             zoomOutButton.addMouseOutHandler(new MouseOutHandler() {
                 @Override
                 public void onMouseOut(MouseOutEvent e) {
                     e.preventDefault();
-                    zoomOutButton.removeStyleName("map-PanZoomControlZoomOutButtonMouseDown");
+                    resetStyleNamesTo(zoomOutButton, false, "map-PanZoomControlZoomOutButtonMouse");
                     stopZoomLoop(m_zoomOutButtonTimer);
                 }
             });
         }
+        
+    /**
+     * Catch-all method for making sure only one button type is set on the element at any time.
+     * This is the easiest necessary step to take cases such as the user hold-clicking on a button,
+     * dragging onto the other button, and releasing their click. 
+     * 
+     * @param button
+     * @param isInButton
+     * @param newName 
+     */
+    private void resetStyleNamesTo(HTML button, boolean isInButton, String newName) {
+        if (isInButton) {
+            button.removeStyleName("map-PanZoomControlZoomInButtonMouse");
+            button.removeStyleName("map-PanZoomControlZoomInButtonMouseOver");
+        }
+        else {
+            button.removeStyleName("map-PanZoomControlZoomOutButtonMouse");
+            button.removeStyleName("map-PanZoomControlZoomOutButtonMouseOver");
+        }
+        button.addStyleName(newName);
+    }
 
 	private double m_dx;
 

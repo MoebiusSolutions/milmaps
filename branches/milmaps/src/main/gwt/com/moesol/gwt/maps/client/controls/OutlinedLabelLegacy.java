@@ -69,11 +69,14 @@ public class OutlinedLabelLegacy extends FlowPanel {
             
             text.setStyleName("map-OutlinedLabelText");
             top.setStyleName("map-OutlinedLabelOutline");
+            top.addStyleName("map-OutlineUp");
             bottom.setStyleName("map-OutlinedLabelOutline");
             right.setStyleName("map-OutlinedLabelOutline");
             left.setStyleName("map-OutlinedLabelOutline");
             topLeft.setStyleName("map-OutlinedLabelOutline");
             bottomLeft.setStyleName("map-OutlinedLabelOutline");
+            bottomLeft.addStyleName("map-OutlineDown");
+            bottomLeft.addStyleName("map-OutlineLeft");
             topRight.setStyleName("map-OutlinedLabelOutline");
             bottomRight.setStyleName("map-OutlinedLabelOutline");
             
@@ -105,5 +108,21 @@ public class OutlinedLabelLegacy extends FlowPanel {
 		bottomRight.setHTML(safeValue);
 		topRight.setHTML(safeValue);
 		bottomLeft.setHTML(safeValue);
+	}
+        
+	/**
+	 * Set the text value of the label while allowing for the inclusion of HTML tags.
+	 * @param value
+	 */
+	public void setHtml(String value) {
+		text.setHTML(value);
+		top.setHTML(value);
+		right.setHTML(value);
+		bottom.setHTML(value);
+		left.setHTML(value);
+		topLeft.setHTML(value);
+		bottomRight.setHTML(value);
+		topRight.setHTML(value);
+		bottomLeft.setHTML(value);
 	}
 }

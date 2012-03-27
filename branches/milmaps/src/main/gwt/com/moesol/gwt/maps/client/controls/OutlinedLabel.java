@@ -67,4 +67,20 @@ public class OutlinedLabel extends Widget {
 		topRight.setInnerHTML(safeValue);
 		bottomLeft.setInnerHTML(safeValue);
 	}
+        
+	/**
+	 * Set the text value of the label while allowing for the inclusion of HTML tags.
+	 * @param value
+	 */
+	public void setHtml(String value) {
+		text.setInnerHTML(value);
+		top.setInnerHTML(value);
+		right.setInnerHTML(value);
+		bottom.setInnerHTML(value);
+		left.setInnerHTML(value);
+		topLeft.setInnerHTML(value);
+		bottomRight.setInnerHTML(value);
+		topRight.setInnerHTML(value);
+		bottomLeft.setInnerHTML(value);
+	}
 }

@@ -407,7 +407,9 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	
 	public void doUpdateView() {
-		if (m_resized || hasLevelChanged() || m_divMgr.hasDivMovedToFar()) {
+		if (m_resized 
+                        || hasLevelChanged() 
+                        || m_divMgr.hasDivMovedToFar()) {
 			m_resized = false;
 			//System.out.println("fullUpdate");
 			fullUpdateView();
@@ -415,6 +417,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 			//System.out.println("partialUpdate");
 			partialUpdateView();
 		}
+                
 		m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
 		m_changeListeners.fireChange( this );
 		
@@ -437,6 +440,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public void partialUpdateView() {
 		Sample.MAP_PARTIAL_UPDATE.beginSample();
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
+		m_divMgr.positionIcons();
 		Sample.MAP_PARTIAL_UPDATE.endSample();
 	}
 	
@@ -462,8 +466,9 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	@Override
 	public void setSize(String width, String height) {
 		super.setSize(width, height);
+                m_viewPanel.setSize(width, height);
 		// below fails in IE
-		updateSize(getOffsetWidth(), getOffsetHeight());
+//		updateSize(getOffsetWidth(), getOffsetHeight());
 	}
 
 	private void updateSize(int width, int height) {
@@ -640,5 +645,9 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public WidgetPositioner getWidgetPositioner() {
 		return m_divMgr.getWidgetPositioner();
 	}
+
+//        private boolean iconsHaveMoved() {
+//                return m_iconLayer.iconsHaveMoved();
+//        }
 	
 }

@@ -108,7 +108,7 @@ public class DivManager {
 	
 	private boolean nothingChanged(){
 		if (m_opacity == m_oldOpacity && m_currentLevel == m_oldLevel) {
-			System.out.println("nothing changed");
+//			System.out.println("nothing changed");
 			return true;
 		}
 		m_oldOpacity = m_opacity;
@@ -240,6 +240,10 @@ public class DivManager {
 		DivCoordSpan ds = dp.getUsedDivSpan();
 		return dw.hasDivMovedToFar(mapProj, vw, dim, ds);
 	}
+
+        public boolean hasIconsMoved() {
+                throw new UnsupportedOperationException("Not yet implemented");
+        }
 	
 	public void positionIcons() {
 		getCurrentDiv().positionIcons();
