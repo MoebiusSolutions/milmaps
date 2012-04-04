@@ -6,11 +6,12 @@ import mil.usmc.mgrs.objects.R2;
 public abstract class AbstractProjection implements IProjection {
 	public static double RadToDeg = 57.29577951;
 	public static double DegToRad = 0.017453293;
+	public static int DOTS_PER_INCH = 96;
 	
 	protected double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_METERS;
 	protected double MeterPerDeg  = EarthCirMeters/360.0;
 	
-	protected int m_scrnDpi = 75;   // screen dot per inch
+	protected int m_scrnDpi = DOTS_PER_INCH;   // screen dot per inch
 	protected double m_scrnMpp = 2.54 / (m_scrnDpi * 100.0);
 	protected int m_boxWidthInPix ;
 	protected int m_boxHeightInPix;
