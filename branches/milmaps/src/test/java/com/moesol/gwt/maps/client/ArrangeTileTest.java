@@ -36,7 +36,7 @@ public class ArrangeTileTest {
 	int m_tilePixWidth  = 512;
 	int m_tilePixHeight = 512;
 	
-	int m_dpi = 75;
+	int m_dpi = AbstractProjection.DOTS_PER_INCH;
 
 	public ArrangeTileTest(){
 		m_vp.setDivWorker(m_divWorker);

@@ -46,6 +46,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.moesol.gwt.maps.client.AbstractProjection;
 import com.moesol.gwt.maps.client.DeclutterEngine;
 import com.moesol.gwt.maps.client.DivManager;
 import com.moesol.gwt.maps.client.DivPanel;
@@ -85,7 +86,7 @@ public class Driver implements EntryPoint {
 	private static final int TILE_DY = 3;
 	private static final int TILE_DX = 4;
 	private static Dictionary OPTIONS = Dictionary.getDictionary("milMap_options");
-	private int m_scrnDpi = 75;
+	private int m_scrnDpi = AbstractProjection.DOTS_PER_INCH;
 	private MapView m_map;
 	//private PositionControl m_mousePosLabel;
 	private final Label m_centerLabel = new Label();
@@ -499,7 +500,7 @@ public class Driver implements EntryPoint {
 		Window.alert("New geo/world/view = " + cl + " or " + perSec + "k/sec");
 		
 
-		// Value objects with trival pools
+		// Value objects with trivial pools
 		//GeodeticCoords[] gcPool = new GeodeticCoords[100];
 		//for (int i = 0; i < gcPool.length; i++) {
 		//	gcPool[i] = new GeodeticCoords();

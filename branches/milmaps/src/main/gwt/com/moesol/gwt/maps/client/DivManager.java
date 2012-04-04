@@ -108,7 +108,6 @@ public class DivManager {
 	
 	private boolean nothingChanged(){
 		if (m_opacity == m_oldOpacity && m_currentLevel == m_oldLevel) {
-//			System.out.println("nothing changed");
 			return true;
 		}
 		m_oldOpacity = m_opacity;

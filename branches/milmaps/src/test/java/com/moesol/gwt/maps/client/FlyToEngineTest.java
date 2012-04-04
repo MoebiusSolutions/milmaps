@@ -54,7 +54,7 @@ public class FlyToEngineTest {
 		m_engine.onUpdate(FlyToEngine.ZOOM_OUT_UNTIL);
 		double preTeleportScale = m_proj.getEquatorialScale();
 		MapScale result = new JmvMapScale(preTeleportScale);
-		MapScale expect = JmvMapScale.parse("1:86.7M");
+		MapScale expect = JmvMapScale.parse("1:110.9M");
 		assertEquals(preTeleportScale,expectedScale,0.00000001);
 		assertEquals(expect.toString(), result.toString());
 	}
@@ -98,8 +98,8 @@ public class FlyToEngineTest {
 		m_engine.onUpdate(FlyToEngine.ZOOM_PAUSE);
 		ViewWorker vw = m_viewport.getVpWorker();
 		GeodeticCoords pt = vw.getGeoCenter();
-		assertEquals(19.9999354, pt.getPhi(AngleUnit.DEGREES),0.00001);
-		assertEquals(29.9543667, pt.getLambda(AngleUnit.DEGREES),0.00001);
+		assertEquals(19.9999782, pt.getPhi(AngleUnit.DEGREES),0.00001);
+		assertEquals(29.9643065, pt.getLambda(AngleUnit.DEGREES),0.00001);
 	}
 	
 	@Test

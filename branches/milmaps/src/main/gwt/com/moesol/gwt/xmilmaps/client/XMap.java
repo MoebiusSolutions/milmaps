@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.moesol.gwt.maps.client.AbstractProjection;
 import com.moesol.gwt.maps.client.IconLayer;
 import com.moesol.gwt.maps.client.LayerSet;
 import com.moesol.gwt.maps.client.LayerSetJson;
@@ -44,7 +45,7 @@ public class XMap implements Exportable {
 	
 	final DockLayoutPanel m_dockPanel = new DockLayoutPanel(Unit.PX);
 
-	private int m_scrnDpi = 75;
+	private int m_scrnDpi = AbstractProjection.DOTS_PER_INCH;
 	private LayoutPanel m_lp;
 	MapView m_mapView;
 	

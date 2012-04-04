@@ -57,7 +57,8 @@ public class MapScale {
 	public String toString() {
 		double bottom = 1/m_scale;
 		if (bottom >= ONE_MILLION) {
-			return NumberFormat.getFormat("0.0").format(bottom / ONE_MILLION) + "M";
+			double d = bottom / ONE_MILLION;
+			return NumberFormat.getFormat("0.0").format(d) + "M";
 		} else if (bottom >= ONE_THOUSAND) {
 			return NumberFormat.getFormat("0.0").format(bottom / ONE_THOUSAND) + "K";
 		} else {

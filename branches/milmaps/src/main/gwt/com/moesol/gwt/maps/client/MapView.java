@@ -36,7 +36,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 
 	private final IconLayer m_iconLayer = new IconLayer();
 
-	private int m_dpi = 75;
+	private int m_dpi = AbstractProjection.DOTS_PER_INCH;
 	private boolean m_bSuspendMapAction = false;
 	private boolean m_bDeclutterLabels = false;
 
@@ -93,6 +93,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		//placeDivPanels();
 		initWidget(m_focusPanel);
 		//doUpdateView();
+	}
+	
+	public AbsolutePanel getViewPanel(){
+		return m_viewPanel;
 	}
 	
 	public IconEngine getIconEngine() { return m_iconEngine; }
@@ -468,7 +472,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		super.setSize(width, height);
                 m_viewPanel.setSize(width, height);
 		// below fails in IE
-//		updateSize(getOffsetWidth(), getOffsetHeight());
+        //updateSize(getOffsetWidth(), getOffsetHeight());
 	}
 
 	private void updateSize(int width, int height) {

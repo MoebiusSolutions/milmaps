@@ -166,14 +166,15 @@ public class TileBuilder {
 	private TileCoords makeCenterTileUsingMapView(ViewBox vb) {	
 		TileCoords tc = new TileCoords(0,0);
 		IProjection proj = m_divWorker.getProjection();
-		tc.setOffsetX(m_mapViewWorker.getOffsetInWcX());
-		if (vb.isSingleTile() == false) {
+		if (vb.isSingleTile()) {
+			tc.setOffsetX(m_mapViewWorker.getOffsetInWcX());
+			tc.setOffsetY(m_mapViewWorker.getOffsetInWcY());
+		}
+		else {
 			GeodeticCoords gc = new GeodeticCoords(vb.left(),vb.top(),AngleUnit.DEGREES);
 			WorldCoords wc = proj.geodeticToWorld(gc);
+			tc.setOffsetX(wc.getX());
 			tc.setOffsetY(wc.getY());
-		}
-		else{
-			tc.setOffsetY(m_mapViewWorker.getOffsetInWcY());
 		}
 		tc.setTileWidth( vb.getWidth());
 		tc.setTileHeight(vb.getHeight());
@@ -337,7 +338,7 @@ public class TileBuilder {
 		if (layer.getLayerSet().isAlwaysDraw() || layer.isPriority()) {
 			ViewBox vb = null;
 			if (layer.getLayerSet().isTiled() == false){
-				vb = m_mapViewWorker.getViewBox(m_mapViewWorker.getProjection());
+				vb = m_mapViewWorker.getViewBox(0);
 			}
 			TileCoords[] tileCoords = arrangeTiles( level, vb, layer);
 			layer.setTileCoords(tileCoords);
@@ -354,7 +355,7 @@ public class TileBuilder {
 			.setHeight((int)(vd.getHeight()/dFactor)).build();
 		
 		m_tileViewWorker.setDimension(m_scaledViewDims);
-		ViewBox vb = m_mapViewWorker.getViewBox(m_divWorker.getProjection());
+		ViewBox vb = m_mapViewWorker.getViewBox(0);
 		int dpi = m_divProj.getScrnDpi();
 		for (TiledImageLayer layer : m_tiledImageLayers) {
 			LayerSet ls = layer.getLayerSet();

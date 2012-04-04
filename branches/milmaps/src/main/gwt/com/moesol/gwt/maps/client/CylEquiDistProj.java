@@ -114,7 +114,7 @@ public class CylEquiDistProj extends AbstractProjection {
 		}
 		lng = wrapLng(lng);
 		double lat = yPixToDegLat(w.getY());
-		
+		lat = Math.max(Math.min(lat,BOUNDS.getTopLat()),BOUNDS.getBotLat());
 		return Degrees.geodetic(lat, lng);
 	}
 	

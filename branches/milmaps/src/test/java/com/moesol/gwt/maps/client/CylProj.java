@@ -23,8 +23,8 @@ public class CylProj {
 	public double EarthCirMeters  = 2.0*Math.PI*6378137;
 	public double MeterPerDeg  = EarthCirMeters/360.0;
 	
-	protected int m_scrnDpi = 75;   // screen dot per inch
-	protected double m_scrnMpp = 2.54/7500.0; // screen meter per pixel
+	protected int m_scrnDpi = AbstractProjection.DOTS_PER_INCH;   // screen dot per inch
+	protected double m_scrnMpp = 2.54/(m_scrnDpi*100.0); // screen meter per pixel
 	protected double m_scale = 0;   // map scale
 	protected double m_prevScale;
 	

@@ -11,6 +11,9 @@ import com.moesol.gwt.maps.shared.BoundingBox;
 
 public abstract class AbstractProjection implements IProjection, HasHandlers {
     
+	public static double RadToDeg = 57.29577951;
+	public static double DegToRad = 0.017453293;
+	public static int DOTS_PER_INCH = 96;
 	private final HandlerManager m_handlerManager = new HandlerManager(this);
 	protected IProjection.T m_projType;
 	protected final WorldDimension m_wdSize = new WorldDimension(); // Whole world
@@ -18,8 +21,8 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	public double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_MEERS;
 	public double MeterPerDeg  = EarthCirMeters/360.0;
 	
-	protected int m_scrnDpi = 75;   // screen dot per inch
-	protected double m_scrnMpp = 2.54/7500.0; // screen meter per pixel
+	protected int m_scrnDpi = DOTS_PER_INCH;   // screen dot per inch
+	protected double m_scrnMpp = 2.54/m_scrnDpi*100.0; // screen meter per pixel
 	
 	protected double m_eqScale = 0; // map scale
 	
@@ -28,16 +31,12 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	protected double m_baseEqScale = 0;
 	//protected int 	 m_orgTilePixSize = 0;
 	//protected double m_origTileDegHeight = 0;
-	
-	// TODO remove me.
-	public static double RadToDeg = 57.29577951;
-	public static double DegToRad = 0.017453293;
 
 	@Override
 	public IProjection.T getType() { return m_projType; }
 	
 	public AbstractProjection() {
-		this(75);
+		this(DOTS_PER_INCH);
 	}
 	public AbstractProjection(int dpi) {
 		m_scrnDpi = dpi;
