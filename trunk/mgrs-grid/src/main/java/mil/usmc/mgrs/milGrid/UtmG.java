@@ -4,6 +4,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import mil.usmc.mgrs.AbstractProjection;
 import mil.usmc.mgrs.IProjection;
 import mil.usmc.mgrs.milGrid.UtmPoint.EHemisphere;
 import mil.usmc.mgrs.objects.R2;
@@ -32,7 +33,8 @@ public class UtmG {
     protected int  		  m_gridSize; // Size of Nk Cell.
     protected ClipZone    m_clipZone; // ClipZone to be drawn.
     protected IProjection m_proj = null;
-    protected double m_scrnMpp = 2.54/7500.0; // screen meter per pixel
+    protected int m_scrnDpi = AbstractProjection.DOTS_PER_INCH;
+    protected double m_scrnMpp = 2.54/m_scrnDpi*100.0; // screen meter per pixel
     
     // These are used in _drawLines
     protected R2 m_r2Pt = new R2();
