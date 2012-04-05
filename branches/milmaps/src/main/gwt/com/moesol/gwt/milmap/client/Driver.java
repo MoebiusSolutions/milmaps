@@ -285,8 +285,8 @@ public class Driver implements EntryPoint {
 		// Map dimmer control
 		MapDimmerControl dimmer = new MapDimmerControl(m_map, true);
 		lp.add(dimmer);
-		lp.setWidgetRightWidth(dimmer,10, Style.Unit.PX, 35, Style.Unit.PX);
-		lp.setWidgetBottomHeight(dimmer, 10, Style.Unit.PX, 22, Style.Unit.PX);
+		lp.setWidgetRightWidth(dimmer,10, Style.Unit.PX, 60, Style.Unit.PX);
+		lp.setWidgetBottomHeight(dimmer, 10, Style.Unit.PX, 34, Style.Unit.PX);
 		
 		// Map tag control
 		//TagControl tag = new TagControl(m_map, true);
