@@ -153,6 +153,13 @@ public class DivPanel extends AbsolutePanel {
 		}
 		m_tiledImageLayers.clear();
 	}
+	
+	public void setOpacity(boolean bothPanels, double opacity){
+		m_dimPanel.getElement().getStyle().setOpacity(opacity);
+		if (bothPanels){
+			m_nonDimPanel.getElement().getStyle().setOpacity(opacity);
+		}
+	}
 
 	public boolean hasAutoRefreshOnTimerLayers() {
 		for (TiledImageLayer layer : m_tiledImageLayers) {

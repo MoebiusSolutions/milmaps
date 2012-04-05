@@ -106,7 +106,7 @@ public class DivManager {
 		return null;
 	}
 	
-	private boolean nothingChanged(){
+	private boolean noChangedInOpacityOrLevel(){
 		if (m_opacity == m_oldOpacity && m_currentLevel == m_oldLevel) {
 			return true;
 		}
@@ -116,27 +116,25 @@ public class DivManager {
 	}
 	
 	public void adjustOpacity(){
-		if (nothingChanged()) {
+		if (noChangedInOpacityOrLevel()) {
 			return;
 		}
 		if (m_currentLevel == 0) {
-			Element el = m_dpArray[0].getTileLayerPanel().getElement();
-			el.getStyle().setOpacity(m_opacity);			
+			m_dpArray[0].setOpacity(false, m_opacity);	
 		}
 		else {
 			int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
 			if (m_opacity == 1.0) {
 				for(int j = m_currentLevel; j >= n; j--){
-					Element el = m_dpArray[j].getTileLayerPanel().getElement();
-					el.getStyle().setOpacity(m_opacity);			
+					m_dpArray[j].setOpacity(true, m_opacity);			
 				}				
 			}
 			else {
-				double inc = ( n == 0 ? m_opacity/(m_currentLevel+1) : m_opacity/LEVEL_RANGE);
-				for (int j = m_currentLevel; j >= n; j--) {
-					double opacity = Math.max(0, m_opacity - (m_currentLevel-j)*inc);
-					Element el = m_dpArray[j].getTileLayerPanel().getElement();
-					el.getStyle().setOpacity(opacity);			
+				//double inc = ( n == 0 ? m_opacity/(m_currentLevel+1) : m_opacity/LEVEL_RANGE);
+				m_dpArray[m_currentLevel].setOpacity(false, m_opacity);
+				for (int j = m_currentLevel-1; j >= n; j--) {
+					//double opacity = Math.max(0, m_opacity - (m_currentLevel-j)*inc);
+					m_dpArray[j].setOpacity(true, 0);			
 				}
 			}
 		}
