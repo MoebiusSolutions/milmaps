@@ -3,7 +3,6 @@ package com.moesol.gwt.maps.client;
 import java.util.ArrayList;
 
 import com.moesol.gwt.maps.client.units.AngleUnit;
-import com.moesol.gwt.maps.shared.BoundingBox;
 
 public class TileBuilder {
 	private int m_leftTiles;
