@@ -187,12 +187,12 @@ public class TileImageManager {
 		return null;
 	}
 
-	public void setAllZIndex(int zindex) {
-		for (int i = 0; i < m_infoCache.size(); i++) {
-			TileInfo tileInfo = m_infoCache.get(i);
-			Image img = (Image) tileInfo.m_image;
-			img.getElement().getStyle().setProperty("zIndex", zindex + "");
-		}
-	}
+//	public void setAllZIndex(int zindex) {
+//		for (int i = 0; i < m_infoCache.size(); i++) {
+//			TileInfo tileInfo = m_infoCache.get(i);
+//			Image img = (Image) tileInfo.m_image;
+//			img.getElement().getStyle().setProperty("zIndex", zindex + "");
+//		}
+//	}
 
 }
