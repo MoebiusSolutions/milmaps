@@ -152,8 +152,7 @@ public class TiledImageLayer {
 		}
 		//String bboxStr = vw.getBoundingBoxStr(m_divWorker.getProjection());
 		ImageDiv image = (ImageDiv)m_tileImageMgr.findOrCreateImage(vb,tileCoords);
-		// TODO review the need for zindex now that animation is done differently
-		setImageZIndex(image,  m_layerSet.getZIndex());
+		setImageZIndex(image, m_layerSet.getZIndex());
 		int x = tileCoords.getOffsetX();
 		int y = tileCoords.getOffsetY();
 		int width = tileCoords.getTileWidth();
@@ -168,7 +167,9 @@ public class TiledImageLayer {
 
 	private void setImageZIndex(ImageDiv image, int zIndex) {
 		// Note if you try and use "zindex" it WON'T work.
-		image.getElement().getStyle().setProperty("zIndex", Integer.toString(zIndex) );
+		//image.getElement().getStyle().setProperty("zIndex", Integer.toString(zIndex) );
+		image.getElement().getStyle().setZIndex(zIndex);
+		image.getElement().getParentElement().getStyle().setZIndex(zIndex);
 	}
 
 	public void setLevel(int level) {
