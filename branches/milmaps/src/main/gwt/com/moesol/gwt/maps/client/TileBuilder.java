@@ -164,14 +164,13 @@ public class TileBuilder {
 	
 	private TileCoords makeCenterTileUsingMapView(ViewBox vb) {	
 		TileCoords tc = new TileCoords(0,0);
-		IProjection proj = m_divWorker.getProjection();
 		if (vb.isSingleTile()) {
 			tc.setOffsetX(m_mapViewWorker.getOffsetInWcX());
 			tc.setOffsetY(m_mapViewWorker.getOffsetInWcY());
 		}
 		else {
 			GeodeticCoords gc = new GeodeticCoords(vb.left(),vb.top(),AngleUnit.DEGREES);
-			WorldCoords wc = proj.geodeticToWorld(gc);
+			WorldCoords wc = m_divWorker.getProjection().geodeticToWorld(gc);
 			tc.setOffsetX(wc.getX());
 			tc.setOffsetY(wc.getY());
 		}
@@ -318,16 +317,15 @@ public class TileBuilder {
 			m_divProj.setEquatorialScale(lsScale);
 		}
 		m_centerTile = makeCenterTileUsingMapView(vb);
-		if (singleTile == false){
-			positionCenterOffsetForDiv(m_centerTile);
+		positionCenterOffsetForDiv(m_centerTile);
+		if (singleTile == true){
+			r[0] = makeViewTileFromCenter();
+		}
+		else{
 			// we will make three copies of tile
 			r[0] = makeViewTilePositionedFromCenter(0);
 			r[1] = makeViewTilePositionedFromCenter(1);
 			r[2] = makeViewTilePositionedFromCenter(2);
-		}
-		else{
-			positionCenterOffsetForDiv(m_centerTile);
-			r[0] = makeViewTileFromCenter();
 		}
 		return r;
 	}
@@ -362,11 +360,9 @@ public class TileBuilder {
 				layer.updateView(vb); // Force hiding inactive layers, but skip placing their tiles.
 				continue;
 			}
-			if (ls.isBackgroundMap() || currentLevel == m_divLevel) {
-				if (ls.isAlwaysDraw() || layer.isPriority()) {
-					int level = layer.findLevel(dpi, projScale);
-					placeTilesForOneLayer(vd, level, layer);
-				}
+			if (ls.isAlwaysDraw() || layer.isPriority()) {
+				int level = layer.findLevel(dpi, projScale);
+				placeTilesForOneLayer(vd, level, layer);
 			}
 		}
 	}
@@ -376,9 +372,7 @@ public class TileBuilder {
 		if (layerSet.isAlwaysDraw()) {
 			return false;
 		}
-		if (!layerSet.isBackgroundMap()) {
-			return false;
-		}
+		
 		if (!layerSet.levelIsInRange(level)) {
 			return false;
 		}

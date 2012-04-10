@@ -43,7 +43,6 @@ public class LayerSetJson extends JavaScriptObject {
 			.withDimmable(isTiled(layerSet.isDimmable()))
 			.withZeroTop(isZeroTop(layerSet.isZeroTop()))
 			.withAlwaysDraw(isAlwaysDraw(layerSet.isAlwaysDraw()))
-			.withSetBackGroundMapFlag(isBackgroundMap(layerSet.isBackgroundMap()))
 			.withAutoRefreshOnTimer(isAutoRefreshOnTimer(layerSet.isAutoRefreshOnTimer()))
 			.withActive(isActive(layerSet.isActive()))
 			.withSrs(getSrs(layerSet.getSrs()))

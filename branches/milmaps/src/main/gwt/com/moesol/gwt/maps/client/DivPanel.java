@@ -30,7 +30,7 @@ public class DivPanel extends AbsolutePanel {
 		m_dimPanel.setWidth("100%");
 		m_dimPanel.setHeight("100%");
 		m_dimPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
-		m_dimPanel.getElement().setClassName("tileLayerPanel"); 
+		m_dimPanel.getElement().setClassName("dimTileLayerPanel"); 
 
 		m_nonDimPanel.setStylePrimaryName("nonDimTileLayerPanel");
 		m_nonDimPanel.setWidth("100%");
@@ -103,8 +103,7 @@ public class DivPanel extends AbsolutePanel {
 		int minLeft = Integer.MAX_VALUE;
 		int maxRight = Integer.MIN_VALUE;
 		for (TiledImageLayer layer : m_tiledImageLayers) {
-			boolean bkgrndMap = layer.getLayerSet().isBackgroundMap();
-			if (!layer.getLayerSet().isActive() || !bkgrndMap){
+			if (!layer.getLayerSet().isActive()){
 				continue;
 			}
 			minLeft = Math.min(minLeft, layer.getMinLeft());
@@ -174,10 +173,10 @@ public class DivPanel extends AbsolutePanel {
 		return false;
 	}
 	
-	public void hideAllTiles() {
+	public void removeAllTiles() {
 		for (TiledImageLayer layer : m_tiledImageLayers) {
 			if (layer.getLayerSet().isActive()) {
-				layer.hideAllTiles();
+				layer.removeAllTiles();
 			}
 		}
 	}

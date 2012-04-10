@@ -103,8 +103,8 @@ public class TiledImageLayer {
 	  return m_tileCoords;
 	}
 	
-	public void hideAllTiles() {
-		m_tileImageMgr.hideAllImages();
+	public void removeAllTiles() {
+		m_tileImageMgr.removeAllImages();
 	}
 	
 	/**

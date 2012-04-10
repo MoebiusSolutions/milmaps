@@ -434,7 +434,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		Sample.MAP_FULL_UPDATE.beginSample();
 		// Do Not change the order of the next two
 		// methods are called in
-		m_divMgr.doUpdateDivsVisibility( m_viewPanel );
+		m_divMgr.doUpdateDivsVisibility();
 		m_divMgr.doUpdateDivsCenterScale( m_mapProj.getEquatorialScale() );
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
 		m_divMgr.positionIcons();
@@ -552,7 +552,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		// TODO confirm next two lines are needed.
 		ViewWorker vp = m_viewPort.getVpWorker();
 		vp.setCenterInWc(m_mapProj.geodeticToWorld(vp.getGeoCenter()));
-		updateView();
+		//updateView();
+		doUpdateView();
 	}
 	
 	//TODO

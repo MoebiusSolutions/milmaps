@@ -543,7 +543,7 @@ public class Driver implements EntryPoint {
 		IProjection proj = m_map.getProjection();
 		double eqScale = proj.getEquatorialScale();
 		for ( int i = 0; i < 1; i++){
-			dp.hideAllTiles();
+			dp.removeAllTiles();
 			dp.doUpdate(eqScale);
 		}
 	}

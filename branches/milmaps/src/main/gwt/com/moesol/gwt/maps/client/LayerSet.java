@@ -15,8 +15,7 @@ public class LayerSet implements IsSerializable {
 	private boolean m_tiled = true;
 	private boolean m_dimmable = true;
 	private boolean m_zeroTop = false;
-	private boolean m_alwaysDraw = false;
-	private boolean m_isBackgroundMap = true;
+	private boolean m_alwaysDraw = false; 
 	private boolean m_autoRefreshOnTimer = false;
 	private String m_srs = "EPSG:4326";
 	private int m_minLevel = -20;
@@ -77,15 +76,7 @@ public class LayerSet implements IsSerializable {
 	public void setStartLevel(int level) {
 		m_startLevel = level;
 	}
-	
-	public void setBackgroundMapFlag( boolean flag ){
-		m_isBackgroundMap = flag;
-	}
-	
-	public boolean isBackgroundMap(){
-		return m_isBackgroundMap;
-	}
-	
+
 	public void setZIndex(int index) {
 		m_zIndex = index;
 	}
@@ -358,11 +349,6 @@ public class LayerSet implements IsSerializable {
 		if (m_urlPattern == null) {
 			throw new IllegalStateException("urlPattern is null");
 		}
-		return this;
-	}
-
-	public LayerSet withSetBackGroundMapFlag(boolean backGroundMap) {
-		setBackgroundMapFlag(backGroundMap);
 		return this;
 	}
 

@@ -112,7 +112,6 @@ public class TileMapServiceActivity extends AbstractActivity implements
 			    ls.setStartLevel(1);
 			    ls.withPixelWidth(256).setPixelHeight(256);
 			    ls.setAlwaysDraw(true);
-			    ls.setBackgroundMapFlag(false);
 			    ls.setZIndex(4);
 			    ls.setLevelRange(-2, 12);
 				displayedItems.add(tileMapMetadata);
