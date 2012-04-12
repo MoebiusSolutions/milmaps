@@ -95,6 +95,11 @@ public class DivPanel extends AbsolutePanel {
 		m_divWorker.setDivBaseDimensions(width, height);
 	}
 	
+	public void makePanelSmall(AbsolutePanel panel, int width, int height){
+		super.setPixelSize(width, height);
+		panel.setWidgetPosition(this, 0, 0);
+	}
+	
 	public DivDimensions getScaledDims(){
 		return m_scaledDims;
 	}
@@ -117,11 +122,6 @@ public class DivPanel extends AbsolutePanel {
 		m_scaledDims.setWidth(width);
 		m_scaledDims.setHeight(height);
 		super.setPixelSize(width, height);
-	}
-	
-	public void setDimensions(DivDimensions d){
-		m_scaledDims.copyFrom(d);
-		super.setPixelSize(d.getWidth(), d.getHeight());
 	}
 	
 	public DivWorker getDivWorker(){ return m_divWorker; }
@@ -191,6 +191,7 @@ public class DivPanel extends AbsolutePanel {
 		int currentLevel = m_map.getDivManager().getCurrentLevel();
 		m_tileBuilder.layoutTiles(vd, eqScale, currentLevel);
 	}
+	
 	
 	public void placeInViewPanel( AbsolutePanel panel ) {
 		IProjection mp = m_map.getProjection();

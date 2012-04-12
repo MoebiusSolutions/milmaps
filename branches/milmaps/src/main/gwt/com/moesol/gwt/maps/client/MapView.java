@@ -434,7 +434,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		Sample.MAP_FULL_UPDATE.beginSample();
 		// Do Not change the order of the next two
 		// methods are called in
-		m_divMgr.doUpdateDivsVisibility();
+		m_divMgr.doUpdateDivsVisibility(m_viewPanel);
 		m_divMgr.doUpdateDivsCenterScale( m_mapProj.getEquatorialScale() );
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
 		m_divMgr.positionIcons();
@@ -524,6 +524,18 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		updateView();
 	}
 	
+	public boolean zoomToNextLevelOnPixel(int x, int y, boolean bIn) {
+		if (m_bSuspendMapAction == false) {
+			int level = m_divMgr.getCurrentLevel() + (bIn ? 1 : -1);
+			level = Math.max(Math.min(level,DivManager.NUMDIVS-1), 0);
+			double currentScale = m_mapProj.getEquatorialScale();
+			double scale = m_mapProj.getScaleFromLevel(level);
+			double factor = scale/currentScale;
+			m_animateEngine.animateZoomMap( x, y, factor);
+		}
+		return (m_bSuspendMapAction == false);
+	}
+	
 	/**
 	 * Animate zoom map, but keep the latitude and longitude under x, y 
 	 * during the zoom and after its completion.
@@ -569,6 +581,13 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public void zoom(double dScale) {
 		m_mapProj.setEquatorialScale(dScale);
 		updateView();
+	}
+	
+	public void animateZoomToNextLevel(boolean bIn) {
+		ViewDimension v = m_viewPort.getVpWorker().getDimension();
+		int x = v.getWidth() / 2;
+		int y = v.getHeight() / 2;
+		zoomToNextLevelOnPixel(x, y, bIn);
 	}
 
 	public void animateZoom(double scaleFactor) {

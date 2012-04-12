@@ -31,8 +31,8 @@ public class MapController implements
 	TouchStartHandler, TouchMoveHandler, TouchEndHandler, TouchCancelHandler
 {
 	private static boolean s_previewInstalled = false;
-	private static final int sKey = 83;//(int)'s';
-	private static final int fKey = 70;//(int)'f';
+	private static final int S_KEY = 83;//(int)'s';
+	private static final int F_KEY = 70;//(int)'f';
 	private final MapView m_map;
 	private final DoubleClickTracker m_doubleClickTracker = new DoubleClickTracker();
 	private final MouseWheelTracker m_mouseWheelTracker = new MouseWheelTracker();
@@ -92,8 +92,7 @@ public class MapController implements
 	}
 
 	public void zoomAndCenter(int x, int y, boolean bZoomIn) {
-		double zoomFactor = (bZoomIn ? 2.0 : 0.5 );
-		m_map.zoomOnPixel(x,y,zoomFactor);
+		m_map.zoomToNextLevelOnPixel(x,y,bZoomIn);
 
 	}
 
@@ -300,10 +299,10 @@ public class MapController implements
 	private void onKeyDownWithControl(int keyCode) {
 		switch (keyCode) {
 		case KeyCodes.KEY_UP:
-			m_map.animateZoom(2);
+			m_map.animateZoomToNextLevel(true);
 			break;
 		case KeyCodes.KEY_DOWN:
-			m_map.animateZoom(1/2.0);
+			m_map.animateZoomToNextLevel(false);
 			break;
 		}
 	}
@@ -322,10 +321,10 @@ public class MapController implements
 		case KeyCodes.KEY_DOWN:
 			moveMap(0, -1);
 			break;
-		case fKey:
+		case F_KEY:
 			m_map.fullUpdateView();
 			break;
-		case sKey:
+		case S_KEY:
 			new MapStateDialog(m_map).show();
 			break;	
 		}

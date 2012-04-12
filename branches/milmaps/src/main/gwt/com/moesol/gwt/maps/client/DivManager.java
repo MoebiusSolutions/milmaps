@@ -3,7 +3,7 @@ package com.moesol.gwt.maps.client;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 
 public class DivManager {
-	private static int LEVEL_RANGE = 2;
+	private static int LEVEL_RANGE = 1;
 	public static final int NUMDIVS = 20;
 	private int m_currentLevel = 0;
 	private int m_oldLevel = 0;
@@ -197,11 +197,12 @@ public class DivManager {
 		}
 	}
 	
-	public void doUpdateDivsVisibility() {
+	public void doUpdateDivsVisibility(AbsolutePanel panel) {
 		setCurrentLevelFromMapScale();
 		int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
 		for (int i = 0; i < n; i++) {
 			m_dpArray[i].removeAllTiles();
+			m_dpArray[i].makePanelSmall(panel,10,10);
 			m_dpArray[i].setVisible(false);
 		}
 		for (int i = n; i <= m_currentLevel; i++) {
@@ -209,6 +210,7 @@ public class DivManager {
 		}
 		for (int i = m_currentLevel+1; i < NUMDIVS; i++) {
 			m_dpArray[i].removeAllTiles();
+			m_dpArray[i].makePanelSmall(panel,10,10);
 			m_dpArray[i].setVisible(false);
 		}	
 		adjustOpacity();
