@@ -1,5 +1,8 @@
 package com.moesol.gwt.maps.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.AbsolutePanel;
 
 public class DivManager {
@@ -15,6 +18,7 @@ public class DivManager {
 	
 	private ViewWorker m_vpWorker = null;
 	DivPanel[] m_dpArray = new DivPanel[NUMDIVS];
+	private List<LayerSet> m_layerSets = new ArrayList<LayerSet>();
 	
 	public DivManager(IMapView map){
 		m_map = map;
@@ -23,13 +27,43 @@ public class DivManager {
 	public void attachDivsTo(AbsolutePanel lp){
 		for( int i = 0; i < NUMDIVS; i++ ){
 			m_dpArray[i] = new DivPanel(i);
-			m_dpArray[i].getElement().getStyle().setZIndex(i);
 			lp.add(m_dpArray[i]);
 		}
 		
 		// we will initialize the projection, but the projection
 		// may change when the layer sets are loaded.
 		initProjections( 512, 512,180,180,IProjection.T.CylEquiDist);
+	}
+	private void ensureDivPanel(int level) {
+		if (divPanelExists(level)) {
+			return;
+		}
+		m_dpArray[level] = new DivPanel(level);
+		getMapView().getViewPanel().add(m_dpArray[level]);
+		copyLayerSets(m_dpArray[level]);
+		initOneDivPanel(level);
+	}
+	private void detachDivPanel(int level) {
+		if (!divPanelExists(level)) {
+			return;
+		}
+		
+		m_dpArray[level].close();
+		getMapView().getViewPanel().remove(m_dpArray[level]);
+		m_dpArray[level] = null;
+	}
+	private boolean divPanelExists(int level) {
+		return m_dpArray[level] != null;
+	}
+	private void copyLayerSets(DivPanel divPanel) {
+		for (LayerSet ls : m_layerSets) {
+			divPanel.addLayer(ls);
+		}
+	}
+
+	public MapView getMapView() {
+		MapView mapView = (MapView) m_map; // TODO
+		return mapView;
 	}
 	
 	public boolean isProjectionSet(){
@@ -53,15 +87,22 @@ public class DivManager {
 								  IProjection.T projType ){
 		m_proj = Projection.createProj(projType);
 		m_proj.initialize(tilePixWidth, tileDegWidth, tileDegHeight);
+		
 		initDivPanels();
 	}
 	
 	protected void initDivPanels(){
-		double eqScale = m_proj.getBaseEquatorialScale();
-		for( int i = 0; i < NUMDIVS; i++ ){
-			double scale = eqScale*(1<<i);
-			m_dpArray[i].initialize(i, m_map, m_proj.getType(),scale);
+		for (int i = 0; i < NUMDIVS; i++) {
+			if (divPanelExists(i)) {
+				initOneDivPanel(i);
+			}
 		}
+	}
+
+	private void initOneDivPanel(int level) {
+		double eqScale = m_proj.getBaseEquatorialScale();
+		double scale = eqScale*(1 << level);
+		m_dpArray[level].initialize(level, m_map, m_proj.getType(),scale);
 	}
 	
 	public int getNumDivs(){ return NUMDIVS; }
@@ -70,10 +111,12 @@ public class DivManager {
 		m_vpWorker = vp;
 	}
 	
-	public void setCenter(GeodeticCoords gc){
-		for( int i = 0; i < NUMDIVS; i++ ){
-			m_dpArray[i].getDivWorker().setGeoCenter(gc);
-		}	
+	public void setCenter(GeodeticCoords gc) {
+		for (int i = 0; i < NUMDIVS; i++) {
+			if (divPanelExists(i)) {
+				m_dpArray[i].getDivWorker().setGeoCenter(gc);
+			}
+		}
 	}
 	
 	private void setCurrentLevelFromMapScale() {
@@ -98,7 +141,7 @@ public class DivManager {
 		return getDiv(m_currentLevel);
 	}
 	
-	public DivPanel getDiv( int i ) {
+	private DivPanel getDiv( int i ) {
 		if ( -1 < i && i < NUMDIVS){
 			return m_dpArray[i];
 		}
@@ -125,7 +168,9 @@ public class DivManager {
 			int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
 			if (m_opacity == 1.0) {
 				for(int j = m_currentLevel; j >= n; j--){
-					m_dpArray[j].setOpacity(true, m_opacity);			
+					if (divPanelExists(j)) {
+						m_dpArray[j].setOpacity(true, m_opacity);			
+					}
 				}				
 			}
 			else {
@@ -133,7 +178,9 @@ public class DivManager {
 				m_dpArray[m_currentLevel].setOpacity(false, m_opacity);
 				for (int j = m_currentLevel-1; j >= n; j--) {
 					//double opacity = Math.max(0, m_opacity - (m_currentLevel-j)*inc);
-					m_dpArray[j].setOpacity(true, 0);			
+					if (divPanelExists(j)) {
+						m_dpArray[j].setOpacity(true, 0);			
+					}
 				}
 			}
 		}
@@ -146,27 +193,42 @@ public class DivManager {
 	}
 	
 	public void addLayer(LayerSet layerSet) {
-		for( int i = 0; i < NUMDIVS; i++ ){
-			m_dpArray[i].addLayer(layerSet);
-		}		
+		m_layerSets.add(layerSet);
+		
+		for (int i = 0; i < NUMDIVS; i++) {
+			if (divPanelExists(i)) {
+				m_dpArray[i].addLayer(layerSet);
+			}
+		}
 	}
 	
 	public void removeLayer(LayerSet layerSet) {
-		for( int i = 0; i < NUMDIVS; i++ ){
-			m_dpArray[i].removeLayer(layerSet);
+		m_layerSets.remove(layerSet);
+		
+		for (int i = 0; i < NUMDIVS; i++) {
+			if (divPanelExists(i)) {
+				m_dpArray[i].removeLayer(layerSet);
+			}
 		}
 	}
 	
 	public void clearLayers() {
-		for( int i = 0; i < NUMDIVS; i++ ){
-			m_dpArray[i].clearLayers();
+		m_layerSets.clear();
+		
+		for (int i = 0; i < NUMDIVS; i++) {
+			if (divPanelExists(i)) {
+				m_dpArray[i].clearLayers();
+			}
 		}
 	}
 	
 	public boolean hasAutoRefreshOnTimerLayers() {
-		for( int i = 0; i < NUMDIVS; i++ ){
-			if ( m_dpArray[i].hasAutoRefreshOnTimerLayers() )
-				return true;
+		for (int i = 0; i < NUMDIVS; i++) {
+			if (divPanelExists(i)) {
+				if (m_dpArray[i].hasAutoRefreshOnTimerLayers()) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -192,6 +254,7 @@ public class DivManager {
 		int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
 		GeodeticCoords gc = m_vpWorker.getGeoCenter(); 
 		for( int i = n; i <= m_currentLevel; i++ ){
+			ensureDivPanel(i);
 			m_dpArray[i].updateViewCenter(gc);
 			m_dpArray[i].doUpdate(eqScale);
 		}
@@ -201,32 +264,42 @@ public class DivManager {
 		setCurrentLevelFromMapScale();
 		int n = Math.max(0, m_currentLevel - LEVEL_RANGE);
 		for (int i = 0; i < n; i++) {
-			m_dpArray[i].removeAllTiles();
-			m_dpArray[i].makePanelSmall(panel,10,10);
-			m_dpArray[i].setVisible(false);
+			makePanelHidden(i, panel);
 		}
 		for (int i = n; i <= m_currentLevel; i++) {
+			ensureDivPanel(i);
 			m_dpArray[i].setVisible(true);
 		}
 		for (int i = m_currentLevel+1; i < NUMDIVS; i++) {
-			m_dpArray[i].removeAllTiles();
-			m_dpArray[i].makePanelSmall(panel,10,10);
-			m_dpArray[i].setVisible(false);
+			makePanelHidden(i, panel);
 		}	
 		adjustOpacity();
+	}
+
+	public void makePanelHidden(int level, AbsolutePanel panel) {
+		if (!divPanelExists(level)) {
+			return;
+		}
+		m_dpArray[level].removeAllTiles();
+		m_dpArray[level].makePanelSmall(panel,0,0);
+//		m_dpArray[level].setVisible(false);
+		detachDivPanel(level);
 	}
 	
 	public void placeDivsInViewPanel( AbsolutePanel panel ) {
 		setCurrentLevelFromMapScale();
 		int n = Math.max( 0, m_currentLevel - LEVEL_RANGE );
 		for ( int i = n; i <= m_currentLevel; i++ ) {
+			ensureDivPanel(i);
 			m_dpArray[i].placeInViewPanel(panel);
 		}
 	}
 	
-	public void resizeDivs( int w, int h ) {
-		for ( int i = 0; i < NUMDIVS; i++ ) {
-			m_dpArray[i].resize(w, h);
+	public void resizeDivs(int w, int h) {
+		for (int i = 0; i < NUMDIVS; i++) {
+			if (divPanelExists(i)) {
+				m_dpArray[i].resize(w, h);
+			}
 		}
 	}
 	
@@ -240,9 +313,9 @@ public class DivManager {
 		return dw.hasDivMovedToFar(mapProj, vw, dim, ds);
 	}
 
-        public boolean hasIconsMoved() {
-                throw new UnsupportedOperationException("Not yet implemented");
-        }
+	public boolean hasIconsMoved() {
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
 	
 	public void positionIcons() {
 		getCurrentDiv().positionIcons();

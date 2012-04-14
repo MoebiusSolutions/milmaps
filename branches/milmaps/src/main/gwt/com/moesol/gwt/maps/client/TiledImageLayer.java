@@ -1,7 +1,8 @@
 package com.moesol.gwt.maps.client;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.moesol.gwt.maps.client.stats.Sample;
 
 /**
@@ -13,8 +14,8 @@ public class TiledImageLayer {
 	/** The one and only layer set this tiled image layer will render */
 	private final LayerSet m_layerSet;
 	
-	private final LayoutPanel m_dimLayoutPanel;
-	private final LayoutPanel m_nonDimLayoutPanel;
+	private final Panel m_dimLayoutPanel;
+	private final Panel m_nonDimLayoutPanel;
 	private final TileImageManager m_tileImageMgr = new TileImageManager(m_tileImageEngineListener);
 	
 	private final double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_MEERS;
@@ -55,15 +56,13 @@ public class TiledImageLayer {
 			ImageDiv image = (ImageDiv)object;
 			// Better performance in IE7 to skip for non-auto update, but always setting fixes some IE7 issues.
 			image.setUrl(tileCoords.makeTileURL(vb, getLayerSet(), getLevel(), getDynamicCounter()));
-			layoutPanel().setWidgetVisible(image, true);
+			image.setVisible(true);
 		}
 
 		@Override
 		public void hideImage(Object object) {
 			ImageDiv image = (ImageDiv)object;
-			//image.setPixelSize(512, 512);
-			//m_absolutePanel.setWidgetPosition(image, -513, -513);
-			layoutPanel().setWidgetVisible(image, false);
+			image.setVisible(false);
 		}
 	};
 	
@@ -88,7 +87,7 @@ public class TiledImageLayer {
 		return m_divPanel.getDynamicCounter();
 	}
 	
-	private LayoutPanel layoutPanel(){
+	private Panel layoutPanel(){
 		if (m_layerSet.isDimmable()) {
 			return m_dimLayoutPanel;
 		}
@@ -158,16 +157,19 @@ public class TiledImageLayer {
 		int width = tileCoords.getTileWidth();
 		int height = tileCoords.getTileHeight();
 		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(x, y, width, height);
-		layoutPanel().setWidgetLeftRight(image, b.left, Unit.PCT, 100-b.right, Unit.PCT);
-		layoutPanel().setWidgetTopBottom(image, b.top, Unit.PCT, 100-b.bot, Unit.PCT);
+		
+		Style imageStyle = image.getElement().getStyle();
+		imageStyle.setLeft(b.left, Unit.PCT);
+		imageStyle.setRight(100 - b.right, Unit.PCT);
+		imageStyle.setTop(b.top, Unit.PCT);
+		imageStyle.setBottom(100 - b.bottom, Unit.PCT);
+		
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();
 		m_minLeft  = Math.max(0,Math.min(x, m_minLeft));
 		m_maxRight = Math.min(dd.getWidth(),Math.max(x+width, m_maxRight));
 	}
 
 	private void setImageZIndex(ImageDiv image, int zIndex) {
-		// Note if you try and use "zindex" it WON'T work.
-		//image.getElement().getStyle().setProperty("zIndex", Integer.toString(zIndex) );
 		image.getElement().getStyle().setZIndex(zIndex);
 		image.getElement().getParentElement().getStyle().setZIndex(zIndex);
 	}

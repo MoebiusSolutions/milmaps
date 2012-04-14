@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DivPanel extends AbsolutePanel {
-	private final LayoutPanel m_dimPanel = new LayoutPanel();
-	private final LayoutPanel m_nonDimPanel = new LayoutPanel();
+	private final AbsolutePanel m_dimPanel = new AbsolutePanel();
+	private final AbsolutePanel m_nonDimPanel = new AbsolutePanel();
 	private final DivWorker m_divWorker = new DivWorker();
 	private final TileBuilder m_tileBuilder = new TileBuilder();
 	private final DivDimensions m_scaledDims = new DivDimensions();
@@ -43,8 +43,15 @@ public class DivPanel extends AbsolutePanel {
 		this.add(m_dimPanel);
 		this.add(m_nonDimPanel);
 		this.getElement().setClassName("DivPanelContainer");
+		this.getElement().getStyle().setZIndex(level);
 	}
 	
+	public void close() {
+		removeAllTiles();
+		this.remove(m_dimPanel);
+		this.remove(m_nonDimPanel);
+	}
+
 	public void initialize(int level, IMapView map, IProjection.T type, double eqScale) {
 		m_map = map;
 		m_divProj = Projection.createProj(type);
@@ -126,9 +133,13 @@ public class DivPanel extends AbsolutePanel {
 	
 	public DivWorker getDivWorker(){ return m_divWorker; }
 	
-	public LayoutPanel getTileLayerPanel(){ return m_dimPanel; }
+	public Panel getTileLayerPanel() {
+		return m_dimPanel;
+	}
 	
-	public LayoutPanel getNonDimTileLayerPanel(){ return m_nonDimPanel; }
+	public Panel getNonDimTileLayerPanel() {
+		return m_nonDimPanel;
+	}
 	
 	public void addLayer(LayerSet layerSet) {
 		TiledImageLayer tiledImageLayer = new TiledImageLayer(this, layerSet);
@@ -239,7 +250,7 @@ public class DivPanel extends AbsolutePanel {
 	}
 	
 	private void placeIcon(Widget widget, int dx, int dy, int dw, int dh, int z) {
-		LayoutPanel lp = getNonDimTileLayerPanel();
+		Panel lp = getNonDimTileLayerPanel();
 		if (widget.getParent() == null || widget.getParent() != lp) {
 			lp.add(widget);
 		}
@@ -247,9 +258,13 @@ public class DivPanel extends AbsolutePanel {
 		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(dx, dy, 1, 1);
 		
 		widget.setPixelSize(dw, dh);
-		lp.setWidgetLeftWidth(widget, b.left, Unit.PCT, dw, Unit.PX);
-		lp.setWidgetTopHeight(widget, b.top, Unit.PCT, dh, Unit.PX);
-		lp.getWidgetContainerElement(widget).getStyle().setZIndex(z);
+//		lp.setWidgetLeftWidth(widget, b.left, Unit.PCT, dw, Unit.PX);
+//		lp.setWidgetTopHeight(widget, b.top, Unit.PCT, dh, Unit.PX);
+//		lp.getWidgetContainerElement(widget).getStyle().setZIndex(z);
+		
+		widget.getElement().getStyle().setLeft(b.left, Unit.PCT);
+		widget.getElement().getStyle().setTop(b.top, Unit.PCT);
+		widget.getElement().getStyle().setZIndex(z);
 	}
 
 }

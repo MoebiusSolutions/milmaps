@@ -1,10 +1,7 @@
 package com.moesol.gwt.maps.client;
 
-import java.util.List;
-
 import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
 import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
-import com.moesol.gwt.maps.client.stats.Sample;
 
 /**
  * DivWorker class is used to help handle all tile placements. It works with just one projection
@@ -25,12 +22,12 @@ public class DivWorker implements ProjectionChangedHandler {
 	public class BoxBounds {
 		public double top;
 		public double left;
-		public double bot;
+		public double bottom;
 		public double right;
 		
 		@Override
 		public String toString() {
-			return "[" +" top: "+ top + ", left: "+ left +" bot: "+ bot + ", right: "+ right + "]";
+			return "[" +" top: "+ top + ", left: "+ left +" bot: "+ bottom + ", right: "+ right + "]";
 		}
 	}
 	public BoxBounds m_boxBounds = new BoxBounds();
@@ -180,7 +177,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	public BoxBounds computePerccentBounds(int x, int y, int width, int height) {
 		m_boxBounds.top   = divYToPercent(y)*100;
 		m_boxBounds.left  = divXToPercent(x)*100;
-		m_boxBounds.bot   = divYToPercent(y+height)*100;
+		m_boxBounds.bottom   = divYToPercent(y+height)*100;
 		m_boxBounds.right = divXToPercent(x+width)*100;
 		return m_boxBounds;
 	}
