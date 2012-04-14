@@ -14,7 +14,7 @@ public class AnimationEngine extends Animation {
 	private double m_endEqScale;
 	private double m_nextScale;
 	private double m_scaleDiff;
-	private int m_durationInSecs = 750;
+	private int m_durationInSecs = 250;
 	  
 	public AnimationEngine( MapView mv ) {
 	   m_mapView = mv;
