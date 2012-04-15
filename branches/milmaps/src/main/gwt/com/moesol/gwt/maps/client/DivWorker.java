@@ -193,9 +193,9 @@ public class DivWorker implements ProjectionChangedHandler {
 		double factor = getScaleFactor(mapProj);
 		dim.setWidth((int)(m_baseDims.getWidth()*factor + 0.5));
 		dim.setHeight((int)(m_baseDims.getHeight()*factor + 0.5));
-		WorldCoords wc = mapProj.geodeticToWorld(m_geoCenter);
-		int left = computeDivLeft(wc, dim, vw, factor);
-		int top  = viewOy - (wc.getY()+ dim.getHeight()/2);
+		WorldCoords centerWc = mapProj.geodeticToWorld(m_geoCenter);
+		int left = computeDivLeft(centerWc, dim, vw, factor);
+		int top  = viewOy - (centerWc.getY()+ dim.getHeight()/2);
 		return new ViewCoords(left, top);
 	}
 
@@ -244,15 +244,18 @@ public class DivWorker implements ProjectionChangedHandler {
 		if (ds.isBad()) {
 			return true;
 		}
-		int imgLeft  = (int)(factor*ds.getLeft());
-		int imgRight = (int)(factor*ds.getRight());
+		int imgTop    = (int)(factor*ds.getTop());
+		int imgLeft   = (int)(factor*ds.getLeft());
+		int imgBottom = (int)(factor*ds.getBottom());
+		int imgRight  = (int)(factor*ds.getRight());
 		
-		ViewCoords br = new ViewCoords(tl.getX()+ imgRight, tl.getY()+ dim.getHeight());
+		
+		ViewCoords br = new ViewCoords(tl.getX()+ imgRight, tl.getY()+ imgBottom);
 		ViewDimension vd = vw.getDimension();
 		if (-20 < (tl.getX()+imgLeft)     || 
 			 br.getX() < vd.getWidth()+20 || 
-		    -10 < tl.getY()               || 
-		     br.getY() < vd.getHeight()+10) {
+		    -20 < tl.getY()+imgTop               || 
+		     br.getY() < vd.getHeight()+20) {
 			return true;
 		}
 		return false;

@@ -29,6 +29,8 @@ public class TiledImageLayer {
 	private boolean m_priority = false;
 	int m_minLeft  = Integer.MAX_VALUE;
 	int m_maxRight = Integer.MIN_VALUE;
+	int m_minTop  = Integer.MAX_VALUE;
+	int m_maxBottom = Integer.MIN_VALUE;
 	
 	
 	private class MyTileImageEngineListener implements TileImageEngineListener {
@@ -69,6 +71,9 @@ public class TiledImageLayer {
 	
 	public int getMinLeft(){ return m_minLeft; }
 	public int getMaxRight(){ return m_maxRight; }
+	
+	public int getMinTop(){ return m_minTop; }
+	public int getMaxBottom(){ return m_maxBottom; }
 
 	public TiledImageLayer( DivPanel divPanel, LayerSet layerSet ) {
 		m_divPanel = divPanel;
@@ -140,6 +145,8 @@ public class TiledImageLayer {
 	private void positionImages(ViewBox vb) {
 		m_minLeft = Integer.MAX_VALUE;
 		m_maxRight = Integer.MIN_VALUE;
+		m_minTop  = Integer.MAX_VALUE;
+		m_maxBottom = Integer.MIN_VALUE;
 		for (int i = 0; i < m_tileCoords.length; i++) {
 			positionOneImage(vb, m_tileCoords[i]);
 		}
@@ -165,8 +172,10 @@ public class TiledImageLayer {
 		imageStyle.setBottom(100 - b.bottom, Unit.PCT);
 		
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();
-		m_minLeft  = Math.max(0,Math.min(x, m_minLeft));
-		m_maxRight = Math.min(dd.getWidth(),Math.max(x+width, m_maxRight));
+		m_minLeft   = Math.max(0,Math.min(x, m_minLeft));
+		m_maxRight  = Math.min(dd.getWidth(),Math.max(x+width, m_maxRight));
+		m_minTop    = Math.max(0,Math.min(y,m_minTop));
+		m_maxBottom = Math.min(dd.getHeight(),Math.max(y+height, m_maxBottom));
 	}
 
 	private void setImageZIndex(ImageDiv image, int zIndex) {

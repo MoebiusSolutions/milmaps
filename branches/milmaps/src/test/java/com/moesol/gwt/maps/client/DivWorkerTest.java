@@ -57,12 +57,11 @@ public class DivWorkerTest {
 		WorldCoords vwCent = m_vw.getVpCenterInWc();
 		//WorldCoords divCent = m_mapProj.geodeticToWorld(m_dw.getGeoCenter());
 		// First lets move left:
-		DivCoordSpan ds = new DivCoordSpan(88,1112);
+		// TODO Write test for top, bottom
+		DivCoordSpan ds = new DivCoordSpan(-10, 88, 502, 1112);
 		for( int j = 10; j < 400; j += 10 ){
 			WorldCoords wc = new WorldCoords(vwCent.getX()-j, vwCent.getY());
 			m_vw.setCenterInWc(wc);	
-			if ( j == 220 )
-				j += 0;
 			boolean bMovedToFar = m_dw.hasDivMovedToFar(m_mapProj, m_vw, m_dims, ds);
 			if ( bMovedToFar )
 				bMovedToFar= false;
