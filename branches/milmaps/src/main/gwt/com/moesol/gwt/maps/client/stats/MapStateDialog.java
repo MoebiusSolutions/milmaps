@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.moesol.gwt.maps.client.Browser;
 import com.moesol.gwt.maps.client.DivManager;
-import com.moesol.gwt.maps.client.DivPanel;
 import com.moesol.gwt.maps.client.IProjection;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewDimension;
