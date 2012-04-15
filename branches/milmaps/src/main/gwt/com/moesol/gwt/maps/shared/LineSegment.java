@@ -1,8 +1,6 @@
 package com.moesol.gwt.maps.shared;
 
 import com.moesol.gwt.maps.client.WorldCoords;
-import com.moesol.gwt.maps.client.WorldCoords.Builder;
-import com.moesol.gwt.maps.client.stats.Stats;
 
 public class LineSegment {
 	WorldCoords m_p;
