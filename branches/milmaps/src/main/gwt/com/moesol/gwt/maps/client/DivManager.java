@@ -19,6 +19,7 @@ public class DivManager {
 	private ViewWorker m_vpWorker = null;
 	DivPanel[] m_dpArray = new DivPanel[NUMDIVS];
 	private List<LayerSet> m_layerSets = new ArrayList<LayerSet>();
+	private DivDimensions m_lastResize = new DivDimensions();
 	
 	public DivManager(IMapView map){
 		m_map = map;
@@ -91,7 +92,7 @@ public class DivManager {
 		initDivPanels();
 	}
 	
-	protected void initDivPanels(){
+	protected void initDivPanels() {
 		for (int i = 0; i < NUMDIVS; i++) {
 			if (divPanelExists(i)) {
 				initOneDivPanel(i);
@@ -103,6 +104,7 @@ public class DivManager {
 		double eqScale = m_proj.getBaseEquatorialScale();
 		double scale = eqScale*(1 << level);
 		m_dpArray[level].initialize(level, m_map, m_proj.getType(),scale);
+		m_dpArray[level].resize(m_lastResize.getWidth(), m_lastResize.getHeight());
 	}
 	
 	public int getNumDivs(){ return NUMDIVS; }
@@ -141,8 +143,8 @@ public class DivManager {
 		return getDiv(m_currentLevel);
 	}
 	
-	private DivPanel getDiv( int i ) {
-		if ( -1 < i && i < NUMDIVS){
+	private DivPanel getDiv(int i) {
+		if (-1 < i && i < NUMDIVS) {
 			return m_dpArray[i];
 		}
 		return null;
@@ -233,17 +235,6 @@ public class DivManager {
 		return false;
 	}
 	
-	public boolean allTilesLoaded( int n ) {
-		// TODO KBT we may want to use this, not sure!
-		//int start = ( m_currentLevel-n < 0 ? 0 : m_currentLevel-n );
-		//int end = ( m_currentLevel+n > m_numDivs-1 ? m_numDivs-n : m_currentLevel+1 );
-		//for ( int i = start; i <= end; i++ ){
-		//	if ( m_dpArray[i].allTilesLoaded() == false )
-		//		return false;
-		//}
-		return true;
-	}
-	
 	public double getClosestLevelScale(double eqScale) {
 		IProjection proj = m_map.getProjection();
 		int level = proj.getLevelFromScale( eqScale, 0.5);
@@ -282,7 +273,6 @@ public class DivManager {
 		}
 		m_dpArray[level].removeAllTiles();
 		m_dpArray[level].makePanelSmall(panel,0,0);
-//		m_dpArray[level].setVisible(false);
 		detachDivPanel(level);
 	}
 	
@@ -296,6 +286,8 @@ public class DivManager {
 	}
 	
 	public void resizeDivs(int w, int h) {
+		m_lastResize.setWidth(w);
+		m_lastResize.setHeight(h);
 		for (int i = 0; i < NUMDIVS; i++) {
 			if (divPanelExists(i)) {
 				m_dpArray[i].resize(w, h);
