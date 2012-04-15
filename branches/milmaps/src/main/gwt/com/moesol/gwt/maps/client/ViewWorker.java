@@ -3,7 +3,6 @@ package com.moesol.gwt.maps.client;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
 import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
-import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class ViewWorker implements ProjectionChangedHandler {
 	private ViewDimension m_dims = new ViewDimension(400, 600);

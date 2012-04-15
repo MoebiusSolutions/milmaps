@@ -1,7 +1,5 @@
 package com.moesol.gwt.maps.client;
 
-import com.google.gwt.core.client.GWT;
-import com.moesol.gwt.maps.client.LayerSet;
 
 /**
  * Save one satellite round trip by just keeping the layer

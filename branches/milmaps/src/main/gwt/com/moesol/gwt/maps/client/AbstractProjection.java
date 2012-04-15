@@ -6,7 +6,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
 import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
-import com.moesol.gwt.maps.shared.BoundingBox;
 
 
 public abstract class AbstractProjection implements IProjection, HasHandlers {

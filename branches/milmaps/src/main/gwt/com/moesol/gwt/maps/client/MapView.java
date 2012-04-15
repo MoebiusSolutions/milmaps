@@ -1,9 +1,7 @@
 package com.moesol.gwt.maps.client;
 
 import java.util.Date;
-import java.util.logging.Logger;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.Cookies;
@@ -11,7 +9,12 @@ import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ChangeListenerCollection;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
