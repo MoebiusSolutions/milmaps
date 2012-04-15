@@ -177,19 +177,6 @@ public class DivPanel extends AbsolutePanel {
 		}
 	}
 
-	public boolean hasAutoRefreshOnTimerLayers() {
-		for (TiledImageLayer layer : m_tiledImageLayers) {
-			LayerSet layerSet = layer.getLayerSet();
-			if (!layerSet.isActive()) {
-				continue;
-			}
-			if (layerSet.isAutoRefreshOnTimer()) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public void removeAllTiles() {
 		for (TiledImageLayer layer : m_tiledImageLayers) {
 			if (layer.getLayerSet().isActive()) {

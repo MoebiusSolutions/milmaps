@@ -225,11 +225,12 @@ public class DivManager {
 	}
 	
 	public boolean hasAutoRefreshOnTimerLayers() {
-		for (int i = 0; i < NUMDIVS; i++) {
-			if (divPanelExists(i)) {
-				if (m_dpArray[i].hasAutoRefreshOnTimerLayers()) {
-					return true;
-				}
+		for (LayerSet layerSet : m_layerSets) {
+			if (!layerSet.isActive()) {
+				continue;
+			}
+			if (layerSet.isAutoRefreshOnTimer()) {
+				return true;
 			}
 		}
 		return false;

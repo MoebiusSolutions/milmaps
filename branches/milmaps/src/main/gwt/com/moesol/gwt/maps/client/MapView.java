@@ -415,18 +415,18 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	public void doUpdateView() {
 		if (m_resized 
-                        || hasLevelChanged() 
-                        || m_divMgr.hasDivMovedToFar()) {
+				|| m_dynamicUpdateEngine.isDynamicUpdateNeeded()
+				|| hasLevelChanged()
+				|| m_divMgr.hasDivMovedToFar()) {
 			m_resized = false;
-			//System.out.println("fullUpdate");
+			m_dynamicUpdateEngine.setDynamicUpdateNeeded(false);
 			fullUpdateView();
 		} else {
-			//System.out.println("partialUpdate");
 			partialUpdateView();
 		}
                 
 		m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
-		m_changeListeners.fireChange( this );
+		m_changeListeners.fireChange(this);
 		
 // TODO move to idle handling...
 //		recordCenter();
