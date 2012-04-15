@@ -27,8 +27,6 @@ import com.moesol.gwt.maps.client.LayerSetJson;
 import com.moesol.gwt.maps.client.MapPanel;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.controls.FlyToController;
-import com.moesol.gwt.maps.client.controls.MapDimmerControl;
-import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
 
 @ExportPackage("milmaps")
 
