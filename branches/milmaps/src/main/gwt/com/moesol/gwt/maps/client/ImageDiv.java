@@ -11,8 +11,11 @@ public class ImageDiv extends AbsolutePanel {
 
 	public ImageDiv() {
 		image = new Image();
-		image.setWidth("100%");
-		image.setHeight("100%");
+		image.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		image.getElement().getStyle().setLeft(0, Unit.PX);
+		image.getElement().getStyle().setRight(0, Unit.PX);
+		image.getElement().getStyle().setWidth(100, Unit.PCT);
+		image.getElement().getStyle().setHeight(100, Unit.PCT);
 
 		// This is what LayoutPanel was adding.
 		inner = new AbsolutePanel();
