@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class FlyToEngineTest {
