@@ -24,25 +24,27 @@ public class DivPanel extends AbsolutePanel {
 	
 	public DivPanel(int level) {
 		m_level = level;
+		
 		m_tileBuilder.setDivWorker(m_divWorker);
 		m_tileBuilder.setTileImageLayers(m_tiledImageLayers);
-		m_dimPanel.setStylePrimaryName("tileLayerPanel");
+		
+		m_dimPanel.setStylePrimaryName("mm-DimTileLayerPanel");
 		m_dimPanel.setWidth("100%");
 		m_dimPanel.setHeight("100%");
 		m_dimPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
-		m_dimPanel.getElement().setClassName("dimTileLayerPanel"); 
+		m_dimPanel.getElement().getStyle().setZIndex(1);
 
-		m_nonDimPanel.setStylePrimaryName("nonDimTileLayerPanel");
+		m_nonDimPanel.setStylePrimaryName("mm-NonDimTileLayerPanel");
 		m_nonDimPanel.setWidth("100%");
 		m_nonDimPanel.setHeight("100%");
 		m_nonDimPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
-		m_nonDimPanel.getElement().setClassName("nonDimTileLayerPanel"); 
+		m_nonDimPanel.getElement().getStyle().setZIndex(2);
 		
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();
 		super.setPixelSize(dd.getWidth(), dd.getHeight());
 		this.add(m_dimPanel);
 		this.add(m_nonDimPanel);
-		this.getElement().setClassName("DivPanelContainer");
+		this.getElement().setClassName("mm-DivPanelContainer");
 		this.getElement().getStyle().setZIndex(level);
 	}
 	

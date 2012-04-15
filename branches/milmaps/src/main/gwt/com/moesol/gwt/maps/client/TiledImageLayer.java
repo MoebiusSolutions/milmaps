@@ -171,7 +171,6 @@ public class TiledImageLayer {
 
 	private void setImageZIndex(ImageDiv image, int zIndex) {
 		image.getElement().getStyle().setZIndex(zIndex);
-		image.getElement().getParentElement().getStyle().setZIndex(zIndex);
 	}
 
 	public void setLevel(int level) {
