@@ -320,8 +320,6 @@ public class Driver implements EntryPoint {
 			img.getElement().getStyle().setZIndex(3020);
 			
 			widgetPositioner.place(img, 200, 200,
-					DeclutterEngine.LEADER_IMAGE_WIDTH,
-					DeclutterEngine.LEADER_IMAGE_HEIGHT,
 					4000);
 		}
 	}

@@ -413,11 +413,15 @@ public class DeclutterEngineTest {
 
 		graphics.setColor(Color.RED);
 		for (Placement p : widgetPositioner.images) {
+			p.width = m_imageMock.getOffsetWidth();
+			p.height = m_imageMock.getOffsetHeight();
 			graphics.drawRect(p.x, p.y, p.width, p.height);
 		}
 
 		graphics.setColor(Color.YELLOW);
 		for (Placement p : widgetPositioner.labels) {
+			p.width = m_labelMock.getOffsetWidth();
+			p.height = m_labelMock.getOffsetHeight();
 			graphics.drawRect(p.x, p.y, p.width, p.height);
 		}
 

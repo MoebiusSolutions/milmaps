@@ -36,8 +36,6 @@ public class IconEngine {
 			widgetPositioner.place(image, 
 					dc.getX() + icon.getIconOffset().getX(), 
 					dc.getY() + icon.getIconOffset().getY(), 
-					icon.getImageSize().getWidth(),
-					icon.getImageSize().getHeight(),
 					icon.getZIndex());
 		}
 		
@@ -58,7 +56,7 @@ public class IconEngine {
 			widgetPositioner.place(label, 
 					dc.getX() + icon.getDeclutterOffset().getX(), 
 					dc.getY() + icon.getDeclutterOffset().getY(),
-					width, height,icon.getZIndex() );
+					icon.getZIndex() );
 		}
 		
 		Image leader = icon.getLabelLeaderImage();
@@ -66,8 +64,6 @@ public class IconEngine {
 			widgetPositioner.place(leader, 
 					dc.getX() - DeclutterEngine.LEADER_IMAGE_WIDTH / 2, 
 					dc.getY() - DeclutterEngine.LEADER_IMAGE_HEIGHT / 2,
-					leader.getOffsetWidth(),
-					leader.getOffsetHeight(),
 					icon.getZIndex());
 		}
 	}

@@ -237,8 +237,8 @@ public class DivPanel extends AbsolutePanel {
 		if (m_widgetPositioner == null) {
 			m_widgetPositioner = new WidgetPositioner() {
 				@Override
-				public void place(Widget widget, int divX, int divY, int width, int height, int z) {
-					placeIcon(widget, divX, divY, width, height, z);
+				public void place(Widget widget, int divX, int divY, int z) {
+					placeIcon(widget, divX, divY, z);
 				}
 				@Override
 				public void remove(Widget widget) {
@@ -249,7 +249,7 @@ public class DivPanel extends AbsolutePanel {
 		return m_widgetPositioner;
 	}
 	
-	private void placeIcon(Widget widget, int dx, int dy, int dw, int dh, int z) {
+	private void placeIcon(Widget widget, int dx, int dy, int z) {
 		Panel lp = getNonDimTileLayerPanel();
 		if (widget.getParent() == null || widget.getParent() != lp) {
 			lp.add(widget);
@@ -257,11 +257,7 @@ public class DivPanel extends AbsolutePanel {
 		
 		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(dx, dy, 1, 1);
 		
-		widget.setPixelSize(dw, dh);
-//		lp.setWidgetLeftWidth(widget, b.left, Unit.PCT, dw, Unit.PX);
-//		lp.setWidgetTopHeight(widget, b.top, Unit.PCT, dh, Unit.PX);
-//		lp.getWidgetContainerElement(widget).getStyle().setZIndex(z);
-		
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		widget.getElement().getStyle().setLeft(b.left, Unit.PCT);
 		widget.getElement().getStyle().setTop(b.top, Unit.PCT);
 		widget.getElement().getStyle().setZIndex(z);
