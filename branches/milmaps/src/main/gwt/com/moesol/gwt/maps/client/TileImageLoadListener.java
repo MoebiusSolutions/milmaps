@@ -4,9 +4,9 @@ import com.google.gwt.user.client.ui.LoadListener;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TileImageLoadListener implements LoadListener {
-	private TileImageManager m_tileEngine;
+	private TileImageCache m_tileEngine;
 	
-	public void setTileImageEngine(TileImageManager e) {
+	public void setTileImageEngine(TileImageCache e) {
 		m_tileEngine = e;
 	}
 	

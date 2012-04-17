@@ -192,8 +192,7 @@ public class DivPanel extends AbsolutePanel {
 			m_tileBuilder.setLayerBestSuitedForScale();
 			m_firstSearch = false;
 		}
-		int currentLevel = m_map.getDivManager().getCurrentLevel();
-		m_tileBuilder.layoutTiles(vd, eqScale, currentLevel);
+		m_tileBuilder.layoutTiles(vd, eqScale);
 	}
 	
 	

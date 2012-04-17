@@ -16,7 +16,7 @@ public class TiledImageLayer {
 	
 	private final Panel m_dimLayoutPanel;
 	private final Panel m_nonDimLayoutPanel;
-	private final TileImageManager m_tileImageMgr = new TileImageManager(m_tileImageEngineListener);
+	private final TileImageCache m_tileImageMgr = new TileImageCache(m_tileImageEngineListener);
 	
 	private final double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_MEERS;
 	private final double MeterPerDeg  = EarthCirMeters/360.0;
@@ -149,14 +149,32 @@ public class TiledImageLayer {
 		m_maxBottom = Integer.MIN_VALUE;
 		for (int i = 0; i < m_tileCoords.length; i++) {
 			positionOneImage(vb, m_tileCoords[i]);
+			computeImageBounds(m_tileCoords[i]);
 		}
+	}
+	
+	public void computeImageBounds(TileCoords tileCoords){
+		if (tileCoords == null) {
+			return;
+		}
+		int x = tileCoords.getOffsetX();
+		int y = tileCoords.getOffsetY();
+		int width = tileCoords.getTileWidth();
+		int height = tileCoords.getTileHeight();
+		DivDimensions dd = m_divWorker.getDivBaseDimensions();
+		m_minLeft   = Math.max(0,Math.min(x, m_minLeft));
+		m_maxRight  = Math.min(dd.getWidth(),Math.max(x+width, m_maxRight));
+		m_minTop    = Math.max(0,Math.min(y,m_minTop));
+		m_maxBottom = Math.min(dd.getHeight(),Math.max(y+height, m_maxBottom));
 	}
 
 	private void positionOneImage(ViewBox vb, TileCoords tileCoords) {
 		if (tileCoords == null) {
 			return;
 		}
-		//String bboxStr = vw.getBoundingBoxStr(m_divWorker.getProjection());
+		if ( vb != null ){
+			System.out.println("positionOneImage");
+		}
 		ImageDiv image = (ImageDiv)m_tileImageMgr.findOrCreateImage(vb,tileCoords);
 		setImageZIndex(image, m_layerSet.getZIndex());
 		int x = tileCoords.getOffsetX();
@@ -170,12 +188,6 @@ public class TiledImageLayer {
 		imageStyle.setRight(100 - b.right, Unit.PCT);
 		imageStyle.setTop(b.top, Unit.PCT);
 		imageStyle.setBottom(100 - b.bottom, Unit.PCT);
-		
-		DivDimensions dd = m_divWorker.getDivBaseDimensions();
-		m_minLeft   = Math.max(0,Math.min(x, m_minLeft));
-		m_maxRight  = Math.min(dd.getWidth(),Math.max(x+width, m_maxRight));
-		m_minTop    = Math.max(0,Math.min(y,m_minTop));
-		m_maxBottom = Math.min(dd.getHeight(),Math.max(y+height, m_maxBottom));
 	}
 
 	private void setImageZIndex(ImageDiv image, int zIndex) {

@@ -237,9 +237,9 @@ public class DivWorker implements ProjectionChangedHandler {
 		return left;
 	}
 	
+	
 	public boolean hasDivMovedToFar(IProjection mapProj, ViewWorker vw, 
 									DivDimensions dim, DivCoordSpan ds) {
-		ViewCoords tl = computeDivLayoutInView(mapProj, vw, dim);
 		double factor = getScaleFactor(mapProj);
 		if (ds.isBad()) {
 			return true;
@@ -249,9 +249,17 @@ public class DivWorker implements ProjectionChangedHandler {
 		int imgBottom = (int)(factor*ds.getBottom());
 		int imgRight  = (int)(factor*ds.getRight());
 		
-		
+		ViewCoords tl = computeDivLayoutInView(mapProj, vw, dim);
 		ViewCoords br = new ViewCoords(tl.getX()+ imgRight, tl.getY()+ imgBottom);
 		ViewDimension vd = vw.getDimension();
+		WorldDimension wd = mapProj.getWorldDimension();
+		if (wd.getHeight() < vd.getHeight()){
+			if (-20 < (tl.getX()+imgLeft) || br.getX() < vd.getWidth()+20){
+				return true;
+			}	
+			return false;
+		}
+		
 		if (-20 < (tl.getX()+imgLeft)     || 
 			 br.getX() < vd.getWidth()+20 || 
 		    -20 < tl.getY()+imgTop               || 

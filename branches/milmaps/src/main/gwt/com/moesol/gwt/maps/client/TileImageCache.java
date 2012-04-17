@@ -7,7 +7,7 @@ import java.util.Comparator;
 import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.stats.Sample;
 
-public class TileImageManager {
+public class TileImageCache {
 	private static class TileInfo {
 		long m_lastUsedMillis;
 		int m_x;
@@ -28,7 +28,7 @@ public class TileImageManager {
 	public static int MAX_CACHE_SIZE = 2;
 	private final ArrayList<TileInfo> m_infoCache = new ArrayList<TileInfo>();
 	private final TileImageEngineListener m_listener;
-	public TileImageManager( TileImageEngineListener listener ) {
+	public TileImageCache( TileImageEngineListener listener ) {
 		m_listener = listener;
 	}
 	
@@ -39,21 +39,26 @@ public class TileImageManager {
 		}
 	}
 	
+	private boolean isTiledLayer(ViewBox vb){
+		return (vb == null);
+	}
+	
 	public Object findOrCreateImage(ViewBox vb, TileCoords tileCoords) {
 		int iSize = m_infoCache.size();
-		for (int i = 0; i < iSize; i++) {
-		  TileInfo tileInfo = m_infoCache.get(i);
-		  if (isMatch(tileInfo, tileCoords)) {
-			if (tileInfo.m_placed) {
-				continue;
+		if (isTiledLayer(vb)){
+			for (int i = 0; i < iSize; i++) {
+			  TileInfo tileInfo = m_infoCache.get(i);
+			  if (isMatch(tileInfo, tileCoords)) {
+				if (tileInfo.m_placed) {
+					continue;
+				}
+				m_listener.useImage(vb,  tileCoords, tileInfo.m_image);
+				tileInfo.m_placed = true;
+				tileInfo.m_lastUsedMillis = System.currentTimeMillis();
+				return tileInfo.m_image;
+			  }
 			}
-			m_listener.useImage(vb,  tileCoords, tileInfo.m_image);
-			tileInfo.m_placed = true;
-			tileInfo.m_lastUsedMillis = System.currentTimeMillis();
-			return tileInfo.m_image;
-		  }
 		}
-		
 		TileInfo result = new TileInfo();
 		result.m_image = m_listener.createImage(vb, tileCoords);
 		result.m_lastUsedMillis = System.currentTimeMillis();

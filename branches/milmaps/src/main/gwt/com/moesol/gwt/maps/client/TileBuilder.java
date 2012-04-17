@@ -162,15 +162,26 @@ public class TileBuilder {
 		return tc;
 	}
 	
+	private WorldCoords getViewBoxWcOffset(ViewBox vb){
+		GeodeticCoords gc = new GeodeticCoords(vb.left(),vb.top(),AngleUnit.DEGREES);
+		WorldCoords wc = m_divWorker.getProjection().geodeticToWorld(gc);
+		return wc;
+	}
+	
 	private TileCoords makeCenterTileUsingMapView(ViewBox vb) {	
 		TileCoords tc = new TileCoords(0,0);
 		if (vb.isSingleTile()) {
 			tc.setOffsetX(m_mapViewWorker.getOffsetInWcX());
-			tc.setOffsetY(m_mapViewWorker.getOffsetInWcY());
+			if (vb.isMapHeightSmallerThanView()){
+				WorldCoords wc = getViewBoxWcOffset(vb);
+				tc.setOffsetY(wc.getY());				
+			}
+			else {
+				tc.setOffsetY(m_mapViewWorker.getOffsetInWcY());
+			}
 		}
 		else {
-			GeodeticCoords gc = new GeodeticCoords(vb.left(),vb.top(),AngleUnit.DEGREES);
-			WorldCoords wc = m_divWorker.getProjection().geodeticToWorld(gc);
+			WorldCoords wc = getViewBoxWcOffset(vb);
 			tc.setOffsetX(wc.getX());
 			tc.setOffsetY(wc.getY());
 		}
@@ -330,21 +341,18 @@ public class TileBuilder {
 		return r;
 	}
 	
-	private void placeTilesForOneLayer( ViewDimension vd, 
+	private void placeTilesForOneLayer( ViewBox vb, ViewDimension vd, 
 										int level, TiledImageLayer layer ) {
 		if (layer.getLayerSet().isAlwaysDraw() || layer.isPriority()) {
-			ViewBox vb = null;
-			if (layer.getLayerSet().isTiled() == false){
-				vb = m_mapViewWorker.getViewBox(0);
-			}
-			TileCoords[] tileCoords = arrangeTiles( level, vb, layer);
+			ViewBox vBox = (layer.getLayerSet().isTiled() == true? null:vb);
+			TileCoords[] tileCoords = arrangeTiles( level, vBox, layer);
 			layer.setTileCoords(tileCoords);
 			layer.setLevel(level);
-			layer.updateView(vb);
+			layer.updateView(vBox);
 		}
 	}
 
-	public void layoutTiles( ViewDimension vd, double eqScale, int currentLevel ) {
+	public void layoutTiles(ViewDimension vd, double eqScale) {
 		double projScale = m_divProj.getEquatorialScale();
 		double dFactor = eqScale/projScale;
 		m_scaledViewDims = ViewDimension.builder()
@@ -357,12 +365,13 @@ public class TileBuilder {
 		for (TiledImageLayer layer : m_tiledImageLayers) {
 			LayerSet ls = layer.getLayerSet();
 			if (!ls.isActive()) {
-				layer.updateView(vb); // Force hiding inactive layers, but skip placing their tiles.
+				// Force hiding inactive layers, but skip placing their tiles.
+				layer.updateView(vb); 
 				continue;
 			}
 			if (ls.isAlwaysDraw() || layer.isPriority()) {
 				int level = layer.findLevel(dpi, projScale);
-				placeTilesForOneLayer(vd, level, layer);
+				placeTilesForOneLayer(vb,vd, level, layer);
 			}
 		}
 	}

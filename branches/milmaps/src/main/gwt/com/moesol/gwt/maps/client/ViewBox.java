@@ -12,6 +12,7 @@ public class ViewBox {
 	private int m_width;
 	private int m_height;
 	private boolean m_singleTile = true;
+	private boolean m_mapHeightSmallerThanView = false;
 	
 	public static class Builder {
 		private double left;
@@ -164,6 +165,11 @@ public class ViewBox {
 		return m_singleTile;
 	}
 	
+	public boolean isMapHeightSmallerThanView(){
+		return m_mapHeightSmallerThanView;
+	}
+	
+	
 	public String getWmsString(){
 		return m_leftLon + "," + m_botLat + "," + m_rightLon + "," + m_topLat;
 	}
@@ -177,6 +183,7 @@ public class ViewBox {
 			m_height = wd.getHeight();
 			m_singleTile = false;
 		}
+		m_mapHeightSmallerThanView = (wd.getHeight() < m_height);
 	}
 
 	@Override

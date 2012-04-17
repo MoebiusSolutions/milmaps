@@ -163,7 +163,6 @@ public class MapController implements
 		
 		m_map.cancelAnimations();
 		m_map.setWorldCenter(newWorldCenter);
-//		m_map.fullUpdateView();
 		m_map.partialUpdateView();
 		return true;
 	}
