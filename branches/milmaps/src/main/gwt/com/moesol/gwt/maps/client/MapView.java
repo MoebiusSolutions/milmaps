@@ -216,13 +216,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		recordCenter();
 		ProjectionValues.writeCookies(getProjection());
 
-		// View changed re-declutter
-		if (isDeclutterLabels()) {
-			getDeclutterEngine().incrementalDeclutter(
-					getIconLayer().getIcons(), 
-					m_iconEngine, 
-					m_divMgr.getCurrentDiv().getDivWorker());
-		}
+		doDeclutterView();
 	}
 	
 	/**
@@ -241,6 +235,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		}
 		m_oldIconVersion = getIconLayer().getVersion();
 		
+		doDeclutterView();
+	}
+	
+	private void doDeclutterView() {
 		if (isDeclutterLabels()) {
 			getDeclutterEngine().incrementalDeclutter(
 					getIconLayer().getIcons(), 
@@ -399,6 +397,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_isUpdateTimerScheduled = true;
 	}
 	
+	public void declutterView() {
+		doDeclutterView();
+	}
+	
 	void cancelAnimations() {
 		m_animateEngine.cancel();
 		m_flyToEngine.getAnimation().cancel();
@@ -424,7 +426,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		} else {
 			partialUpdateView();
 		}
-                
+		
 		m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
 		m_changeListeners.fireChange(this);
 		
