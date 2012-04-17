@@ -286,9 +286,9 @@ public class TileCoords {
 			return returnStr;
 		}
 		if (returnStr.contains("?")) {
-			return returnStr + "#" + dynamicCounter;
+			return returnStr + "&_=" + dynamicCounter;
 		}
-		return returnStr + "#" + dynamicCounter;
+		return returnStr + "?_=" + dynamicCounter;
 	}
 
 	private static String encode(String v) {
