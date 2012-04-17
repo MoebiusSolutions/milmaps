@@ -53,19 +53,45 @@ public class DivWorkerTest {
 	}
 	
 	@Test
-	public void hasDivMovedToFarTest(){
-		WorldCoords vwCent = m_vw.getVpCenterInWc();
-		//WorldCoords divCent = m_mapProj.geodeticToWorld(m_dw.getGeoCenter());
-		// First lets move left:
-		// TODO Write test for top, bottom
-		DivCoordSpan ds = new DivCoordSpan(-10, 88, 502, 1112);
-		for( int j = 10; j < 400; j += 10 ){
-			WorldCoords wc = new WorldCoords(vwCent.getX()-j, vwCent.getY());
-			m_vw.setCenterInWc(wc);	
-			boolean bMovedToFar = m_dw.hasDivMovedToFar(m_mapProj, m_vw, m_dims, ds);
-			if ( bMovedToFar )
-				bMovedToFar= false;
-			assertEquals(false,bMovedToFar);
+	public void computeImageSpanTest(){
+		DivWorker.ImageBounds b = DivWorker.newImageBounds();
+		b.left   = Integer.MAX_VALUE;
+		b.right  = Integer.MIN_VALUE;
+		b.top    = Integer.MAX_VALUE;
+		b.bottom = Integer.MIN_VALUE;
+		
+		TileCoords[] tc = new TileCoords[2];
+		tc[0] = new TileCoords(5, 5, 0, 0);
+		tc[1] = new TileCoords(10, 10, 0, 0);
+		for (int i = 0; i < tc.length; i++) {
+			m_dw.computeImageBounds(tc[i], b);
 		}
+		assertEquals(5,b.left);
+		assertEquals(5,b.top);
+		assertEquals(522,b.right);
+		assertEquals(522,b.bottom);
+	}
+	
+	@Test
+	public void hasDivMovedToFarTest(){
+		DivCoordSpan ds = new DivCoordSpan(0, 0, 800, 1200);
+		boolean bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, m_dims, ds);
+		assertEquals(false,bMovedToFar);
+		// moved left to0 far
+		ds = new DivCoordSpan(0, -400, 800, -400+1200);
+		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, m_dims, ds);
+		assertEquals(true,bMovedToFar);
+		// moved right too far
+		ds = new DivCoordSpan(400, 0, 800, 400+1200);
+		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, m_dims, ds);
+		assertEquals(true,bMovedToFar);
+		// moved down too far
+		ds = new DivCoordSpan(210, 0, 210+800, 1200);
+		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, m_dims, ds);
+		assertEquals(true,bMovedToFar);
+		// moved up too far
+		ds = new DivCoordSpan(-210, 0, -210+800, 1200);
+		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, m_dims, ds);
+		assertEquals(true,bMovedToFar);
 	}
 }

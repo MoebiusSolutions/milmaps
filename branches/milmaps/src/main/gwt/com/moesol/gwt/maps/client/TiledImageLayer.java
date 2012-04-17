@@ -3,7 +3,10 @@ package com.moesol.gwt.maps.client;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Panel;
+import com.moesol.gwt.maps.client.DivWorker.BoxBounds;
+import com.moesol.gwt.maps.client.DivWorker.ImageBounds;
 import com.moesol.gwt.maps.client.stats.Sample;
+
 
 /**
  * Images are placed into an absolute panel. 
@@ -24,13 +27,10 @@ public class TiledImageLayer {
 	private TileCoords[] m_tileCoords;
 	private int m_level;
 	private DivWorker m_divWorker;
+	private final ImageBounds m_imgBounds = DivWorker.newImageBounds();
 	private final DivPanel m_divPanel;
 	/** Marked as priority when this image layer is the best for the scale */
 	private boolean m_priority = false;
-	int m_minLeft  = Integer.MAX_VALUE;
-	int m_maxRight = Integer.MIN_VALUE;
-	int m_minTop  = Integer.MAX_VALUE;
-	int m_maxBottom = Integer.MIN_VALUE;
 	
 	
 	private class MyTileImageEngineListener implements TileImageEngineListener {
@@ -69,11 +69,11 @@ public class TiledImageLayer {
 	};
 	
 	
-	public int getMinLeft(){ return m_minLeft; }
-	public int getMaxRight(){ return m_maxRight; }
+	public int getMinLeft(){ return m_imgBounds.left; }
+	public int getMaxRight(){ return m_imgBounds.right; }
 	
-	public int getMinTop(){ return m_minTop; }
-	public int getMaxBottom(){ return m_maxBottom; }
+	public int getMinTop(){ return m_imgBounds.top; }
+	public int getMaxBottom(){ return m_imgBounds.bottom; }
 
 	public TiledImageLayer( DivPanel divPanel, LayerSet layerSet ) {
 		m_divPanel = divPanel;
@@ -143,30 +143,16 @@ public class TiledImageLayer {
 	}
 
 	private void positionImages(ViewBox vb) {
-		m_minLeft = Integer.MAX_VALUE;
-		m_maxRight = Integer.MIN_VALUE;
-		m_minTop  = Integer.MAX_VALUE;
-		m_maxBottom = Integer.MIN_VALUE;
+		m_imgBounds.left   = Integer.MAX_VALUE;
+		m_imgBounds.right  = Integer.MIN_VALUE;
+		m_imgBounds.top    = Integer.MAX_VALUE;
+		m_imgBounds.bottom = Integer.MIN_VALUE;
 		for (int i = 0; i < m_tileCoords.length; i++) {
 			positionOneImage(vb, m_tileCoords[i]);
-			computeImageBounds(m_tileCoords[i]);
+			m_divWorker.computeImageBounds(m_tileCoords[i], m_imgBounds);
 		}
 	}
-	
-	public void computeImageBounds(TileCoords tileCoords){
-		if (tileCoords == null) {
-			return;
-		}
-		int x = tileCoords.getOffsetX();
-		int y = tileCoords.getOffsetY();
-		int width = tileCoords.getTileWidth();
-		int height = tileCoords.getTileHeight();
-		DivDimensions dd = m_divWorker.getDivBaseDimensions();
-		m_minLeft   = Math.max(0,Math.min(x, m_minLeft));
-		m_maxRight  = Math.min(dd.getWidth(),Math.max(x+width, m_maxRight));
-		m_minTop    = Math.max(0,Math.min(y,m_minTop));
-		m_maxBottom = Math.min(dd.getHeight(),Math.max(y+height, m_maxBottom));
-	}
+
 
 	private void positionOneImage(ViewBox vb, TileCoords tileCoords) {
 		if (tileCoords == null) {
@@ -181,7 +167,7 @@ public class TiledImageLayer {
 		int y = tileCoords.getOffsetY();
 		int width = tileCoords.getTileWidth();
 		int height = tileCoords.getTileHeight();
-		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(x, y, width, height);
+		BoxBounds b = m_divWorker.computePerccentBounds(x, y, width, height);
 		
 		Style imageStyle = image.getElement().getStyle();
 		imageStyle.setLeft(b.left, Unit.PCT);

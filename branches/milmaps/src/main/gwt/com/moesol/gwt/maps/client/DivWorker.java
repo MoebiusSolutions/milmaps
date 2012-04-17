@@ -30,6 +30,25 @@ public class DivWorker implements ProjectionChangedHandler {
 			return "[" +" top: "+ top + ", left: "+ left +" bot: "+ bottom + ", right: "+ right + "]";
 		}
 	}
+	
+	
+	public static class ImageBounds {
+		public int top;
+		public int left;
+		public int bottom;
+		public int right;
+		
+		@Override
+		public String toString() {
+			return "[" +" top: "+ top + ", left: "+ left +" bot: "+ bottom + ", right: "+ right + "]";
+		}
+	}
+	
+	public static ImageBounds newImageBounds(){
+		return  new ImageBounds();
+	}
+	
+	
 	public BoxBounds m_boxBounds = new BoxBounds();
 	
 	public DivWorker(){
@@ -237,8 +256,24 @@ public class DivWorker implements ProjectionChangedHandler {
 		return left;
 	}
 	
+	public void computeImageBounds(TileCoords tileCoords, ImageBounds b){
+		if (tileCoords == null) {
+			return;
+		}
+		int x = tileCoords.getOffsetX();
+		int y = tileCoords.getOffsetY();
+		int width = tileCoords.getTileWidth();
+		int height = tileCoords.getTileHeight();
+		DivDimensions dd = getDivBaseDimensions();
+		// note, we are clipping the images by the div's boundaries
+		b.left   = Math.max(0,Math.min(x, b.left));
+		b.right  = Math.min(dd.getWidth(),Math.max(x+width, b.right));
+		b.top    = Math.max(0,Math.min(y,b.top));
+		b.bottom = Math.min(dd.getHeight(),Math.max(y+height, b.bottom));
+	}
 	
-	public boolean hasDivMovedToFar(IProjection mapProj, ViewWorker vw, 
+	
+	public boolean hasDivMovedTooFar(IProjection mapProj, ViewWorker vw, 
 									DivDimensions dim, DivCoordSpan ds) {
 		double factor = getScaleFactor(mapProj);
 		if (ds.isBad()) {
@@ -260,10 +295,16 @@ public class DivWorker implements ProjectionChangedHandler {
 			return false;
 		}
 		
-		if (-20 < (tl.getX()+imgLeft)     || 
-			 br.getX() < vd.getWidth()+20 || 
-		    -20 < tl.getY()+imgTop               || 
-		     br.getY() < vd.getHeight()+20) {
+		if (-20 < tl.getX()+imgLeft){
+			return true;
+		}
+		if (br.getX() < vd.getWidth()+20){
+			return true;
+		}
+		if (-20 < tl.getY()+imgTop){
+			return true; 
+		}
+		if (br.getY() < vd.getHeight()+20) {
 			return true;
 		}
 		return false;

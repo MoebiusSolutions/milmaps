@@ -303,7 +303,7 @@ public class DivManager {
 		DivDimensions dim = dp.getScaledDims();
 		IProjection mapProj = m_map.getProjection();
 		DivCoordSpan ds = dp.getUsedDivSpan();
-		return dw.hasDivMovedToFar(mapProj, vw, dim, ds);
+		return dw.hasDivMovedTooFar(mapProj, vw, dim, ds);
 	}
 
 	public boolean hasIconsMoved() {
