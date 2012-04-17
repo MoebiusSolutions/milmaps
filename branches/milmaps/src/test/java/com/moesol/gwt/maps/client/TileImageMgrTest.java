@@ -7,17 +7,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TileImageMgrTest {
-	private TileImageManager m_engine;
+	private TileImageCache m_engine;
 	private TileImageEngineListener m_listener = EasyMock.createMock(TileImageEngineListener.class);
 
 	@Before
 	public void setUp() throws Exception {
-		m_engine = new TileImageManager(m_listener);
+		m_engine = new TileImageCache(m_listener);
 	}
 	
 	@Test
 	public void testTileImageEngine() {
-		TileImageManager.MAX_CACHE_SIZE = 64;
+		TileImageCache.MAX_CACHE_SIZE = 64;
 		
 		TileCoords[] coords = new TileCoords[] {
 				new TileCoords(0, 0),
@@ -93,9 +93,9 @@ public class TileImageMgrTest {
 	
 	@Test
 	public void testKickOutOfCache() {
-		TileImageManager.MAX_CACHE_SIZE = 64;
+		TileImageCache.MAX_CACHE_SIZE = 64;
 		
-		for (int i = 0; i < TileImageManager.MAX_CACHE_SIZE; i++) {
+		for (int i = 0; i < TileImageCache.MAX_CACHE_SIZE; i++) {
 			TileCoords tileCoords = new TileCoords(i, 0);
 			EasyMock.expect(m_listener.createImage(null, tileCoords)).andReturn("x=" + i);
 		}
@@ -103,7 +103,7 @@ public class TileImageMgrTest {
 			TileCoords tileCoords = new TileCoords(0, i);
 			EasyMock.expect(m_listener.createImage(null, tileCoords)).andReturn("y=" + i);
 		}
-		for (int i = 0; i < TileImageManager.MAX_CACHE_SIZE; i++) {
+		for (int i = 0; i < TileImageCache.MAX_CACHE_SIZE; i++) {
 			m_listener.hideImage("x=" + i);
 		}
 		for (int i = 0; i < 5; i++) {
@@ -111,7 +111,7 @@ public class TileImageMgrTest {
 		}
 		EasyMock.replay(new Object[] { m_listener });
 		
-		for (int i = 0; i < TileImageManager.MAX_CACHE_SIZE; i++) {
+		for (int i = 0; i < TileImageCache.MAX_CACHE_SIZE; i++) {
 			TileCoords tileCoords = new TileCoords(i, 0);
 			m_engine.findOrCreateImage(null, tileCoords);
 		}
