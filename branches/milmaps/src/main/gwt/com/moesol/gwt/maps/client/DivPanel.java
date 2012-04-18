@@ -173,9 +173,8 @@ public class DivPanel extends AbsolutePanel {
 	
 	public void setOpacity(boolean bothPanels, double opacity){
 		m_dimPanel.getElement().getStyle().setOpacity(opacity);
-		if (bothPanels){
-			m_nonDimPanel.getElement().getStyle().setOpacity(opacity);
-		}
+		opacity = (bothPanels ? opacity : 1);
+		m_nonDimPanel.getElement().getStyle().setOpacity(opacity);
 	}
 
 	public void removeAllTiles() {
