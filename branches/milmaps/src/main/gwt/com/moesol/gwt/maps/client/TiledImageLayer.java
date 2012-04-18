@@ -158,9 +158,6 @@ public class TiledImageLayer {
 		if (tileCoords == null) {
 			return;
 		}
-		if ( vb != null ){
-			System.out.println("positionOneImage");
-		}
 		ImageDiv image = (ImageDiv)m_tileImageMgr.findOrCreateImage(vb,tileCoords);
 		setImageZIndex(image, m_layerSet.getZIndex());
 		int x = tileCoords.getOffsetX();
@@ -234,6 +231,9 @@ public class TiledImageLayer {
 
 	// dpi is pixels per inch for physical screen
 	public int findLevel(double dpi, double projScale) {
+		if (m_layerSet.isTiled() == false){
+			return -1;
+		}
 		double mpp = 2.54 / (dpi * 100); // meters per pixel for physical screen
 		double m_dx = m_layerSet.getPixelWidth();
 		double l_mpp = (m_layerSet.getStartLevelTileWidthInDeg()*MeterPerDeg)/m_dx;

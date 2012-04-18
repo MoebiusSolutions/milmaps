@@ -9,7 +9,7 @@ public interface IMapView {
 	IconEngine getIconEngine();
 	void setSuspendFlag(boolean b);
 	void updateView();
-	void doUpdateView();
+	void dumbUpdateView();
 	void partialUpdateView();
 	void setCenter(GeodeticCoords geodeticCoords);
 	DivManager getDivManager();

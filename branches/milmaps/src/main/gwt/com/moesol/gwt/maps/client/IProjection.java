@@ -49,6 +49,18 @@ public interface IProjection {
 	public abstract int getScrnDpi();
 
 	BoundingBox getDegreeBoundingBox();
+	
+	/**
+	 * sets the decimal equatorial scale of the projection
+	 * @param dScale
+	 */
+	public abstract void setBaseEquatorialScale(double dScale);
+	
+	/**
+	 * Returns the original scale that is computed when the projection 
+	 * is initialized with the layer data.
+	 */
+	public abstract double getBaseEquatorialScale();
 
 	/**
 	 * sets the decimal equatorial scale of the projection
@@ -125,13 +137,6 @@ public interface IProjection {
 	 * 		integer number of tiles
 	 */
 	public abstract int getNumYtiles( double tileDegWidth );
-	
-	/**
-	 * Returns the original scale that is computed when the projection 
-	 * is initialized with the layer data.
-	 */
-	public abstract double getBaseEquatorialScale();
-	
 	
 	/**
 	 * compWidthInPixels : computes the number of pixels between two longitudes.

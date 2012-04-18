@@ -50,12 +50,12 @@ public class CylEquiDistProj extends AbstractProjection {
 		deg = clip(deg, getDegreeBoundingBox().left(), getDegreeBoundingBox().right());
 		double x = (deg/360) + 0.5;
 		double mapSize = mapSize();
-		// add 0.5 for roundoff error
 		return (x*mapSize);	
 	}
 
 	@Override
 	public int lngDegToPixX( double deg ){
+		// add 0.5 for roundoff error
 		return (int)(lngDegToMcX(deg)+0.5);
 	}
 

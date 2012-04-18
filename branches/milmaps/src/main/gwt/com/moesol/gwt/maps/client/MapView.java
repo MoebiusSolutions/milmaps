@@ -375,7 +375,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		@Override
 		public void run() {
 			m_isUpdateTimerScheduled = false;
-			doUpdateView();
+			dumbUpdateView();
 		}
 	};
 	private boolean m_isUpdateTimerScheduled = false;
@@ -415,7 +415,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	}
 	
 	
-	public void doUpdateView() {
+	public void dumbUpdateView() {
 		if (m_resized 
 				|| m_dynamicUpdateEngine.isDynamicUpdateNeeded()
 				|| hasLevelChanged()
@@ -564,23 +564,20 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	/**
 	 * Non-animated zoom in.
 	 */
-	public void zoomByFactor(double zoomFactor) {
-		m_mapProj.zoomByFactor(zoomFactor);
-		// TODO confirm next two lines are needed.
-		ViewWorker vp = m_viewPort.getVpWorker();
-		vp.setCenterInWc(m_mapProj.geodeticToWorld(vp.getGeoCenter()));
-		//updateView();
-		doUpdateView();
+	public void zoomByFactor(double factor) {
+		m_mapProj.zoomByFactor(factor);
+		m_viewPort.getVpWorker().updateOffsets();
+		dumbUpdateView();
 	}
 	
 	//TODO
 	public void zoomAndMove( final double factor, final int offsetX, final int offsetY ) {
-		final ViewWorker vpWorker = this.getViewport().getVpWorker();
 		m_mapProj.zoomByFactor(factor);
+		final ViewWorker vpWorker = this.getViewport().getVpWorker();
 		final ViewDimension vd = vpWorker.getDimension();
 		final WorldCoords wc = new WorldCoords(offsetX + vd.getWidth()/2, offsetY - vd.getHeight()/2);
 		vpWorker.setCenterInWc(wc);
-		doUpdateView();
+		dumbUpdateView();
 	}
 
 	public void zoom(double dScale) {

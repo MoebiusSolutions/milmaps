@@ -104,6 +104,19 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	}
 	
 	@Override
+	public void setBaseEquatorialScale(double dScale) {
+		if (dScale <= 0.0) {
+			throw new IllegalArgumentException("scale Factor less than zero");
+		}
+		m_baseEqScale = dScale;
+	}
+	
+    @Override
+    public double getBaseEquatorialScale(){ 
+    	return m_baseEqScale; 
+    }
+	
+	@Override
 	public double getEquatorialScale() {
 		return m_eqScale;
 	}
@@ -168,11 +181,6 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 		double y1 = latDegToPixY( lat1 );
 		double y2 = latDegToPixY( lat2 );
 		return (int)(Math.abs(y2 - y1) + 0.5);
-    }
-    
-    @Override
-    public double getBaseEquatorialScale(){ 
-    	return m_baseEqScale; 
     }
     
     @Override

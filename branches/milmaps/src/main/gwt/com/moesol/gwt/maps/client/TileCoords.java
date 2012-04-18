@@ -18,6 +18,7 @@ public class TileCoords {
 	private int m_tileHeight = 512;
 	private int m_drawTileWidth;
 	private int m_drawTileHeight;
+	private boolean m_tiled = true;
 	private boolean m_inViewPort = false;
 	private boolean m_bZeroTop = false;
 	private double m_degWidth = 180.0;
@@ -181,6 +182,14 @@ public class TileCoords {
 			return false;
 		}
 		return true;
+	}
+	
+	public boolean isTiled() {
+		return m_tiled;
+	}
+
+	public void setTiled(boolean tiled) {
+		m_tiled = tiled;
 	}
 
 	public boolean isInViewPort() {

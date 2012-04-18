@@ -144,7 +144,7 @@ public class MapController implements
 
 		try {
 			if (!maybeDragMap(x, y) && m_dragTracker != null) {
-				m_map.doUpdateView();
+				m_map.dumbUpdateView();
 			}
 			m_map.setFocus(true);
 		} finally {

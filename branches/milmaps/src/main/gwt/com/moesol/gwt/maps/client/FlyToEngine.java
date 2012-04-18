@@ -216,11 +216,11 @@ public class FlyToEngine {
 	
 	public void onCancel() {
 		// Overriden to prevent onComplete. We just stop the flyTo
-		m_mapView.doUpdateView();
+		m_mapView.dumbUpdateView();
 	}
 	
 	public void onComplete(){
-		m_mapView.doUpdateView();
+		m_mapView.dumbUpdateView();
 	}
 	
 	void panPreTeleport(double progress) {

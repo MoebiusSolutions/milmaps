@@ -49,6 +49,11 @@ public class ViewWorker implements ProjectionChangedHandler {
 		return m_geoCenter;
 	}
 	
+	public void updateOffsets(){
+		WorldCoords wc = m_proj.geodeticToWorld(m_geoCenter);
+		computeOffsets(wc);
+	}
+	
 	public void setCenterInWc(WorldCoords cent) {
 		m_geoCenter = m_proj.worldToGeodetic(cent);
 		computeOffsets(cent);
@@ -114,20 +119,18 @@ public class ViewWorker implements ProjectionChangedHandler {
 	
 	public DivCoords viewToDivCoords( DivWorker divWorker, ViewCoords vc ){
 		WorldCoords wc = viewToWorld(vc);
-		return divWorker.worldToDiv(wc);
+		return divWorker.worldToDiv(wc,false);
 	}
 	
 	// this routine returns a viewbox with a maximum size of 360 degrees 
 	// in width.
 	public ViewBox  getViewBox(IProjection proj, double f){
-		int widthPad = (int)(f*m_dims.getWidth());
-		int heightPad = (int)(f*m_dims.getHeight());
-		int leftWx  = vcXtoWcX(0-widthPad);
-		int topWy   = vcYtoWcY(0-heightPad);
-		int rightWx = vcXtoWcX(m_dims.getWidth()+widthPad);
-		int botWy 	= vcYtoWcY(m_dims.getHeight()+heightPad);
-		int dimWidth  = m_dims.getWidth()+2*widthPad;
-		int dimHeight = m_dims.getHeight()+2*heightPad;
+		int leftWx  = vcXtoWcX(0);
+		int topWy   = vcYtoWcY(0);
+		int rightWx = vcXtoWcX(m_dims.getWidth());
+		int botWy 	= vcYtoWcY(m_dims.getHeight());
+		int dimWidth  = (int)(m_dims.getWidth()*f);
+		int dimHeight = (int)(m_dims.getHeight()*f);
 		WorldCoords tl = new WorldCoords(leftWx,topWy);
 		WorldCoords br = new WorldCoords(rightWx,botWy);
 		GeodeticCoords gtl = proj.worldToGeodetic(tl);
@@ -144,9 +147,8 @@ public class ViewWorker implements ProjectionChangedHandler {
 	}
 	
 	public ViewBox getViewBox(double f){
-		// TODO replace 0 with f; 
-		// When I figure out why it doesn't work
-		return getViewBox(m_proj, 0);
+		f = (f > 0 ? 1/f:1);
+		return getViewBox(m_proj, f);
 	}
 
 	@Override

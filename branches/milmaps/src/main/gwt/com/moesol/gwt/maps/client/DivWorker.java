@@ -9,6 +9,7 @@ import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
  * @author <a href="www.moesol.com">Moebius Solutions, Inc.</a>
  */
 public class DivWorker implements ProjectionChangedHandler {
+	private final int UPDATE_PAD = 1;
 	private GeodeticCoords m_geoCenter = new GeodeticCoords();
 	private MapCoords m_divCenterMc = null; // viewport center in wc.
 	private final DivDimensions m_baseDims = new DivDimensions();
@@ -131,8 +132,16 @@ public class DivWorker implements ProjectionChangedHandler {
 		m_offsetInMcY = m_divCenterMc.getY()+ m_baseDims.getHeight()/2;
 	}
 	
-	public int worldToDivX(int wcX ){
-		return (int) Math.rint((wcX - m_offsetInMcX));
+	public int worldToDivX(int wcX, boolean bWrap ){
+		double offsetInMcX;
+		if (bWrap && m_offsetInMcX < 0) {
+			int mapWidth = m_divProj.getWorldDimension().getWidth();
+			offsetInMcX = m_offsetInMcX + mapWidth;
+		}
+		else{
+			offsetInMcX = m_offsetInMcX;
+		}
+		return (int) Math.rint((wcX - offsetInMcX));
 	}
 	
 	public int worldToDivY( int wcY ){
@@ -150,12 +159,14 @@ public class DivWorker implements ProjectionChangedHandler {
 	 * @param checkWrap
 	 * @return ViewCoords
 	 */
-	public DivCoords worldToDiv( WorldCoords wc ) {
-		return new DivCoords(worldToDivX(wc.getX()), worldToDivY(wc.getY()));
+	public DivCoords worldToDiv( WorldCoords wc, boolean bWrap ) {
+		int dx = worldToDivX(wc.getX(),bWrap);
+		int dy = worldToDivY(wc.getY());
+		return new DivCoords(dx,dy);
 	}
 	
-	public DivCoords worldToDiv( int wcX, int wcY ) {
-		return new DivCoords(worldToDivX(wcX), worldToDivY(wcY));
+	public DivCoords worldToDiv( int wcX, int wcY, boolean bWrap ) {
+		return new DivCoords(worldToDivX(wcX,bWrap), worldToDivY(wcY));
 	}
 	
 	public int divToWorldX( int dcX ){
@@ -295,16 +306,16 @@ public class DivWorker implements ProjectionChangedHandler {
 			return false;
 		}
 		
-		if (-20 < tl.getX()+imgLeft){
+		if (-UPDATE_PAD < tl.getX()+imgLeft){
 			return true;
 		}
-		if (br.getX() < vd.getWidth()+20){
+		if (br.getX() < vd.getWidth()+UPDATE_PAD){
 			return true;
 		}
-		if (-20 < tl.getY()+imgTop){
+		if (-UPDATE_PAD < tl.getY()+imgTop){
 			return true; 
 		}
-		if (br.getY() < vd.getHeight()+20) {
+		if (br.getY() < vd.getHeight()+UPDATE_PAD) {
 			return true;
 		}
 		return false;

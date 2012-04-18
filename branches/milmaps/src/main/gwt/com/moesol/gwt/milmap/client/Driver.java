@@ -385,6 +385,7 @@ public class Driver implements EntryPoint {
 		 //int num = 512;  // better
 		 //int num = 256;  // good
 		 //int num = 128;  // rocking
+		/*
 		int num = 10;
 		double maxx = 360.0;
 		double maxy = 30.0;
@@ -397,7 +398,8 @@ public class Driver implements EntryPoint {
 			lat += incy;
 			lng += incx;
 		}
-		//addOneIcon(0,0.0,0.0);
+		*/
+		addOneIcon(0,0.0,89.0);
 		
 	}
 
@@ -549,7 +551,7 @@ public class Driver implements EntryPoint {
 	public void declutterTest(){
 		boolean flag =  !m_map.isDeclutterLabels();
 		m_map.setDeclutterLabels(flag);
-		m_map.doUpdateView();
+		m_map.dumbUpdateView();
 	}
 
 	protected void goRight() {

@@ -299,9 +299,10 @@ public class DivManager {
 	public boolean hasDivMovedToFar() {
 		DivPanel dp = getCurrentDiv();
 		DivWorker dw = dp.getDivWorker();
-		ViewWorker vw = m_map.getViewport().getVpWorker();
-		DivDimensions dim = dp.getScaledDims();
 		IProjection mapProj = m_map.getProjection();
+		DivDimensions dim = new DivDimensions();
+		ViewWorker vw = m_map.getViewport().getVpWorker();
+		dw.computeDivLayoutInView(mapProj, vw, dim);
 		DivCoordSpan ds = dp.getUsedDivSpan();
 		return dw.hasDivMovedTooFar(mapProj, vw, dim, ds);
 	}

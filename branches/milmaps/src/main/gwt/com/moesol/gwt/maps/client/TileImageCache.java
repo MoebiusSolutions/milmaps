@@ -39,13 +39,9 @@ public class TileImageCache {
 		}
 	}
 	
-	private boolean isTiledLayer(ViewBox vb){
-		return (vb == null);
-	}
-	
 	public Object findOrCreateImage(ViewBox vb, TileCoords tileCoords) {
 		int iSize = m_infoCache.size();
-		if (isTiledLayer(vb)){
+		if (tileCoords.isTiled()){
 			for (int i = 0; i < iSize; i++) {
 			  TileInfo tileInfo = m_infoCache.get(i);
 			  if (isMatch(tileInfo, tileCoords)) {

@@ -57,6 +57,7 @@ public class DivPanel extends AbsolutePanel {
 	public void initialize(int level, IMapView map, IProjection.T type, double eqScale) {
 		m_map = map;
 		m_divProj = Projection.createProj(type);
+		m_divProj.setBaseEquatorialScale(eqScale);
 		m_divProj.setEquatorialScale(eqScale);
 		m_divWorker.setProjection(m_divProj);
 		m_tileBuilder.setProjection(m_divProj);
@@ -209,11 +210,11 @@ public class DivPanel extends AbsolutePanel {
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();
 		int dW = dd.getWidth();
 		int dH = dd.getHeight();
-		if ( dW <= w ){
+		if ( dW < w ){
 			int f = (w/dW) + 1;
 			dW *= f; 
 		}
-		if ( dH<= h ){
+		if ( dH < h ){
 			int f = (h/dH) + 1;
 			dH *= f;
 		}

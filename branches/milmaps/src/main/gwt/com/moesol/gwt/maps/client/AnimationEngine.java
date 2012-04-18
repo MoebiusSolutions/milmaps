@@ -74,7 +74,7 @@ public class AnimationEngine extends Animation {
 			IProjection proj = m_mapView.getProjection();
 			double scale = proj.getEquatorialScale();
 			zoom(getClosestLevelScale(scale));
-			m_mapView.doUpdateView();
+			m_mapView.dumbUpdateView();
 		} finally {
 			m_mapView.setSuspendFlag(false);
 		}
@@ -84,7 +84,7 @@ public class AnimationEngine extends Animation {
 	protected void onCancel() {
 		// Don't call super onCancel or it will call onComplete.
 		m_mapView.setSuspendFlag(false);
-		m_mapView.doUpdateView();
+		m_mapView.dumbUpdateView();
 	}
 
 	public int getDurationInSecs() {
