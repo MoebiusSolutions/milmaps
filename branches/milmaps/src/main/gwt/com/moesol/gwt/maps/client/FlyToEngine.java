@@ -1,11 +1,10 @@
 package com.moesol.gwt.maps.client;
 
-import com.google.gwt.animation.client.Animation;
 import com.moesol.gwt.maps.client.timing.interpolators.SplineInterpolator;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
 
-public class FlyToEngine {
+public class FlyToEngine extends FlyToCommon implements IFlyTo {
 	public enum Dir {
 		LEFT, RIGHT, STAY
 	}
@@ -31,39 +30,10 @@ public class FlyToEngine {
 	private double m_deltaInScale;
 	private boolean m_teleported = false;
 	private Dir m_move = Dir.STAY;
-	private Animation m_animationAdaptor;
 	
 	public FlyToEngine(IMapView mv) {
 		m_mapView = mv;
 	}
-	
-	private class AnimationAdaptor extends Animation {
-
-		@Override
-		protected void onUpdate(double progress) {
-			FlyToEngine.this.onUpdate(progress);
-		}
-
-		@Override
-		protected void onCancel() {
-			FlyToEngine.this.onCancel();
-		}
-		
-		@Override
-		protected void onComplete(){
-			FlyToEngine.this.onComplete();
-		}
-	}
-	
-	public Animation getAnimation() {
-		// Instead of extending Animation we use an adaptor and lazy initialization
-		// so that we can create FlyToEngine in unit test.
-		if (m_animationAdaptor == null) {
-			m_animationAdaptor = new AnimationAdaptor();
-		}
-		return m_animationAdaptor;
-	}
-	
 	
 	private GeodeticCoords viewToGeo(int x, int y) {
 		ViewWorker vw = m_mapView.getViewport().getVpWorker();
@@ -194,7 +164,7 @@ public class FlyToEngine {
 	 * 
 	 * We pan the entire time. We zoom out for the first half and zoom in for the second half.
 	 */
-	protected void onUpdate(double progress) {
+	public void onUpdate(double progress) {
 		if (progress <= ZOOM_OUT_UNTIL) {
 			double outProgress = progress/ZOOM_OUT_UNTIL;
 			//outProgress = EASE_IN_OUT.interpolate(outProgress);
@@ -270,13 +240,10 @@ public class FlyToEngine {
 		m_mapView.getProjection().setEquatorialScale(newScale);
 	}
 
-	/**
-	 * Start a flyTo animation.
-	 * 
-	 * @param endLat
-	 * @param endLng
-	 * @param projectionScale
+	/* (non-Javadoc)
+	 * @see com.moesol.gwt.maps.client.IFlyTo#flyTo(com.moesol.gwt.maps.client.GeodeticCoords, double)
 	 */
+	@Override
 	public void flyTo( GeodeticCoords endPt, double projectionScale) {
 		getAnimation().cancel();
 		

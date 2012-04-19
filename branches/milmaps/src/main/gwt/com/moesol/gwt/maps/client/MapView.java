@@ -32,7 +32,8 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private final DivManager m_divMgr = new DivManager(this);
 	
 	private final AnimationEngine m_animateEngine = new AnimationEngine(this);
-	private final FlyToEngine m_flyToEngine = new FlyToEngine(this);
+	// private final IFlyTo m_flyToEngine = new FlyToEngine(this); TODO
+	private final IFlyTo m_flyToEngine = new FlyToSimple(this);
 	private final IconEngine m_iconEngine = new IconEngine(this);
 	private DeclutterEngine m_declutterEngine; // null unless needed
 	private final ChangeListenerCollection m_changeListeners = new ChangeListenerCollection();
@@ -416,7 +417,9 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	
 	public void dumbUpdateView() {
-		if (m_resized 
+		boolean updateWorkAround = true;
+		if (updateWorkAround 
+				|| m_resized 
 				|| m_dynamicUpdateEngine.isDynamicUpdateNeeded()
 				|| hasLevelChanged()
 				|| m_divMgr.hasDivMovedToFar()) {
