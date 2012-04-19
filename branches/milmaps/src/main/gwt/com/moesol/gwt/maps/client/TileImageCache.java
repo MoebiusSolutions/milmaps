@@ -153,7 +153,7 @@ public class TileImageCache {
 			return false;
 		}
 		if (tileCoords.isTiled() == false){
-			if (tileInfo.m_vb != null){
+			if (tileInfo.m_vb != null && vb != null){
 				return tileInfo.m_vb.isEqual(vb);
 			}
 		}

@@ -175,6 +175,9 @@ public class ViewBox {
 	}
 	
 	public boolean isEqual(ViewBox vb){
+		if (vb == null) {
+			throw new IllegalArgumentException("Can not check again null viewbox");
+		}
 		if (m_topLat != vb.m_topLat){
 			return false;
 		}
