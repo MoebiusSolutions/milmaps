@@ -13,6 +13,7 @@ public class TileImageCache {
 		int m_x;
 		int m_y;
 		int m_level;
+		ViewBox m_vb = null;
 		Object m_image;
 		/* true if tile was placed/drawn for level */
 		boolean m_placed;
@@ -41,19 +42,17 @@ public class TileImageCache {
 	
 	public Object findOrCreateImage(ViewBox vb, TileCoords tileCoords) {
 		int iSize = m_infoCache.size();
-		if (tileCoords.isTiled()){
-			for (int i = 0; i < iSize; i++) {
-			  TileInfo tileInfo = m_infoCache.get(i);
-			  if (isMatch(tileInfo, tileCoords)) {
-				if (tileInfo.m_placed) {
-					continue;
-				}
-				m_listener.useImage(vb,  tileCoords, tileInfo.m_image);
-				tileInfo.m_placed = true;
-				tileInfo.m_lastUsedMillis = System.currentTimeMillis();
-				return tileInfo.m_image;
-			  }
+		for (int i = 0; i < iSize; i++) {
+		  TileInfo tileInfo = m_infoCache.get(i);
+		  if (isMatch(tileInfo, vb, tileCoords)) {
+			if (tileInfo.m_placed) {
+				continue;
 			}
+			m_listener.useImage(vb,  tileCoords, tileInfo.m_image);
+			tileInfo.m_placed = true;
+			tileInfo.m_lastUsedMillis = System.currentTimeMillis();
+			return tileInfo.m_image;
+		  }
 		}
 		TileInfo result = new TileInfo();
 		result.m_image = m_listener.createImage(vb, tileCoords);
@@ -63,6 +62,8 @@ public class TileImageCache {
 		result.m_placed = true;
 		result.m_x = tileCoords.getX();
 		result.m_y = tileCoords.getY();
+		// may wan to always add viewbox at some point
+		result.m_vb = (tileCoords.isTiled()? null : vb);
 		m_infoCache.add(result);
 		return result.m_image;
 	}
@@ -141,7 +142,7 @@ public class TileImageCache {
 		}
 	}
 	
-	private boolean isMatch(TileInfo tileInfo, TileCoords tileCoords) {
+	private boolean isMatch(TileInfo tileInfo, ViewBox vb, TileCoords tileCoords) {
 		if (tileInfo.m_level != levelOrZero(tileCoords)) {
 			return false;
 		}
@@ -150,6 +151,11 @@ public class TileImageCache {
 		}
 		if (tileInfo.m_y != tileCoords.getY()) {
 			return false;
+		}
+		if (tileCoords.isTiled() == false){
+			if (tileInfo.m_vb != null){
+				return tileInfo.m_vb.isEqual(vb);
+			}
 		}
 		return true;
 	}

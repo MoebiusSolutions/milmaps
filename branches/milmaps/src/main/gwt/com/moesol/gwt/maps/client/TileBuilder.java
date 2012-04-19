@@ -327,7 +327,10 @@ public class TileBuilder {
 		IProjection proj = m_mapViewWorker.getProjection();
 		WorldDimension wd = proj.getWorldDimension();
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();
-		return (dd.getWidth() < wd.getWidth());
+		if (vb.left() > vb.right()){
+			return (dd.getWidth() < wd.getWidth());
+		}
+		return false;
 	}
 	
 	public TileCoords[] arrangeViewTile(ViewBox vb, LayerSet ls) {
@@ -352,11 +355,10 @@ public class TileBuilder {
 	private void placeTilesForOneLayer( ViewBox vb, ViewDimension vd, 
 										int level, TiledImageLayer layer ) {
 		if (layer.getLayerSet().isAlwaysDraw() || layer.isPriority()) {
-			ViewBox vBox = (layer.getLayerSet().isTiled() == true? null:vb);
-			TileCoords[] tileCoords = arrangeTiles( level, vBox, layer);
+			TileCoords[] tileCoords = arrangeTiles( level, vb, layer);
 			layer.setTileCoords(tileCoords);
 			layer.setLevel(level);
-			layer.updateView(vBox);
+			layer.updateView(vb);
 		}
 	}
 

@@ -174,6 +174,28 @@ public class ViewBox {
 		return m_leftLon + "," + m_botLat + "," + m_rightLon + "," + m_topLat;
 	}
 	
+	public boolean isEqual(ViewBox vb){
+		if (m_topLat != vb.m_topLat){
+			return false;
+		}
+		if (m_leftLon != vb.m_leftLon){
+			return false;
+		}
+		if (m_botLat != vb.m_botLat){
+			return false;
+		}
+		if (m_rightLon != vb.m_rightLon){
+			return false;
+		}
+		if (m_width != vb.m_width){
+			return false;
+		}
+		if (m_height != vb.m_height){
+			return false;
+		}
+		return true;
+	}
+	
 	public void correctForMultipleMaps(IProjection proj){
 		WorldDimension wd = proj.getWorldDimension();
 		if (wd.getWidth() < m_width) {
