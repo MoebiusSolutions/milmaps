@@ -164,7 +164,7 @@ public class TiledImageLayer {
 		int y = tileCoords.getOffsetY();
 		int width = tileCoords.getTileWidth();
 		int height = tileCoords.getTileHeight();
-		BoxBounds b = m_divWorker.computePerccentBounds(x, y, width, height);
+		BoxBounds b = m_divWorker.computePercentBounds(x, y, width, height);
 		
 		Style imageStyle = image.getElement().getStyle();
 		imageStyle.setLeft(b.left, Unit.PCT);

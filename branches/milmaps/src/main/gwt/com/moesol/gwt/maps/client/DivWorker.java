@@ -16,6 +16,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	private double m_eqScale;
 	private double m_offsetInMcX;
 	private double m_offsetInMcY;
+	private int m_divOffsetInViewX;
 	private IProjection m_divProj = null;
 	
 	private int m_mapLevel;
@@ -122,6 +123,10 @@ public class DivWorker implements ProjectionChangedHandler {
 		computeOffsets();
 	}
 	
+	public int getDivOffsetInView(){
+		return m_divOffsetInViewX;
+	}
+	
 	public void updateDivWithCurrentGeoCenter(){
 		m_divCenterMc = m_divProj.geodeticToMapCoords(m_geoCenter);
 		computeOffsets();		
@@ -196,7 +201,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	 * @param height
 	 * @return
 	 */
-	public BoxBounds computePerccentBounds(int x, int y, int width, int height) {
+	public BoxBounds computePercentBounds(int x, int y, int width, int height) {
 		m_boxBounds.top   = divYToPercent(y)*100;
 		m_boxBounds.left  = divXToPercent(x)*100;
 		m_boxBounds.bottom   = divYToPercent(y+height)*100;
@@ -216,9 +221,9 @@ public class DivWorker implements ProjectionChangedHandler {
 		dim.setWidth((int)(m_baseDims.getWidth()*factor + 0.5));
 		dim.setHeight((int)(m_baseDims.getHeight()*factor + 0.5));
 		WorldCoords centerWc = mapProj.geodeticToWorld(m_geoCenter);
-		int left = computeDivLeft(centerWc, dim, vw, factor);
+		m_divOffsetInViewX = computeDivLeft(centerWc, dim, vw, factor);
 		int top  = viewOy - (centerWc.getY()+ dim.getHeight()/2);
-		return new ViewCoords(left, top);
+		return new ViewCoords(m_divOffsetInViewX, top);
 	}
 
 	private int computeIntersect(int left1, int width1, int left2, int width2) {

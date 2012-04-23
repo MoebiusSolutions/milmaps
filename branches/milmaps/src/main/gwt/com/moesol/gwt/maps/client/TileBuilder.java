@@ -17,6 +17,7 @@ public class TileBuilder {
 	private LayerSetWorker m_lsWorker = new LayerSetWorker();
 	private ViewWorker m_mapViewWorker = null;
 	private DivWorker m_divWorker = null;
+	private IMapView m_map = null;
 	private int m_divLevel;
 	
 	private ArrayList<TiledImageLayer> m_tiledImageLayers;
@@ -25,13 +26,16 @@ public class TileBuilder {
 	private TileCoords m_centerTile;
 	
 	IProjection m_divProj = null;
-	
+	// TODO This will come out when done testing
+	private WorldCoords m_vbOffsetWc = null;
+	////////////////////////////////////////////
 	public void setTileImageLayers( ArrayList<TiledImageLayer> tiledImageLayers ) {
 		m_tiledImageLayers = tiledImageLayers;
 	}
 	
-	public void setMapViewWorker(ViewWorker vw){
-		m_mapViewWorker = vw;
+	public void setMapView(IMapView map){
+		m_map = map;
+		m_mapViewWorker = map.getViewport().getVpWorker();
 	}
 	
 	public void setDivWorker( DivWorker dw ) {
@@ -92,7 +96,7 @@ public class TileBuilder {
 		
 	// Note, in all these routines Use the div projection that has a 
 	// fixed scale and is designed to be used at the level natural scale.
-	private void computeHowManyXTiles( int dimWidth ) {
+	private void computeHowManyXTiles(int dimWidth) {
 		int tileWidth = m_centerTile.getTileWidth();
 		int wcX = m_divWorker.divToWorldX( m_centerTile.getOffsetX());
 		int leftDist = m_tileViewWorker.wcXtoVcX(wcX);
@@ -103,7 +107,7 @@ public class TileBuilder {
 		m_cxTiles = 1 + m_leftTiles + rightTiles;
 	}
 
-	private void computeHowManyYTiles( int dimHeight ) {
+	private void computeHowManyYTiles(int dimHeight) {
 		int tileHeight = m_centerTile.getTileHeight();
 		int wcY = m_divWorker.divToWorldY( m_centerTile.getOffsetY());
 		int topDist = m_tileViewWorker.wcYtoVcY(wcY);
@@ -162,30 +166,52 @@ public class TileBuilder {
 		return tc;
 	}
 	
-	private WorldCoords getViewBoxWcOffset(ViewBox vb){
+
+	private WorldCoords getViewBoxWcOffset(ViewBox vb, boolean useProj){
+		if( useProj == false){
+			int boxWidth = vb.getWidth();
+			int boxHeight = vb.getHeight();
+			ViewDimension vd = m_mapViewWorker.getDimension();
+			double vwWidth = vd.getWidth();
+			double f = boxWidth/vwWidth;
+			int x = (int)(f*(m_mapViewWorker.getOffsetInWcX()+vd.getWidth()/2));
+			int y = (int)(f*(m_mapViewWorker.getOffsetInWcY()+vd.getHeight()/2));
+			WorldDimension wd = m_map.getProjection().getWorldDimension();
+			if (wd.getHeight()*f < boxHeight) {
+				GeodeticCoords gc = new GeodeticCoords(vb.left(),vb.top(),AngleUnit.DEGREES);
+				WorldCoords wc = m_divWorker.getProjection().geodeticToWorld(gc);
+				return new WorldCoords(x- boxWidth/2, wc.getY());
+			}
+			return new WorldCoords(x- boxWidth/2, y-boxHeight/2);
+		}
 		GeodeticCoords gc = new GeodeticCoords(vb.left(),vb.top(),AngleUnit.DEGREES);
 		WorldCoords wc = m_divWorker.getProjection().geodeticToWorld(gc);
 		return wc;
 	}
-	
-	private WorldCoords getViewBoxWcOffset(int boxWidth, int boxHeight){
-		ViewDimension vd = m_mapViewWorker.getDimension();
-		double vwWidth = vd.getWidth();
-		double f = boxWidth/vwWidth;
-		int x = (int)(f*(m_mapViewWorker.getOffsetInWcX()+vd.getWidth()/2));
-		int y = (int)(f*(m_mapViewWorker.getOffsetInWcY()+vd.getHeight()/2));
-		return new WorldCoords(x- boxWidth/2, y-boxHeight/2);
+
+
+	private ViewCoords getDivOffsetInView(){
+		IProjection proj = m_map.getProjection();
+		DivDimensions t = m_divWorker.getDivBaseDimensions();
+		DivDimensions dd = new DivDimensions(t.getWidth(),t.getHeight());
+		ViewCoords vc = m_divWorker.computeDivLayoutInView(proj, m_mapViewWorker, dd);
+		return vc;
 	}
 	
+	public WorldCoords getVbOffsets(){ return m_vbOffsetWc; }
+	public TileCoords getCenterTile(){ return m_centerTile; }
+	
 	private TileCoords makeCenterTileUsingMapView(ViewBox vb) {	
-		TileCoords tc = new TileCoords(0,0);
 		WorldCoords wc;
 		if (vb.isSingleTile()) {
-			wc = getViewBoxWcOffset(vb.getWidth(),vb.getHeight());
+			wc = getViewBoxWcOffset(vb,false);
 		}
 		else {
-			wc = getViewBoxWcOffset(vb);
+			wc = getViewBoxWcOffset(vb,true);
 		}
+		m_vbOffsetWc = wc;
+		
+		TileCoords tc = new TileCoords(0,0);
 		tc.setOffsetX(wc.getX());
 		tc.setOffsetY(wc.getY());
 		tc.setTileWidth( vb.getWidth());
@@ -243,16 +269,27 @@ public class TileBuilder {
 		return tc;
 	}
 	
-	private void positionCenterOffsetForDiv( TileCoords tc, boolean bWrap ) {
+	private void positionTileOffsetForDiv(TileCoords tc) {
 	    // This routine positions the center tile relative to the view it sits in.
 		int wcX = tc.getOffsetX();
 		int wcY = tc.getOffsetY();
-		DivCoords dc = worldToDiv( wcX, wcY, bWrap );
+		DivCoords dc = worldToDiv(wcX, wcY);
 		tc.setOffsetY(dc.getY());
 		tc.setOffsetX(dc.getX());
 	}
 	
-	public DivCoords worldToDiv(int wcX, int wcY, boolean bWrap) {
+	private void positionNonTileOffsetForDiv(TileCoords tc) {
+	    // This routine positions the center tile relative to the view it sits in.
+		int wcX = tc.getOffsetX();
+		int wcY = tc.getOffsetY();
+		DivCoords dc = worldToDiv(wcX, wcY);
+		ViewCoords vc = getDivOffsetInView();
+		tc.setOffsetX(-1*vc.getX());
+		//tc.setOffsetX(dc.getX());
+		tc.setOffsetY(dc.getY());
+	}
+	
+	public DivCoords worldToDiv(int wcX, int wcY) {
 		return m_divWorker.worldToDiv(wcX, wcY);
 	}
 	
@@ -301,7 +338,7 @@ public class TileBuilder {
 	 * @param int level
 	 * @return array of tile coordinates (never null)
 	 */
-	public TileCoords[] arrangeTiles( int level, LayerSet ls, double lsScale ) {
+	public TileCoords[] arrangeTiles(int level, LayerSet ls, double lsScale) {
 		int tLevel = level - ls.getStartLevel();
 
 		double degFactor = ( tLevel < 1 ? 1 : Math.pow(2, tLevel) );
@@ -312,7 +349,7 @@ public class TileBuilder {
 			m_divProj.setEquatorialScale(lsScale);
 		}
 		m_centerTile = m_lsWorker.findTile( ls, level, m_tileDegWidth, m_tileDegHeight, gc );
-		positionCenterOffsetForDiv(m_centerTile, false);
+		positionTileOffsetForDiv(m_centerTile);
 		//TODO
 		// we should probably use the view dimensions here to keep
 		// the number of tile down to a reasonable value.
@@ -325,29 +362,18 @@ public class TileBuilder {
 		return r;
 	}
 	
-	private boolean shouldWrap(ViewBox vb){
-		IProjection proj = m_mapViewWorker.getProjection();
-		WorldDimension wd = proj.getWorldDimension();
-		DivDimensions dd = m_divWorker.getDivBaseDimensions();
-		if (vb.left() > vb.right()){
-			return true;
-			//return (dd.getWidth() <= wd.getWidth());
-		}
-		return false;
-	}
-	
 	public TileCoords[] arrangeViewTile(ViewBox vb, LayerSet ls) {
 		boolean singleTile = vb.isSingleTile();
 		TileCoords[] r = (singleTile? new TileCoords[1]:new TileCoords[3]);
 
 		m_centerTile = makeCenterTileUsingMapView(vb);
-		boolean wrap = false;//shouldWrap(vb);
-		positionCenterOffsetForDiv(m_centerTile,wrap);
 		if (singleTile == true){
+			positionNonTileOffsetForDiv(m_centerTile);
 			r[0] = makeViewTileFromCenter();
 		}
 		else{
 			// we will make three copies of tile
+			positionTileOffsetForDiv(m_centerTile);
 			r[0] = makeViewTilePositionedFromCenter(0);
 			r[1] = makeViewTilePositionedFromCenter(1);
 			r[2] = makeViewTilePositionedFromCenter(2);

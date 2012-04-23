@@ -22,6 +22,9 @@ public class DivPanel extends AbsolutePanel {
 	protected IProjection m_divProj = null;
 	private WidgetPositioner m_widgetPositioner; // null unless needed
 	
+	// remove these when done fixing non-tiled images
+	ViewCoords m_tl = null;
+	
 	public DivPanel(int level) {
 		m_level = level;
 		
@@ -62,7 +65,7 @@ public class DivPanel extends AbsolutePanel {
 		m_divWorker.setProjection(m_divProj);
 		m_tileBuilder.setProjection(m_divProj);
 		m_tileBuilder.setDivLevel(level);
-		m_tileBuilder.setMapViewWorker(map.getViewport().getVpWorker());
+		m_tileBuilder.setMapView(map);
 	}
 	
 	public void initialize(IMapView map) {
@@ -71,10 +74,15 @@ public class DivPanel extends AbsolutePanel {
 		m_divWorker.setProjection(m_divProj);
 		m_tileBuilder.setProjection(m_divProj);
 		m_tileBuilder.setDivLevel(0);
-		m_tileBuilder.setMapViewWorker(map.getViewport().getVpWorker());
+		m_tileBuilder.setMapView(map);
 	}
 	
 	public int getDivLevel(){ return m_level; }
+	 // TPDO remove after done testing
+	public WorldCoords getVBOffsetWc(){ return m_tileBuilder.getVbOffsets(); }
+	public TileCoords getCenterTile(){ return m_tileBuilder.getCenterTile(); }
+	///////////////////
+	public ViewCoords getDivTopLeft(){ return m_tl; }
 	
 	public void setProjection(IProjection proj){ m_divProj = proj; }
 	public IProjection getProjection(){ return m_divProj; }
@@ -200,6 +208,7 @@ public class DivPanel extends AbsolutePanel {
 		IProjection mp = m_map.getProjection();
 		ViewWorker vw = m_map.getViewport().getVpWorker();
 		ViewCoords tl = m_divWorker.computeDivLayoutInView(mp, vw, m_scaledDims);
+		m_tl = tl;
 		super.setPixelSize(m_scaledDims.getWidth(), m_scaledDims.getHeight());
 		panel.setWidgetPosition(this, tl.getX(), tl.getY());
 	}
@@ -247,7 +256,7 @@ public class DivPanel extends AbsolutePanel {
 			lp.add(widget);
 		}
 		
-		DivWorker.BoxBounds b = m_divWorker.computePerccentBounds(dx, dy, 1, 1);
+		DivWorker.BoxBounds b = m_divWorker.computePercentBounds(dx, dy, 1, 1);
 		
 		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		widget.getElement().getStyle().setLeft(b.left, Unit.PCT);
