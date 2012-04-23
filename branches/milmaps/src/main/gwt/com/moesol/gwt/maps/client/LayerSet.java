@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * @see MapView.addLayer
  */
 public class LayerSet implements IsSerializable {
+	private String m_styleName = "moesol-MapTile";
 	private String m_server;
 	private String m_data = "";
 	private int m_skipLevels = 0;
@@ -31,7 +32,18 @@ public class LayerSet implements IsSerializable {
 	//private double m_degHeight = 180.0;
 	private double m_startLevelTileWidthInDeg = 180.0;
 	private double m_startLevelTileHeightInDeg = 180.0;
-	
+
+	public String getStyleName() {
+		return m_styleName;
+	}
+	public void setStyleName(String styleName) {
+		m_styleName = styleName;
+	}
+	public LayerSet withStyleName(String styleName) {
+		setStyleName(styleName);
+		return this;
+	}
+
 	public double getStartLevelTileWidthInDeg() {
 		return m_startLevelTileWidthInDeg;
 	}

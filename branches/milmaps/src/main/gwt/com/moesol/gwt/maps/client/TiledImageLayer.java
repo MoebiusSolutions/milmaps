@@ -40,7 +40,7 @@ public class TiledImageLayer {
 			image.addLoadListener(m_tileImageLoadListener);
 			String url = tileCoords.makeTileURL(vb, getLayerSet(), getLevel(), getDynamicCounter());
 			image.setUrl(url);
-			image.setStyleName("moesol-MapTile");
+			image.setStyleName(m_layerSet.getStyleName());
 
 			layoutPanel().add(image);
 			return image;
