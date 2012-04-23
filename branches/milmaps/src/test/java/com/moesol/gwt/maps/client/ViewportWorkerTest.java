@@ -54,6 +54,55 @@ public class ViewportWorkerTest {
 		assertEquals( offsetWcY, 328);
 	}
 	
+	private int getIconViewPtX( int i, int j){
+	int x[][] = {{ 400, 172, -55, -283, -510, 1310, 1083, 855, 628, 400 },
+				 { 628, 400, 173, -55, -282, -510, 1311, 1083, 856, 628 },
+				 { 855, 627, 400, 172, -55, -283, -510, 1310, 1083, 855 },
+				 { 1083, 855, 628, 400, 173, -55, -282, -510, 1311, 1083 },
+				 { 1310, 1082, 855, 627, 400, 172, -55, -283, -510, 1310 },
+				 { -510, 1310, 1083, 855, 628, 400, 173, -55, -282, -510 },
+				 { -283, -511, 1310 , 1082, 855, 627, 400, 172, -55, -283 },
+				 { -55, -283, -511 , 1310, 1082, 855, 627, 400, 172, -55 },
+				 { 172, -55, -283, -511 , 1310, 1082, 855, 627, 400, 172 },
+				 { 400, 172, -55, -283, -510, 1310, 1083, 855, 628, 400 }};		
+		//int k = (10-i + j - 1)%10;
+		//if ( k < 0 ){
+		//	k += 0;
+		//}
+		return x[i][j];
+	}
+	
+	@Test
+	public void geodeticToViewTest(){
+		int x[] = { 400, 172, -55, -283, -510, 1310, 1083, 855, 628, 400 };
+		ViewDimension vd = new ViewDimension(800,600);
+		m_vpWorker.intialize(vd, m_proj);
+		m_proj.setEquatorialScale(2*m_proj.getBaseEquatorialScale());
+		WorldDimension wd = m_proj.getWorldDimension();
+		assertEquals(2048,wd.getWidth());
+		double degInc = 40;
+		double iconLng = 0;
+		int viewCentX = -400;
+		double dPixelInc = 227.55;
+		int pixelInc = m_proj.compWidthInPixels(0, degInc);
+		assertEquals(228,pixelInc);
+		for (int i = 0; i < 10; i++){
+			iconLng = -180 + i*degInc;
+			GeodeticCoords gc = new GeodeticCoords(iconLng,0, AngleUnit.DEGREES); 
+			
+			for (int j = 0; j < 10; j++){
+				viewCentX = (int)(j*dPixelInc+ 0.5);
+				WorldCoords cent = new WorldCoords(viewCentX,512);
+				m_vpWorker.setCenterInWc(cent);
+				ViewCoords vc = m_vpWorker.geodeticToView(gc);
+				int ox = getIconViewPtX(i,j);
+				assertEquals(ox,vc.getX(),1);
+			}
+		}
+
+		m_proj.setEquatorialScale(m_proj.getBaseEquatorialScale()/2);
+	}
+	
 	@Test
 	public void getViewBoxTest(){
 		m_vpWorker.intialize(m_viewDimensions, m_proj);

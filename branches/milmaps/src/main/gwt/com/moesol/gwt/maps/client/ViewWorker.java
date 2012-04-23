@@ -3,6 +3,7 @@ package com.moesol.gwt.maps.client;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
 import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
+import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class ViewWorker implements ProjectionChangedHandler {
 	private ViewDimension m_dims = new ViewDimension(400, 600);
@@ -106,6 +107,26 @@ public class ViewWorker implements ProjectionChangedHandler {
 		return (m_offsetInWcY - vcY);
 	}
 	
+	public double getDegLngDistFromCenter(double lng ){
+		double lngDif = lng  - m_geoCenter.getLambda(AngleUnit.DEGREES);
+		lngDif = m_proj.wrapLng(lngDif);
+		return lngDif;
+	}
+	
+	public ViewCoords geodeticToView(GeodeticCoords gc){
+		double degLng = gc.getLambda(AngleUnit.DEGREES);
+		double lngDist = getDegLngDistFromCenter(degLng); 
+		int deltaX = m_proj.compWidthInPixels(0,lngDist);
+		if (lngDist < 0){
+			deltaX =  -1*deltaX;
+		}
+		int viewX = (m_offsetInWcX + m_dims.getWidth()/2) + deltaX;
+		viewX = wcXtoVcX(viewX);
+		WorldCoords wc = m_proj.geodeticToWorld(gc);
+		int viewY = wcYtoVcY( wc.getY() );
+		return new ViewCoords(viewX, viewY);
+	}
+	
 	
 	/**
 	 * vcToWc converts View Coordinates to World Coordinates based on the view sizes
@@ -119,7 +140,7 @@ public class ViewWorker implements ProjectionChangedHandler {
 	
 	public DivCoords viewToDivCoords( DivWorker divWorker, ViewCoords vc ){
 		WorldCoords wc = viewToWorld(vc);
-		return divWorker.worldToDiv(wc,false);
+		return divWorker.worldToDiv(wc);
 	}
 	
 	// this routine returns a viewbox with a maximum size of 360 degrees 

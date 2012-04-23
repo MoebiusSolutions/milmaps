@@ -10,9 +10,15 @@ public class IconEngine {
 	private static double CharWidthInPixels = 10.0;
 	private static int CharHeightInPixels = 15; 
 	private final IMapView m_mapView;
+	private final ViewWorker m_viewWorker;
+	private final DivManager m_divMgr;
+	
+	private DivCoords m_divAjustment;
 	
 	public IconEngine(IMapView mv) {
 		m_mapView = mv;
+		m_viewWorker = m_mapView.getViewport().getVpWorker();
+		m_divMgr = m_mapView.getDivManager();
 	}
 
 	public void positionIcons(WidgetPositioner widgetPositioner, DivWorker divWorker) {
@@ -25,11 +31,15 @@ public class IconEngine {
 		
 		Sample.DIV_POSITION_ICONS.endSample();
 	}
+	
+	public DivCoords getIconDivCoords( DivWorker dw, GeodeticCoords gc){
+		ViewCoords vc = m_viewWorker.geodeticToView(gc);
+		return m_viewWorker.viewToDivCoords(dw, vc);
+	}
 
-	public void positionOneIcon(Icon icon, WidgetPositioner widgetPositioner, DivWorker divWorker) {
-		IProjection projection = divWorker.getProjection();
-		WorldCoords wc = projection.geodeticToWorld(icon.getLocation());
-		DivCoords dc = divWorker.worldToDiv(wc,true);
+	public void positionOneIcon(Icon icon, WidgetPositioner widgetPositioner, 
+														    DivWorker divWorker) {
+		DivCoords dc = getIconDivCoords(divWorker, icon.getLocation());
 		
 		Image image = icon.getImage();
 		if (image != null) {

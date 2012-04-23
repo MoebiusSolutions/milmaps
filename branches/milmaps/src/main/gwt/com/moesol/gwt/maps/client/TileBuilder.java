@@ -168,30 +168,32 @@ public class TileBuilder {
 		return wc;
 	}
 	
+	private WorldCoords getViewBoxWcOffset(int boxWidth, int boxHeight){
+		ViewDimension vd = m_mapViewWorker.getDimension();
+		double vwWidth = vd.getWidth();
+		double f = boxWidth/vwWidth;
+		int x = (int)(f*(m_mapViewWorker.getOffsetInWcX()+vd.getWidth()/2));
+		int y = (int)(f*(m_mapViewWorker.getOffsetInWcY()+vd.getHeight()/2));
+		return new WorldCoords(x- boxWidth/2, y-boxHeight/2);
+	}
+	
 	private TileCoords makeCenterTileUsingMapView(ViewBox vb) {	
 		TileCoords tc = new TileCoords(0,0);
-		//if (vb.isSingleTile()) {
-		//	tc.setOffsetX(m_mapViewWorker.getOffsetInWcX());
-		//	if (vb.isMapHeightSmallerThanView()){
-		//		WorldCoords wc = getViewBoxWcOffset(vb);
-		//		tc.setOffsetY(wc.getY());				
-		//	}
-		//	else {
-		//		tc.setOffsetY(m_mapViewWorker.getOffsetInWcY());
-		//	}
-		//}
-		//else {
-			WorldCoords wc = getViewBoxWcOffset(vb);
-			tc.setOffsetX(wc.getX());
-			tc.setOffsetY(wc.getY());
-		//}
+		WorldCoords wc;
+		if (vb.isSingleTile()) {
+			wc = getViewBoxWcOffset(vb.getWidth(),vb.getHeight());
+		}
+		else {
+			wc = getViewBoxWcOffset(vb);
+		}
+		tc.setOffsetX(wc.getX());
+		tc.setOffsetY(wc.getY());
 		tc.setTileWidth( vb.getWidth());
 		tc.setTileHeight(vb.getHeight());
 		tc.setInViewPort( true );
 		tc.setDegWidth(vb.getLonSpan());
 		tc.setDegHeight(vb.getLatSpan());
 		tc.setLevel(m_divLevel);
-		
 		return tc;
 	}
 	
@@ -251,7 +253,7 @@ public class TileBuilder {
 	}
 	
 	public DivCoords worldToDiv(int wcX, int wcY, boolean bWrap) {
-		return m_divWorker.worldToDiv(wcX, wcY,bWrap);
+		return m_divWorker.worldToDiv(wcX, wcY);
 	}
 	
 	private boolean badYTile(int y) {
@@ -328,7 +330,8 @@ public class TileBuilder {
 		WorldDimension wd = proj.getWorldDimension();
 		DivDimensions dd = m_divWorker.getDivBaseDimensions();
 		if (vb.left() > vb.right()){
-			return (dd.getWidth() < wd.getWidth());
+			return true;
+			//return (dd.getWidth() <= wd.getWidth());
 		}
 		return false;
 	}
@@ -338,7 +341,7 @@ public class TileBuilder {
 		TileCoords[] r = (singleTile? new TileCoords[1]:new TileCoords[3]);
 
 		m_centerTile = makeCenterTileUsingMapView(vb);
-		boolean wrap = shouldWrap(vb);
+		boolean wrap = false;//shouldWrap(vb);
 		positionCenterOffsetForDiv(m_centerTile,wrap);
 		if (singleTile == true){
 			r[0] = makeViewTileFromCenter();

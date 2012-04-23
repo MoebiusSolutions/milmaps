@@ -132,16 +132,8 @@ public class DivWorker implements ProjectionChangedHandler {
 		m_offsetInMcY = m_divCenterMc.getY()+ m_baseDims.getHeight()/2;
 	}
 	
-	public int worldToDivX(int wcX, boolean bWrap ){
-		double offsetInMcX;
-		if (bWrap && m_offsetInMcX < 0) {
-			int mapWidth = m_divProj.getWorldDimension().getWidth();
-			offsetInMcX = m_offsetInMcX + mapWidth;
-		}
-		else{
-			offsetInMcX = m_offsetInMcX;
-		}
-		return (int) Math.rint((wcX - offsetInMcX));
+	public int worldToDivX(int wcX){
+		return (int) Math.rint((wcX - m_offsetInMcX));
 	}
 	
 	public int worldToDivY( int wcY ){
@@ -159,14 +151,14 @@ public class DivWorker implements ProjectionChangedHandler {
 	 * @param checkWrap
 	 * @return ViewCoords
 	 */
-	public DivCoords worldToDiv( WorldCoords wc, boolean bWrap ) {
-		int dx = worldToDivX(wc.getX(),bWrap);
+	public DivCoords worldToDiv( WorldCoords wc ) {
+		int dx = worldToDivX(wc.getX());
 		int dy = worldToDivY(wc.getY());
 		return new DivCoords(dx,dy);
 	}
 	
-	public DivCoords worldToDiv( int wcX, int wcY, boolean bWrap ) {
-		return new DivCoords(worldToDivX(wcX,bWrap), worldToDivY(wcY));
+	public DivCoords worldToDiv( int wcX, int wcY) {
+		return new DivCoords(worldToDivX(wcX), worldToDivY(wcY));
 	}
 	
 	public int divToWorldX( int dcX ){
