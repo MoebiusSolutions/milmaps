@@ -172,8 +172,7 @@ public class TileBuilder {
 			int boxWidth = vb.getWidth();
 			int boxHeight = vb.getHeight();
 			ViewDimension vd = m_mapViewWorker.getDimension();
-			double vwWidth = vd.getWidth();
-			double f = boxWidth/vwWidth;
+			double f = vb.getFactor();
 			int x = (int)(f*(m_mapViewWorker.getOffsetInWcX()+vd.getWidth()/2));
 			int y = (int)(f*(m_mapViewWorker.getOffsetInWcY()+vd.getHeight()/2));
 			WorldDimension wd = m_map.getProjection().getWorldDimension();
@@ -278,13 +277,14 @@ public class TileBuilder {
 		tc.setOffsetX(dc.getX());
 	}
 	
-	private void positionNonTileOffsetForDiv(TileCoords tc) {
+	private void positionNonTileOffsetForDiv(double factor, TileCoords tc) {
 	    // This routine positions the center tile relative to the view it sits in.
 		int wcX = tc.getOffsetX();
 		int wcY = tc.getOffsetY();
 		DivCoords dc = worldToDiv(wcX, wcY);
 		ViewCoords vc = getDivOffsetInView();
-		tc.setOffsetX(-1*vc.getX());
+		int x = (int)(-1*factor*vc.getX());
+		tc.setOffsetX(x);
 		//tc.setOffsetX(dc.getX());
 		tc.setOffsetY(dc.getY());
 	}
@@ -368,7 +368,7 @@ public class TileBuilder {
 
 		m_centerTile = makeCenterTileUsingMapView(vb);
 		if (singleTile == true){
-			positionNonTileOffsetForDiv(m_centerTile);
+			positionNonTileOffsetForDiv(vb.getFactor(), m_centerTile);
 			r[0] = makeViewTileFromCenter();
 		}
 		else{

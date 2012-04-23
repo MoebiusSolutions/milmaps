@@ -11,6 +11,7 @@ public class ViewBox {
 	private double m_rightLon;
 	private int m_width;
 	private int m_height;
+	private double m_factor;
 	private boolean m_singleTile = true;
 	private boolean m_mapHeightSmallerThanView = false;
 	
@@ -19,6 +20,7 @@ public class ViewBox {
 		private double bottom;
 		private double right;
 		private double top;
+		private double factor;
 		private int width;
 		private int height;
 		
@@ -36,6 +38,10 @@ public class ViewBox {
 		}
 		public Builder top(double v) {
 			top = v;
+			return this;
+		}
+		public Builder factor(double v) {
+			factor = v;
 			return this;
 		}
 		public Builder width(int v){
@@ -62,6 +68,7 @@ public class ViewBox {
 		public ViewBox build() {
 			return new ViewBox(builder.top, builder.left, 
 								   builder.bottom, builder.right, 
+								   builder.factor,
 								   builder.width, builder.height);
 		}
 	}
@@ -76,6 +83,7 @@ public class ViewBox {
 							   Radians.asDegrees(builder.left), 
 							   Radians.asDegrees(builder.bottom), 
 							   Radians.asDegrees(builder.right),
+							   builder.factor,
 							   builder.width, builder.height);
 		}
 	}
@@ -85,7 +93,8 @@ public class ViewBox {
 	}
 
 	private ViewBox(double topLat, double leftLon, 
-					double botLat, double rightLon, int width, int height) {
+					double botLat, double rightLon, double factor,
+					int width, int height) {
 		if (topLat < botLat) {
 			throw new IllegalArgumentException(
 					"Top lat must be greater than bottom lat: top=" + topLat + " bottom=" + botLat);
@@ -95,6 +104,7 @@ public class ViewBox {
 		m_leftLon  	= leftLon;
 		m_botLat   	= botLat;
 		m_rightLon  = rightLon;
+		m_factor    = factor;
 		m_width 	= width;
 		m_height 	= height;
 	}
@@ -130,12 +140,23 @@ public class ViewBox {
 	public double getRightLon() {
 		return m_rightLon;
 	}
+	
 	public double right() {
 		return getRightLon();
 	}
+	
+	public double getFactor() {
+		return m_factor;
+	}
+	
+	public double factor() {
+		return getFactor();
+	}
+	
 	public int getWidth() {
 		return m_width;
 	}
+	
 	public int width() {
 		return getWidth();
 	}

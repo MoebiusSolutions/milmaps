@@ -161,6 +161,7 @@ public class ViewWorker implements ProjectionChangedHandler {
 						 .top(gtl.latitude().degrees())
 						 .left(gtl.longitude().degrees())
 						 .right(gbr.longitude().degrees())
+						 .factor(f)
 						 .width(dimWidth).height(dimHeight)
 						 .degrees().build();
 		vb.correctForMultipleMaps(proj);
