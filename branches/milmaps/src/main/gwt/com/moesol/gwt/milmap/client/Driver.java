@@ -399,7 +399,7 @@ public class Driver implements EntryPoint {
 			lng += incx;
 		}
 		*/
-		addOneIcon(0,0.0,89.0);
+		addOneIcon(0,0.0,90.0);
 		
 	}
 

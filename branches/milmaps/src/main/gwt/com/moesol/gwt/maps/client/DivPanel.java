@@ -65,7 +65,7 @@ public class DivPanel extends AbsolutePanel {
 		m_divWorker.setProjection(m_divProj);
 		m_tileBuilder.setProjection(m_divProj);
 		m_tileBuilder.setDivLevel(level);
-		m_tileBuilder.setMapView(map);
+		m_tileBuilder.setMapViewWorker(map.getViewport().getVpWorker());
 	}
 	
 	public void initialize(IMapView map) {
@@ -74,13 +74,15 @@ public class DivPanel extends AbsolutePanel {
 		m_divWorker.setProjection(m_divProj);
 		m_tileBuilder.setProjection(m_divProj);
 		m_tileBuilder.setDivLevel(0);
-		m_tileBuilder.setMapView(map);
+		m_tileBuilder.setMapViewWorker(map.getViewport().getVpWorker());
 	}
 	
 	public int getDivLevel(){ return m_level; }
 	 // TPDO remove after done testing
 	public WorldCoords getVBOffsetWc(){ return m_tileBuilder.getVbOffsets(); }
 	public TileCoords getCenterTile(){ return m_tileBuilder.getCenterTile(); }
+	public int getVbWidth(){ return m_tileBuilder.getViwBoxWidth(); }
+	public int getVbHeight(){ return m_tileBuilder.getViwBoxHeight(); }
 	///////////////////
 	public ViewCoords getDivTopLeft(){ return m_tl; }
 	

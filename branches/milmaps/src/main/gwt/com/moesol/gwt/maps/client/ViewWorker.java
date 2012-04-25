@@ -120,8 +120,7 @@ public class ViewWorker implements ProjectionChangedHandler {
 		if (lngDist < 0){
 			deltaX =  -1*deltaX;
 		}
-		int viewX = (m_offsetInWcX + m_dims.getWidth()/2) + deltaX;
-		viewX = wcXtoVcX(viewX);
+		int viewX =  m_dims.getWidth()/2 + deltaX;
 		WorldCoords wc = m_proj.geodeticToWorld(gc);
 		int viewY = wcYtoVcY( wc.getY() );
 		return new ViewCoords(viewX, viewY);
@@ -143,8 +142,13 @@ public class ViewWorker implements ProjectionChangedHandler {
 		return divWorker.worldToDiv(wc);
 	}
 	
-	// this routine returns a viewbox with a maximum size of 360 degrees 
-	// in width.
+
+	/**
+	 * This routine need to scale the viewbox correctly so the non-tiled
+	 * image size is correct for the div in its natural size.
+	 * This routine returns a viewbox with a maximum size of 360 degrees 
+	 * in width.
+	 */
 	public ViewBox  getViewBox(IProjection proj, double f){
 		int leftWx  = vcXtoWcX(0);
 		int topWy   = vcYtoWcY(0);
@@ -164,7 +168,6 @@ public class ViewWorker implements ProjectionChangedHandler {
 						 .factor(f)
 						 .width(dimWidth).height(dimHeight)
 						 .degrees().build();
-		vb.correctForMultipleMaps(proj);
 		return vb;
 	}
 	

@@ -2,6 +2,7 @@ package com.moesol.gwt.maps.client;
 
 import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
 import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
+import com.moesol.gwt.maps.client.units.AngleUnit;
 
 /**
  * DivWorker class is used to help handle all tile placements. It works with just one projection
@@ -16,7 +17,6 @@ public class DivWorker implements ProjectionChangedHandler {
 	private double m_eqScale;
 	private double m_offsetInMcX;
 	private double m_offsetInMcY;
-	private int m_divOffsetInViewX;
 	private IProjection m_divProj = null;
 	
 	private int m_mapLevel;
@@ -123,10 +123,6 @@ public class DivWorker implements ProjectionChangedHandler {
 		computeOffsets();
 	}
 	
-	public int getDivOffsetInView(){
-		return m_divOffsetInViewX;
-	}
-	
 	public void updateDivWithCurrentGeoCenter(){
 		m_divCenterMc = m_divProj.geodeticToMapCoords(m_geoCenter);
 		computeOffsets();		
@@ -215,15 +211,55 @@ public class DivWorker implements ProjectionChangedHandler {
 		return (mapScale/divOrigScale);
 	}
 	
+	public int wcYtoVcY( int wcY ){
+		// Normally we would have vY = wc.getY() - m_offsetInWcY.
+		// But for the view y axis we want the y values changed to be relative to the 
+		// div's top. So we will subtract dY from the div's top. This will also
+		// flip the direction of the divs's y axis
+		return (int)(m_offsetInMcY - wcY);	// flip y axis	
+	}
+	
+	public double getDegLngDistFromCenter(double lng ){
+		double lngDif = lng  - m_geoCenter.getLambda(AngleUnit.DEGREES);
+		lngDif = m_divProj.wrapLng(lngDif);
+		return lngDif;
+	}
+	
+	/**
+	 * geodeticToWc attempts to keep the wc point on the div
+	 * while finding the correct point. Mostly useful with 
+	 * wrap situations.
+	 * @param  GeodeticCoords gc
+	 * @return WorldCoords
+	 */
+	public WorldCoords geodeticToWc(GeodeticCoords gc){
+		double degLng = gc.getLambda(AngleUnit.DEGREES);
+		double lngDist = getDegLngDistFromCenter(degLng); 
+		int deltaX = m_divProj.compWidthInPixels(0,lngDist);
+		if (lngDist < 0){
+			deltaX =  -1*deltaX;
+		}
+		int divXWc =  m_baseDims.getWidth()/2 + deltaX;
+		WorldCoords wc = m_divProj.geodeticToWorld(gc);
+		return new WorldCoords(divXWc, wc.getY());
+	}
+	
+	/**
+	 * This scales the divPanel before placing it in the view
+	 * @param mapProj
+	 * @param vw
+	 * @param dim
+	 * @return The offset in view coordinates.
+	 */
 	public ViewCoords computeDivLayoutInView(IProjection mapProj, ViewWorker vw, DivDimensions dim) {
 		int viewOy = vw.getOffsetInWcY();
 		double factor = getScaleFactor(mapProj);
 		dim.setWidth((int)(m_baseDims.getWidth()*factor + 0.5));
 		dim.setHeight((int)(m_baseDims.getHeight()*factor + 0.5));
 		WorldCoords centerWc = mapProj.geodeticToWorld(m_geoCenter);
-		m_divOffsetInViewX = computeDivLeft(centerWc, dim, vw, factor);
+		int left = computeDivLeft(centerWc, dim, vw, factor);
 		int top  = viewOy - (centerWc.getY()+ dim.getHeight()/2);
-		return new ViewCoords(m_divOffsetInViewX, top);
+		return new ViewCoords(left, top);
 	}
 
 	private int computeIntersect(int left1, int width1, int left2, int width2) {

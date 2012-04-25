@@ -43,8 +43,12 @@ public class MapStateDialog extends DialogBox {
 		int height = el.getClientHeight();
 		addRow("ViewPanel ClientWidth: ", width);
 		addRow("ViewPanel ClientWidth: : ", height);
-		int s = Browser.getFontPixWidth("test");
-		addRow("Font Width: ", s);
+		int vbWidth = divMgr.getCurrentDiv().getVbWidth();
+		int vbHeight = divMgr.getCurrentDiv().getVbHeight();
+		addRow("ViewBox Width: ", vbWidth);
+		addRow("ViewBox height: : ", vbHeight);
+		//int s = Browser.getFontPixWidth("test");
+		//addRow("Font Width: ", s);
 		WorldCoords wcVb = divMgr.getCurrentDiv().getVBOffsetWc();
 		ViewCoords vc = divMgr.getCurrentDiv().getDivTopLeft();
 		TileCoords ct = divMgr.getCurrentDiv().getCenterTile();
@@ -55,7 +59,7 @@ public class MapStateDialog extends DialogBox {
 			addRow("ViewBoxOffset X in Wc: ", wcVb.getX());
 		}
 		addRow("ViewBoxOffset X in Div: ", ct.getOffsetX());
-		addRow("DivOffset X in view : ", vc.getX());
+		addRow("DivOffset X in View : ", vc.getX());
 		
 		addRow("ViewOffset Y in Wc: ", offsetYWc);
 		if (wcVb != null){
