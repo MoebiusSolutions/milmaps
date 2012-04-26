@@ -220,11 +220,7 @@ public class ViewBox {
 			m_leftLon = -180;
 			m_rightLon = 180;
 			m_width = wd.getWidth();
-			m_height = wd.getHeight();
 			m_singleTile = false;
-		}
-		else if (wd.getHeight() < m_height){
-			m_height = wd.getHeight();
 		}
 	}
 

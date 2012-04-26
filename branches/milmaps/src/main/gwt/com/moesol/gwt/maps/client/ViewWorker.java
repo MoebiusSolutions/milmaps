@@ -149,17 +149,23 @@ public class ViewWorker implements ProjectionChangedHandler {
 	 * This routine returns a viewbox with a maximum size of 360 degrees 
 	 * in width.
 	 */
-	public ViewBox  getViewBox(IProjection proj, double f){
+	public ViewBox  getViewBox(IProjection proj, double f) {
 		int leftWx  = vcXtoWcX(0);
 		int topWy   = vcYtoWcY(0);
 		int rightWx = vcXtoWcX(m_dims.getWidth());
 		int botWy 	= vcYtoWcY(m_dims.getHeight());
 		int dimWidth  = (int)(m_dims.getWidth()*f);
-		int dimHeight = (int)(m_dims.getHeight()*f);
+		
 		WorldCoords tl = new WorldCoords(leftWx,topWy);
 		WorldCoords br = new WorldCoords(rightWx,botWy);
 		GeodeticCoords gtl = proj.worldToGeodetic(tl);
 		GeodeticCoords gbr = proj.worldToGeodetic(br);
+		
+		// Compute height from viewTop and viewBottom;
+		int viewTop = lat2vcY(gtl.latitude().degrees());
+		int viewBottom = lat2vcY(gbr.latitude().degrees());
+		int dimHeight = (int)((viewBottom - viewTop)*f);
+		
 		ViewBox vb = 
 		ViewBox.builder().bottom(gbr.latitude().degrees())
 						 .top(gtl.latitude().degrees())
@@ -171,6 +177,10 @@ public class ViewWorker implements ProjectionChangedHandler {
 		return vb;
 	}
 	
+	private int lat2vcY(double lat) {
+		return geodeticToView(GeodeticCoords.builder().latitude(lat).degrees().build()).getY();
+	}
+
 	public ViewBox getViewBox(double f){
 		f = (f > 0 ? 1/f:1);
 		return getViewBox(m_proj, f);
