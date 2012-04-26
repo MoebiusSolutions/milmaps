@@ -416,7 +416,7 @@ public class TileBuilder {
 		
 		m_tileViewWorker.setDimension(m_scaledViewDims);
 		ViewBox vb = m_mapViewWorker.getViewBox(factor);
-		vb.correctForMultipleMaps(m_divProj);
+		vb.makeAnyCorrectionsNeeded(m_divProj);
 		int dpi = m_divProj.getScrnDpi();
 		for (TiledImageLayer layer : m_tiledImageLayers) {
 			LayerSet ls = layer.getLayerSet();
