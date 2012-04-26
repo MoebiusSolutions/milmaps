@@ -221,7 +221,7 @@ public class TileCoords {
 
 	String doMakeTileURL(ViewBox vb, LayerSet layerSet, 
 						 int levelInUrl, long dynamicCounter ) {
-		Map<String, String> replacements = new HashMap<String, String>(layerSet.getProperties());
+		Map<String, Object> replacements = new HashMap<String, Object>(layerSet.getProperties());
 		int width;
 		int height;
 		String bBoxStr;
@@ -252,8 +252,8 @@ public class TileCoords {
 		replacements.put("quad", computeQuad(layerSet, levelInUrl));
 		
 		String returnStr = layerSet.getUrlPattern();
-		for (Entry<String, String> e : replacements.entrySet()) {
-			returnStr = returnStr.replaceAll("\\{" + e.getKey() + "\\}", e.getValue());
+		for (Entry<String, Object> e : replacements.entrySet()) {
+			returnStr = returnStr.replaceAll("\\{" + e.getKey() + "\\}", e.getValue().toString());
 		}
 		return maybeAppendDynamicCounter(layerSet, returnStr, dynamicCounter);
 	}

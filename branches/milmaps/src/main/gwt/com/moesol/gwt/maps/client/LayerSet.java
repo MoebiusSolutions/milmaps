@@ -1,6 +1,8 @@
 package com.moesol.gwt.maps.client;
 
-import com.google.gwt.dev.util.collect.HashMap;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
@@ -33,7 +35,7 @@ public class LayerSet implements IsSerializable {
 	//private double m_degHeight = 180.0;
 	private double m_startLevelTileWidthInDeg = 180.0;
 	private double m_startLevelTileHeightInDeg = 180.0;
-	private HashMap<String, String> m_properties;
+	private Map<String, Object> m_properties;
 
 	public String getStyleName() {
 		return m_styleName;
@@ -428,16 +430,16 @@ public class LayerSet implements IsSerializable {
 	 * Example "my.property" = "world", URL pattern of "hello {my.property}" would
 	 * result in a URL of "hello world".
 	 */
-	public HashMap<String, String> getProperties() {
+	public Map<String, Object> getProperties() {
 		if (m_properties == null) {
-			m_properties = new HashMap<String, String>();
+			m_properties = new HashMap<String, Object>();
 		}
 		return m_properties;
 	}
-	public void setProperties(HashMap<String, String> properties) {
+	public void setProperties(Map<String, Object> properties) {
 		m_properties = properties;
 	}
-	public LayerSet withProperties(HashMap<String, String> properties) {
+	public LayerSet withProperties(Map<String, Object> properties) {
 		setProperties(properties);
 		return this;
 	}
