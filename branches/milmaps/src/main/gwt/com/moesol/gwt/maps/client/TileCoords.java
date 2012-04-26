@@ -221,7 +221,7 @@ public class TileCoords {
 
 	String doMakeTileURL(ViewBox vb, LayerSet layerSet, 
 						 int levelInUrl, long dynamicCounter ) {
-		Map<String, String> replacements = new HashMap<String, String>();
+		Map<String, String> replacements = new HashMap<String, String>(layerSet.getProperties());
 		int width;
 		int height;
 		String bBoxStr;

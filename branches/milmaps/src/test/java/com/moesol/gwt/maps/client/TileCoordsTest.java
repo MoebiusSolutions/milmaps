@@ -58,4 +58,19 @@ public class TileCoordsTest {
 		assertEquals("server/tileset/data+with+space/level/1/x/2/y/3?_=49", url);
 	}
 
+	@Test
+	public void testDoMakeTileURLReplacements() {
+		TileCoords tc = new TileCoords(2, 3);
+		TileCoords.setGlobalURLProvider(m_provider);
+		
+		LayerSet ls = new LayerSet();
+		ls.setData("data with space");
+		ls.setServer("server");
+		ls.setSkipLevels(0);
+		ls.getProperties().put("my.world", "world");
+		ls.setUrlPattern("hello {my.world}");
+		
+		String url = tc.doMakeTileURL(null,ls, 1, 1);
+		assertEquals("hello world", url);
+	}
 }

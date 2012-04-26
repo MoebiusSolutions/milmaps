@@ -1,5 +1,6 @@
 package com.moesol.gwt.maps.client;
 
+import com.google.gwt.dev.util.collect.HashMap;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
@@ -32,6 +33,7 @@ public class LayerSet implements IsSerializable {
 	//private double m_degHeight = 180.0;
 	private double m_startLevelTileWidthInDeg = 180.0;
 	private double m_startLevelTileHeightInDeg = 180.0;
+	private HashMap<String, String> m_properties;
 
 	public String getStyleName() {
 		return m_styleName;
@@ -403,4 +405,41 @@ public class LayerSet implements IsSerializable {
 	public LayerSet withMaxLevel(int l) {
 		setMaxLevel(l); return this;
 	}
+	
+	/**
+	 * @return Custom properties map for this layer set. Lazy created if null.
+	 * These properties are used in the URL pattern. There are some predefine
+	 * property names that will get ignored:
+	 * <ul>
+	 * <li>"server" = layerSet.getServer()
+	 * <li>"data" = layerSet.getData()
+	 * <li>"level" - level being requested
+	 * <li>"srs" = layerSet.getSrs()
+	 * <li>"imgSize" = layerSet.getPixelWidth()
+	 * <li>"width" - width of WMS request
+	 * <li>"height" - height of WMS request
+	 * <li>"x" - column of tile being requested
+	 * <li>"y" - row of tile being requested
+	 * <li>"bbox" - bounding box of WMS request
+	 * <li>"quakKey" -MS virtual earth style quad key tile reference
+	 * <li>"quad" - Google style quad tile reference
+	 * </ul>
+	 * <p>Suggest use of a prefix to avoid future collisions.
+	 * Example "my.property" = "world", URL pattern of "hello {my.property}" would
+	 * result in a URL of "hello world".
+	 */
+	public HashMap<String, String> getProperties() {
+		if (m_properties == null) {
+			m_properties = new HashMap<String, String>();
+		}
+		return m_properties;
+	}
+	public void setProperties(HashMap<String, String> properties) {
+		m_properties = properties;
+	}
+	public LayerSet withProperties(HashMap<String, String> properties) {
+		setProperties(properties);
+		return this;
+	}
+
 }
