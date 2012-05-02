@@ -64,7 +64,7 @@ public class DivWorkerTest {
 		tc[0] = new TileCoords(5, 5, 0, 0);
 		tc[1] = new TileCoords(10, 10, 0, 0);
 		for (int i = 0; i < tc.length; i++) {
-			m_dw.computeImageBounds(tc[i], b);
+			m_dw.computeImageBounds(tc[i], m_dims, b);
 		}
 		assertEquals(5,b.left);
 		assertEquals(5,b.top);
@@ -75,23 +75,23 @@ public class DivWorkerTest {
 	@Test
 	public void hasDivMovedToFarTest(){
 		DivCoordSpan ds = new DivCoordSpan(0, 0, 800, 1200);
-		boolean bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, m_dims, ds);
+		boolean bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, ds);
 		assertEquals(false,bMovedToFar);
 		// moved left to0 far
 		ds = new DivCoordSpan(0, -400, 800, -400+1200);
-		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, m_dims, ds);
+		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, ds);
 		assertEquals(true,bMovedToFar);
 		// moved right too far
 		ds = new DivCoordSpan(400, 0, 800, 400+1200);
-		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, m_dims, ds);
+		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, ds);
 		assertEquals(true,bMovedToFar);
 		// moved down too far
 		ds = new DivCoordSpan(210, 0, 210+800, 1200);
-		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, m_dims, ds);
+		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, ds);
 		assertEquals(true,bMovedToFar);
 		// moved up too far
 		ds = new DivCoordSpan(-210, 0, -210+800, 1200);
-		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, m_dims, ds);
+		bMovedToFar = m_dw.hasDivMovedTooFar(m_mapProj, m_vw, ds);
 		assertEquals(true,bMovedToFar);
 	}
 }
