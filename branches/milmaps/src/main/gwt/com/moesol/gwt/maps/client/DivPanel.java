@@ -77,6 +77,7 @@ public class DivPanel extends AbsolutePanel {
 		m_tileBuilder.setMapViewWorker(map.getViewport().getVpWorker());
 	}
 	
+	public IMapView getIMapView(){return m_map;}
 	public int getDivLevel(){ return m_level; }
 	 // TPDO remove after done testing
 	public WorldCoords getVBOffsetWc(){ return m_tileBuilder.getVbOffsets(); }
@@ -133,10 +134,10 @@ public class DivPanel extends AbsolutePanel {
 			if (!layer.getLayerSet().isActive()){
 				continue;
 			}
-			top    = Math.max(top, layer.getMinTop());
-			left   = Math.max(left, layer.getMinLeft());
-			bottom = Math.min(bottom, layer.getMaxBottom());
-			right  = Math.min(right, layer.getMaxRight());			
+			top    = Math.max(top, layer.getImgBoundTop());
+			left   = Math.max(left, layer.getImgBoundLeft());
+			bottom = Math.min(bottom, layer.getImgBoundBottom());
+			right  = Math.min(right, layer.getImgBoundRight());			
 		}
 		return new DivCoordSpan(top, left, bottom, right);
 	}

@@ -149,12 +149,14 @@ public class ViewWorker implements ProjectionChangedHandler {
 	 * This routine returns a viewbox with a maximum size of 360 degrees 
 	 * in width.
 	 */
-	public ViewBox  getViewBox(IProjection proj, double f) {
-		int leftWx  = vcXtoWcX(0);
-		int topWy   = vcYtoWcY(0);
-		int rightWx = vcXtoWcX(m_dims.getWidth());
-		int botWy 	= vcYtoWcY(m_dims.getHeight());
-		int dimWidth  = (int)(m_dims.getWidth()*f);
+	public ViewBox  getViewBox(IProjection proj, double f, double padFactor) {
+		int padW = (int)(m_dims.getWidth()*padFactor);
+		int padH = (int)(m_dims.getHeight()*padFactor);
+		int leftWx  = vcXtoWcX(0-padW);
+		int topWy   = vcYtoWcY(0-padH);
+		int rightWx = vcXtoWcX(m_dims.getWidth()+padW);
+		int botWy 	= vcYtoWcY(m_dims.getHeight()+padH);
+		int dimWidth  = (int)((m_dims.getWidth()+2*padW)*f);
 		
 		WorldCoords tl = new WorldCoords(leftWx,topWy);
 		WorldCoords br = new WorldCoords(rightWx,botWy);
@@ -183,7 +185,7 @@ public class ViewWorker implements ProjectionChangedHandler {
 
 	public ViewBox getViewBox(double f){
 		f = (f > 0 ? 1/f:1);
-		return getViewBox(m_proj, f);
+		return getViewBox(m_proj, f, 0);
 	}
 
 	@Override

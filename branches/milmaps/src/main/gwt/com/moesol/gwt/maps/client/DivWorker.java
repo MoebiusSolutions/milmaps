@@ -33,7 +33,6 @@ public class DivWorker implements ProjectionChangedHandler {
 		}
 	}
 	
-	
 	public static class ImageBounds {
 		public int top;
 		public int left;
@@ -211,6 +210,13 @@ public class DivWorker implements ProjectionChangedHandler {
 		return (mapScale/divOrigScale);
 	}
 	
+	public DivDimensions getScaledDimensions(IProjection mapProj){
+		double f = getScaleFactor(mapProj);
+		int width = (int)(m_baseDims.getWidth()*f + 0.5);
+		int height = (int)(m_baseDims.getHeight()*f + 0.5);
+		return new DivDimensions(width,height);
+	}
+	
 	public int wcYtoVcY( int wcY ){
 		// Normally we would have vY = wc.getY() - m_offsetInWcY.
 		// But for the view y axis we want the y values changed to be relative to the 
@@ -245,7 +251,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	}
 	
 	/**
-	 * This scales the divPanel before placing it in the view
+	 * This scales the divPanel to match "map world scale" before placing it in the view
 	 * @param mapProj
 	 * @param vw
 	 * @param dim
@@ -300,25 +306,57 @@ public class DivWorker implements ProjectionChangedHandler {
 		return left;
 	}
 	
-	public void computeImageBounds(TileCoords tileCoords, ImageBounds b){
+	private int leftBound(int newLeft, int oldLeft, int divWidth ){
+		if ( newLeft < divWidth ){
+			return Math.min(newLeft, oldLeft);
+		}
+		return oldLeft;
+	}
+	
+	private int rightBound(int newRight, int oldRight ){
+		if ( newRight > 0 ){
+			return Math.max(newRight, oldRight);
+		}
+		return oldRight;
+	}
+	
+	private int topBound(int newTop, int oldTop, int divHeight ){
+		if ( newTop < divHeight ){
+			return Math.min(newTop, oldTop);
+		}
+		return oldTop;
+	}
+	
+	private int bottomBound(int newBot, int oldBot){
+		if ( newBot > 0 ){
+			return Math.max(newBot, oldBot);
+		}
+		return oldBot;
+	}
+	
+	public void computeImageBounds(TileCoords tileCoords, 
+								   DivDimensions divBaseDim, ImageBounds b ){
 		if (tileCoords == null) {
 			return;
 		}
+		// Offset should be in div coordinates
 		int x = tileCoords.getOffsetX();
 		int y = tileCoords.getOffsetY();
 		int width = tileCoords.getTileWidth();
 		int height = tileCoords.getTileHeight();
-		DivDimensions dd = getDivBaseDimensions();
-		// note, we are clipping the images by the div's boundaries
-		b.left   = Math.max(0,Math.min(x, b.left));
-		b.right  = Math.min(dd.getWidth(),Math.max(x+width, b.right));
-		b.top    = Math.max(0,Math.min(y,b.top));
-		b.bottom = Math.min(dd.getHeight(),Math.max(y+height, b.bottom));
+		if (!tileCoords.isTiled())
+			height += 0;
+		
+		b.left   = leftBound(x, b.left, divBaseDim.getWidth());
+		b.right  = rightBound(x+width, b.right);
+		b.top    = topBound(y,b.top,divBaseDim.getHeight());
+		b.bottom = bottomBound(y+height, b.bottom);
 	}
 	
 	
-	public boolean hasDivMovedTooFar(IProjection mapProj, ViewWorker vw, 
-									DivDimensions dim, DivCoordSpan ds) {
+	public boolean hasDivMovedTooFar(IProjection mapProj, 
+									 ViewWorker vwWorker, 
+									 DivCoordSpan ds) {
 		double factor = getScaleFactor(mapProj);
 		if (ds.isBad()) {
 			return true;
@@ -328,12 +366,13 @@ public class DivWorker implements ProjectionChangedHandler {
 		int imgBottom = (int)(factor*ds.getBottom());
 		int imgRight  = (int)(factor*ds.getRight());
 		
-		ViewCoords tl = computeDivLayoutInView(mapProj, vw, dim);
+		DivDimensions dim = new DivDimensions();
+		ViewCoords tl = computeDivLayoutInView(mapProj, vwWorker, dim);
 		ViewCoords br = new ViewCoords(tl.getX()+ imgRight, tl.getY()+ imgBottom);
-		ViewDimension vd = vw.getDimension();
-		WorldDimension wd = mapProj.getWorldDimension();
-		if (wd.getHeight() < vd.getHeight()){
-			if (-20 < (tl.getX()+imgLeft) || br.getX() < vd.getWidth()+20){
+		ViewDimension view = vwWorker.getDimension();
+		WorldDimension map = mapProj.getWorldDimension();
+		if (map.getHeight() < view.getHeight()){
+			if (-5 < (tl.getX()+imgLeft) || br.getX() < view.getWidth()+5){
 				return true;
 			}	
 			return false;
@@ -342,13 +381,13 @@ public class DivWorker implements ProjectionChangedHandler {
 		if (-UPDATE_PAD < tl.getX()+imgLeft){
 			return true;
 		}
-		if (br.getX() < vd.getWidth()+UPDATE_PAD){
+		if (br.getX() < view.getWidth()+UPDATE_PAD){
 			return true;
 		}
 		if (-UPDATE_PAD < tl.getY()+imgTop){
 			return true; 
 		}
-		if (br.getY() < vd.getHeight()+UPDATE_PAD) {
+		if (br.getY() < view.getHeight()+UPDATE_PAD) {
 			return true;
 		}
 		return false;

@@ -13,7 +13,7 @@ public class FlyToSimple extends FlyToCommon {
 	@Override
 	public void flyTo(GeodeticCoords endPt, double projectionScale) {
 		m_mapView.setCenter(endPt);
-		// m_mapView.getProjection().setEquatorialScale(projectionScale);
+		m_mapView.getProjection().setEquatorialScale(projectionScale);
 		m_mapView.updateView();
 	}
 

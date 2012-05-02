@@ -417,7 +417,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	
 	public void dumbUpdateView() {
-		boolean updateWorkAround = true;
+		boolean updateWorkAround = false;
 		if (updateWorkAround 
 				|| m_resized 
 				|| m_dynamicUpdateEngine.isDynamicUpdateNeeded()

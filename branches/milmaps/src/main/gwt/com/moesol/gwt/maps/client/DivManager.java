@@ -300,11 +300,10 @@ public class DivManager {
 		DivPanel dp = getCurrentDiv();
 		DivWorker dw = dp.getDivWorker();
 		IProjection mapProj = m_map.getProjection();
-		DivDimensions dim = new DivDimensions();
+
 		ViewWorker vw = m_map.getViewport().getVpWorker();
-		dw.computeDivLayoutInView(mapProj, vw, dim);
 		DivCoordSpan ds = dp.getUsedDivSpan();
-		return dw.hasDivMovedTooFar(mapProj, vw, dim, ds);
+		return dw.hasDivMovedTooFar(mapProj, vw, ds);
 	}
 
 	public boolean hasIconsMoved() {

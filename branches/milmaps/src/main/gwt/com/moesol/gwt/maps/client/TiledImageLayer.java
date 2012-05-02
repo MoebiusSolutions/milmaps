@@ -69,11 +69,11 @@ public class TiledImageLayer {
 	};
 	
 	
-	public int getMinLeft(){ return m_imgBounds.left; }
-	public int getMaxRight(){ return m_imgBounds.right; }
+	public int getImgBoundLeft(){ return m_imgBounds.left; }
+	public int getImgBoundRight(){ return m_imgBounds.right; }
 	
-	public int getMinTop(){ return m_imgBounds.top; }
-	public int getMaxBottom(){ return m_imgBounds.bottom; }
+	public int getImgBoundTop(){ return m_imgBounds.top; }
+	public int getImgBoundBottom(){ return m_imgBounds.bottom; }
 
 	public TiledImageLayer( DivPanel divPanel, LayerSet layerSet ) {
 		m_divPanel = divPanel;
@@ -142,15 +142,26 @@ public class TiledImageLayer {
 		m_tileImageMgr.hideUnplacedImages();
 	}
 
+	private void clipImgBoundsToDiv(){
+		DivDimensions dim = m_divWorker.getDivBaseDimensions();
+		m_imgBounds.left = Math.max(0, m_imgBounds.left);
+		m_imgBounds.right = Math.min(dim.getWidth(), m_imgBounds.right);
+		m_imgBounds.top = Math.max(0, m_imgBounds.top);
+		m_imgBounds.bottom = Math.min(dim.getHeight(), m_imgBounds.bottom);
+	}
+	
 	private void positionImages(ViewBox vb) {
 		m_imgBounds.left   = Integer.MAX_VALUE;
 		m_imgBounds.right  = Integer.MIN_VALUE;
 		m_imgBounds.top    = Integer.MAX_VALUE;
 		m_imgBounds.bottom = Integer.MIN_VALUE;
+		DivDimensions divBaseDim = m_divWorker.getDivBaseDimensions();
 		for (int i = 0; i < m_tileCoords.length; i++) {
 			positionOneImage(vb, m_tileCoords[i]);
-			m_divWorker.computeImageBounds(m_tileCoords[i], m_imgBounds);
+			m_divWorker.computeImageBounds(m_tileCoords[i],divBaseDim, m_imgBounds);
 		}
+		// note, we are clipping the images by the div's boundaries
+		clipImgBoundsToDiv();
 	}
 
 

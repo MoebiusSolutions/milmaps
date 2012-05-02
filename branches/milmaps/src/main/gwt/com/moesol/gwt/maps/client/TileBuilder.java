@@ -179,18 +179,6 @@ public class TileBuilder {
 		WorldCoords wc = geodeticToWorldCoords(gc);
 		return wc;
 	}
-
-	/**
-	 * This routine computes the DivPanel offset without scaling it first.
-	 * @return The DivPanel offset in view coordinates.
-	 */
-	private ViewCoords compDivOffsetInView(){
-		IProjection proj = m_mapViewWorker.getProjection();
-		DivDimensions t = m_divWorker.getDivBaseDimensions();
-		DivDimensions dd = new DivDimensions(t.getWidth(),t.getHeight());
-		ViewCoords vc = m_divWorker.computeDivLayoutInView(proj, m_mapViewWorker, dd);
-		return vc;
-	}
 	
 	// TODO remove when done testing non-tiled images
 	public WorldCoords getVbOffsets(){ return m_vbOffsetWc; }
@@ -275,24 +263,18 @@ public class TileBuilder {
 		tc.setOffsetX(dc.getX());
 	}
 	
-	private void positionWholeWorldTileOffsetForDiv(double factor, TileCoords tc) {
-	    // This routine positions the center tile relative to the view it sits in.
-		int wcX = tc.getOffsetX();
-		int wcY = tc.getOffsetY();
-		DivCoords dc = worldToDiv((int)(wcX*factor), (int)(wcY*factor));
-		tc.setOffsetY(dc.getY());
-		tc.setOffsetX(dc.getX());
+	private int computeTileXoffsetForDiv(ViewBox vb){
+		DivDimensions t = m_divWorker.getDivBaseDimensions();
+		return (t.getWidth() - vb.getWidth())/2;
 	}
 	
-	private void positionNonTileOffsetForDiv(double factor, TileCoords tc) {
+	private void positionNonTileOffsetForDiv(ViewBox vb, TileCoords tc) {
 	    // This routine positions the center tile relative to the view it sits in.
 		int wcX = tc.getOffsetX();
 		int wcY = tc.getOffsetY();
 		DivCoords dc = worldToDiv(wcX, wcY);
-		ViewCoords vc = compDivOffsetInView();
-		int x = (int)(-1*factor*vc.getX());
+		int x = computeTileXoffsetForDiv(vb);
 		tc.setOffsetX(x);
-		//tc.setOffsetX(dc.getX());
 		tc.setOffsetY(dc.getY());
 	}
 	
@@ -383,7 +365,7 @@ public class TileBuilder {
 		
 		TileCoords[] r = createTileArray(vb);
 		if (vb.isSingleTile() == true){
-			positionNonTileOffsetForDiv(vb.getFactor(), m_centerTile);
+			positionNonTileOffsetForDiv(vb, m_centerTile);
 			r[0] = makeViewTileFromCenter();
 		}
 		else{
