@@ -66,7 +66,7 @@ public abstract class AbstractProjection implements IProjection {
 		m_orgTilePixWidth = tileSize;
 		m_orgTilePixHeight = tileSize;
 		double degWidth = degSize/(1<<level);
-		m_centLng = wrapLng(tileX*degWidth + degWidth/2.0);
+		m_centLng = wrapLng((tileX+0.5)*degWidth - 180) ;
 		computebaseScale();
 		m_eqScale = m_baseEqScale*(1<<level);
 	}
