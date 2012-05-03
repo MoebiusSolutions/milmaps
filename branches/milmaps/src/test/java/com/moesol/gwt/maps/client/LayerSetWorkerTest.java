@@ -73,7 +73,7 @@ public class LayerSetWorkerTest {
 		intializeTileP();
 		for ( int i = 0; i < 2; i++ ){
 			IProjection proj = Projection.getProj(m_ls[i]);
-			m_lsWorker.setProjection(proj);
+			m_lsWorker.setDivProjection(proj);
 			count = 0;
 			for ( int latInc = 0; latInc < 3; latInc++ ){
 				double lat = -60.0 + latInc*60;
@@ -123,9 +123,8 @@ public class LayerSetWorkerTest {
 		int count = 0;
 		intializeTileP();
 		for ( int i = 0; i < 2; i++ ){
-			boolean zeroTop = m_ls[i].isZeroTop();
 			IProjection proj = Projection.getProj(m_ls[i]);
-			m_lsWorker.setProjection(proj);
+			m_lsWorker.setDivProjection(proj);
 			if ( i == 1 )
 				i = 1;
 			count = 0;
@@ -138,7 +137,7 @@ public class LayerSetWorkerTest {
 						double dFactor = 1 << level;
 						proj.zoomByFactor(dFactor);
 						TileXY tile = m_lsWorker.geoPosToTileXY(m_ls[i],level, geo);		
-						WorldCoords wc = m_lsWorker.tileXYToTopLeftXY( m_ls[i], zeroTop, level, tile  );
+						WorldCoords wc = m_lsWorker.tileXYToTopLeftWcXY( m_ls[i], level, tile, 1 );
 						WorldCoords wc2 = findConerWc( proj, count, m_ls[i], level, tile );
 						proj.zoomByFactor(1.0/dFactor);
 						if ( wc.equals(wc2) == false)
@@ -157,7 +156,7 @@ public class LayerSetWorkerTest {
 		//double f = 1 << level;
 		return ls.getPixelWidth();
 	}
-	
+	/*
 	@Test 
 	public void testCompTileDrawWidth(){
  		double[] maxLat = new double[2];
@@ -165,7 +164,7 @@ public class LayerSetWorkerTest {
 		maxLat[1] = 85.05113;
 		for ( int i = 0; i < 2; i++ ){
 			IProjection proj = Projection.getProj(m_ls[i]);
-			m_lsWorker.setProjection(proj);
+			m_lsWorker.setDivProjection(proj);
 			for ( int level = 0; level < 4; level++ ){
 				double dFactor = 1 << level;
 				proj.zoomByFactor(dFactor);
@@ -176,4 +175,5 @@ public class LayerSetWorkerTest {
 			}	
 		}		
 	}
+	*/
 }
