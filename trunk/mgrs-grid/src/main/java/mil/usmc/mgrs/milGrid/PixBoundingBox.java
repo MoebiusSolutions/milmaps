@@ -119,11 +119,11 @@ public class PixBoundingBox {
 		double widthLng = bbox.getLngDegSpan();
 
 		double centerLng = wrapLng(bbox.left()+widthLng/2.0);
-		int mapWidth = proj.mapWidthInPix();
 		int mapHeight = proj.mapHeightInPix();
 		double centerLat = (bbox.bottom()+bbox.top())/2.0;	
 		R2 c = proj.latLngToPixelXY(centerLat, centerLng);
-	
+		// We divide by 2 because the center of the box coincides with the 
+		// center of the projection, which is 0 on the x-axis.
 		int left = -1*width/2;
 		int top = Math.min(mapHeight, c.m_y+height/2);
 		int bottom = Math.max(0, c.m_y - height/2);
