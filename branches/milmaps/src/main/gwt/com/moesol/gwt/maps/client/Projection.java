@@ -1,6 +1,8 @@
 package com.moesol.gwt.maps.client;
 
 public class Projection {
+	private static final double EarthCirMeters  = 2.0*Math.PI*6378137;
+	private static final double MeterPerDeg  = EarthCirMeters/360.0;
 	
 	public static IProjection.T getType( String srs ){
 		IProjection.T type = IProjection.T.Mercator;
@@ -36,6 +38,9 @@ public class Projection {
 			//proj.zoomByFactor(2.0);
 		}else if (type == IProjection.T.CylEquiDist ) {
 			proj = new CylEquiDistProj();//size,degWidth,degHeight);
+			double dScale = LayerSetWorker.findScale(ls,proj.getScrnDpi(),0);
+			proj.setBaseEquatorialScale(dScale);
+			proj.setEquatorialScale(dScale);
 		}
 		return proj;
 	}
