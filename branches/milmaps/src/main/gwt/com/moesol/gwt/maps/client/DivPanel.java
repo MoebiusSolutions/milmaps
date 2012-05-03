@@ -68,15 +68,6 @@ public class DivPanel extends AbsolutePanel {
 		m_tileBuilder.setMapViewWorker(map.getViewport().getVpWorker());
 	}
 	
-	public void initialize(IMapView map) {
-		m_map = map;
-		m_divProj = map.getProjection();
-		m_divWorker.setProjection(m_divProj);
-		m_tileBuilder.setProjection(m_divProj);
-		m_tileBuilder.setDivLevel(0);
-		m_tileBuilder.setMapViewWorker(map.getViewport().getVpWorker());
-	}
-	
 	public IMapView getIMapView(){return m_map;}
 	public int getDivLevel(){ return m_level; }
 	 // TPDO remove after done testing
