@@ -344,8 +344,6 @@ public class DivWorker implements ProjectionChangedHandler {
 		int y = tileCoords.getOffsetY();
 		int width = tileCoords.getTileWidth();
 		int height = tileCoords.getTileHeight();
-		if (!tileCoords.isTiled())
-			height += 0;
 		
 		b.left   = leftBound(x, b.left, divBaseDim.getWidth());
 		b.right  = rightBound(x+width, b.right);
