@@ -115,7 +115,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 
 	public void setProjection(IProjection proj) {
 		m_mapProj = proj;
-		m_previousEqScale = proj.getEquatorialScale()*8.0;
+		m_previousEqScale = proj.getEquatorialScale();
 		m_viewPort.setProjection(proj);
 	}
 	
@@ -123,10 +123,13 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		if (!ls.isActive()) {
 			return false;
 		}
-		if (m_mapProj != null) {
-			if ( m_mapProj.doesSupport(ls.getSrs()) && m_bProjSet )
-				return true;
+		if (ls.isAlwaysDraw()){
+			return false;
 		}
+		//if (m_mapProj != null) {
+		//	if ( m_mapProj.doesSupport(ls.getSrs()) && m_bProjSet )
+		//		return true;
+		//}
 
 		IProjection proj = Projection.getProj(ls);
 		if (proj != null) {
