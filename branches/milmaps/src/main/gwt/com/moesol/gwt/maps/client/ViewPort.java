@@ -8,7 +8,6 @@ import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
 public class ViewPort implements ProjectionChangedHandler {
 	private ViewDimension m_viewDims = new ViewDimension(600, 400);
 	private IProjection m_proj = null;
-	private final LayerSetWorker m_lsWorker = new LayerSetWorker();
 	private final ViewWorker m_vpWorker = new ViewWorker();
 	private DivWorker m_divWorker;
 	private int m_tilePixWidth  = 512;
@@ -35,7 +34,6 @@ public class ViewPort implements ProjectionChangedHandler {
 		m_projectChangedHandlerRegistration = proj.addProjectionChangedHandler(this);
 		
 		m_proj = proj;
-		m_lsWorker.setProjection(proj);
 		m_vpWorker.intialize(m_viewDims, proj);
 		
 		GeodeticCoords g = new GeodeticCoords();

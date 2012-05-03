@@ -44,7 +44,7 @@ public class TileBuilder {
 	
 	public void setProjection( IProjection proj ) { 
 		m_divProj = proj;
-		m_lsWorker.setProjection(proj);
+		m_lsWorker.setDivProjection(proj);
 		m_tileViewWorker.setProjection(proj);
 	}
 	
@@ -138,6 +138,7 @@ public class TileBuilder {
 		
 		int x = centTileX + centerOffsetXIdx;
 		int y = centTileY - centerOffsetYIdx; // Flip y
+		// This is the only place we need to correct for zeroTop true.
 		if ( zeroTop  ){
 			// since tile is zero-top, we need to translate it.
 			int numYTiles = getNumYTiles();
