@@ -72,13 +72,15 @@ public class DivManager {
 	}
 	
 	public boolean setProjFromLayerSet( LayerSet ls ){
-		int size = ls.getPixelWidth();
-		double degWidth  = ls.getStartLevelTileWidthInDeg();
-		double degHeight = ls.getStartLevelTileHeightInDeg();
-		if ( size != 0 && degWidth != 0 && degHeight != 0 ){
-			IProjection.T type = Projection.getType(ls.getSrs());
-			initProjections( size, size, degWidth, degHeight, type );
-			return true;
+		if ( ls.isActive() && !ls.isAlwaysDraw() && ls.isTiled()){
+			int size = ls.getPixelWidth();
+			double degWidth  = ls.getStartLevelTileWidthInDeg();
+			double degHeight = ls.getStartLevelTileHeightInDeg();
+			if ( size != 0 && degWidth != 0 && degHeight != 0 ){
+				IProjection.T type = Projection.getType(ls.getSrs());
+				initProjections( size, size, degWidth, degHeight, type );
+				return true;
+			}
 		}
 		return false;
 	}
