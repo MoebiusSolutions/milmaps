@@ -143,7 +143,8 @@ public class MapController implements
 		DOM.releaseCapture(sender.getElement());
 
 		try {
-			if (!maybeDragMap(x, y) && m_dragTracker != null) {
+			maybeDragMap(x, y);
+			if (m_dragTracker != null) {
 				m_map.dumbUpdateView();
 			}
 			m_map.setFocus(true);
@@ -152,19 +153,18 @@ public class MapController implements
 		}
 	}
 
-	private boolean maybeDragMap(int x, int y) {
+	private void maybeDragMap(int x, int y) {
 		if (m_dragTracker == null) {
-			return false; // Not dragging
+			return; // Not dragging
 		}
 		WorldCoords newWorldCenter = m_dragTracker.update(x, y);
 		if (m_dragTracker.isSameAsLast()) {
-			return false;
+			return;
 		}
 		
 		m_map.cancelAnimations();
 		m_map.setWorldCenter(newWorldCenter);
 		m_map.partialUpdateView();
-		return true;
 	}
 	private void maybeHover(MouseMoveEvent event) {
 		m_hoverTimer .cancel();
