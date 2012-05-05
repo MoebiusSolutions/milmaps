@@ -2,12 +2,15 @@ package com.moesol.gwt.maps.client;
 
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 
 public class ImageDiv extends AbsolutePanel {
-	public Image image;
+	public final Image image;
 	public final AbsolutePanel inner;
+	private HandlerRegistration m_loadReg;
+	private HandlerRegistration m_errorReg;
 
 	public ImageDiv() {
 		image = new Image();
@@ -33,7 +36,7 @@ public class ImageDiv extends AbsolutePanel {
 
 	public void removeImage() {
 		remove(image);
-		image = null;
+		// image = null;
 	}
 
 	public Image getImage() {
@@ -41,35 +44,24 @@ public class ImageDiv extends AbsolutePanel {
 	}
 
 	public void setUrl(String url) {
-		if (image != null) {
-			image.setUrl(url);
-		}
+		image.setUrl(url);
 	}
 
 	public String getUrl() {
-		if (image != null) {
-			return image.getUrl();
-		}
-		return null;
+		return image.getUrl();
 	}
 
 	public void setStyleName(String name) {
-		if (image != null) {
-			image.setStyleName(name);
-		}
+		image.setStyleName(name);
 	}
 
-	@SuppressWarnings("deprecation")
-	public void addLoadListener(TileImageLoadListener ll) {
-		if (image != null) {
-			image.addLoadListener(ll);
-		}
+	public void addHandlers(TileImageLoadListener handler) {
+		m_loadReg = image.addLoadHandler(handler);
+		m_errorReg = image.addErrorHandler(handler);
+	}
+	public void removeHandlers() {
+		m_loadReg.removeHandler();
+		m_errorReg.removeHandler();
 	}
 
-	@SuppressWarnings("deprecation")
-	public void removeLoadListener(TileImageLoadListener ll) {
-		if (image != null) {
-			image.removeLoadListener(ll);
-		}
-	}
 }

@@ -37,7 +37,7 @@ public class TiledImageLayer {
 		@Override
 		public Object createImage(ViewBox vb, TileCoords tileCoords) {
 			ImageDiv image = new ImageDiv();
-			image.addLoadListener(m_tileImageLoadListener);
+			image.addHandlers(m_tileImageLoadListener);
 			String url = tileCoords.makeTileURL(vb, getLayerSet(), getLevel(), getDynamicCounter());
 			image.setUrl(url);
 			image.setStyleName(m_layerSet.getStyleName());
@@ -48,7 +48,7 @@ public class TiledImageLayer {
 		@Override
 		public void destroyImage(Object object) {
 			ImageDiv image = (ImageDiv)object;
-			image.removeLoadListener(m_tileImageLoadListener);
+			image.removeHandlers();
 			image.removeImage();
 			image.removeFromParent();
 		}
