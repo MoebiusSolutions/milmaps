@@ -18,6 +18,8 @@ public class TileImageLoadListener implements LoadHandler, ErrorHandler {
 		// Allow another zoom
 		Widget image = (Widget) event.getSource();
 		m_tileEngine.markLoaded(image);
+		// Allow different css when image is error.
+		image.addStyleDependentName("error");
 	}
 	@Override
 	public void onLoad(LoadEvent event) {
