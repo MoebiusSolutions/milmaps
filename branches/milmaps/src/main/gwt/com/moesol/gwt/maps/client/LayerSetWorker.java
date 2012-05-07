@@ -157,7 +157,6 @@ public class LayerSetWorker {
      */
     public WorldCoords tileXY2TopLeftWcXY( int numRows,int tileX, int tileY, 
     									  int tileWidth, int tileHeight ){
-    	// TODO This sucks and needs to be reworked
     	int topLeftX = tileX;
     	int topLeftY = tileY + 1;
     	return new WorldCoords(topLeftX*tileWidth, topLeftY*tileHeight);

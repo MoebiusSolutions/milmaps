@@ -127,8 +127,8 @@ public class DivManager {
 		double dMapEqScale = m_map.getProjection().getEquatorialScale();
 		double divBaseEqScale = m_proj.getEquatorialScale();
 		double logMess = Math.log( dMapEqScale ) - Math.log( divBaseEqScale );
-		double dN = logMess / Math.log(2); 
-		int level = Math.max(0,(int)dN);
+		double dN = (logMess / Math.log(2)); 
+		int level = Math.max(0,(int)(dN+0.5));
 		setCurrentLevel( level );
 	}
 	
