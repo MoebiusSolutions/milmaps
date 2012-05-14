@@ -7,6 +7,112 @@
         <title>Milmaps Cache</title>
     </head>
     <body>
-        <h2>Does nothing</h2>
+		<script type="text/javascript">
+			function doSubmit() {
+				var form = document.getElementById("buildUrlForm");
+				var data = "/" + form.data.value;
+				var srs = "/" + form.srs.value;
+				var size = "/" + form.imageSize.value;
+				var level = "/" + form.level.value;
+				var x = "/" + form.x.value;
+				var y = "/" + form.y.value;
+				var server = "http://localhost:8080/milmapsCache/rs/mapcache";
+				var new_url = server + data + srs + size + level + x + y;
+				window.open(new_url); 
+				return false;
+			};
+			// Code for the tile builder
+			function postRequest(url, elementId){
+				var xmlhttp;
+				if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlhttp=new XMLHttpRequest();
+				}
+				else{// code for IE6, IE5
+					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange=function(){
+					if(xmlhttp.readyState == 4){
+						if (xmlhttp.status==200){ 
+							document.getElementById(elementId).innerHTML=xmlhttp.responseText;
+						}
+					}
+				}
+				xmlhttp.open("POST",url,true);
+				xmlhttp.send();
+			}
+			
+			function doBuildTiles() {
+				document.getElementById("myDiv").innerHTML="Please wait, building in progress";
+				var server = "http://localhost:8080/milmapsCache/rs/buildMaps";
+				var form = document.getElementById("buildTiles");
+				var http = "/" + form.http.value
+				var dataServer = "/" + form.dataServer.value;
+				var servlet = "/" + form.servlet.value;
+				var dataName = "/" + form.dataName.value;
+				var deg = "/" + form.dataDeg.value;
+				var srs = "/" + form.srs.value;
+				var size = "/" + form.tileSize.value;
+				var newLevel = "/" + form.newLevel.value;
+				var outPath = "/" + form.outPath.value;
+				var new_url = server + http + dataServer + servlet + dataName 
+									 + deg + srs + size + newLevel + outPath;
+				postRequest(new_url, "myDiv");			
+				return false;
+			}
+			
+			function doShowSourceTile() {
+				var form = document.getElementById("buildTiles");
+				var http = form.http.value;
+				var server = "://" + form.dataServer.value;
+				var servlet = "/" + form.servlet.value;
+				var atPath = "/" + form.atPath.value;
+				var dataName = "/" + form.dataName.value;
+				var level = "/" + form.level.value;
+				var x = "/" + form.x.value;
+				var y = "/" + form.y.value;
+				var url = http + server + servlet + atPath + dataName + "/level" +level + "/x" + x + "/y" + y;
+				window.open(url); 
+				return false;
+			}
+
+		</script>
+		<form name="form1"id = "buildUrlForm" method="POST" style="float: left;">
+			<fieldset style="width:300px;">
+				<h2>Query: MapCache Tile</h2>
+				<p><dd>Data:--<input type="text" value= "BMNG" name="data" /></dd></p>
+				<p><dd>SRS:---<input type="text" value="EPSG:4326" name="srs" /></dd></p>
+				<p><dd>Size:--<input type="text" value="512" name="imageSize" /></dd></p>
+				<p><dd>Level:-<input type="text" value="0" name="level" /></dd></p>
+				<p><dd>X:-----<input type="text" value="0" name="x" /></dd></p>
+				<p><dd>Y:-----<input type="text" value="0" name="y" /></dd></p>
+				<p><dd>Click Button to submit</dd></p>
+				<input type="button" value="Submit" onclick="doSubmit();" style="float: right;"> </input>
+			</fieldset>
+		</form>
+
+		<form name="form2" id = "buildTiles" method="Get" style="float: inherit;">
+			<fieldset style="width:640px;">	
+				<h2 style="float: center;">WW-Tile-Server Tile Builder</h2>
+				<p><dd>HttP:--------<input type="text" value= "https" name="http" />
+					   DataServer:--<input type="text" value= "otm.moesol.com" name="dataServer" /></dd></p>
+				<p><dd>Servlet:-----<input type="text" value= "ww-tile-server" name="servlet" />
+				 	   Data:--------<input type="text" value= "BlueMarbleNG_200412" name="dataName" /></dd></p>
+				<p><dd>Data Degrees-<input type="text" value= "36" name="dataDeg" />
+					   SRS:---------<input type="text" value= "EPSG:4326" name="srs" /></dd></p>
+				<p><dd>Size:--------<input type="text" value= "512" name="tileSize" />
+					   New Level:---<input type="text" value= "0" name="newLevel" /></dd></p>
+				<p><dd>Output Path:-<input type="text" value="E:/" name="outPath" />
+					   Build Tiles : <input type="button" value="Build Tiles" onclick="doBuildTiles();"> </input></dd></p>
+				<div id="myDiv"><h2>Waiting for reply</h2></div>
+				
+				<p><dd></dd></p>
+				<p><dd>--------Query for Tile-------</dd></p>
+				<p><dd>AtPath:------<input type="text" value= "tileset" name="atPath" />
+				       Level:--<input type="text" value= "0" name="level" /></dd></p>
+				<p><dd>X:-----------<input type="text" value= "0" name="x" />
+				       Y:------<input type="text" value= "0" name="y" /></dd></p>	
+				<input type="button" value="Show Source Tile" onclick="doShowSourceTile();"> </input>
+			</fieldset>
+		</form>
     </body>
 </html>
