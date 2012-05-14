@@ -4,16 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.imageio.ImageIO;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -26,18 +17,12 @@ import javax.ws.rs.core.Response;
 
 @Path("mapcache")
 public class MapCacheTileResource {
-	private static final Logger LOGGER = Logger
-	.getLogger(MapCacheTileResource.class.getName());
 	
 	private String m_csBase = "e:/milmapsCache";
-	private boolean m_skipRealDownload = Boolean.getBoolean("skip.download");
-	
-	private static final Logger s_logger = Logger.getLogger(MapCacheTileResource.class.getName());
-	///////////////////////////////////////////
-	// This is just for now, we will create a config file later
-	private int m_urlDataSize = 512;
 	private String m_data = "bmng";
-	private String m_urlPatern =  "{server}/{data}/MapServer/tile/{level}/{y}/{x}";
+	
+	private boolean m_skipRealDownload = Boolean.getBoolean("skip.download");
+	private String m_urlPatern =  Utils.getUrlPattern(Utils.MAP_CACHE);
 	private String m_server = "http://services.arcgisonline.com/ArcGIS/rest/services";
 	private String m_imageFormat = "png";
 	private Split m_split = new Split();
@@ -85,60 +70,6 @@ public class MapCacheTileResource {
 		}
 	}
 	
-	String buildDirPath( String data, int size, int level, int xTile ){
-		String csDir = m_csBase + "/" + data + "/" + size + "/" + level + "/" + xTile;
-		return csDir;
-	}
-	
-	String buildFilePath( String csPath, int yTile, String ext ){
-		String csFile = csPath + "/" + yTile + "." + ext;
-		return csFile;
-	}
-
-	String buildUrl( String server, String urlPatern, String data,
-					 String srs, int size, int level, int xTile, int yTile ){
-		
-		Map<String, String> replacements = new HashMap<String, String>();
-
-		replacements.put("server", server );
-		replacements.put("data", data);
-		replacements.put("level", Integer.toString(level));
-		replacements.put("srs", srs);
-		replacements.put("width", Integer.toString(size));
-		replacements.put("height", Integer.toString(size));
-		replacements.put("x", Integer.toString(xTile));
-		replacements.put("y", Integer.toString(yTile));
-		//replacements.put("bbox", computeBbox(layerSet, levelInUrl));
-		//replacements.put("quadkey", computeQuadKey(layerSet, levelInUrl));
-		
-		String returnStr = urlPatern;
-		for (Entry<String, String> e : replacements.entrySet()) {
-			returnStr = returnStr.replaceAll("\\{" + e.getKey() + "\\}", e.getValue());
-		}		
-		return returnStr;
-	}
-	
-	/*
-	BufferedImage buildMapTile( String server, String urlPatern, String data,
-								int epsg, int size, int level, int xTile, int yTile,
-								String imageFormat ) throws FileNotFoundException, MalformedURLException, IOException {
-		
-		BufferedImage img = null;
-		String dirPath = buildDirPath(m_data, size, level, xTile );
-		String filePath = buildFilePath(dirPath, yTile, imageFormat);
-		File file = new File(filePath);
-		if ( file.exists() == true ){
-			img = (BufferedImage)ImageIO.read(file);
-		}
-		else{
-			String url = buildUrl( server, urlPatern, data, epsg, size, level, xTile, yTile );
-			img = getImageFromURL(url,file);
-		}
-		
-		return img;
-	}
-	*/
-	
 	private void splitFile(int level, int x, int y, BufferedImage img ) throws IOException{
 		m_inf.level = level;
 		m_inf.x = x;
@@ -151,8 +82,9 @@ public class MapCacheTileResource {
 								String imageFormat ) throws FileNotFoundException, MalformedURLException, IOException {
 		
 		BufferedImage img = null;
-		String dirPath = buildDirPath(m_data, size, level, xTile );
-		String filePath = buildFilePath(dirPath, yTile, imageFormat);
+		String dirPath = Utils.buildDirPath(Utils.MAP_CACHE,m_csBase, 
+										    m_data, size, level, xTile );
+		String filePath = Utils.buildFilePath(Utils.MAP_CACHE,dirPath,0, yTile, imageFormat);
 		File file = new File(filePath);
 		if ( file.exists() == true ){
 			img = (BufferedImage)ImageIO.read(file);
@@ -168,8 +100,9 @@ public class MapCacheTileResource {
 			}
 			if ( bGoodDir ){
 				// Get Image and write to file
-				String url = buildUrl( server, urlPatern, data, srs, size, level, xTile, yTile );
-				img = getImageFromURL(url,file);
+				String url = Utils.buildUrl( "mapcache", server, urlPatern, data, 
+											 srs, size, level, xTile, yTile );
+				img = Utils.getAndSaveImageFromURL(url,file,m_skipRealDownload);
 				splitFile(level, xTile, yTile, img );
 			}
 		}
@@ -179,7 +112,7 @@ public class MapCacheTileResource {
 			int x = xTile/2;
 			int y = yTile/2;
 			int s = 512;
-			String url = buildUrl( server, urlPatern, data, epsg, s, level, x, y );
+			String url = uTILS.buildUrl( "mapcache", server, urlPatern, data, epsg, s, level, x, y );
 			img = getImageFromURL(url,file);
 			if ( img != null ){
 				BufferedImage img2 = null;
@@ -192,49 +125,6 @@ public class MapCacheTileResource {
 		}
 		*/
 		return img;
-	}
-
-	
-	BufferedImage getImageFromURL(final String url, final File outFile) 
-								 throws FileNotFoundException, MalformedURLException, IOException 
-	{
-		if (m_skipRealDownload ) {
-			System.out.println("skipping: " + url + " " + Thread.currentThread());
-			return null;
-		}
-		System.out.println("getting: " + url + " " + Thread.currentThread());
-		
-		BufferedImage img = null;
-		
-		URL u = new URL(url);
-		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-		InputStream is = conn.getInputStream();
-		try {
-			// TODO: incorporate this
-			int errorCode = conn.getResponseCode();
-			
-			if (errorCode == HttpURLConnection.HTTP_OK) {
-				img = ImageIO.read(is);
-				writeTileFile(url, img, outFile);
-				//if ( errorFile != null )
-				//	deleteErrorFile(errorFile);
-			}// else if ( errorFile != null ){
-			//	writeFailureFile(url, errorCode, errorFile);
-			//}
-		} finally {
-			is.close();
-		}
-		return img;
-	}
-
-	
-	private void writeTileFile(String url, BufferedImage bi, File outFile) throws IOException {
-		try {
-			outFile.createNewFile();
-			ImageIO.write(bi, "png", outFile);
-		} catch (Throwable t) {
-			s_logger.log(Level.WARNING, "Could not process url: "+url+", tile at file: "+outFile.getAbsolutePath(), t);
-		} 
 	}
 	
 	/*
