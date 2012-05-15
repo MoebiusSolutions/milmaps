@@ -14,6 +14,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -28,13 +29,13 @@ public class BuildMapTilesResource {
 	TileInfo m_tileInfo = null;
 	String m_srcUrlPat = null;
 	String m_server = null;
-	String m_data = null;
+	String m_dataName = null;
 	String m_servlet = null;
 	String m_srs = null;
 	double m_factor;
 	Projection m_proj = null;
 	// next members are used for output
-	private String m_outBase = null;//"e:/milmapsCache";
+	private String m_outBase = null;
 	private String m_csBase = "/var/lib/milmapsCache";
 
 	@POST
@@ -49,16 +50,49 @@ public class BuildMapTilesResource {
 			@PathParam("srs")        String srs,
 			@PathParam("tileSize")   int size,
 			@PathParam("newLevel")   int newLevel,
-			@PathParam("outPath")   String outPath) {
+			@PathParam("outPath")    String outPath) {
 		try {	
 
 			m_server = http +"://" + server + "/" + servlet;
 			m_servlet = servlet;
 			m_srcUrlPat = Utils.getUrlPattern(Utils.WW_TILE_SERVER);
-			m_data = data;
-			m_outBase = outPath +"/" + servlet +"/" + data;
+			m_dataName = data;
+			m_outBase = outPath +"/" + servlet + "/" + m_dataName;
 			m_srs = srs;
 			m_proj = new Projection(deg,size);
+			String csRtn = buildMapTiles(deg,size,newLevel);
+			
+			return Response.ok(csRtn,MediaType.TEXT_PLAIN).build();
+		} catch (Exception e) {
+			throw new WebApplicationException(e,
+					Response.Status.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	//////////////////////////////
+	// Another way
+	
+	@POST
+	@Path("/ww-tile-server")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response buildTiles(	
+			@QueryParam("dataServer") String dataServer,
+			@QueryParam("dataName") String data,
+			@QueryParam("dataDeg")  double deg,
+			@QueryParam("srs")      String srs,
+			@QueryParam("tileSize") int size,
+			@QueryParam("newLevel") int newLevel,
+			@QueryParam("outPath")  String outPath) {
+		try {	
+
+			m_server =  dataServer + "/ww-tile-server";
+			m_servlet = "ww-tile-server";
+			m_srcUrlPat = Utils.getUrlPattern(Utils.WW_TILE_SERVER);
+			m_dataName = data;
+			m_outBase = outPath + "/" + data;
+			m_srs = srs;
+			m_proj = new Projection(deg,size);
+			
 			String csRtn = buildMapTiles(deg,size,newLevel);
 			
 			return Response.ok(csRtn,MediaType.TEXT_PLAIN).build();
@@ -103,7 +137,7 @@ public class BuildMapTilesResource {
 			 int diRow, int djCol, String imgFormat ) throws FileNotFoundException, MalformedURLException, IOException {
 
 		String dirPath = Utils.buildDirPath(Utils.WW_TILE_SERVER, m_outBase, 
-											m_data, 0, newLevel, diRow );
+											m_dataName, 0, newLevel, diRow );
 		String filePath = Utils.buildFilePath(Utils.WW_TILE_SERVER, dirPath, 
 											  djCol, diRow, imgFormat);
 		
@@ -158,7 +192,7 @@ public class BuildMapTilesResource {
 	}
 
 	private BufferedImage findInCache(int xTile, int yTile, String imageFormat, int level, int size) throws IOException {
-		String dirPath = Utils.buildDirPath(Utils.MAP_CACHE, m_csBase, m_data, size, level, xTile );
+		String dirPath = Utils.buildDirPath(Utils.MAP_CACHE, m_csBase, m_dataName, size, level, xTile );
 		String filePath = Utils.buildFilePath(Utils.MAP_CACHE,dirPath,0, yTile, imageFormat);
 		File file = new File(filePath);
 		if ( file.exists() == true ) {
@@ -166,13 +200,13 @@ public class BuildMapTilesResource {
 			return ImageIO.read(file);
 		}
 		String url = Utils.buildUrl( m_servlet, m_server, 
-				 m_srcUrlPat, m_data, m_srs, size, level, xTile, yTile );
+				 m_srcUrlPat, m_dataName, m_srs, size, level, xTile, yTile );
 
 		LOGGER.log(Level.INFO, "Downloading {0}", url);
 		BufferedImage img = Utils.getImageFromURL(url);
 		file.getParentFile().mkdirs();
 		ImageIO.write(img, imageFormat, file);
-		return null;
+		return img;
 	}
 
 	protected BufferedImage newImage(int size, int type){
