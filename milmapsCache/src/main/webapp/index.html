@@ -49,7 +49,8 @@
 			}
 			
 			function doBuildTiles() {
-				var server = "http://localhost:8080/milmapsCache/rs/buildMaps";
+				var myOrigin = window.location.protocol + '//' + window.location.host;
+				var server = myOrigin + "/milmapsCache/rs/buildMaps";
 				var form = document.getElementById("buildTiles");
 				var http = "/" + form.http.value
 				var dataServer = "/" + form.dataServer.value;
