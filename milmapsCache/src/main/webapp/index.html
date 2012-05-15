@@ -9,6 +9,8 @@
     <body>
 		<script type="text/javascript">
 			function doSubmit() {
+				var myOrigin = window.location.protocol + '//' + window.location.host;
+				var server = myOrigin + "/milmapsCache/rs/mapcache";
 				var form = document.getElementById("buildUrlForm");
 				var data = "/" + form.data.value;
 				var srs = "/" + form.srs.value;
@@ -16,7 +18,6 @@
 				var level = "/" + form.level.value;
 				var x = "/" + form.x.value;
 				var y = "/" + form.y.value;
-				var server = "http://localhost:8080/milmapsCache/rs/mapcache";
 				var new_url = server + data + srs + size + level + x + y;
 				window.open(new_url); 
 				return false;
