@@ -27,7 +27,8 @@ public class MapCacheTileResourceTest {
 		int level = 1;
 		int xTile = 0;
 		int yTile = 1;
-		String csUrl = m_cache.buildUrl(server, urlPatern, data, srs, width, level, xTile, yTile );
+		String csUrl = Utils.buildUrl("mapcache",server, urlPatern, data, 
+									   srs, width, level, xTile, yTile );
 		
 		String ans = "http://services.arcgisonline.com/ArcGIS/rest/services/I3_Imagery_Prime_World_2D/MapServer/tile/1/1/0";
 		assertEquals(csUrl,ans );
@@ -35,6 +36,7 @@ public class MapCacheTileResourceTest {
 
 	@Test
 	public void testBuildFilePath(){
+		String base = "e:/milmapsCache";
 		String data = "I3_Imagery_Prime_World_2D";
 		String csFormat = "png";
 		int size = 512;
@@ -42,8 +44,8 @@ public class MapCacheTileResourceTest {
 		int xTile = 0;
 		int yTile = 1;
 
-		String dirPath = m_cache.buildDirPath( data, size, level, xTile );
-		String filePath = m_cache.buildFilePath(dirPath, yTile, csFormat);
+		String dirPath = Utils.buildDirPath( Utils.MAP_CACHE,base, data, size, level, xTile );
+		String filePath = Utils.buildFilePath(Utils.MAP_CACHE, dirPath, xTile, yTile, csFormat);
 		
 		String ans = "e:/milmapsCache/I3_Imagery_Prime_World_2D/512/1/0/1.png";
 		assertEquals(filePath,ans );
