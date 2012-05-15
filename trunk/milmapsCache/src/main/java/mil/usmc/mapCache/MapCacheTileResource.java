@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 @Path("mapcache")
 public class MapCacheTileResource {
 	
-	private String m_csBase = "e:/milmapsCache";
+	private String m_csBase = "/var/lib/milmapsCache";
 	private String m_data = "bmng";
 	
 	private boolean m_skipRealDownload = Boolean.getBoolean("skip.download");

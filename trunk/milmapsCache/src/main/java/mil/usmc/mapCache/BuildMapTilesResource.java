@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -22,8 +23,7 @@ import mil.usmc.mapCache.Utils.TilePosition;
 
 @Path("buildMaps")
 public class BuildMapTilesResource {
-	private static final Logger LOGGER = Logger
-	.getLogger(BuildMapTilesResource.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(BuildMapTilesResource.class.getName());
 	
 	TileInfo m_tileInfo = null;
 	String m_srcUrlPat = null;
@@ -35,6 +35,8 @@ public class BuildMapTilesResource {
 	Projection m_proj = null;
 	// next members are used for output
 	private String m_outBase = null;//"e:/milmapsCache";
+	private String m_csBase = "/var/lib/milmapsCache";
+
 	@POST
 	@Path("{http}/{Server}/{servlet}/{dataName}/{dataDeg}/{srs}/{tileSize}/{newLevel}/{outPath}")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -123,23 +125,19 @@ public class BuildMapTilesResource {
 			TilePix destTile = new TilePix(0,0);
 			Graphics2D gr = newImage.createGraphics(); 
 			int fSrcSize = (int)(srcSize*factor + 0.5);
-			for(int i = 0; i < m_tileInfo.numYtiles; i++){
-				double botLat = i*m_tileInfo.degHeight + -90.0;
+			for(int yTile = 0; yTile < m_tileInfo.numYtiles; yTile++){
+				double botLat = yTile*m_tileInfo.degHeight + -90.0;
 				double topLat = botLat + m_tileInfo.degHeight;
-				for(int j = 0; j < m_tileInfo.numXtiles; j++){
-					double leftLng = j*m_tileInfo.degWidth + -180.0;
+				for(int xTile = 0; xTile < m_tileInfo.numXtiles; xTile++){
+					double leftLng = xTile*m_tileInfo.degWidth + -180.0;
 					double rightLng = leftLng + m_tileInfo.degWidth;
 					TilePosition tp = Utils.tilePosition(orgX, orgY, topLat, leftLng, 
 													  	 botLat, rightLng, m_proj);
 					if(Utils.tilesIntersect(tp.tl, fSrcSize, destTile, srcSize)){
-						String url = Utils.buildUrl( m_servlet, m_server, 
-													 m_srcUrlPat, m_data, 
-							 					     m_srs, srcSize, srcLevel, j, i );
-						BufferedImage img = Utils.getImageFromURL(url);
-						if(img != null){
+						BufferedImage img = findInCache(xTile, yTile, imgFormat, 0, srcSize);
+						if (img != null) {
 							gr.drawImage(img, tp.tl.x, tp.tl.y, tp.width, tp.height,null);
-						}
-						else{
+						} else {
 							bOk = false;
 						}
 					}
@@ -158,38 +156,61 @@ public class BuildMapTilesResource {
 		return bOk;
 	}
 
-    
+	private BufferedImage findInCache(int xTile, int yTile, String imageFormat, int level, int size) throws IOException {
+		String dirPath = Utils.buildDirPath(Utils.MAP_CACHE, m_csBase, m_data, size, level, xTile );
+		String filePath = Utils.buildFilePath(Utils.MAP_CACHE,dirPath,0, yTile, imageFormat);
+		File file = new File(filePath);
+		if ( file.exists() == true ) {
+			LOGGER.log(Level.INFO, "From cache {0}", file);
+			return ImageIO.read(file);
+		}
+		String url = Utils.buildUrl( m_servlet, m_server, 
+				 m_srcUrlPat, m_data, m_srs, size, level, xTile, yTile );
+
+		LOGGER.log(Level.INFO, "Downloading {0}", url);
+		BufferedImage img = Utils.getImageFromURL(url);
+		file.getParentFile().mkdirs();
+		ImageIO.write(img, imageFormat, file);
+		return null;
+	}
+
 	protected BufferedImage newImage(int size, int type){
 		return new BufferedImage(size, size, type);
 	}
 	
 	public static void main(String[] args) {
 		// used this main to test my certkey.
-		String server = "https://otm.moesol.com";
-		String servlet = "/ww-tile-server";
-		String atPath = "/tileset";
-		String dataName = "/BlueMarbleNG_200412";
-		String request = "/level/" +"0" + "/x/" + "0" + "/y/" + "0";
-		String url = server + servlet + atPath + dataName + request;
-		try{
-			BufferedImage img = Utils.getImageFromURL(url);
-			String dirPath = "E:/TileServerTest";
-			String filePath = dirPath + "/wwImage.png";
-			File dir = new File(dirPath);
-			boolean bGoodDir = true;
-			if (dir.exists() == false){
-				bGoodDir = dir.mkdirs();
-			}
-			if(bGoodDir){
-				File outFile = new File(filePath);
-				outFile.createNewFile();
-				ImageIO.write(img, "png", outFile);
-				System.out.println("Wrote image tp " + filePath);
-			}
-		} catch (Exception e) {
-			System.out.println("This sucks");
-			throw new WebApplicationException(e,
-					Response.Status.INTERNAL_SERVER_ERROR);
+//		String server = "https://otm.moesol.com";
+//		String servlet = "/ww-tile-server";
+//		String atPath = "/tileset";
+//		String dataName = "/BlueMarbleNG_200412";
+//		String request = "/level/" +"0" + "/x/" + "0" + "/y/" + "0";
+//		String url = server + servlet + atPath + dataName + request;
+//		try{
+//			BufferedImage img = Utils.getImageFromURL(url);
+//			String dirPath = "C:/TileServerTest";
+//			String filePath = dirPath + "/wwImage.png";
+//			File dir = new File(dirPath);
+//			boolean bGoodDir = true;
+//			if (dir.exists() == false){
+//				bGoodDir = dir.mkdirs();
+//			}
+//			if(bGoodDir){
+//				File outFile = new File(filePath);
+//				outFile.createNewFile();
+//				ImageIO.write(img, "png", outFile);
+//				System.out.println("Wrote image tp " + filePath);
+//			}
+//		} catch (Exception e) {
+//			System.out.println("This sucks");
+//			throw new WebApplicationException(e,
+//					Response.Status.INTERNAL_SERVER_ERROR);
+//		}
+		// https://localhost/milmapsCache/rs/buildMaps/https/otm.moesol.com/ww-tile-server/BlueMarbleNG_200412/36/EPSG:4326/512/1/C:/
+		
+		for (int i = 0; i < 3; i++) {
+			new BuildMapTilesResource().buildTiles("https", "otm.moesol.com", 
+					"ww-tile-server", "BlueMarbleNG_200412", 36, "EPSG:4326", 512, 0, "C:/");
 		}
     }
 }
