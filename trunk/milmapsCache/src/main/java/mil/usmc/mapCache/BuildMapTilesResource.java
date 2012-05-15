@@ -147,6 +147,7 @@ public class BuildMapTilesResource {
 			if(bOk){// Write file
 				File outFile = new File(filePath);
 				outFile.createNewFile();
+				LOGGER.log(Level.INFO, "Writing: {0}", outFile);
 				ImageIO.write(newImage, imgFormat, outFile);
 			}
 		}
@@ -210,7 +211,7 @@ public class BuildMapTilesResource {
 		
 		for (int i = 0; i < 3; i++) {
 			new BuildMapTilesResource().buildTiles("https", "otm.moesol.com", 
-					"ww-tile-server", "BlueMarbleNG_200412", 36, "EPSG:4326", 512, 0, "C:/");
+					"ww-tile-server", "BlueMarbleNG_200412", 36, "EPSG:4326", 512, i, "C:/");
 		}
     }
 }
