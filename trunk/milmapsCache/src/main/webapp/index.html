@@ -52,10 +52,12 @@
 			function doBuildTiles() {
 				var myOrigin = window.location.protocol + '//' + window.location.host;
 				var server = myOrigin + "/milmapsCache/rs/buildMaps";
+				
 				var form = document.getElementById("buildTiles");
+				var servlet = "/" + form.servlet.value;
+				
 				var http = "/" + form.http.value
 				var dataServer = "/" + form.dataServer.value;
-				var servlet = "/" + form.servlet.value;
 				var dataName = "/" + form.dataName.value;
 				var deg = "/" + form.dataDeg.value;
 				var srs = "/" + form.srs.value;
@@ -63,9 +65,54 @@
 				var startLevel = form.startLevel.value;
 				var endLevel = form.endLevel.value;
 				var outPath = "/" + form.outPath.value;
-				var new_url = server + http + dataServer + servlet + dataName 
-									 + deg + srs + size;
+				var new_url = server + http + dataServer + servlet + dataName + deg + srs + size;
 				postRequest(new_url, startLevel, endLevel, outPath, "myDiv");			
+				return false;
+			}
+			
+			function postRequest2(url, startLevel, endLevel, outPath, elementId){
+				var xmlhttp;
+				var startL = parseInt(startLevel,10);
+				var endL = parseInt(endLevel,10);
+				for (newLevel = startL; newLevel <= endL; newLevel = newLevel +1){
+					document.getElementById("myDiv").innerHTML="Please wait, processing level: " + newLevel;
+					if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+						xmlhttp=new XMLHttpRequest();
+					}
+					else{// code for IE6, IE5
+						xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+					}
+					xmlhttp.onreadystatechange=function(){
+						if(xmlhttp.readyState == 4){
+							if (xmlhttp.status==200){ 
+								document.getElementById(elementId).innerHTML=xmlhttp.responseText;
+							}
+						}
+					}
+					var newUrl = url + "&newLevel=" + newLevel  + "&outPath=" + outPath;
+					xmlhttp.open("POST",newUrl,false);
+					xmlhttp.send();
+				}
+			}
+			
+			function doBuildTiles2() {
+				var myOrigin = window.location.protocol + '//' + window.location.host;
+				var server = myOrigin + "/milmapsCache/rs/buildMaps";
+				
+				var form = document.getElementById("buildTiles");
+				var servlet = "/" + form.servlet.value;
+				
+				var dataServer = form.dataServer.value;
+				var dataName = "&dataName=" + form.dataName.value;
+				var deg = "&dataDeg=" + form.dataDeg.value;
+				var srs = "&srs=" + form.srs.value;
+				var size = "&tileSize=" + form.tileSize.value;
+				var startLevel = form.startLevel.value;
+				var endLevel = form.endLevel.value;
+				var outPath = form.outPath.value;
+
+				var new_url = server + servlet + "?dataServer=" + dataServer + dataName + deg + srs + size;
+				postRequest2(new_url, startLevel, endLevel, outPath, "myDiv");			
 				return false;
 			}
 			
@@ -102,17 +149,16 @@
 		<form name="form2" id = "buildTiles" method="Get" style="float: inherit;">
 			<fieldset style="width:640px;">	
 				<h2 style="float: center;">WW-Tile-Server Tile Builder</h2>
-				<p><dd>HttP:--------<input type="text" value= "https" name="http" />
-					   DataServer:--<input type="text" value= "otm.moesol.com" name="dataServer" /></dd></p>
-				<p><dd>Servlet:-----<input type="text" value= "ww-tile-server" name="servlet" />
-				 	   Data:--------<input type="text" value= "BlueMarbleNG_200412" name="dataName" /></dd></p>
+				<p><dd>DataServer:--<input type="text" value= "https://otm.moesol.com" name="dataServer" style="width: 300px;" /></dd></p>
+				<p><dd>Servlet:-----<input type="text" value= "ww-tile-server" name="servlet"  /></dd></p>
+				<p><dd>Data:--------<input type="text" value= "BlueMarbleNG_200412" name="dataName" /></dd></p>
 				<p><dd>Data Degrees-<input type="text" value= "36" name="dataDeg" style="width: 40px;" />
 					   SRS:---<input type="text" value= "EPSG:4326" name="srs" style="width: 100px;"/></dd></p>
 				<p><dd>Size:--------<input type="text" value= "512" name="tileSize" style="width: 40px;" />
-				       Start Level:--<input type="text" value= "0" name="startLevel" style="width: 30px;" />
-					   End Level:--<input type="text" value= "2" name="endLevel" style="width: 30px;"/></dd></p>
-				<p><dd>Output Path:-<input type="text" value="E:/" name="outPath" />
-					   Build Tiles : <input type="button" value="Build Tiles" onclick="doBuildTiles();"> </input></dd></p>
+				       Start Level:-<input type="text" value= "0" name="startLevel" style="width: 30px;" />
+					   End Level:-<input type="text" value= "2" name="endLevel" style="width: 30px;"/></dd></p>
+				<p><dd>Output Path:-<input type="text" value="C:/ww-tile-server" name="outPath" style="width: 300px;"/></dd></p>
+				<p><dd>Build Tiles : <input type="button" value="Build Tiles" onclick="doBuildTiles2();"> </input></dd></p>
 				<div id="myDiv"><h2>Waiting for reply</h2></div>
 				
 				<p><dd></dd></p>
