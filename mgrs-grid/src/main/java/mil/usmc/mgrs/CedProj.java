@@ -37,16 +37,6 @@ public class CedProj extends AbstractProjection {
         return (2 * Math.PI * IProjection.EARTH_RADIUS_METERS) / mapWidth();
     } 
 	
-	private double translateLng(double lng){
-		if (lng < -180) {
-			lng += 360;
-		}
-		else if (lng > 180){
-			lng -= 360;
-		}
-		return lng;
-	}
-	
     @Override
     public R2 tileXYToTopLeftXY( int tileX, int tileY  ){
     	m_pixel.m_x = tileX*m_orgTilePixWidth;

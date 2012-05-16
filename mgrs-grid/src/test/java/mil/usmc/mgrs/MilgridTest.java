@@ -29,7 +29,7 @@ public class MilgridTest {
 		int level = 8;
 		int tX = 259;
 		int tY = 139;
-		proj.init(512, level, tX, 180);
+		proj.init(512, level, tX);
 		PixBoundingBox box = new PixBoundingBox();
 		Point bl = new Point();
 		Point tr = new Point();
