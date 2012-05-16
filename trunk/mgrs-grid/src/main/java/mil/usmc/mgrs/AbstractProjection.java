@@ -61,11 +61,21 @@ public abstract class AbstractProjection implements IProjection {
 		return (EarthCirMeters*m_eqScale/m_scrnMpp);
 	}
 	
+	protected double translateLng(double lng){
+		if (lng < -180) {
+			lng += 360;
+		}
+		else if (lng > 180){
+			lng -= 360;
+		}
+		return lng;
+	}
+	
 	@Override
-	public void init(int tileSize, int level, int tileX, double degSize) {
+	public void init(int tileSize, int level, int tileX) {
 		m_orgTilePixWidth = tileSize;
 		m_orgTilePixHeight = tileSize;
-		double degWidth = degSize/(1<<level);
+		double degWidth = m_orgTileDegWidth/(1<<level);
 		m_centLng = wrapLng((tileX+0.5)*degWidth - 180) ;
 		computebaseScale();
 		m_eqScale = m_baseEqScale*(1<<level);

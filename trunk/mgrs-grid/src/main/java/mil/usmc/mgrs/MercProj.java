@@ -19,10 +19,10 @@ public class MercProj extends AbstractProjection
     private static final double MaxLongitude = 180;
 
     public MercProj(){
-    	m_orgTilePixWidth = 256;
+    	m_orgTilePixWidth  = 256;
     	m_orgTilePixHeight = 256;
-    	m_orgTileDegWidth = 180.0;
-    	m_orgTileDegHeight = 180.0;
+    	m_orgTileDegWidth  = 360.0;
+    	m_orgTileDegHeight = MaxLatitude*2;
     }
 
 	
@@ -60,17 +60,6 @@ public class MercProj extends AbstractProjection
         double sinLat = Math.sin(DegToRad*dLat);
         double y = 0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI);
         return (y * mapWidth());
-	}
-      
-	
-	private double translateLng(double lng){
-		if (lng < -180) {
-			lng += 360;
-		}
-		else if (lng > 180){
-			lng -= 360;
-		}
-		return lng;
 	}
 	
 	/**

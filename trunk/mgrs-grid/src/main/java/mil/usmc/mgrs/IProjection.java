@@ -6,7 +6,7 @@ import mil.usmc.mgrs.objects.R2;
 public interface IProjection {
 	public static double EARTH_RADIUS_METERS = 6378137; // meters
 	
-	public abstract void init(int tileSize, int level, int tileX, double degSize);
+	public abstract void init(int tileSize, int level, int tileX);
 	
 	public abstract double initUsingBbox(int pixWidth, int pixHeight, WmsBoundingBox bbox);
 	

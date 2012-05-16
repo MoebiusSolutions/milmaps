@@ -42,7 +42,7 @@ public class MgrsTile {
 		else{
 			m_proj = new CedProj();
 		}
-		m_proj.init(width,level,tileX,180);
+		m_proj.init(width,level,tileX);
 		m_width = width;
 		m_height = height;
 		m_level = level;
