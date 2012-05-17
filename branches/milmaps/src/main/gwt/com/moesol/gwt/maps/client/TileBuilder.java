@@ -112,9 +112,13 @@ public class TileBuilder {
 		int wcY = m_divWorker.divToWorldY( m_centerTile.getOffsetY());
 		int topDist = m_tileViewWorker.wcYtoVcY(wcY);
 		int bottomDist = dimHeight - (topDist + tileHeight);
-		
-		m_topTiles = topDist <= 0 ? 0 : (topDist + tileHeight - 1) / tileHeight;
-		int bottomTiles = bottomDist <= 0 ? 0 : (bottomDist + tileHeight - 1) / tileHeight;
+		WorldDimension wd = m_divWorker.getProjection().getWorldDimension();
+		int bottomTiles = 0;
+		m_topTiles = 0;
+		if ( wd.getHeight() > tileHeight + 1){
+			m_topTiles = topDist <= 0 ? 0:(topDist + tileHeight-1)/tileHeight;
+			bottomTiles = bottomDist <= 0 ? 0:(bottomDist + tileHeight-1)/tileHeight;
+		}
 		m_cyTiles = 1 + m_topTiles + bottomTiles;
 	}
 	
@@ -139,13 +143,13 @@ public class TileBuilder {
 		int x = centTileX + centerOffsetXIdx;
 		int y = centTileY - centerOffsetYIdx; // Flip y
 		// This is the only place we need to correct for zeroTop true.
-		if ( zeroTop  ){
+		if (zeroTop){
 			// since tile is zero-top, we need to translate it.
 			int numYTiles = getNumYTiles();
 			y = (numYTiles - y - 1);
 		}
 		
-		if (badYTile(y)) {
+		if (badYTile(y)){
 			return null;
 		}
 		x = wrapTileX(x);

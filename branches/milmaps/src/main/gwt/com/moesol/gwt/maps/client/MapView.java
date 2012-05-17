@@ -455,7 +455,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	public void partialUpdateView() {
 		Sample.MAP_PARTIAL_UPDATE.beginSample();
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
-		m_divMgr.positionIcons();
+		//m_divMgr.positionIcons();
 		Sample.MAP_PARTIAL_UPDATE.endSample();
 	}
 	
@@ -576,14 +576,15 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		dumbUpdateView();
 	}
 	
-	//TODO
+	//TODO This routine shouldn't do a full update ???+
 	public void zoomAndMove( final double factor, final int offsetX, final int offsetY ) {
 		m_mapProj.zoomByFactor(factor);
 		final ViewWorker vpWorker = this.getViewport().getVpWorker();
 		final ViewDimension vd = vpWorker.getDimension();
 		final WorldCoords wc = new WorldCoords(offsetX + vd.getWidth()/2, offsetY - vd.getHeight()/2);
 		vpWorker.setCenterInWc(wc);
-		dumbUpdateView();
+		partialUpdateView();
+		//dumbUpdateView();
 	}
 
 	public void zoom(double dScale) {

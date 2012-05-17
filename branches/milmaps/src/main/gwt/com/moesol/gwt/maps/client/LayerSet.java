@@ -22,15 +22,15 @@ public class LayerSet implements IsSerializable {
 	private boolean m_alwaysDraw = false; 
 	private boolean m_autoRefreshOnTimer = false;
 	private String m_srs = "EPSG:4326";
-	private int m_minLevel = -20;
+	private int m_minLevel = 0;
 	private int m_maxLevel = 20;
 	private int m_zIndex = 4;
 	private int m_startLevel = 0;
 
 	private int m_origPixWidth = 512; // cell width in pixels
 	private int m_origPixHeight = 512; // cell height in pixels
-	private int m_drawPixX= 512;
-	private int m_drawPixY = 512;
+	private int m_drawPixWidth= 512;
+	private int m_drawPixHeight = 512;
 	//private double m_degWidth = 180.0; // default, but note that world wind uses 36.0
 	//private double m_degHeight = 180.0;
 	private double m_startLevelTileWidthInDeg = 180.0;
@@ -302,13 +302,13 @@ public class LayerSet implements IsSerializable {
 	 * @return pixel width of tiles in this layer set.
 	 */
 	public int getDrawPixelWidth() {
-		return m_drawPixX;
+		return m_drawPixWidth;
 	}
 	public void setDrawPixelWidth(int dx) {
-		m_drawPixX = dx;
+		m_drawPixWidth = dx;
 	}
 	public LayerSet withDrawPixelWidth(int dx) {
-		m_drawPixX = dx;
+		m_drawPixWidth = dx;
 		return this;
 	}
 
@@ -316,13 +316,13 @@ public class LayerSet implements IsSerializable {
 	 * @return pixel height of tiles in this layer set.
 	 */
 	public int getDrawPixelHeight() {
-		return m_drawPixY;
+		return m_drawPixHeight;
 	}
 	public void setDrawPixelHeight(int dy) {
-		m_drawPixY = dy;
+		m_drawPixHeight = dy;
 	}
 	public LayerSet withDrawPixelHeight(int dy) {
-		m_drawPixY = dy;
+		m_drawPixHeight = dy;
 		return this;
 	}
 

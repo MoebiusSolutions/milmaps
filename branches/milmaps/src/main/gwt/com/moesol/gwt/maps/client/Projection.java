@@ -30,10 +30,15 @@ public class Projection {
 		int size = ls.getPixelWidth();
 		double degWidth  = ls.getStartLevelTileWidthInDeg();
 		double degHeight = ls.getStartLevelTileHeightInDeg();
-		if ( size == 0 || degWidth == 0 || degHeight == 0 )
+		if (size == 0 || degWidth == 0 || degHeight == 0){
 			return null;
+		}
+		// TODO verify mercator scale is set correctly.
 		if ( type == IProjection.T.Mercator ){
 			proj = new Mercator();//size,degWidth,degHeight);
+			double dScale = LayerSetWorker.findScale(ls,proj.getScrnDpi(),0);
+			proj.setBaseEquatorialScale(dScale);
+			proj.setEquatorialScale(dScale);
 			// We want to start with level 1 and not 0.
 			//proj.zoomByFactor(2.0);
 		}else if (type == IProjection.T.CylEquiDist ) {

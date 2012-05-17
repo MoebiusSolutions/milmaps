@@ -7,18 +7,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.moesol.gwt.maps.client.stats.Sample;
 
 public class IconEngine {
-	private static double CharWidthInPixels = 10.0;
-	private static int CharHeightInPixels = 15; 
 	private final IMapView m_mapView;
 	private final ViewWorker m_viewWorker;
-	private final DivManager m_divMgr;
-	
-	private DivCoords m_divAjustment;
+	//private final DivManager m_divMgr;
+
 	
 	public IconEngine(IMapView mv) {
 		m_mapView = mv;
 		m_viewWorker = m_mapView.getViewport().getVpWorker();
-		m_divMgr = m_mapView.getDivManager();
+		//m_divMgr = m_mapView.getDivManager();
 	}
 
 	public void positionIcons(WidgetPositioner widgetPositioner, DivWorker divWorker) {
@@ -52,16 +49,16 @@ public class IconEngine {
 		Label label = icon.getLabel();
 		if (label != null) {
 			// We may want to move this block of code
-			int width = 0;
-			int height = 0;
-			if (label.getOffsetWidth() > 0) {
-				width = label.getOffsetWidth();
-				height = label.getOffsetHeight();
-			}
-			else if (label.getText().length() > 0) {
-				width = (int)(label.getText().length()*CharWidthInPixels +0.5);
-				height = CharHeightInPixels;
-			}
+			//int width = 0;
+			//int height = 0;
+			//if (label.getOffsetWidth() > 0) {
+			//	width = label.getOffsetWidth();
+			//	height = label.getOffsetHeight();
+			//}
+			//else if (label.getText().length() > 0) {
+			//	width = (int)(label.getText().length()*CharWidthInPixels +0.5);
+			//	height = CharHeightInPixels;
+			//}
 			//// End of block
 			widgetPositioner.place(label, 
 					dc.getX() + icon.getDeclutterOffset().getX(), 
