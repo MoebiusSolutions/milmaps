@@ -156,8 +156,8 @@ public class Driver implements EntryPoint {
 		DOM.setInnerHTML(mapPanel.getElement(), "");
 		
 		final DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.PX);
-		dockPanel.setHeight("420px");
-		dockPanel.setWidth("600px");
+		dockPanel.setHeight("100%");
+		dockPanel.setWidth("100%");
 		mapPanel.add(dockPanel);
 
 		// loadLayerConfigsFromServer();
@@ -206,12 +206,6 @@ public class Driver implements EntryPoint {
 				showLeaders();
 			}
 		});
-		Button resizeMap = new Button("Fill Viewport", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				dockPanel.setHeight("100%");
-				dockPanel.setWidth("100%");
-			}});
 		Button benchmarks = new Button("Benchmarks", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -250,7 +244,6 @@ public class Driver implements EntryPoint {
 		bar.add(removeIcons);
 		bar.add(moveIcons);
 		bar.add(showLeaders);
-		bar.add(resizeMap);
 		bar.add(declutter);
 		bar.add(benchmarks);
 		bar.add(stats);
