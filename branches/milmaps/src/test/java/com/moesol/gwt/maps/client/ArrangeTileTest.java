@@ -42,6 +42,7 @@ public class ArrangeTileTest {
 		m_vp.setDivWorker(m_divWorker);
 		m_tb.setProjection(m_proj);
 		m_tb.setDivWorker(m_divWorker);
+		m_divWorker.setProjection(m_proj);
 	}
 	
 	
