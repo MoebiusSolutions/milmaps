@@ -70,6 +70,7 @@ import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
 import com.moesol.gwt.maps.client.controls.PositionControl;
 import com.moesol.gwt.maps.client.controls.SearchControl;
 import com.moesol.gwt.maps.client.gin.MapsGinjector;
+import com.moesol.gwt.maps.client.graphics.Hello;
 import com.moesol.gwt.maps.client.place.MapsActivityMapper;
 import com.moesol.gwt.maps.client.place.MapsPlaceHistoryMapper;
 import com.moesol.gwt.maps.client.stats.StatsDialogBox;
@@ -111,6 +112,8 @@ public class Driver implements EntryPoint {
 	public void onModuleLoad() {
 		PlaceHistoryHandler historyHandler = null;
 		 
+		new Hello().sayHi();
+		
 		if (isTrue("showLayerPanel", false)) {
 			eventBus = injector.getEventBus();
 			PlaceController placeController = injector.getPlaceController();
