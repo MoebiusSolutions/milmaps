@@ -243,8 +243,8 @@ public class Driver implements EntryPoint {
 				mapChanged();
 			}});
 
-		HorizontalPanel bar = new HorizontalPanel();
-        // removing buttons for demo purposes
+        // removing button bar for demo purposes
+//		HorizontalPanel bar = new HorizontalPanel();
 //		bar.add(removeIcons);
 //		bar.add(moveIcons);
 //		bar.add(showLeaders);
@@ -253,7 +253,7 @@ public class Driver implements EntryPoint {
 //		bar.add(stats);
 //		bar.add(memoryTest);
 
-		dockPanel.addNorth(bar, 20);
+//		dockPanel.addNorth(bar, 20);
 		
 		LayoutPanel lp = new LayoutPanel();
 		dockPanel.add(lp);
