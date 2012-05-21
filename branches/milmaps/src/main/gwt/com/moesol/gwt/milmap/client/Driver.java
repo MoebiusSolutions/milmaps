@@ -70,7 +70,6 @@ import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
 import com.moesol.gwt.maps.client.controls.PositionControl;
 import com.moesol.gwt.maps.client.controls.SearchControl;
 import com.moesol.gwt.maps.client.gin.MapsGinjector;
-import com.moesol.gwt.maps.client.graphics.Hello;
 import com.moesol.gwt.maps.client.place.MapsActivityMapper;
 import com.moesol.gwt.maps.client.place.MapsPlaceHistoryMapper;
 import com.moesol.gwt.maps.client.stats.StatsDialogBox;
@@ -111,8 +110,6 @@ public class Driver implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		PlaceHistoryHandler historyHandler = null;
-		 
-		new Hello().sayHi();
 		
 		if (isTrue("showLayerPanel", false)) {
 			eventBus = injector.getEventBus();
@@ -161,6 +158,8 @@ public class Driver implements EntryPoint {
 		final DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.PX);
 		dockPanel.setHeight("100%");
 		dockPanel.setWidth("100%");
+		//dockPanel.setHeight("420px");
+		//dockPanel.setWidth("600px");
 		mapPanel.add(dockPanel);
 
 		// loadLayerConfigsFromServer();
@@ -193,22 +192,22 @@ public class Driver implements EntryPoint {
 		m_map.updateView();
 		
 
-		Button removeIcons = new Button("Remove Icons", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				removeIcons();
-			}});
-		Button moveIcons = new Button("Move Icons", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				moveIcons();
-			}});
-		Button showLeaders = new Button("Show Leaders", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				showLeaders();
-			}
-		});
+		//Button removeIcons = new Button("Remove Icons", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		removeIcons();
+		//	}});
+		//Button moveIcons = new Button("Move Icons", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		moveIcons();
+		//	}});
+		//Button showLeaders = new Button("Show Leaders", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		showLeaders();
+		//	}
+		//});
 		Button benchmarks = new Button("Benchmarks", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -219,17 +218,17 @@ public class Driver implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				stats();
 			}});
-		Button memoryTest = new Button("Memory Test", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				memoryTest();
-			}});
+		//Button memoryTest = new Button("Memory Test", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		memoryTest();
+		//	}});
 		
-		Button declutter = new Button("Declutter", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				declutterTest();
-			}});
+		//Button declutter = new Button("Declutter", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		declutterTest();
+		//	}});
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
 		oracle.add("0");
 		oracle.add("01");
@@ -244,13 +243,13 @@ public class Driver implements EntryPoint {
 			}});
 
 		HorizontalPanel bar = new HorizontalPanel();
-		bar.add(removeIcons);
-		bar.add(moveIcons);
-		bar.add(showLeaders);
-		bar.add(declutter);
+		//bar.add(removeIcons);
+		//bar.add(moveIcons);
+		//bar.add(showLeaders);
+		//bar.add(declutter);
 		bar.add(benchmarks);
 		bar.add(stats);
-		bar.add(memoryTest);
+		//bar.add(memoryTest);
 
 		dockPanel.addNorth(bar, 20);
 		
