@@ -244,6 +244,7 @@ public class Driver implements EntryPoint {
 			}});
 
 		HorizontalPanel bar = new HorizontalPanel();
+        // removing buttons for demo purposes
 //		bar.add(removeIcons);
 //		bar.add(moveIcons);
 //		bar.add(showLeaders);
