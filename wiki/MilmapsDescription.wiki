@@ -1,0 +1,19 @@
+Milmaps, a TMS, WMS map client
+
+= Introduction =
+
+Milmaps is an open source pure javascript mapping package written using GWT. Currently Milmaps runs in several of the new browsers such as ie-9, chrome, firefox, as well as being backwards compatible with ie-7. 
+
+= Details =
+
+Capabilities include:
+* Supports several WMS and TMS layer sets.
+* Provides javascript based APIs using the “org.timepedia.exporter”.
+* Provides several customizable controls such as 
+** Fly to
+** Map Dimmer
+** Geo-position Display
+** Map Pan and Zoom
+* Auto switches map tiles of different scale based on closest natural scale
+* Supports mouse wheel scroll for zooming in and out along with panning by mouse down and drag
+* Supports Zoom on point. (zooms in while keeping same geo-position under the mouse cursor)
