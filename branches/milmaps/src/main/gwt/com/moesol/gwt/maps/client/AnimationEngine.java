@@ -44,8 +44,17 @@ public class AnimationEngine extends Animation {
 		double ox = m_ztWorker.getOffsetX();
 		double oy = m_ztWorker.getOffsetY();
 		m_ztWorker.setViewOffsets(ox, oy);
-		m_mapView.zoomAndMove(f, (int)ox, (int)oy);
+		zoomAndMove(f, (int)ox, (int)oy);
 		m_oldScale = nextScale;
+	}
+	
+	//TODO This routine shouldn't do a full update ???+
+	public void zoomAndMove( final double factor, final int offsetX, final int offsetY ) {
+		m_proj.zoomByFactor(factor);
+		final ViewDimension vd = m_vpWorker.getDimension();
+		final WorldCoords wc = new WorldCoords(offsetX + vd.getWidth()/2, offsetY - vd.getHeight()/2);
+		m_vpWorker.setCenterInWc(wc);
+		m_mapView.partialUpdateView();
 	}
 	
 	@Override

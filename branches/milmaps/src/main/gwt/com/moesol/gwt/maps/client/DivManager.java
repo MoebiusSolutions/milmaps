@@ -280,7 +280,6 @@ public class DivManager {
 	}
 	
 	public void placeDivsInViewPanel( AbsolutePanel panel ) {
-		setCurrentLevelFromMapScale();
 		int n = Math.max( 0, m_currentLevel - LEVEL_RANGE );
 		for ( int i = n; i <= m_currentLevel; i++ ) {
 			ensureDivPanel(i);

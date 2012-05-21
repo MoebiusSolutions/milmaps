@@ -29,8 +29,7 @@ public class LayerSet implements IsSerializable {
 
 	private int m_origPixWidth = 512; // cell width in pixels
 	private int m_origPixHeight = 512; // cell height in pixels
-	private int m_drawPixWidth= 512;
-	private int m_drawPixHeight = 512;
+
 	//private double m_degWidth = 180.0; // default, but note that world wind uses 36.0
 	//private double m_degHeight = 180.0;
 	private double m_startLevelTileWidthInDeg = 180.0;
@@ -298,33 +297,6 @@ public class LayerSet implements IsSerializable {
 		return this;
 	}
 	
-	/**
-	 * @return pixel width of tiles in this layer set.
-	 */
-	public int getDrawPixelWidth() {
-		return m_drawPixWidth;
-	}
-	public void setDrawPixelWidth(int dx) {
-		m_drawPixWidth = dx;
-	}
-	public LayerSet withDrawPixelWidth(int dx) {
-		m_drawPixWidth = dx;
-		return this;
-	}
-
-	/**
-	 * @return pixel height of tiles in this layer set.
-	 */
-	public int getDrawPixelHeight() {
-		return m_drawPixHeight;
-	}
-	public void setDrawPixelHeight(int dy) {
-		m_drawPixHeight = dy;
-	}
-	public LayerSet withDrawPixelHeight(int dy) {
-		m_drawPixHeight = dy;
-		return this;
-	}
 
 	/**
 	 * @return true if this layer set should be refreshed periodically. For

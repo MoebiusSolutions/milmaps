@@ -23,7 +23,6 @@ import com.moesol.gwt.maps.client.touch.TouchMoveHandler;
 import com.moesol.gwt.maps.client.touch.TouchStartEvent;
 import com.moesol.gwt.maps.client.touch.TouchStartHandler;
 import com.moesol.gwt.maps.client.units.AngleUnit;
-
 public class MapController implements 
 	HasHandlers,
 	MouseMoveHandler, MouseDownHandler, MouseUpHandler, MouseOutHandler,
@@ -41,6 +40,9 @@ public class MapController implements
 	private int m_keyVelocity = 1;
 	private boolean m_bUseDragTracker = true;
 	WorldCoords m_wc = new WorldCoords();
+	
+	//CircleTool m_cir;
+	
 	private HasText m_msg = new HasText() {
 		@Override
 		public void setText(String text) {
@@ -77,6 +79,8 @@ public class MapController implements
 
 	public MapController withMsg(HasText msg) {
 		m_msg = msg;
+		//CanvasTool ct = m_map.getDivManager().getCanvasTool();
+		//m_cir = new CircleTool(ct);
 		return this;
 	}
 
@@ -106,6 +110,7 @@ public class MapController implements
 		Widget sender = (Widget) event.getSource();
 		int x = event.getX();
 		int y = event.getY();
+		
 		DOM.setCapture(sender.getElement());
 		boolean bMouseDown = m_doubleClickTracker.onMouseDown(x, y);
 		if (bMouseDown) {
