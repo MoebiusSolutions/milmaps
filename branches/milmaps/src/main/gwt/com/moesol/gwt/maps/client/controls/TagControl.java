@@ -31,15 +31,16 @@ import java.io.Serializable;
 public class TagControl extends Composite implements Serializable {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private boolean m_bTagOn = false;
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private boolean m_bTagOn = false;
     private String m_name;
     GeodeticCoords m_gc;
     MapView m_mapView;
     private AddTagDialog m_box = null;
     private int m_nameCount = 0;
+    private boolean tagControlServiceOn = false;
     private TagControlServiceAsync tagControlService = GWT.create(TagControlService.class);
 
     // add tag dialog class ----------------------------------
@@ -167,40 +168,42 @@ public class TagControl extends Composite implements Serializable {
         addStyleName("map-TagControl");
         setZindex(100000);
 
-        // Initialize the service proxy.
-        if (tagControlService == null) {
-            tagControlService = GWT.create(TagControlService.class);
-        }
-        // Set up the callback object.
-        AsyncCallback<Tag[]> callback = new AsyncCallback<Tag[]>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                Window.alert("Internal Server Error:" + caught.getMessage());
+        if (tagControlServiceOn) {
+            // Initialize the service proxy.
+            if (tagControlService == null) {
+                tagControlService = GWT.create(TagControlService.class);
             }
+            // Set up the callback object.
+            AsyncCallback<Tag[]> callback = new AsyncCallback<Tag[]>() {
 
-            @Override
-            public void onSuccess(Tag[] tags) {
-                for (Tag tag : tags) {
-                    Icon icon = new Icon(2010);
-                    icon.setLocation(tag.getGeodeticCoords());
-                    //String url = "http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg";
-                    String url = "images/icon.jpeg";
-                    icon.setIconUrl(url);
-                    icon.setLabel(tag.getName());
-                    Image im = icon.getImage();
-                    im.setPixelSize(16, 16);
-                    m_mapView.getIconLayer().addIcon(icon);
-                    m_mapView.updateView();
+                @Override
+                public void onFailure(Throwable caught) {
+                    Window.alert("Internal Server Error:" + caught.getMessage());
                 }
-            }
-        };
-        tagControlService.loadTagsFromDisk(callback);
+
+                @Override
+                public void onSuccess(Tag[] tags) {
+                    for (Tag tag : tags) {
+                        Icon icon = new Icon(2010);
+                        icon.setLocation(tag.getGeodeticCoords());
+                        //String url = "http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg";
+                        String url = "images/icon.jpeg";
+                        icon.setIconUrl(url);
+                        icon.setLabel(tag.getName());
+                        Image im = icon.getImage();
+                        im.setPixelSize(16, 16);
+                        m_mapView.getIconLayer().addIcon(icon);
+                        m_mapView.updateView();
+                    }
+                }
+            };
+            tagControlService.loadTagsFromDisk(callback);
+        }
     }
 
     public void mouseDown(int x, int y) {
         if (m_bTagOn) {
-        	ViewCoords vc = new ViewCoords(x, y);
+            ViewCoords vc = new ViewCoords(x, y);
             m_mapView.setFocus(false);
             ViewWorker worker = m_mapView.getViewport().getVpWorker();
             m_gc = m_mapView.getProjection().worldToGeodetic(worker.viewToWorld(vc));
@@ -247,23 +250,25 @@ public class TagControl extends Composite implements Serializable {
             }
 
             private void saveTagToDisk() {
-                // Initialize the service proxy.
-                if (tagControlService == null) {
-                    tagControlService = GWT.create(TagControlService.class);
+                if (tagControlServiceOn) {
+                    // Initialize the service proxy.
+                    if (tagControlService == null) {
+                        tagControlService = GWT.create(TagControlService.class);
+                    }
+                    // Set up the callback object.
+                    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            Window.alert("Internal Server Error:" + caught.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(Boolean result) {
+                        }
+                    };
+                    tagControlService.saveTagToDisk(m_name, m_gc, callback);
                 }
-                // Set up the callback object.
-                AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Internal Server Error:" + caught.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(Boolean result) {
-                    }
-                };
-                tagControlService.saveTagToDisk(m_name, m_gc, callback);
             }
         };
         btnSave.addClickHandler(saveHandler);
@@ -341,23 +346,25 @@ public class TagControl extends Composite implements Serializable {
             }
 
             private void deleteTagFromDisk(String name) {
-                // Initialize the service proxy.
-                if (tagControlService == null) {
-                    tagControlService = GWT.create(TagControlService.class);
+                if (tagControlServiceOn) {
+                    // Initialize the service proxy.
+                    if (tagControlService == null) {
+                        tagControlService = GWT.create(TagControlService.class);
+                    }
+                    // Set up the callback object.
+                    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            Window.alert("Internal Server Error:" + caught.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(Boolean result) {
+                        }
+                    };
+                    tagControlService.deleteTagFromDisk(name, callback);
                 }
-                // Set up the callback object.
-                AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Internal Server Error:" + caught.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(Boolean result) {
-                    }
-                };
-                tagControlService.deleteTagFromDisk(name, callback);
             }
         };
         btnDelete.addClickHandler(deleteHandler);

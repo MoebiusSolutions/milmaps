@@ -69,6 +69,7 @@ import com.moesol.gwt.maps.client.controls.MapDimmerControl;
 import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
 import com.moesol.gwt.maps.client.controls.PositionControl;
 import com.moesol.gwt.maps.client.controls.SearchControl;
+import com.moesol.gwt.maps.client.controls.TagControl;
 import com.moesol.gwt.maps.client.gin.MapsGinjector;
 import com.moesol.gwt.maps.client.place.MapsActivityMapper;
 import com.moesol.gwt.maps.client.place.MapsPlaceHistoryMapper;
@@ -243,13 +244,13 @@ public class Driver implements EntryPoint {
 			}});
 
 		HorizontalPanel bar = new HorizontalPanel();
-		//bar.add(removeIcons);
-		//bar.add(moveIcons);
-		//bar.add(showLeaders);
-		//bar.add(declutter);
-		bar.add(benchmarks);
-		bar.add(stats);
-		//bar.add(memoryTest);
+//		bar.add(removeIcons);
+//		bar.add(moveIcons);
+//		bar.add(showLeaders);
+//		bar.add(declutter);
+//		bar.add(benchmarks);
+//		bar.add(stats);
+//		bar.add(memoryTest);
 
 		dockPanel.addNorth(bar, 20);
 		
@@ -284,10 +285,10 @@ public class Driver implements EntryPoint {
 		lp.setWidgetBottomHeight(dimmer, 10, Style.Unit.PX, 34, Style.Unit.PX);
 		
 		// Map tag control
-		//TagControl tag = new TagControl(m_map, true);
-		//hp.add(tag);
-		//hp.setWidgetRightWidth(tag,10, Style.Unit.PX, 35, Style.Unit.PX);
-		//hp.setWidgetBottomHeight(tag, 40, Style.Unit.PX, 22, Style.Unit.PX);
+		TagControl tag = new TagControl(m_map, true);
+		lp.add(tag);
+		lp.setWidgetRightWidth(tag,10, Style.Unit.PX, 35, Style.Unit.PX);
+		lp.setWidgetBottomHeight(tag, 40, Style.Unit.PX, 22, Style.Unit.PX);
 		
 		SearchControl flyToControl = new SearchControl();
 		lp.add(flyToControl);
