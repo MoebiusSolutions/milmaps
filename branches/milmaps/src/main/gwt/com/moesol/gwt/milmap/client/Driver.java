@@ -289,7 +289,7 @@ public class Driver implements EntryPoint {
 		TagControl tag = new TagControl(m_map, true);
 		lp.add(tag);
 		lp.setWidgetRightWidth(tag,10, Style.Unit.PX, 35, Style.Unit.PX);
-		lp.setWidgetBottomHeight(tag, 40, Style.Unit.PX, 22, Style.Unit.PX);
+		lp.setWidgetBottomHeight(tag, 60, Style.Unit.PX, 22, Style.Unit.PX);
 		
 		SearchControl flyToControl = new SearchControl();
 		lp.add(flyToControl);
