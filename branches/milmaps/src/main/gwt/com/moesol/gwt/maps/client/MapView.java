@@ -575,17 +575,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_viewPort.getVpWorker().updateOffsets();
 		dumbUpdateView();
 	}
-	
-	//TODO This routine shouldn't do a full update ???+
-	public void zoomAndMove( final double factor, final int offsetX, final int offsetY ) {
-		m_mapProj.zoomByFactor(factor);
-		final ViewWorker vpWorker = this.getViewport().getVpWorker();
-		final ViewDimension vd = vpWorker.getDimension();
-		final WorldCoords wc = new WorldCoords(offsetX + vd.getWidth()/2, offsetY - vd.getHeight()/2);
-		vpWorker.setCenterInWc(wc);
-		partialUpdateView();
-		//dumbUpdateView();
-	}
 
 	public void zoom(double dScale) {
 		m_mapProj.setEquatorialScale(dScale);
