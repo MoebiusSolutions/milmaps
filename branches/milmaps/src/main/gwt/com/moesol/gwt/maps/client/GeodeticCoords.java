@@ -5,7 +5,7 @@ import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Radians;
 
-// TODO move the three coordinate classes to their own package (coords).
+// TODO move the three coordinate classes to their own package (coords or units).
 /**
  * Immutable geodetic coordinates.
  * @author hastings
