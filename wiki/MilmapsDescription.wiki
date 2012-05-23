@@ -20,5 +20,4 @@ Capabilities include:
   * Supports Zoom on point. (zooms in while keeping same geo-position under the mouse cursor)
 
 == VISIT ==
-<wiki:gadget url="http://www.milmaps.com" height="400" border="0" /> 
 http://www.milmaps.com/
