@@ -3,8 +3,8 @@ package com.moesol.gwt.maps.client.controls;
 import java.util.ArrayList;
 
 import com.moesol.gwt.maps.client.GeodeticCoords;
-import com.moesol.gwt.maps.client.MapScale;
 import com.moesol.gwt.maps.client.MapView;
+import com.moesol.gwt.maps.client.units.MapScale;
 
 /**
  * Handles search events to implement fly-to functionality. Encapsulating

@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.moesol.gwt.maps.client.units.MapScale;
+import com.moesol.gwt.maps.server.units.JvmMapScale;
 import com.moesol.gwt.maps.shared.BoundingBox;
 
 public class ProjectionsTest {
@@ -19,6 +21,7 @@ public class ProjectionsTest {
 	
 	@Before
 	public void before() {
+		JvmMapScale.init();
 		IProjection proj = new CylEquiDistProj(512, 180, 180);
 		viewPort.setProjection(proj);
 	}
@@ -47,12 +50,14 @@ public class ProjectionsTest {
 	}
 
 	@Test
-	public void given_zoomed_out_when_find_small_box_then_larget_scale() {
+	public void given_zoomed_out_when_find_small_box_then_larger_scale() {
 		recordViewPort();
 		
 		BoundingBox box = BoundingBox.builder().top(12).left(10).bottom(10).right(12).degrees().build();
 		double start = viewPort.getProjection().getEquatorialScale();
 		double found = Projections.findScaleFor(viewPort, box);
+		System.out.println("start: " + MapScale.forScale(start));
+		System.out.println("found: " + MapScale.forScale(found));
 		assertTrue(found > start);
 	}
 	

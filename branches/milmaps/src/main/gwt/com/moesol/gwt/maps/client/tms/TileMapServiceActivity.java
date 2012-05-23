@@ -148,8 +148,7 @@ public class TileMapServiceActivity extends AbstractActivity implements
 	private void goToNewPlace() {
 		placeController.goTo(new TileMapServicePlace(getLayerIds(), mapView
 				.getCenter().getPhi(AngleUnit.DEGREES), mapView.getCenter()
-				.getLambda(AngleUnit.DEGREES), mapView.getViewport()
-				.getLevel()));
+				.getLambda(AngleUnit.DEGREES)));
 	}
 
 	@Override

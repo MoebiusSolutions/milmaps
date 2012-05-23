@@ -1,12 +1,24 @@
-package com.moesol.gwt.maps.client;
+package com.moesol.gwt.maps.server.units;
+
+import com.moesol.gwt.maps.client.units.MapScale;
+
 
 /**
  * Use for unit tests. Override toString with jmv friendly version.
  * @author hastings
  */
-public class JmvMapScale extends MapScale {
+public class JvmMapScale extends MapScale {
 
-	public JmvMapScale(double scale) {
+	public static void init() {
+		MapScale.DEFAULT= new Factory() {
+			@Override
+			public MapScale make(double scale) {
+				return new JvmMapScale(scale);
+			}
+		};
+	}
+		
+	JvmMapScale(double scale) {
 		super(scale);
 	}
 
@@ -22,8 +34,4 @@ public class JmvMapScale extends MapScale {
 		}
 	}
 	
-	public static MapScale parse(String string) {
-		return new JmvMapScale(MapScale.parse(string).asDouble());
-	}
-
 }

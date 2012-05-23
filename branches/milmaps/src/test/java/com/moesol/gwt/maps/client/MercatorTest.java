@@ -2,11 +2,13 @@ package com.moesol.gwt.maps.client;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
-
+import com.moesol.gwt.maps.client.units.MapScale;
+import com.moesol.gwt.maps.server.units.JvmMapScale;
 
 public class MercatorTest {
 
@@ -26,9 +28,12 @@ public class MercatorTest {
 	protected int m_orgTilePixSize = 256;
 	protected double m_orgTileWidthInDeg = 360;
 	
-	public MercatorTest(){
+	
+	@Before
+	public void before() {
+		JvmMapScale.init();
 	}
-
+	
 	@Test
 	public void testWorldToView() {
 		checkWorldToView(0);
@@ -36,10 +41,10 @@ public class MercatorTest {
 	
 	@Test
 	public void testScaleToLevelAndBack() {
-		MapScale s = JmvMapScale.parse("1:1M");
+		MapScale s = MapScale.parse("1:1M");
 		int level = m_proj.getLevelFromScale(s.asDouble(), 0);
 		System.out.println("level: " + level);
-		JmvMapScale ns = new JmvMapScale(m_proj.getScaleFromLevel(level));
+		MapScale ns = MapScale.forScale(m_proj.getScaleFromLevel(level));
 		System.out.println("scale: " + ns);
 	}
 	

@@ -1,25 +1,13 @@
 package com.moesol.gwt.maps.client;
 
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.moesol.gwt.maps.client.WorldCoords.Builder;
-import com.moesol.gwt.maps.client.events.ProjectionChangedEvent;
-import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
 
-public class ViewPort implements ProjectionChangedHandler {
+public class ViewPort {
 	private ViewDimension m_viewDims = new ViewDimension(600, 400);
 	private IProjection m_proj = null;
 	private final ViewWorker m_vpWorker = new ViewWorker();
 	private DivWorker m_divWorker;
-	private int m_tilePixWidth  = 512;
-	private int m_tilePixHeight = 512;
-	private double m_tileDegWidth  = 180;
-	private double m_tileDegHeight = 180;
-	private int m_level = 0;
   
-	private int m_cxTiles;
-	private int m_cyTiles;
-	private HandlerRegistration m_projectChangedHandlerRegistration;
-	
 	public ViewPort() {
 	}
 	
@@ -28,11 +16,6 @@ public class ViewPort implements ProjectionChangedHandler {
 	}
 	
 	public void setProjection(IProjection proj) {
-		if (m_projectChangedHandlerRegistration != null) {
-			m_projectChangedHandlerRegistration.removeHandler();
-		}
-		m_projectChangedHandlerRegistration = proj.addProjectionChangedHandler(this);
-		
 		m_proj = proj;
 		m_vpWorker.intialize(m_viewDims, proj);
 		
@@ -40,28 +23,16 @@ public class ViewPort implements ProjectionChangedHandler {
 		m_vpWorker.setGeoCenter(g);
 	}
 	
-	public ViewWorker getVpWorker(){ return m_vpWorker; }
+	public ViewWorker getVpWorker() {
+		return m_vpWorker;
+	}
 	
-	public void setDivWorker( DivWorker dw ){ 
+	public void setDivWorker(DivWorker dw) {
 		m_divWorker = dw; 
 	}
-	
-	public DivWorker getDivWorker(){ return m_divWorker; }
-	
-	public void setTileDegWidth( double deg ){
-		m_tileDegWidth = deg;
+	public DivWorker getDivWorker() {
+		return m_divWorker;
 	}
-	public double getTileDegWidth(){ return m_tileDegWidth; }
-	
-	public void setTileDegHeight( double deg ){
-	  	m_tileDegHeight = deg;
-	}
-	public double getTileDegHeight(){ return m_tileDegHeight; }
-  
-    public void setTilePixWidth( int pix ){m_tilePixWidth = pix;}
-    public int getTilePixWidth(){ return m_tilePixWidth; }
-    public void setTilePixHeight( int pix ){m_tilePixHeight = pix;}
-    public int getTilePixHeight(){ return m_tilePixHeight; }
 	
 	public ViewCoords worldToView(WorldCoords wc, boolean checkWrap) {
 		ViewCoords r = m_vpWorker.wcToVC(wc);
@@ -79,10 +50,6 @@ public class ViewPort implements ProjectionChangedHandler {
 		}
 		return new ViewCoords(x, y);
 	}
-
-    public int getNumberOfRows( double degHeight, int level ){
-    	return (int)((180.0 /degHeight)*(1<<level));
-    }
 
 	/**
 	 * @param vc ViewCoords
@@ -138,14 +105,6 @@ public class ViewPort implements ProjectionChangedHandler {
 		return true;
 	}
 	
-	public int getNumXTiles() {
-		return m_proj.getNumXtiles(m_tileDegWidth);
-	}
-	
-	public int getNumYTiles() {
-		return m_proj.getNumYtiles(m_tileDegHeight);
-	}
-
 	/**
 	 * @return width in pixels
 	 */
@@ -160,20 +119,10 @@ public class ViewPort implements ProjectionChangedHandler {
 		return m_viewDims.getHeight();
 	}
 	
-	public int getCxTiles() {
-		return m_cxTiles;
-	}
-	
-	public int getCyTiles() {
-		return m_cyTiles;
-	}
-	
 	public void setSize(int w, int h) {
 		m_viewDims = new ViewDimension(w, h);
 		m_vpWorker.setDimension(m_viewDims);
 	}
-	
-	public int getLevel() { return m_level; }
 	
 	/**
 	 * Keep the view center x on the view and the y within the view port.
@@ -212,9 +161,4 @@ public class ViewPort implements ProjectionChangedHandler {
 		return newWc.build();
 	}
 
-	@Override
-	public void onProjectionChanged(ProjectionChangedEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
 }

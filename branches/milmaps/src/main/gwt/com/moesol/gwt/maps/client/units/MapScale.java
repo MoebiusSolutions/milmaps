@@ -1,4 +1,4 @@
-package com.moesol.gwt.maps.client;
+package com.moesol.gwt.maps.client.units;
 
 import com.google.gwt.i18n.client.NumberFormat;
 
@@ -13,13 +13,27 @@ public class MapScale {
 	protected static final double ONE_MILLION = 1000000.0;
 	protected static final double ONE_THOUSAND = 1000.0;
 	private final double m_scale;
+	public static Factory DEFAULT = new Factory() {
+		@Override
+		public MapScale make(double scale) {
+			return new MapScale(scale);
+		}
+	};
 	
-	public MapScale(double scale) {
+	public interface Factory {
+		MapScale make(double scale);
+	}
+	
+	protected MapScale(double scale) {
 		this.m_scale = scale;
 	}
 	
 	public double asDouble() {
 		return m_scale;
+	}
+	
+	public static MapScale forScale(double scale) {
+		return DEFAULT.make(scale);
 	}
 	
 	public static MapScale parse(String s) {
@@ -30,7 +44,7 @@ public class MapScale {
 		double top = Double.parseDouble(parts[0]);
 		double bottom = parseBottom(parts[1]);
 		
-		return new MapScale(top / bottom);
+		return forScale(top / bottom);
 	}
 
 	private static double parseBottom(String string) {

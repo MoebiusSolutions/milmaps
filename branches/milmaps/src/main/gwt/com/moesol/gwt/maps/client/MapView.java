@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
+import com.moesol.gwt.maps.client.units.MapScale;
 import com.moesol.gwt.maps.shared.BoundingBox;
 
 public class MapView extends Composite implements IMapView, SourcesChangeEvents {
@@ -179,11 +180,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 
 	public ViewPort getViewport() {
 		return m_viewPort;
-	}
-
-	public void setTilePixDimensions(int width, int height) {
-		m_viewPort.setTilePixWidth(width);
-		m_viewPort.setTilePixHeight(height);
 	}
 
 	public void setDpi(int dpi) {
@@ -405,7 +401,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		doDeclutterView();
 	}
 	
-	void cancelAnimations() {
+	public void cancelAnimations() {
 		m_animateEngine.cancel();
 		m_flyToEngine.getAnimation().cancel();
 	}

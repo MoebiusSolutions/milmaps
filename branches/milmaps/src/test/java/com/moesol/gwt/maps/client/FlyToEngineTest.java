@@ -6,6 +6,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.MapScale;
+import com.moesol.gwt.maps.server.units.JvmMapScale;
 
 public class FlyToEngineTest {
 	
@@ -16,6 +18,7 @@ public class FlyToEngineTest {
 
 	@Before
 	public void before() {
+		JvmMapScale.init();
 		m_proj = new CylEquiDistProj(512, 180.0, 180.0);
 		//MapScale temp = new JmvMapScale(proj.getBaseEquatorialScale());
 		m_proj.zoomByFactor(2.0);
@@ -51,8 +54,8 @@ public class FlyToEngineTest {
 		m_engine.initEngine(gc, 1/50000.0);
 		m_engine.onUpdate(FlyToEngine.ZOOM_OUT_UNTIL);
 		double preTeleportScale = m_proj.getEquatorialScale();
-		MapScale result = new JmvMapScale(preTeleportScale);
-		MapScale expect = JmvMapScale.parse("1:110.9M");
+		MapScale result = MapScale.forScale(preTeleportScale);
+		MapScale expect = MapScale.parse("1:110.9M");
 		assertEquals(preTeleportScale,expectedScale,0.00000001);
 		assertEquals(expect.toString(), result.toString());
 	}
@@ -113,8 +116,8 @@ public class FlyToEngineTest {
 		assertEquals(20, pt.getPhi(AngleUnit.DEGREES),0.0001);
 		assertEquals(30, pt.getLambda(AngleUnit.DEGREES),0.0001);
 		double scale = m_proj.getEquatorialScale();
-		MapScale result = new JmvMapScale(scale);
-		MapScale expect = JmvMapScale.parse("1:50K");
+		MapScale result = MapScale.forScale(scale);
+		MapScale expect = MapScale.parse("1:50K");
 		assertEquals(expect.toString(), result.toString());
 	}
 

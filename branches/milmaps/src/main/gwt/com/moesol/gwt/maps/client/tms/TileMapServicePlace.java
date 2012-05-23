@@ -33,23 +33,10 @@ public class TileMapServicePlace extends Place {
 		this.longitude = longitude;
 	}
 
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
-
-	private int level;
-
-	public TileMapServicePlace(String[] layers, double latitude,
-			double longitude, int level) {
-		super();
+	public TileMapServicePlace(String[] layers, double latitude, double longitude) {
 		this.layers = layers;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.level = level;
 	}
 
 	public static class Tokenizer implements
@@ -64,7 +51,7 @@ public class TileMapServicePlace extends Place {
 			// String[] layers = mainTokens[1].split(",");
 			String[] layers = token.split(",");
 
-			return new TileMapServicePlace(layers, 0, 0, 0);
+			return new TileMapServicePlace(layers, 0, 0);
 		}
 
 		@Override

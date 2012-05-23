@@ -78,6 +78,7 @@ import com.moesol.gwt.maps.client.tms.TileMapServicePlace;
 import com.moesol.gwt.maps.client.tms.TileMapServiceView;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
+import com.moesol.gwt.maps.client.units.MapScale;
 
 public class Driver implements EntryPoint {
 	private static final int MAP_EDGE_HOVER_MAX_PAN_PER_INTERVAL_PIXELS = 10;
@@ -94,7 +95,7 @@ public class Driver implements EntryPoint {
 	private final Grid m_tiles = new Grid(TILE_DY, TILE_DX);
 	private SuggestBox m_levelBox;
 	
-	private Place defaultPlace = new TileMapServicePlace(new String[]{"BMNG@EPSG:4326@png"}, 0, 0, 0);
+	private Place defaultPlace = new TileMapServicePlace(new String[]{"BMNG@EPSG:4326@png"}, 0, 0);
 	
 	private MapsGinjector injector = GWT.create(MapsGinjector.class);
 	EventBus eventBus;
@@ -412,7 +413,8 @@ public class Driver implements EntryPoint {
 	}
 
 	protected void mapChanged() {
-		m_centerLabel.setText(m_map.getCenter() +"," + m_map.getViewport().getLevel());
+		m_centerLabel.setText(m_map.getCenter() +"," + 
+				MapScale.forScale(m_map.getProjection().getEquatorialScale()));
 	}
 
 	protected void resizeMap() {

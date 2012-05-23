@@ -1,14 +1,16 @@
-package com.moesol.gwt.maps.client;
+package com.moesol.gwt.maps.client.units;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.moesol.gwt.maps.client.units.MapScale;
+
 public class MapScaleTest {
 
 	@Test
 	public void testAsDouble() {
-		MapScale s = new MapScale(1/50000.0);
+		MapScale s = MapScale.forScale(1/50000.0);
 		assertEquals(1/50000.0, s.asDouble(), 0.0);
 	}
 
@@ -19,9 +21,9 @@ public class MapScaleTest {
 	}
 	@Test
 	public void testEquals() {
-		MapScale s1 = new MapScale(1.0);
-		MapScale s2 = new MapScale(1.0);
-		MapScale s3 = new MapScale(2.0);
+		MapScale s1 = MapScale.forScale(1.0);
+		MapScale s2 = MapScale.forScale(1.0);
+		MapScale s3 = MapScale.forScale(2.0);
 		
 		assertEquals(s1, s2);
 		assertFalse(s1.equals(s3));
