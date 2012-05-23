@@ -13,9 +13,12 @@ Capabilities include:
     * Map Dimmer
     * Geo-position Display
     * Map Pan and Zoom
+  * Supports layer sets with non-standard tile sizes.
+  * Layer sets can be tagged as dimmable or non-dimmable.
   * Auto switches map tiles of different scale based on closest natural scale
   * Supports mouse wheel scroll for zooming in and out along with panning by mouse down and drag
   * Supports Zoom on point. (zooms in while keeping same geo-position under the mouse cursor)
 
 == VISIT ==
+<wiki:gadget url="http://www.milmaps.com" height="400" border="0" /> 
 http://www.milmaps.com/
