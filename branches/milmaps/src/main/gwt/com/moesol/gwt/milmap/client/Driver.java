@@ -1,9 +1,7 @@
-/*
- * $Id$
- *
+/**
  * (c) Copyright, Moebius Solutions, Inc., 2006
  *
- *                       All Rights Reserved
+ *                        All Rights Reserved
  *
  * This material may be reproduced by or for the U. S. Government
  * pursuant to the copyright license under the clause at

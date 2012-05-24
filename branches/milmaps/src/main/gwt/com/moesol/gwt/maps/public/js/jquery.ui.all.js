@@ -1,11 +1,11 @@
 /*
- * jQuery UI 1.5.2
+ * (c) Copyright, Moebius Solutions, Inc., 2006
  *
- * Copyright (c) 2008 Paul Bakaus (ui.jquery.com)
- * Dual licensed under the MIT (MIT-LICENSE.txt)
- * and GPL (GPL-LICENSE.txt) licenses.
+ *                        All Rights Reserved
  *
- * http://docs.jquery.com/UI
+ * This material may be reproduced by or for the U. S. Government
+ * pursuant to the copyright license under the clause at
+ * DFARS 252.227-7014 (OCT 2001).
  */
 ;(function($) {
 

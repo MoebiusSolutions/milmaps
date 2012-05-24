@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    (c) Copyright, Moebius Solutions, Inc., 2006
+
+                           All Rights Reserved
+
+    This material may be reproduced by or for the U. S. Government
+    pursuant to the copyright license under the clause at
+    DFARS 252.227-7014 (OCT 2001).
+
+-->
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.1.1//EN" "http://google-web-toolkit.googlecode.com/svn/tags/2.1.1/distro-source/core/src/gwt-module.dtd">
 <module rename-to='xmilmaps'>
 	<inherits name="com.google.gwt.user.User" />

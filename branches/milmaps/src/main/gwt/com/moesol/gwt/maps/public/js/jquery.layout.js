@@ -1,17 +1,11 @@
 /*
- * jquery.layout 1.1.4 BETA - Prerelease version
+ * (c) Copyright, Moebius Solutions, Inc., 2006
  *
- * Copyright (c) 2008 
- *   Fabrizio Balliano (http://www.fabrizioballiano.net)
- *   Kevin Dalman (http://allpro.net)
+ *                        All Rights Reserved
  *
- * Dual licensed under the GPL (http://www.gnu.org/licenses/gpl.html)
- * and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
- *
- * $Date: 2008-12-01 06:52:31 -0800 (Mon, 01 Dec 2008) $
- * $Rev: 188 $
- * 
- * NOTE: For best code readability, view this with a fixed-space font and tabs equal to 4-chars
+ * This material may be reproduced by or for the U. S. Government
+ * pursuant to the copyright license under the clause at
+ * DFARS 252.227-7014 (OCT 2001).
  */
 (function($) {
 
