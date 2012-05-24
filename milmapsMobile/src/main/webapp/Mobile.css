@@ -2,3 +2,6 @@
 	width: 100px;
 	height: 100px;
 }
+* {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);  
+}
