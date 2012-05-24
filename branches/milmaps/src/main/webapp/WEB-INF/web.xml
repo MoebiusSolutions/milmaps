@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    (c) Copyright, Moebius Solutions, Inc., 2006
+    (c) Copyright, Moebius Solutions, Inc., 2012
 
                            All Rights Reserved
 
-    This material may be reproduced by or for the U. S. Government
-    pursuant to the copyright license under the clause at
-    DFARS 252.227-7014 (OCT 2001).
+    LICENSE: GPLv3
 
 -->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
