@@ -66,6 +66,10 @@
             </snapshots>
         </repository>
         <repository>
+            <id>moesol.artifactory</id>
+            <url>https://artifactory.moesol.com/artifactory/libs-releases-local</url>
+        </repository>
+        <repository>
             <id>sonatype</id>
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>
             <snapshots>
