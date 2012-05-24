@@ -11,6 +11,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -34,9 +36,16 @@ public class MobileEntryPoint implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		RootPanel mapPanel = RootPanel.get("mapPanel");
+		final RootPanel mapPanel = RootPanel.get("mapPanel");
 		if (mapPanel != null) {
 			doMapPanel(mapPanel);
+            Window.addResizeHandler(new ResizeHandler() {
+
+            @Override
+            public void onResize(ResizeEvent event) {
+                doMapPanel(mapPanel);
+            }
+        });
 			return;
 		}
 	}
@@ -99,7 +108,7 @@ public class MobileEntryPoint implements EntryPoint {
 		controller.bindHandlers(touchPanel);
 		controller.withMsg(m_msg);
 	}
-
+    
 	private FocusPanel makeTouchPanel() {
 		FocusPanel touchPanel = new FocusPanel();
 		touchPanel.setStyleName("touchPanel");
