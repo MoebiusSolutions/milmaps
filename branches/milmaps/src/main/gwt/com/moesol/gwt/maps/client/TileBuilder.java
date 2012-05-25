@@ -25,6 +25,7 @@ public class TileBuilder {
 	private ViewWorker m_mapViewWorker = null;
 	private DivWorker m_divWorker = null;
 	private int m_divLevel;
+	private String m_bestLayerData;
 	
 	private ArrayList<TiledImageLayer> m_tiledImageLayers;
 
@@ -122,7 +123,8 @@ public class TileBuilder {
 		WorldDimension wd = m_divWorker.getProjection().getWorldDimension();
 		int bottomTiles = 0;
 		m_topTiles = 0;
-		if ( wd.getHeight() > tileHeight + 1){
+		int viewPortWidth = m_mapViewWorker.getDimension().getHeight();
+		if ( viewPortWidth < wd.getHeight() + 1){
 			m_topTiles = topDist <= 0 ? 0:(topDist + tileHeight-1)/tileHeight;
 			bottomTiles = bottomDist <= 0 ? 0:(bottomDist + tileHeight-1)/tileHeight;
 		}
@@ -488,6 +490,10 @@ public class TileBuilder {
 		}
 		if (bestLayerSoFar != null) {
 			bestLayerSoFar.setPriority(true);
+			LayerSet ls = bestLayerSoFar.getLayerSet();
+			m_bestLayerData = new String(ls.getData());
 		}
 	}
+	
+	public String getBestLayerData(){ return m_bestLayerData; }
 }

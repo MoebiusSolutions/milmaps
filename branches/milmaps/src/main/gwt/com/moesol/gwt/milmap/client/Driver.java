@@ -66,6 +66,7 @@ import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
 import com.moesol.gwt.maps.client.controls.PositionControl;
 import com.moesol.gwt.maps.client.controls.SearchControl;
 import com.moesol.gwt.maps.client.controls.TagControl;
+import com.moesol.gwt.maps.client.controls.TextControl;
 import com.moesol.gwt.maps.client.gin.MapsGinjector;
 import com.moesol.gwt.maps.client.place.MapsActivityMapper;
 import com.moesol.gwt.maps.client.place.MapsPlaceHistoryMapper;
@@ -86,10 +87,10 @@ public class Driver implements EntryPoint {
 	private static Dictionary OPTIONS = Dictionary.getDictionary("milMap_options");
 	private int m_scrnDpi = AbstractProjection.DOTS_PER_INCH;
 	private MapView m_map;
-	//private PositionControl m_mousePosLabel;
 	private final Label m_centerLabel = new Label();
 	private final Grid m_tiles = new Grid(TILE_DY, TILE_DX);
 	private SuggestBox m_levelBox;
+	TextControl m_textControl = null;
 	
 	private Place defaultPlace = new TileMapServicePlace(new String[]{"BMNG@EPSG:4326@png"}, 0, 0);
 	
@@ -167,7 +168,7 @@ public class Driver implements EntryPoint {
 		MapPanel mapFillPanel = new MapPanel(m_map);
 		m_map.setDpi( m_scrnDpi );
 		m_map.getController().withHoverDelayMillis(MAP_HOVER_DELAY_MILLIS);
-		
+		m_map.setDeclutterLabels(true);
 		//new EdgeHoverPanControl(m_map, MAP_EDGE_HOVER_RADIUS_PIXELS,
 		//		MAP_EDGE_HOVER_PAN_INTERVAL,
 		//		MAP_EDGE_HOVER_MAX_PAN_PER_INTERVAL_PIXELS);
@@ -182,7 +183,6 @@ public class Driver implements EntryPoint {
 //				bc.animateShow(e.getClientX(), e.getClientY());
 //			}
 //		});
-		
 		if (isTrue("showSomeIcons", false)) {
 			addSomeIcons();
 		}
@@ -206,16 +206,16 @@ public class Driver implements EntryPoint {
 		//		showLeaders();
 		//	}
 		//});
-		Button benchmarks = new Button("Benchmarks", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				runBenchmarks();
-			}});
-		Button stats = new Button("Stats", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				stats();
-			}});
+		//Button benchmarks = new Button("Benchmarks", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		runBenchmarks();
+		//	}});
+		//Button stats = new Button("Stats", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		stats();
+		//	}});
 		//Button memoryTest = new Button("Memory Test", new ClickHandler() {
 		//	@Override
 		//	public void onClick(ClickEvent event) {
@@ -239,9 +239,11 @@ public class Driver implements EntryPoint {
 			public void onChange(Widget sender) {
 				mapChanged();
 			}});
+		
+		
 
         // removing button bar for demo purposes
-//		HorizontalPanel bar = new HorizontalPanel();
+		//HorizontalPanel bar = new HorizontalPanel();
 //		bar.add(removeIcons);
 //		bar.add(moveIcons);
 //		bar.add(showLeaders);
@@ -275,6 +277,12 @@ public class Driver implements EntryPoint {
 		lp.add(mousePosLabel);
 		lp.setWidgetRightWidth(mousePosLabel, 10, Style.Unit.PX, 500, Style.Unit.PX );
 		lp.setWidgetTopHeight(mousePosLabel, 10, Style.Unit.PX, 20, Style.Unit.PX );
+
+		//The Text control;
+		m_textControl= new TextControl();
+		lp.add(m_textControl);
+		lp.setWidgetLeftWidth(m_textControl, 10, Style.Unit.PX, 500, Style.Unit.PX );
+		lp.setWidgetBottomHeight(m_textControl, 10, Style.Unit.PX, 20, Style.Unit.PX );
 		
 		// Map dimmer control
 		MapDimmerControl dimmer = new MapDimmerControl(m_map, true);
@@ -411,6 +419,10 @@ public class Driver implements EntryPoint {
 	protected void mapChanged() {
 		m_centerLabel.setText(m_map.getCenter() +"," + 
 				MapScale.forScale(m_map.getProjection().getEquatorialScale()));
+		String s = m_map.getDivManager().getCurrentDiv().getBestLayerData();
+		if(s != null && m_textControl != null){
+			m_textControl.setText(s);
+		}
 	}
 
 	protected void resizeMap() {

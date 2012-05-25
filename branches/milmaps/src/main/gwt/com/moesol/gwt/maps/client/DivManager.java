@@ -21,7 +21,6 @@ public class DivManager {
 	private final IMapView m_map;
 	private double m_opacity = 1.0;
 	private double m_oldOpacity = 1.0;
-	//private Browser.Type m_browser;
 	
 	private ViewWorker m_vpWorker = null;
 	DivPanel[] m_dpArray = new DivPanel[NUMDIVS];

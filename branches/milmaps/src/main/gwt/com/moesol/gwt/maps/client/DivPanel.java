@@ -83,6 +83,9 @@ public class DivPanel extends AbsolutePanel {
 	public int getVbWidth(){ return m_tileBuilder.getViwBoxWidth(); }
 	public int getVbHeight(){ return m_tileBuilder.getViwBoxHeight(); }
 	///////////////////
+	public String getBestLayerData(){ 
+		return m_tileBuilder.getBestLayerData();
+	}
 	public ViewCoords getDivTopLeft(){ return m_tl; }
 	
 	public void setProjection(IProjection proj){ m_divProj = proj; }

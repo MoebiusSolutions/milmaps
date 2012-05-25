@@ -54,6 +54,22 @@
 	color: black;
 }
 
+.map-TextControl {
+	font-family: arial;
+	font-size: 13px;
+	z-index: 10000;
+	right: 0px;
+}
+
+.map-TextControl .map-OutlinedLabelText {
+	color: white;
+}
+
+.map-TextControl .map-OutlinedLabelOutline {
+	color: black;
+}
+
+
 .map-SearchControl {
 	margin-top: 2px;
 	z-index: 10000;
