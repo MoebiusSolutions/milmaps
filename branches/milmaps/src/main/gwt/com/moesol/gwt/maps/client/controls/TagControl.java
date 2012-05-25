@@ -73,7 +73,7 @@ public class TagControl extends Composite implements Serializable {
                     Icon icon = new Icon(2010);
                     icon.setLocation(gc);
                     //String url = "http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg";
-                    String url = "images/icon.jpeg";
+                    String url = "images/tag_icon.png";
                     icon.setIconUrl(url);
                     icon.setLabel(name);
                     Image im = icon.getImage();
@@ -190,7 +190,7 @@ public class TagControl extends Composite implements Serializable {
                     Icon icon = new Icon(2010);
                     icon.setLocation(tag.getGeodeticCoords());
                     //String url = "http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg";
-                    String url = "images/icon.jpeg";
+                    String url = "images/tag_icon.png";
                     icon.setIconUrl(url);
                     icon.setLabel(tag.getName());
                     Image im = icon.getImage();
@@ -301,7 +301,7 @@ public class TagControl extends Composite implements Serializable {
 
     public RemoveTagDialog removeDialogWidget(final String header) {//, String content) {
         final List<Icon> icons = m_mapView.getIconLayer().getIcons();
-        if (icons.size() == 0) {
+        if (icons.isEmpty()) {
             return null;
         }
         final RemoveTagDialog box = new RemoveTagDialog();
