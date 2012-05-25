@@ -18,9 +18,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.moesol.gwt.maps.client.LayerSet;
 import com.moesol.gwt.maps.client.LayerSetJson;
 import com.moesol.gwt.maps.client.MapView;
@@ -88,7 +88,7 @@ public class MobileEntryPoint implements EntryPoint {
 		});
 		out.setStylePrimaryName("toolButton");
 
-		HorizontalPanel bar = new HorizontalPanel();
+		VerticalPanel bar = new VerticalPanel();
 		bar.add(in);
 		bar.add(out);
 		bar.add(m_msg);
@@ -98,7 +98,7 @@ public class MobileEntryPoint implements EntryPoint {
 		touchPanel.setWidget(m_map);
 		controlsAndMap.add(touchPanel);
 		controlsAndMap.add(bar);
-		controlsAndMap.setWidgetPosition(bar, 20, 20);
+		controlsAndMap.setWidgetPosition(bar, 0, 0);
 		controlsAndMap.setWidgetPosition(touchPanel, 0, 0);
 		mapPanel.add(controlsAndMap);
 	}
