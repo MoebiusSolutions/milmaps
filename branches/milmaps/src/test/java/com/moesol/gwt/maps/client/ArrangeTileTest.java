@@ -97,6 +97,7 @@ public class ArrangeTileTest {
 	public void testArrangeTiles(){
 		m_vp.setProjection(m_proj);
 		m_vp.setSize(600,400);
+		m_tb.setMapViewWorker(m_vp.getVpWorker());
 		for ( int j = 0; j < 3; j++ ){
 		    LayerSet ls = createLayerSet(j);
 		    GeodeticCoords geo = Degrees.geodetic(0, 0);

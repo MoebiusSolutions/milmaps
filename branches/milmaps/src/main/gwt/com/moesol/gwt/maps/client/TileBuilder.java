@@ -123,8 +123,8 @@ public class TileBuilder {
 		WorldDimension wd = m_divWorker.getProjection().getWorldDimension();
 		int bottomTiles = 0;
 		m_topTiles = 0;
-		int viewPortWidth = m_mapViewWorker.getDimension().getHeight();
-		if ( viewPortWidth < wd.getHeight() + 1){
+		int vpHeight = m_mapViewWorker.getDimension().getHeight();
+		if ( vpHeight < wd.getHeight() + 1){
 			m_topTiles = topDist <= 0 ? 0:(topDist + tileHeight-1)/tileHeight;
 			bottomTiles = bottomDist <= 0 ? 0:(bottomDist + tileHeight-1)/tileHeight;
 		}
