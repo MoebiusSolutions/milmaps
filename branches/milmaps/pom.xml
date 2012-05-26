@@ -378,7 +378,7 @@
                         <include>src/**</include>
                     </includes>
                     <excludes>
-                    <!-- exclude files for licensing -->
+                        <exclude>**/*.html</exclude>
                     </excludes>
                     <useDefaultExcludes>true</useDefaultExcludes>
                     <encoding>UTF-8</encoding>

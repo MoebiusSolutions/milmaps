@@ -7,9 +7,10 @@
  */
 package com.moesol.gwt.maps.client.controls;
 
-import com.google.gwt.core.client.GWT;
+import java.io.Serializable;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -32,8 +33,6 @@ import com.moesol.gwt.maps.client.Icon;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.ViewWorker;
-
-import java.io.Serializable;
 
 public class TagControl extends Composite implements Serializable {
 
