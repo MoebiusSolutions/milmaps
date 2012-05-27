@@ -29,6 +29,8 @@ public class MobileEntryPoint implements EntryPoint {
 
 	private MapView m_map;
 	private Label m_msg;
+    private FocusPanel m_touchPanel;
+    private AbsolutePanel m_controlsAndMap;
 
 	public MobileEntryPoint() {
 		super();
@@ -41,12 +43,11 @@ public class MobileEntryPoint implements EntryPoint {
 			doMapPanel(mapPanel);
             Window.addResizeHandler(new ResizeHandler() {
 
-            @Override
-            public void onResize(ResizeEvent event) {
-                doMapPanel(mapPanel);
-            }
-        });
-			return;
+                @Override
+                public void onResize(ResizeEvent event) {
+                    setView();
+                }
+            });
 		}
 	}
 
@@ -57,21 +58,14 @@ public class MobileEntryPoint implements EntryPoint {
 
 	private void doMapPanel(RootPanel mapPanel) {
 		DOM.setInnerHTML(mapPanel.getElement(), "");
-		FocusPanel touchPanel = makeTouchPanel();
-		AbsolutePanel controlsAndMap = new AbsolutePanel();
+		m_touchPanel = makeTouchPanel();
+		m_controlsAndMap = new AbsolutePanel();
 		
 		m_msg = new Label("msg...");
 		m_map = new MapView();
 		loadLayerConfigsFromClient();
-		
-		int w = Window.getClientWidth();
-		int h = Window.getClientHeight();
-		
-		controlsAndMap.setPixelSize(w, h);
-		touchPanel.setPixelSize(w, h);
-		m_map.resizeMap(w, h);
-		m_map.updateView();
-		bindListeners(touchPanel, m_map);
+		setView();
+		bindListeners(m_touchPanel, m_map);
 		
 		Button in = new Button(" + ", new ClickHandler() {
 			@Override
@@ -95,13 +89,23 @@ public class MobileEntryPoint implements EntryPoint {
 		bar.getElement().getStyle().setZIndex(5000);
 		bar.getElement().setId("buttonBar");
 		
-		touchPanel.setWidget(m_map);
-		controlsAndMap.add(touchPanel);
-		controlsAndMap.add(bar);
-		controlsAndMap.setWidgetPosition(bar, 0, 0);
-		controlsAndMap.setWidgetPosition(touchPanel, 0, 0);
-		mapPanel.add(controlsAndMap);
+		m_touchPanel.setWidget(m_map);
+		m_controlsAndMap.add(m_touchPanel);
+		m_controlsAndMap.add(bar);
+		m_controlsAndMap.setWidgetPosition(bar, 0, 20);
+		m_controlsAndMap.setWidgetPosition(m_touchPanel, 0, 0);
+		mapPanel.add(m_controlsAndMap);
 	}
+
+    private void setView() {
+        int w = Window.getClientWidth();
+        int h = Window.getClientHeight();
+        
+        m_controlsAndMap.setPixelSize(w, h);
+        m_touchPanel.setPixelSize(w, h);
+        m_map.resizeMap(w, h);
+        m_map.updateView();
+    }
 
 	private void bindListeners(FocusPanel touchPanel, MapView map) {
 		MapTouchController controller = new MapTouchController(map);
