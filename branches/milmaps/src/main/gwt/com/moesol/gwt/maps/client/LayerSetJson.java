@@ -17,6 +17,7 @@ public class LayerSetJson extends JavaScriptObject {
 	protected LayerSetJson() { }
 	
 	public final native String getServer(String def) /*-{ return this.server || def; }-*/;
+    public final native String getId(String def) /*-{ return this.id || def; }-*/;
 	public final native String getData(String def) /*-{ return this.data || def; }-*/;
 	public final native int getSkipLevels(int def) /*-{ return this.skipLevels || def; }-*/;
 	public final native String getUrlPattern(String def) /*-{ return this.urlPattern || def; }-*/;
@@ -43,6 +44,7 @@ public class LayerSetJson extends JavaScriptObject {
 		LayerSet layerSet = new LayerSet();
 		layerSet
 			.withServer(getServer(layerSet.getServer()))
+            .withId(getId(layerSet.getId()))
 			.withData(getData(layerSet.getData()))
 			.withSkipLevels(getSkipLevels(layerSet.getSkipLevels()))
 			.withUrlPattern(getUrlPattern(layerSet.getUrlPattern()))

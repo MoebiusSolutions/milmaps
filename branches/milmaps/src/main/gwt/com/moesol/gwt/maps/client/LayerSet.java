@@ -18,6 +18,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class LayerSet implements IsSerializable {
 	private String m_styleName = "moesol-MapTile";
+    private String m_id;
 	private String m_server;
 	private String m_data = "";
 	private int m_skipLevels = 0;
@@ -141,6 +142,19 @@ public class LayerSet implements IsSerializable {
 		m_data = data;
 		return this;
 	}
+    
+    public String  getId() {
+        return m_id;
+    }
+    
+    public void setId(String id) {
+        m_id = id;
+    }
+    
+    public LayerSet withId(String id) {
+        m_id = id;
+        return this;
+    }
 
 	public String getServer() {
 		return m_server;
