@@ -45,7 +45,8 @@
                 }
                 , // PLI-Service
                 {
-                    server: window.location.protocol + '//' + window.location.host + '/pli-service',
+                    id: 'pli',
+                    server: "/pli-service",
                     urlPattern: "{server}/rs/tiles/{level}/{x}/{y}.png",
                     autoRefreshOnTimer: true,
                     alwaysDraw: true,
