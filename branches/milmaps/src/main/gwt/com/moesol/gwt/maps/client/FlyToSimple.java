@@ -7,7 +7,7 @@
  */
 package com.moesol.gwt.maps.client;
 
-
+import com.moesol.gwt.maps.client.units.MapScale;
 
 public class FlyToSimple extends FlyToCommon {
 	
@@ -20,7 +20,8 @@ public class FlyToSimple extends FlyToCommon {
 	@Override
 	public void flyTo(GeodeticCoords endPt, double projectionScale) {
 		m_mapView.setCenter(endPt);
-		m_mapView.getProjection().setEquatorialScale(projectionScale);
+		// System.out.println("Ignoring: scale: " + MapScale.forScale(projectionScale));
+		// m_mapView.getProjection().setEquatorialScale(projectionScale);
 		m_mapView.updateView();
 	}
 
