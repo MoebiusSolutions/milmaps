@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    (c) Copyright, Moebius Solutions, Inc., 2012
+
+                           All Rights Reserved
+
+    LICENSE: GPLv3
+
+-->
 <module rename-to='mobile'>
 	<!-- Inherit the core Web Toolkit stuff.                        -->
 	<inherits name='com.google.gwt.user.User'/>
