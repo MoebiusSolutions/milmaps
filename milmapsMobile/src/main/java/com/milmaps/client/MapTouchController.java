@@ -1,4 +1,13 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.milmaps.client;
+
+import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Touch;
@@ -32,7 +41,6 @@ import com.moesol.gwt.maps.client.controls.BubbleControl;
 import com.moesol.gwt.maps.client.tms.FeatureReader;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.shared.Feature;
-import java.util.List;
 
 public class MapTouchController implements
         TouchStartHandler, TouchMoveHandler, TouchEndHandler, TouchCancelHandler,
@@ -42,6 +50,9 @@ public class MapTouchController implements
     private DragTracker m_dragTracker;
     private FeatureReader m_reader;
     private BubbleControl m_bubbleControl;
+    private boolean m_firstTap = true;
+    private long m_lastTap = 0;
+    private static final int THRESHOLD = 700;
     private HasText m_msg = new HasText() {
 
         @Override
@@ -117,9 +128,13 @@ public class MapTouchController implements
 
         switch (event.getTargetTouches().length()) {
             case 1: {
+
                 final Touch touch = event.getTargetTouches().get(0);
                 m_dragTracker = new DragTracker(
                         touch.getPageX(), touch.getPageY(), m_mapView.getWorldCenter());
+                // check for double-tap
+                maybeZoomIn(touch);
+                
                 maybeShowBubble(touch);
                 break;
             }
@@ -128,46 +143,23 @@ public class MapTouchController implements
         }
     }
 
-    private void maybeShowBubble(final Touch touch) {
-        ViewCoords m_vc = new ViewCoords(touch.getPageX(), touch.getPageY());
-        ViewWorker viewWorker = m_mapView.getViewport().getVpWorker();
-        WorldCoords worldCoords = viewWorker.viewToWorld(m_vc);
-        GeodeticCoords gc = m_mapView.getProjection().worldToGeodetic(worldCoords);
-
-        int level = m_mapView.getDivManager().getCurrentLevel();
-        double lat = gc.getPhi(AngleUnit.DEGREES);
-        double lng = gc.getLambda(AngleUnit.DEGREES);
-
-        m_reader.getFeatures(level, lat, lng,
-                new AsyncCallback<List<Feature>>() {
-
-                    @Override
-                    public void onSuccess(List<Feature> result) {
-                        if (result.size() > 0) {
-                            m_bubbleControl.hide();
-                            String titles = "";
-                            for (Feature feature : result) {
-                                titles += feature.getTitle() + "<br/>";
-                            }
-                            m_bubbleControl.getHtml().setHTML(titles);
-                            m_bubbleControl.show(touch.getClientX(), touch.getClientY() - 20);
-                        } else {
-                            m_bubbleControl.hide();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("failure");
-                    }
-                });
+    private void maybeZoomIn(Touch touch) {
+        if (m_firstTap) {
+            m_lastTap = System.currentTimeMillis();
+            m_firstTap = false;
+        } else {
+            if (System.currentTimeMillis() - m_lastTap < THRESHOLD) {
+                m_mapView.zoomOnPixel(touch.getPageX(), touch.getPageY(), 2);
+            }
+            m_firstTap = true;
+        }
     }
 
     @Override
     public void onTouchMove(TouchMoveEvent event) {
         m_msg.setText("tm: " + event.getTargetTouches().length());
         event.preventDefault();
-
+        m_firstTap = true; // prevent double-tap-zoom
         switch (event.getTargetTouches().length()) {
             case 1: {
                 Touch touch = event.getTargetTouches().get(0);
@@ -203,8 +195,8 @@ public class MapTouchController implements
     public void onGestureStart(GestureStartEvent event) {
         m_msg.setText("gs: " + event.toDebugString());
         event.preventDefault();
-        //
-        // m_map.animateZoom(event.getScale());
+
+        m_mapView.animateZoom(event.getScale());
     }
 
     @Override
@@ -212,12 +204,47 @@ public class MapTouchController implements
         m_msg.setText("gc: " + event.toDebugString());
         event.preventDefault();
 
-        // m_map.animateZoom(event.getScale());
+        m_mapView.animateZoom(event.getScale());
     }
 
     @Override
     public void onGestureEnd(GestureEndEvent event) {
         m_msg.setText("ge: " + event.toDebugString());
         event.preventDefault();
+    }
+
+    private void maybeShowBubble(final Touch touch) {
+        ViewCoords m_vc = new ViewCoords(touch.getPageX(), touch.getPageY());
+        ViewWorker viewWorker = m_mapView.getViewport().getVpWorker();
+        WorldCoords worldCoords = viewWorker.viewToWorld(m_vc);
+        GeodeticCoords gc = m_mapView.getProjection().worldToGeodetic(worldCoords);
+
+        int level = m_mapView.getDivManager().getCurrentLevel();
+        double lat = gc.getPhi(AngleUnit.DEGREES);
+        double lng = gc.getLambda(AngleUnit.DEGREES);
+
+        m_reader.getFeatures(level, lat, lng,
+                new AsyncCallback<List<Feature>>() {
+
+                    @Override
+                    public void onSuccess(List<Feature> result) {
+                        if (result.size() > 0) {
+                            m_bubbleControl.hide();
+                            String titles = "";
+                            for (Feature feature : result) {
+                                titles += feature.getTitle() + "<br/>";
+                            }
+                            m_bubbleControl.getHtml().setHTML(titles);
+                            m_bubbleControl.show(touch.getClientX(), touch.getClientY() - 20);
+                        } else {
+                            m_bubbleControl.hide();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Window.alert("failure");
+                    }
+                });
     }
 }
