@@ -379,6 +379,7 @@
                     </includes>
                     <excludes>
                         <exclude>**/*.html</exclude>
+                        <exclude>**/*.apt</exclude>
                     </excludes>
                     <useDefaultExcludes>true</useDefaultExcludes>
                     <encoding>UTF-8</encoding>
