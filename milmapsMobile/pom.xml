@@ -63,6 +63,10 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>gwt-mobile-webkit</id>
+            <url>http://gwt-mobile-webkit.googlecode.com/svn/repo</url>
+        </repository>
     </repositories>
 
 	<!-- List of repositories that contain the maven plugins used by this maven 
@@ -113,24 +117,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.code.gwt-mobile-webkit</groupId>
+            <artifactId>gwt-html5-geolocation</artifactId>
+            <version>0.9.5</version>
+        </dependency>
+        <dependency>
             <groupId>mil.geotransj</groupId>
             <artifactId>geotransJ</artifactId>
             <version>1.0.5</version>
             <scope>provided</scope>
         </dependency>
-		<!-- 
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-server</artifactId>
-			<version>1.5</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-			<version>1.5</version>
-		</dependency>
-		 -->
-		
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

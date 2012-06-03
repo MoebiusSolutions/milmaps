@@ -25,6 +25,7 @@
 
 	<!-- Other module inherits                                      -->
 	<inherits name="com.moesol.gwt.maps.Maps"/>
+    <inherits name="com.google.code.gwt.geolocation.Html5Geolocation" />
 
 	<set-property name="gwt.logging.popupHandler" value="DISABLED"/>
 
