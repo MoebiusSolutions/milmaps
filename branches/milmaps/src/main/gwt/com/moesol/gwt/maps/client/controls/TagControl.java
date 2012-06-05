@@ -7,6 +7,7 @@
  */
 package com.moesol.gwt.maps.client.controls;
 
+import com.google.gwt.cell.client.AbstractCell;
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,6 +18,8 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -27,12 +30,16 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.Icon;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.ViewWorker;
+import java.util.ArrayList;
 
 public class TagControl extends Composite implements Serializable {
 
@@ -56,7 +63,7 @@ public class TagControl extends Composite implements Serializable {
             super();
         }
 
-        public boolean setTag(MapView map, GeodeticCoords gc, String name) {
+        public boolean setTag(MapView map, GeodeticCoords gc, String name, String iconType) {
             if (name != null && name.length() > 1) {
                 final List<Icon> icons = m_mapView.getIconLayer().getIcons();
                 boolean bUnique = true;
@@ -72,7 +79,7 @@ public class TagControl extends Composite implements Serializable {
                     Icon icon = new Icon(2010);
                     icon.setLocation(gc);
                     //String url = "http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg";
-                    String url = "images/tag_icon.png";
+                    String url = "images/icons/" + iconType + ".jpeg";
                     icon.setIconUrl(url);
                     icon.setLabel(name);
                     Image im = icon.getImage();
@@ -90,6 +97,52 @@ public class TagControl extends Composite implements Serializable {
         }
     }
     // End of add tag dialog class ------------------------------------
+    
+    // add symbol selection dialog box
+    private class SymbolSelectionDialog extends DialogBox{
+        private SymbolSelectionDialog(final Image image, final TextBox iconName) {
+            final DialogBox me = this;
+            setText("Symbol Selection");
+            setGlassEnabled(true);
+            SymbolCell cell = new SymbolCell();
+            CellList<String> cellList = new CellList<String>(cell);
+            final SingleSelectionModel<String> selectionModel = new SingleSelectionModel<String>();
+            cellList.setSelectionModel(selectionModel);
+            selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+
+                public void onSelectionChange(SelectionChangeEvent event) {
+                    String selected = selectionModel.getSelectedObject();
+                    if (selected != null) {
+                        image.setUrl("images/icons/" + selected + ".jpeg");
+                        iconName.setText(selected);
+                        me.hide(true);
+                    }
+                }
+            });
+
+            List<String> list = new ArrayList<String>();
+            list.add("sfap-----------");
+            list.add("sffp-----------");
+            list.add("sfgpucec-------");
+            list.add("sngpuuacsa-----");
+            cellList.setRowData(0, list);
+            setWidget(cellList);
+        }
+        
+    }
+    // End symbol selection dialog box
+    static class SymbolCell extends AbstractCell<String>{
+
+        @Override
+        public void render(Context context, String value, SafeHtmlBuilder sb) {
+            sb.appendHtmlConstant("<table><tr><td>");
+            sb.appendHtmlConstant("<img src='images/icons/" + value + ".jpeg'/>");
+            sb.appendHtmlConstant("</td><td>");
+            sb.appendHtmlConstant(value);
+            sb.appendHtmlConstant("</td></tr></table>");
+        }
+
+    }
 
     // remove tag dialog class ----------------------------------
     private class RemoveTagDialog extends DialogBox {
@@ -234,6 +287,28 @@ public class TagControl extends Composite implements Serializable {
         box.setText(header);
 
         final VerticalPanel panel = new VerticalPanel();
+        // Add icon selection drop list
+        HorizontalPanel iconPanel = new HorizontalPanel();
+        final Image image = new Image("images/icons/sfap-----------.jpeg");
+        iconPanel.add(image);
+        Button button = new Button("Select Symbol");
+        iconPanel.add(button);
+        final TextBox iconName = new TextBox();
+        iconName.setVisible(false);
+        iconName.setText("sfap-----------");
+        iconPanel.add(iconName);
+        button.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                // show cell list
+                SymbolSelectionDialog symbolSelectionDialog = new SymbolSelectionDialog(image, iconName);
+                symbolSelectionDialog.getElement().getStyle().setProperty("zIndex", Integer.toString(9000));
+                symbolSelectionDialog.setPopupPosition(box.getPopupLeft(),box.getPopupTop());
+                symbolSelectionDialog.show();
+            }
+        });
+        panel.add(iconPanel);
         final TextArea ta = new TextArea();
         ta.setCharacterWidth(20);
         ta.setVisibleLines(1);
@@ -246,7 +321,7 @@ public class TagControl extends Composite implements Serializable {
             @Override
             public void onClick(ClickEvent event) {
                 m_name = ta.getText();
-                if (box.setTag(m_mapView, m_gc, m_name) == true) {
+                if (box.setTag(m_mapView, m_gc, m_name, iconName.getText()) == true) {
                     m_bTagOn = false;
                     saveTagToDisk();
                 }
