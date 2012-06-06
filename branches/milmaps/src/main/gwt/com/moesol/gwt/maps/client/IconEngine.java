@@ -37,8 +37,8 @@ public class IconEngine {
 	}
 	
 	public DivCoords getIconDivCoords( DivWorker dw, GeodeticCoords gc){
-		ViewCoords vc = m_viewWorker.geodeticToView(gc);
-		return m_viewWorker.viewToDivCoords(dw, vc);
+		WorldCoords wc = dw.geodeticToWc(gc);
+		return dw.worldToDiv(wc);
 	}
 
 	public void positionOneIcon(Icon icon, WidgetPositioner widgetPositioner, 

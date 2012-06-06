@@ -158,7 +158,7 @@ public class DivManager {
 		return null;
 	}
 	
-	private boolean noChangedInOpacityOrLevel(){
+	private boolean noChangeInOpacityOrLevel(){
 		if (m_opacity == m_oldOpacity && m_currentLevel == m_oldLevel) {
 			return true;
 		}
@@ -168,7 +168,7 @@ public class DivManager {
 	}
 	
 	public void adjustOpacity(){
-		if (noChangedInOpacityOrLevel()) {
+		if (noChangeInOpacityOrLevel()) {
 			return;
 		}
 		if (m_currentLevel == 0) {
@@ -187,10 +187,11 @@ public class DivManager {
 				//double inc = ( n == 0 ? m_opacity/(m_currentLevel+1) : m_opacity/LEVEL_RANGE);
 				m_dpArray[m_currentLevel].setOpacity(false, m_opacity);
 				for (int j = m_currentLevel-1; j >= n; j--) {
+					m_dpArray[j].setOpacity(false, m_opacity);
 					//double opacity = Math.max(0, m_opacity - (m_currentLevel-j)*inc);
-					if (divPanelExists(j)) {
-						m_dpArray[j].setOpacity(true, 0);			
-					}
+					//if (divPanelExists(j)) {
+						//m_dpArray[j].setOpacity(true, 0);			
+					//}
 				}
 			}
 		}

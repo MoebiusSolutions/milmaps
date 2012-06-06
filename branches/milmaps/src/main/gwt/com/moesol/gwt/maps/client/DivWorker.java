@@ -140,6 +140,22 @@ public class DivWorker implements ProjectionChangedHandler {
 	}
 	
 	public int worldToDivX(int wcX){
+		int tDx = wcX;
+		if (m_offsetInMcX+m_baseDims.getWidth() < wcX){
+			WorldDimension wd = m_divProj.getWorldDimension();
+			tDx -= wd.getWidth();
+			if ( m_offsetInMcX < tDx){
+				return (int) Math.rint((tDx - m_offsetInMcX));
+			}
+		}
+		tDx = wcX;
+		if (tDx < m_offsetInMcX){
+			WorldDimension wd = m_divProj.getWorldDimension();
+			tDx += wd.getWidth();
+			if (tDx <= m_offsetInMcX+m_baseDims.getWidth()){
+				return (int) Math.rint((wcX - m_offsetInMcX));
+			}
+		}
 		return (int) Math.rint((wcX - m_offsetInMcX));
 	}
 	
@@ -161,6 +177,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	public DivCoords worldToDiv( WorldCoords wc ) {
 		int dx = worldToDivX(wc.getX());
 		int dy = worldToDivY(wc.getY());
+		
 		return new DivCoords(dx,dy);
 	}
 	
@@ -246,15 +263,7 @@ public class DivWorker implements ProjectionChangedHandler {
 	 * @return WorldCoords
 	 */
 	public WorldCoords geodeticToWc(GeodeticCoords gc){
-		double degLng = gc.getLambda(AngleUnit.DEGREES);
-		double lngDist = getDegLngDistFromCenter(degLng); 
-		int deltaX = m_divProj.compWidthInPixels(0,lngDist);
-		if (lngDist < 0){
-			deltaX =  -1*deltaX;
-		}
-		int divXWc =  m_baseDims.getWidth()/2 + deltaX;
-		WorldCoords wc = m_divProj.geodeticToWorld(gc);
-		return new WorldCoords(divXWc, wc.getY());
+		return m_divProj.geodeticToWorld(gc);
 	}
 	
 	/**

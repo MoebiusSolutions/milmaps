@@ -19,6 +19,7 @@ import com.moesol.gwt.maps.client.DivCoords;
 import com.moesol.gwt.maps.client.DivManager;
 import com.moesol.gwt.maps.client.DivPanel;
 import com.moesol.gwt.maps.client.DivWorker;
+import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.IProjection;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.TileCoords;
@@ -27,6 +28,7 @@ import com.moesol.gwt.maps.client.ViewDimension;
 import com.moesol.gwt.maps.client.ViewPort;
 import com.moesol.gwt.maps.client.ViewWorker;
 import com.moesol.gwt.maps.client.WorldCoords;
+import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class MapStateDialog extends DialogBox {
 	private FlexTable table = new FlexTable();
@@ -39,15 +41,21 @@ public class MapStateDialog extends DialogBox {
 		DivWorker divWorker = divMgr.getCurrentDiv().getDivWorker();
 		ViewWorker vw = m_mapVw.getViewport().getVpWorker();
 		
-		addRow("Map Projection Scale: ", mapProj.getEquatorialScale());
 		addRow("Div Current Level: ", divMgr.getCurrentLevel() );
-		DivPanel dp = divMgr.getCurrentDiv();
-		IProjection divProj = dp.getProjection();
-		addRow("Div Projection Scale: ", divProj.getEquatorialScale());
-		//ViewPort vp = mapView.getViewport();
-		//ViewDimension vd = vp.getVpWorker().getDimension();
-		//addRow("View width: ", vd.getWidth());
-		//addRow("View height: ", vd.getHeight());
+		GeodeticCoords gc = vw.getGeoCenter();
+		double lat = gc.getPhi(AngleUnit.DEGREES);
+		double lng = gc.getLambda(AngleUnit.DEGREES);
+		addRow("View Geo Center: lat: ",lat);
+		addRow( "View Geo Center: Lng: ", lng);
+		gc = divWorker.getGeoCenter();
+		lat = gc.getPhi(AngleUnit.DEGREES);
+		lng = gc.getLambda(AngleUnit.DEGREES);
+		addRow("Div Geo Center: lat: ",lat);
+		addRow( "Div Geo Center: Lng: ", lng);
+		int offsetXWc = divWorker.getOffsetInWcX();
+		int offsetYWc = divWorker.getOffsetInWcY();
+		addRow("Div offset X in WC : ",offsetXWc);
+		addRow("Div offset Y in WC : ",offsetYWc);
 		//AbsolutePanel panel = mapView.getViewPanel();
 		//Element el = panel.getElement();
 		//int width = el.getClientWidth();
@@ -60,25 +68,6 @@ public class MapStateDialog extends DialogBox {
 		//addRow("ViewBox height: : ", vbHeight);
 		//int s = Browser.getFontPixWidth("test");
 		//addRow("Font Width: ", s);
-		WorldCoords wcVb = divMgr.getCurrentDiv().getVBOffsetWc();
-		ViewCoords vc = divMgr.getCurrentDiv().getDivTopLeft();
-		TileCoords ct = divMgr.getCurrentDiv().getCenterTile();
-		int offsetXWc = vw.getOffsetInWcX();
-		int offsetYWc = vw.getOffsetInWcY();
-		addRow("ViewOffset X in Wc: ", offsetXWc);
-		if (wcVb != null){
-			addRow("ViewBoxOffset X in Wc: ", wcVb.getX());
-		}
-		addRow("ViewBoxOffset X in Div: ", ct.getOffsetX());
-		addRow("DivOffset X in View : ", vc.getX());
-		
-		addRow("ViewOffset Y in Wc: ", offsetYWc);
-		if (wcVb != null){
-			addRow("ViewBoxOffset Y in Wc: ", wcVb.getY());	
-		}
-		addRow("ViewBoxOffset Y in Div: ", ct.getOffsetY());
-		addRow("DivOffset Y in view : ", vc.getY());
-		addSeperator();
 		
 		addButton(new Button("Close", new ClickHandler() {
 			@Override

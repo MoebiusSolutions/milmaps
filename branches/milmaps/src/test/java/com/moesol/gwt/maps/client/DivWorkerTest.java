@@ -12,6 +12,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.moesol.gwt.maps.client.units.AngleUnit;
+
 public class DivWorkerTest {
 	private DivWorker m_dw = new DivWorker();
 	private ViewWorker m_vw = new ViewWorker();
@@ -77,6 +79,14 @@ public class DivWorkerTest {
 		assertEquals(5,b.top);
 		assertEquals(522,b.right);
 		assertEquals(522,b.bottom);
+	}
+	
+	@Test
+	public void geodeticToDivTest(){
+		GeodeticCoords gc = new GeodeticCoords(90,0,AngleUnit.DEGREES);
+		WorldCoords wc = m_dw.geodeticToWc(gc);
+		DivCoords dc =  m_dw.worldToDiv(wc);
+		assertEquals(856,dc.getX());
 	}
 	
 	@Test
