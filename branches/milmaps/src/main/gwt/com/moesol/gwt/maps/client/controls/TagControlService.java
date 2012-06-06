@@ -14,7 +14,7 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 @RemoteServiceRelativePath("tagControl")
 public interface TagControlService extends RemoteService {
 
-    boolean saveTagToDisk(String name, GeodeticCoords gc);
+    boolean saveTagToDisk(String name, GeodeticCoords gc, String symbol);
 
     boolean deleteTagFromDisk(String name);
     

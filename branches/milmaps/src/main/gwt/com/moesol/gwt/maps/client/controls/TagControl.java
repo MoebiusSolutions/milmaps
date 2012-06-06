@@ -7,10 +7,11 @@
  */
 package com.moesol.gwt.maps.client.controls;
 
-import com.google.gwt.cell.client.AbstractCell;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -39,7 +40,6 @@ import com.moesol.gwt.maps.client.Icon;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.ViewWorker;
-import java.util.ArrayList;
 
 public class TagControl extends Composite implements Serializable {
 
@@ -49,7 +49,8 @@ public class TagControl extends Composite implements Serializable {
     private static final long serialVersionUID = 1L;
     private boolean m_bTagOn = false;
     private String m_name;
-    GeodeticCoords m_gc;
+    private GeodeticCoords m_gc;
+    private String m_symbol;
     MapView m_mapView;
     private AddTagDialog m_box = null;
     private int m_nameCount = 0;
@@ -63,7 +64,7 @@ public class TagControl extends Composite implements Serializable {
             super();
         }
 
-        public boolean setTag(MapView map, GeodeticCoords gc, String name, String iconType) {
+        public boolean setTag(MapView map, GeodeticCoords gc, String name, String symbol) {
             if (name != null && name.length() > 1) {
                 final List<Icon> icons = m_mapView.getIconLayer().getIcons();
                 boolean bUnique = true;
@@ -79,7 +80,7 @@ public class TagControl extends Composite implements Serializable {
                     Icon icon = new Icon(2010);
                     icon.setLocation(gc);
                     //String url = "http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg";
-                    String url = "images/icons/" + iconType + ".jpeg";
+                    String url = "images/icons/" + symbol + ".jpeg";
                     icon.setIconUrl(url);
                     icon.setLabel(name);
                     Image im = icon.getImage();
@@ -97,9 +98,10 @@ public class TagControl extends Composite implements Serializable {
         }
     }
     // End of add tag dialog class ------------------------------------
-    
+
     // add symbol selection dialog box
-    private class SymbolSelectionDialog extends DialogBox{
+    private class SymbolSelectionDialog extends DialogBox {
+
         private SymbolSelectionDialog(final Image image, final TextBox iconName) {
             final DialogBox me = this;
             setText("Symbol Selection");
@@ -110,6 +112,7 @@ public class TagControl extends Composite implements Serializable {
             cellList.setSelectionModel(selectionModel);
             selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 
+                @Override
                 public void onSelectionChange(SelectionChangeEvent event) {
                     String selected = selectionModel.getSelectedObject();
                     if (selected != null) {
@@ -128,10 +131,10 @@ public class TagControl extends Composite implements Serializable {
             cellList.setRowData(0, list);
             setWidget(cellList);
         }
-        
     }
     // End symbol selection dialog box
-    static class SymbolCell extends AbstractCell<String>{
+
+    static class SymbolCell extends AbstractCell<String> {
 
         @Override
         public void render(Context context, String value, SafeHtmlBuilder sb) {
@@ -141,7 +144,6 @@ public class TagControl extends Composite implements Serializable {
             sb.appendHtmlConstant(value);
             sb.appendHtmlConstant("</td></tr></table>");
         }
-
     }
 
     // remove tag dialog class ----------------------------------
@@ -242,7 +244,7 @@ public class TagControl extends Composite implements Serializable {
                     Icon icon = new Icon(2010);
                     icon.setLocation(tag.getGeodeticCoords());
                     //String url = "http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg";
-                    String url = "images/tag_icon.png";
+                    String url = "images/icons/" + tag.getSymbol() + ".jpeg";
                     icon.setIconUrl(url);
                     icon.setLabel(tag.getName());
                     Image im = icon.getImage();
@@ -304,7 +306,7 @@ public class TagControl extends Composite implements Serializable {
                 // show cell list
                 SymbolSelectionDialog symbolSelectionDialog = new SymbolSelectionDialog(image, iconName);
                 symbolSelectionDialog.getElement().getStyle().setProperty("zIndex", Integer.toString(9000));
-                symbolSelectionDialog.setPopupPosition(box.getPopupLeft(),box.getPopupTop());
+                symbolSelectionDialog.setPopupPosition(box.getPopupLeft(), box.getPopupTop());
                 symbolSelectionDialog.show();
             }
         });
@@ -321,7 +323,8 @@ public class TagControl extends Composite implements Serializable {
             @Override
             public void onClick(ClickEvent event) {
                 m_name = ta.getText();
-                if (box.setTag(m_mapView, m_gc, m_name, iconName.getText()) == true) {
+                m_symbol = iconName.getText();
+                if (box.setTag(m_mapView, m_gc, m_name, m_symbol) == true) {
                     m_bTagOn = false;
                     saveTagToDisk();
                 }
@@ -341,7 +344,7 @@ public class TagControl extends Composite implements Serializable {
                         public void onSuccess(Boolean result) {
                         }
                     };
-                    tagControlService.saveTagToDisk(m_name, m_gc, callback);
+                    tagControlService.saveTagToDisk(m_name, m_gc, m_symbol, callback);
                 }
             }
         };

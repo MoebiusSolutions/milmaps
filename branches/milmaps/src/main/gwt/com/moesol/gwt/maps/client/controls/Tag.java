@@ -14,10 +14,12 @@ public class Tag implements Serializable {
 
     private String mName;
     private GeodeticCoords mGeo;
+    private String mSymbol;
 
-    public Tag(String name, GeodeticCoords geo) {
+    public Tag(String name, GeodeticCoords geo, String symbol) {
         mName = name;
         mGeo = geo;
+        mSymbol = symbol;
     }
 
     public Tag() {
@@ -39,8 +41,11 @@ public class Tag implements Serializable {
         mGeo = geo;
     }
 
-    @Override
-    public String toString() {
-        return mName + ": " + mGeo;
+    public String getSymbol() {
+        return mSymbol;
+    }
+
+    public void setSymbol(String symbol) {
+        mSymbol = symbol;
     }
 }

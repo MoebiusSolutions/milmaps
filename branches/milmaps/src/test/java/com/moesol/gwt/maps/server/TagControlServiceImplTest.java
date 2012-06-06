@@ -7,16 +7,18 @@
  */
 package com.moesol.gwt.maps.server;
 
-import com.moesol.gwt.maps.client.controls.Tag;
-import org.junit.After;
-import com.moesol.gwt.maps.client.GeodeticCoords;
-import com.moesol.gwt.maps.client.units.AngleUnit;
-import com.moesol.gwt.maps.client.units.Degrees;
-
 import java.io.File;
+
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
+
+import com.moesol.gwt.maps.client.GeodeticCoords;
+import com.moesol.gwt.maps.client.controls.Tag;
+import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
 
 public class TagControlServiceImplTest {
 
@@ -57,14 +59,14 @@ public class TagControlServiceImplTest {
     public void testSaveTagToDisk() {
         System.out.println("saveTagToDisk");
         GeodeticCoords gc = new GeodeticCoords(45, -120, AngleUnit.DEGREES, 432);
+        String symbol = "sfap-----------";
         TagControlServiceImpl instance = new TagControlServiceImpl();
         boolean expResult = true;
-        boolean result = instance.saveTagToDisk(TANK, gc);
+        boolean result = instance.saveTagToDisk(TANK, gc, symbol);
         assertEquals(expResult, result);
 
         gc = Degrees.geodetic(1.001, -34.34);
-//        gc.set(-34.34, 1.001, AngleUnit.DEGREES);
-        result = instance.saveTagToDisk(SHIP, gc);
+        result = instance.saveTagToDisk(SHIP, gc, symbol);
         assertEquals(expResult, result);
         File tagDir = TagControlServiceImpl.TAG_DIRECTORY_PATH_PROVIDER.get();
         assertTrue(tagDir.exists());
@@ -74,9 +76,9 @@ public class TagControlServiceImplTest {
         assertTrue(file2.exists());
         File file3 = new File(tagDir, UNIT + ".xml");
         assertFalse(file3.exists());
-        instance.saveTagToDisk(UNIT, gc);
+        instance.saveTagToDisk(UNIT, gc, symbol);
         assertTrue(file3.exists());
-        assertFalse(instance.saveTagToDisk(UNIT, gc));
+        assertFalse(instance.saveTagToDisk(UNIT, gc, symbol));
     }
 
     /**
