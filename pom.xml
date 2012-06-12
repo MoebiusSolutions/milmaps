@@ -1,20 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
-    <groupId>com.moesol.maps</groupId>
-    <artifactId>milmaps-parent</artifactId>
-    <version>1.3-SNAPSHOT</version>
-    <name>milmaps-parent</name>
-    <packaging>pom</packaging>
-    
-    <modules>
-        <module>milmaps</module>
-        <module>mgrs-grid</module>
-        <module>milmapsCache</module>
-    </modules>
+    <parent>
+        <groupId>com.moesol.maps</groupId>
+        <artifactId>milmaps-parent</artifactId>
+        <version>1.2.13</version>
+    </parent>
+    <artifactId>milmaps</artifactId>
+    <packaging>jar</packaging>
+    <version>2.0.0-SNAPSHOT</version>
+    <name>milmaps</name>
+	<!-- Description and URL are critical to "maven site" generation -->
+    <url>https://www.moesol.com/software-docs/releases/${project.artifactId}/${project.version}</url>
+    <description>GWT-based mapping system. Displays map tiles from Worldwind or ArcGIS tile servers. Displays very limited form of KML, enough to get MIL-STD-2525 icons displayed. </description>
+
+    <properties>
+        <gwt.style>OBF</gwt.style>
+		<!-- <gwt.style>PRETTY</gwt.style> -->
+		<!-- gwt.compiler.skip -->
+        <gwt.version>2.4.0</gwt.version>
+    </properties>
+
+	<!-- Location of trunk source code This is used by "maven deploy". Note 
+		that this may contain a maven property (${project.artifactId}) when it is 
+		first added to the pom, but the maven deploy mechanism will automatically 
+		substitude the properties after the module is deployed once. This may be 
+		interpreted as maven bug. -->
+    <scm>
+        <developerConnection>scm:svn:https://milmaps.googlecode.com/svn/trunk/milmaps</developerConnection>
+    </scm>
+
+	<!-- Software license This is used by "maven site" -->
+    <licenses>
+        <license>
+            <name>GNU General Public License Version 3</name>
+            <url>https://www.moesol.com/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>This ensures that all software source code and any modifications are made
+                available to the end users.
+            </comments>
+        </license>
+    </licenses>
+
+	<!-- Comany info This is used by "maven site" -->
+    <organization>
+        <name>Moebius Solutions, Inc.</name>
+        <url>http://www.moesol.com</url>
+    </organization>
+
+	<!-- List of repositories that contain the maven dependencies required to 
+		build this module -->
+    <repositories>
+        <repository>
+            <id>Moebius Artifactory</id>
+            <layout>default</layout>
+            <url>https://artifactory.moesol.com/artifactory/repo/</url>
+        </repository>
+        <repository>
+            <id>Moebius Artifactory SNAPSHOTS</id>
+            <layout>default</layout>
+            <url>https://artifactory.moesol.com/artifactory/libs-snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>moesol.artifactory</id>
+            <url>https://artifactory.moesol.com/artifactory/libs-releases-local</url>
+        </repository>
+        <repository>
+            <id>sonatype</id>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+	<!-- List of repositories that contain the maven plugins used by this maven 
+		build configuration (pom.xml) -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>Moebius Artifactory</id>
+            <layout>default</layout>
+            <url>https://artifactory.moesol.com/artifactory/repo/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
 	<!-- List of repositories used when deploying this software -->
     <distributionManagement>
@@ -35,16 +110,295 @@
         </site>
     </distributionManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-servlet</artifactId>
+            <version>${gwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <version>${gwt.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <version>${gwt.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt.inject</groupId>
+            <artifactId>gin</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>mil.geotransj</groupId>
+            <artifactId>geotransJ</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>1.5</version>
+        </dependency>
+        <dependency>      
+            <groupId>org.timepedia.exporter</groupId>      
+            <artifactId>gwtexporter</artifactId>      
+            <version>2.1.1</version>      
+            <scope>provided</scope>    
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>1.4.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>1.4.10</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <reporting>
+        <plugins>
+
+			<!-- Unit testing reports -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+
+			<!-- This generates reports for "maven site" This plugin is included explicitly 
+				in order to reduce the number of reports (clutter) in the "maven site" output. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.2</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>license</report>
+							<!-- <report>index</report> <report>dependencies</report> <report>project-team</report> 
+								<report>mailing-list</report> <report>cim</report> <report>issue-tracking</report> 
+								<report>scm</report> -->
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+			<!-- Generate javadocs This included in order to generate javadocs for 
+				"maven site" -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.7</version>
+                <reportSets>
+                    <reportSet>
+                        <id>html</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+					<!-- Unit testing javadocs disabled -->
+					<!-- <reportSet> <id>test-html</id> <reports> <report>test-javadoc</report> 
+						</reports> </reportSet> -->
+                </reportSets>
+            </plugin>
+
+			<!-- This defines the location where tagged releases should be stored 
+				when running "mvn release:prepare". The subdirectory ("tag name") is entered 
+				by the user when running the command. -->
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.0</version>
+                <configuration>
+                    <tagBase>https://svn.moesol.com/svn/opensource/tags</tagBase>
+					<!-- This should be enabled in order to generate a clean pom.xml for 
+						release (without comments or variables), but there's a known maven bug. http://jira.codehaus.org/browse/MRELEASE-491 -->
+					<!-- <generateReleasePoms>true</generateReleasePoms> -->
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+    </reporting>
+
     <build>
+        <finalName>milmaps</finalName>
+        <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+        <sourceDirectory>src/main/gwt</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/gwt</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/gwt</directory>
+            </testResource>
+        </testResources>
+
+        <extensions>
+			<!-- This extension allows "maven site:deploy" to deploy to a svn target. 
+				In other words, with this plugin "/project/distributionManagement/site/url" 
+				can be of type "svn:". -->
+            <extension>
+                <groupId>org.jvnet.wagon-svn</groupId>
+                <artifactId>wagon-svn</artifactId>
+                <version>1.9</version>
+            </extension>
+        </extensions>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
+            </plugin>
+
+			<!-- (At least) this version of the site plugin is required in order to 
+				support the maven-project-info-reports-plugin configuration above. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>2.1.1</version>
+            </plugin>
+
+			<!-- Copy pom.xml to "maven site" output This is included so that our 
+				webserver may identify the module at runtime and potentially generate additional 
+				documentation. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <id>id.pre-site</id>
+                        <phase>pre-site</phase>
+						<!-- Other site-related phases include: <phase>site</phase> <phase>post-site</phase> 
+							<phase>site-deploy</phase> -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo>Copying pom.xml to site</echo>
+                                <copy file="pom.xml" todir="target/site/" overwrite="true" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.9</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <version>2.4.0</version>
+                <executions>
+                    <execution>
+                        <id>gwtCompile</id>
+                        <configuration>
+                            <sourceDirectory>src/main/gwt</sourceDirectory>
+                            <disableCastChecking>true</disableCastChecking>
+                            <disableClassMetadata>true</disableClassMetadata>
+                            <modules>
+								<!-- module>com.moesol.gwt.maps.MapJsApi</module -->
+								<!--module>com.moesol.gwt.maps.Test</module-->
+								<!--module>com.moesol.gwt.maps.MCOP</module-->
+                                <module>com.moesol.gwt.milmap.Milmap</module>
+								<!--  <module>com.moesol.gwt.xmilmaps.Xmilmaps</module>  -->
+                            </modules>
+                        </configuration>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <runTarget>milmap/Milmap.html</runTarget>
+                    <debugPort>8001</debugPort>
+                    <debugSuspend>false</debugSuspend>
+                    <noServer>true</noServer>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>.gwt-cache</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>com.google.code.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <basedir>${basedir}</basedir>
+                    <header>${basedir}/license-header.txt</header>
+                    <includes>
+                        <include>src/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*.html</exclude>
+                        <exclude>**/*.apt</exclude>
+                    </excludes>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
