@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    (c) Copyright, Moebius Solutions, Inc., 2012
+
+                           All Rights Reserved
+
+    LICENSE: GPLv3
+
+-->
+<TileMapService version="1.0.0" services="http://localhost:8080/geowebcache">
+  <Title>Tile Map Service</Title>
+  <Abstract>A Tile Map Service served by GeoWebCache</Abstract>
+  <TileMaps>
+    <TileMap
+      title="tiger-ny"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger-ny@EPSG:900913@png" />
+    <TileMap
+      title="tiger-ny"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger-ny@EPSG:900913@jpeg" />
+    <TileMap
+      title="tiger-ny"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger-ny@EPSG:4326@png" />
+    <TileMap
+      title="tiger-ny"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger-ny@EPSG:4326@jpeg" />
+
+    <TileMap
+      title="A sample ArcGrid file"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Arc_Sample@EPSG:900913@png" />
+    <TileMap
+      title="A sample ArcGrid file"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Arc_Sample@EPSG:900913@jpeg" />
+    <TileMap
+      title="A sample ArcGrid file"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Arc_Sample@EPSG:4326@png" />
+    <TileMap
+      title="A sample ArcGrid file"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Arc_Sample@EPSG:4326@jpeg" />
+    <TileMap
+      title="Manhattan (NY) landmarks"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:poly_landmarks@EPSG:900913@png" />
+    <TileMap
+      title="Manhattan (NY) landmarks"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:poly_landmarks@EPSG:900913@jpeg" />
+    <TileMap
+      title="Manhattan (NY) landmarks"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:poly_landmarks@EPSG:4326@png" />
+    <TileMap
+      title="Manhattan (NY) landmarks"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:poly_landmarks@EPSG:4326@jpeg" />
+    <TileMap
+      title="spearfish"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/spearfish@spearfish:EPSG:26713@png" />
+
+    <TileMap
+      title="spearfish"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/spearfish@spearfish:EPSG:26713@jpeg" />
+    <TileMap
+      title="spearfish"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/spearfish@EPSG:900913@png" />
+    <TileMap
+      title="spearfish"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/spearfish@EPSG:900913@jpeg" />
+    <TileMap
+      title="spearfish"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/spearfish@EPSG:4326@png" />
+    <TileMap
+      title="spearfish"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/spearfish@EPSG:4326@jpeg" />
+    <TileMap
+      title="World rectangle"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:giant_polygon@EPSG:900913@png" />
+    <TileMap
+      title="World rectangle"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:giant_polygon@EPSG:900913@jpeg" />
+    <TileMap
+      title="World rectangle"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:giant_polygon@EPSG:4326@png" />
+    <TileMap
+      title="World rectangle"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:giant_polygon@EPSG:4326@jpeg" />
+
+    <TileMap
+      title="BMNG"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/BMNG@EPSG:4326@png" />
+    <TileMap
+      title="BMNG"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/BMNG@EPSG:4326@jpeg" />
+    <TileMap
+      title="BMNG"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/BMNG@EPSG:900913@png" />
+    <TileMap
+      title="BMNG"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/BMNG@EPSG:900913@jpeg" />
+    <TileMap
+      title="Spearfish roads"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:roads@sf:roads:EPSG:26713@png" />
+    <TileMap
+      title="Spearfish roads"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:roads@sf:roads:EPSG:26713@jpeg" />
+    <TileMap
+      title="Spearfish roads"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:roads@EPSG:900913@png" />
+    <TileMap
+      title="Spearfish roads"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:roads@EPSG:900913@jpeg" />
+    <TileMap
+      title="Spearfish roads"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:roads@EPSG:4326@png" />
+
+    <TileMap
+      title="Spearfish roads"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:roads@EPSG:4326@jpeg" />
+    <TileMap
+      title="Manhattan (NY) roads"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:tiger_roads@EPSG:900913@png" />
+    <TileMap
+      title="Manhattan (NY) roads"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:tiger_roads@EPSG:900913@jpeg" />
+    <TileMap
+      title="Manhattan (NY) roads"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:tiger_roads@EPSG:4326@png" />
+    <TileMap
+      title="Manhattan (NY) roads"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:tiger_roads@EPSG:4326@jpeg" />
+    <TileMap
+      title="North America sample imagery"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Img_Sample@EPSG:900913@png" />
+    <TileMap
+      title="North America sample imagery"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Img_Sample@EPSG:900913@jpeg" />
+    <TileMap
+      title="North America sample imagery"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Img_Sample@EPSG:4326@png" />
+    <TileMap
+      title="North America sample imagery"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Img_Sample@EPSG:4326@jpeg" />
+
+    <TileMap
+      title="Spearfish archeological sites"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:archsites@EPSG:900913@png" />
+    <TileMap
+      title="Spearfish archeological sites"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:archsites@EPSG:900913@jpeg" />
+    <TileMap
+      title="Spearfish archeological sites"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:archsites@EPSG:4326@png" />
+    <TileMap
+      title="Spearfish archeological sites"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:archsites@EPSG:4326@jpeg" />
+    <TileMap
+      title="Spearfish archeological sites"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:archsites@sf:archsites:EPSG:26713@png" />
+    <TileMap
+      title="Spearfish archeological sites"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:archsites@sf:archsites:EPSG:26713@jpeg" />
+    <TileMap
+      title="Spearfish restricted areas"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:restricted@EPSG:900913@png" />
+    <TileMap
+      title="Spearfish restricted areas"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:restricted@EPSG:900913@jpeg" />
+    <TileMap
+      title="Spearfish restricted areas"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:restricted@EPSG:4326@png" />
+
+    <TileMap
+      title="Spearfish restricted areas"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:restricted@EPSG:4326@jpeg" />
+    <TileMap
+      title="Spearfish restricted areas"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:restricted@sf:restricted:EPSG:26713@png" />
+    <TileMap
+      title="Spearfish restricted areas"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:restricted@sf:restricted:EPSG:26713@jpeg" />
+    <TileMap
+      title="sfdem is a Tagged Image File Format with Geographic information"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:sfdem@sf:sfdem:EPSG:26713@png" />
+    <TileMap
+      title="sfdem is a Tagged Image File Format with Geographic information"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:sfdem@sf:sfdem:EPSG:26713@jpeg" />
+    <TileMap
+      title="sfdem is a Tagged Image File Format with Geographic information"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:sfdem@EPSG:900913@png" />
+    <TileMap
+      title="sfdem is a Tagged Image File Format with Geographic information"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:sfdem@EPSG:900913@jpeg" />
+    <TileMap
+      title="sfdem is a Tagged Image File Format with Geographic information"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:sfdem@EPSG:4326@png" />
+    <TileMap
+      title="sfdem is a Tagged Image File Format with Geographic information"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:sfdem@EPSG:4326@jpeg" />
+
+    <TileMap
+      title="tasmania"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tasmania@EPSG:900913@png" />
+    <TileMap
+      title="tasmania"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tasmania@EPSG:900913@jpeg" />
+    <TileMap
+      title="tasmania"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tasmania@EPSG:4326@png" />
+    <TileMap
+      title="tasmania"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tasmania@EPSG:4326@jpeg" />
+    <TileMap
+      title="Tasmania roads"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_roads@EPSG:900913@png" />
+    <TileMap
+      title="Tasmania roads"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_roads@EPSG:900913@jpeg" />
+    <TileMap
+      title="Tasmania roads"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_roads@EPSG:4326@png" />
+    <TileMap
+      title="Tasmania roads"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_roads@EPSG:4326@jpeg" />
+    <TileMap
+      title="Tasmania cities"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_cities@EPSG:900913@png" />
+
+    <TileMap
+      title="Tasmania cities"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_cities@EPSG:900913@jpeg" />
+    <TileMap
+      title="Tasmania cities"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_cities@EPSG:4326@png" />
+    <TileMap
+      title="Tasmania cities"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_cities@EPSG:4326@jpeg" />
+    <TileMap
+      title="Tasmania water bodies"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_water_bodies@EPSG:900913@png" />
+    <TileMap
+      title="Tasmania water bodies"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_water_bodies@EPSG:900913@jpeg" />
+    <TileMap
+      title="Tasmania water bodies"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_water_bodies@EPSG:4326@png" />
+    <TileMap
+      title="Tasmania water bodies"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_water_bodies@EPSG:4326@jpeg" />
+    <TileMap
+      title="Tasmania state boundaries"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_state_boundaries@EPSG:900913@png" />
+    <TileMap
+      title="Tasmania state boundaries"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_state_boundaries@EPSG:900913@jpeg" />
+
+    <TileMap
+      title="Tasmania state boundaries"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_state_boundaries@EPSG:4326@png" />
+    <TileMap
+      title="Tasmania state boundaries"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:tasmania_state_boundaries@EPSG:4326@jpeg" />
+    <TileMap
+      title="Spearfish streams"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:streams@sf:streams:EPSG:26713@png" />
+    <TileMap
+      title="Spearfish streams"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:streams@sf:streams:EPSG:26713@jpeg" />
+    <TileMap
+      title="Spearfish streams"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:streams@EPSG:900913@png" />
+    <TileMap
+      title="Spearfish streams"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:streams@EPSG:900913@jpeg" />
+    <TileMap
+      title="Spearfish streams"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:streams@EPSG:4326@png" />
+    <TileMap
+      title="Spearfish streams"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:streams@EPSG:4326@jpeg" />
+    <TileMap
+      title="Pk50095 is a A raster file accompanied by a spatial data file"
+      srs="EPSG:32633"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Pk50095@nurc:Pk50095:EPSG:32633@png" />
+
+    <TileMap
+      title="Pk50095 is a A raster file accompanied by a spatial data file"
+      srs="EPSG:32633"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Pk50095@nurc:Pk50095:EPSG:32633@jpeg" />
+    <TileMap
+      title="Pk50095 is a A raster file accompanied by a spatial data file"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Pk50095@EPSG:900913@png" />
+    <TileMap
+      title="Pk50095 is a A raster file accompanied by a spatial data file"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Pk50095@EPSG:900913@jpeg" />
+    <TileMap
+      title="Pk50095 is a A raster file accompanied by a spatial data file"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Pk50095@EPSG:4326@png" />
+    <TileMap
+      title="Pk50095 is a A raster file accompanied by a spatial data file"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:Pk50095@EPSG:4326@jpeg" />
+    <TileMap
+      title="Sample PNG mosaic"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:mosaic@EPSG:900913@png" />
+    <TileMap
+      title="Sample PNG mosaic"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:mosaic@EPSG:900913@jpeg" />
+    <TileMap
+      title="Sample PNG mosaic"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:mosaic@EPSG:4326@png" />
+    <TileMap
+      title="Sample PNG mosaic"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/nurc:mosaic@EPSG:4326@jpeg" />
+
+    <TileMap
+      title="Spearfish bug locations"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:bugsites@EPSG:900913@png" />
+    <TileMap
+      title="Spearfish bug locations"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:bugsites@EPSG:900913@jpeg" />
+    <TileMap
+      title="Spearfish bug locations"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:bugsites@EPSG:4326@png" />
+    <TileMap
+      title="Spearfish bug locations"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:bugsites@EPSG:4326@jpeg" />
+    <TileMap
+      title="Spearfish bug locations"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:bugsites@sf:bugsites:EPSG:26713@png" />
+    <TileMap
+      title="Spearfish bug locations"
+      srs="EPSG:26713"
+      profile="local"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/sf:bugsites@sf:bugsites:EPSG:26713@jpeg" />
+    <TileMap
+      title="USA Population"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:states@EPSG:900913@png" />
+    <TileMap
+      title="USA Population"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:states@EPSG:900913@jpeg" />
+    <TileMap
+      title="USA Population"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:states@EPSG:4326@png" />
+
+    <TileMap
+      title="USA Population"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/topp:states@EPSG:4326@jpeg" />
+    <TileMap
+      title="Manhattan (NY) points of interest"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:poi@EPSG:900913@png" />
+    <TileMap
+      title="Manhattan (NY) points of interest"
+      srs="EPSG:900913"
+      profile="global-mercator"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:poi@EPSG:900913@jpeg" />
+    <TileMap
+      title="Manhattan (NY) points of interest"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:poi@EPSG:4326@png" />
+    <TileMap
+      title="Manhattan (NY) points of interest"
+      srs="EPSG:4326"
+      profile="global-geodetic"
+      href="http://localhost:8080/geowebcache/service/tms/1.0.0/tiger:poi@EPSG:4326@jpeg" />
+  </TileMaps>
+</TileMapService>
+
