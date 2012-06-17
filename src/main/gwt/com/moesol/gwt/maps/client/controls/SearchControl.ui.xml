@@ -1,0 +1,28 @@
+<!--
+
+    (c) Copyright, Moebius Solutions, Inc., 2012
+
+                           All Rights Reserved
+
+    LICENSE: GPLv3
+
+-->
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:mapc="urn:import:com.moesol.gwt.maps.client.controls">
+	<ui:with type="com.moesol.gwt.maps.client.MapsClientBundle"
+		field="res"></ui:with>
+	<g:HTMLPanel styleName="map-SearchControl" ui:field="mainPanel">
+		<div style="position:relative;height:100%;width:100%">
+			<!-- HACK: handle the fact that IE thinks that mousing over a transparent area of an element constitutes a mouse out -->
+			<div style="z-index:1;position:absolute;background-color:#888;opacity:0.01;filter: alpha(opacity =1);height:100%;width:100%"></div>
+			<div style="z-index:2;position:absolute">
+				<mapc:MapButton addStyleNames="map-SearchControlButton" ui:field="button" />
+				<div class="map-SearchControlInput">
+					<g:TextBox styleName="map-SearchControlTextBox" ui:field="input" />
+				</div>
+			</div>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 
