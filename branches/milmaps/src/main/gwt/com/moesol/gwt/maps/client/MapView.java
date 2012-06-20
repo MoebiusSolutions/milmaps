@@ -9,7 +9,13 @@ package com.moesol.gwt.maps.client;
 
 import java.util.Date;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.HasChangeHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.EventListener;
@@ -17,18 +23,15 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
 import com.moesol.gwt.maps.client.units.MapScale;
 import com.moesol.gwt.maps.shared.BoundingBox;
 
-public class MapView extends Composite implements IMapView, SourcesChangeEvents {
+public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	private static final long ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
 	
 	private final AbsolutePanel m_viewPanel = new AbsolutePanel();
@@ -44,7 +47,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	private final IFlyTo m_flyToEngine = new FlyToSimple(this);
 	private final IconEngine m_iconEngine = new IconEngine(this);
 	private DeclutterEngine m_declutterEngine; // null unless needed
-	private final ChangeListenerCollection m_changeListeners = new ChangeListenerCollection();
+	//private final ChangeListenerCollection m_changeListeners = new ChangeListenerCollection();
 
 	private final IconLayer m_iconLayer = new IconLayer();
 
@@ -81,6 +84,10 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		initialize(defaultCenter);
 	}
 
+	 private void fireChange() {
+		 NativeEvent nativeEvent = Document.get().createChangeEvent();
+		 ChangeEvent.fireNativeEvent(nativeEvent, this);
+	 }
 	
 	private void initialize(GeodeticCoords defaultCenter) {
 		ProjectionValues.readCookies(m_mapProj);
@@ -437,7 +444,7 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		}
 		
 		m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
-		m_changeListeners.fireChange(this);
+		fireChange();
 		
 // TODO move to idle handling...
 //		recordCenter();
@@ -496,15 +503,6 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 		m_focusPanel.setPixelSize(width, height);
 	}
 
-	@Override
-	public void addChangeListener(ChangeListener listener) {
-		m_changeListeners.add(listener);
-	}
-
-	@Override
-	public void removeChangeListener(ChangeListener listener) {
-		m_changeListeners.remove(listener);
-	}
 	
 	// /////////////////////////////////////////////////////////////////
 	// / User action calls /////////////////////////////////////////////
@@ -669,6 +667,11 @@ public class MapView extends Composite implements IMapView, SourcesChangeEvents 
 	
 	public WidgetPositioner getWidgetPositioner() {
 		return m_divMgr.getWidgetPositioner();
+	}
+	
+	@Override
+	public HandlerRegistration addChangeHandler(ChangeHandler handler) {
+		return addDomHandler(handler, ChangeEvent.getType());
 	}
 
 //        private boolean iconsHaveMoved() {

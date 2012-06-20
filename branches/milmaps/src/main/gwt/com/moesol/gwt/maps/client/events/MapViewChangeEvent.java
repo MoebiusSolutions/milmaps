@@ -1,5 +1,5 @@
 /**
- * (c) Copyright, Moebius Solutions, Inc., 2012
+b * (c) Copyright, Moebius Solutions, Inc., 2012
  *
  *                        All Rights Reserved
  *
@@ -40,8 +40,7 @@ public class MapViewChangeEvent
 		return TYPE;
 	}
 
-	public static HandlerRegistration register(EventBus eventBus,
-			Handler handler)
+	public static HandlerRegistration register(EventBus eventBus, Handler handler)
 	{
 		return eventBus.addHandler(TYPE, handler);
 	}

@@ -85,6 +85,11 @@
 	z-index: 10000;
 }
 
+.map-OverlayEditor {
+	margin-top: 2px;
+	z-index: 10000;
+}
+
 .map-SmallButton {
 	height: 15px;
 	width: 15px;
@@ -139,6 +144,18 @@
 }
 
 .map-TagControlPositionOnButton {
+	background-position: 15px -240px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+.map-OverlayContolOffButton {
+	background-position: 15px -255px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+.map-OverlayContolOnButton {
 	background-position: 15px -240px;
 	float: right;
 	margin: 4px 2px 4px 0px;
@@ -269,4 +286,12 @@
 
 .map-DimmerControl2BrightenButtonOver {
 	background-image: url('images/map_light_o.png');
+}
+
+/*Graphics styles*/
+.milmaps-canvas {
+	position: absolute;
+	backgroundColor: transparent;
+	/*border: 1px solid blue;*/
+	z-index: 4000;
 }

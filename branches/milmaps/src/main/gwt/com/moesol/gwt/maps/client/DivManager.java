@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.moesol.gwt.maps.client.graphics.CanvasTool;
 
 public class DivManager {
 	private static int LEVEL_RANGE = 1;
@@ -27,6 +28,7 @@ public class DivManager {
 	private List<LayerSet> m_layerSets = new ArrayList<LayerSet>();
 	private DivDimensions m_lastResize = new DivDimensions();
 	
+	CanvasTool m_canvasTool = null;
 	public DivManager(IMapView map){
 		m_map = map;
 	}
@@ -36,7 +38,10 @@ public class DivManager {
 			m_dpArray[i] = new DivPanel(i);
 			lp.add(m_dpArray[i]);
 		}
-		
+		//int width = m_map.getViewport().getWidth();
+		//int height = m_map.getViewport().getHeight();
+		m_canvasTool = new CanvasTool();//(width,height);
+		lp.add(m_canvasTool.canvas());
 		// we will initialize the projection, but the projection
 		// may change when the layer sets are loaded.
 		initProjections( 512, 512,180,180,IProjection.T.CylEquiDist);
@@ -324,6 +329,10 @@ public class DivManager {
 
 	public WidgetPositioner getWidgetPositioner() {
 		return getCurrentDiv().getWidgetPositioner();
+	}
+	
+	public CanvasTool getCanvasTool(){
+		return m_canvasTool;
 	}
 }
 

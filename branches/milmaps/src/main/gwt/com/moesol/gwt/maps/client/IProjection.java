@@ -12,7 +12,7 @@ import com.moesol.gwt.maps.client.events.ProjectionChangedHandler;
 import com.moesol.gwt.maps.shared.BoundingBox;
 
 public interface IProjection {
-	public static double EARTH_RADIUS_MEERS = 6378137; // meters
+	public static double EARTH_RADIUS_METERS = 6378137; // meters
 	
 	public enum T {
 		CylEquiDist, Mercator

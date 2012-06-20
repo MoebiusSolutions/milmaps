@@ -5,11 +5,11 @@
  *
  * LICENSE: GPLv3
  */
-package com.moesol.gwt.maps.shared;
+package com.moesol.gwt.maps.client.algorithms;
 
 import com.moesol.gwt.maps.client.WorldCoords;
 
-public class LineSegment {
+public class LineSeg {
 	WorldCoords m_p;
 	WorldCoords m_q;
 	
@@ -17,8 +17,8 @@ public class LineSegment {
 		private WorldCoords m_p;
 		private WorldCoords m_q;
 		
-		public LineSegment build() {
-			return new LineSegment(m_p, m_q);
+		public LineSeg build() {
+			return new LineSeg(m_p, m_q);
 		}
 		public Builder setP(WorldCoords p) { m_p = p; return this; }
 		public Builder setQ(WorldCoords q) { m_q = q; return this; }
@@ -35,12 +35,12 @@ public class LineSegment {
 		return new Builder();
 	}
 	
-	public LineSegment() {
+	public LineSeg() {
 		m_p = null;
 		m_q = null;
 	}	
 
-	public LineSegment(WorldCoords p, WorldCoords q) {
+	public LineSeg(WorldCoords p, WorldCoords q) {
 		m_p = p;
 		m_q = q;
 	}

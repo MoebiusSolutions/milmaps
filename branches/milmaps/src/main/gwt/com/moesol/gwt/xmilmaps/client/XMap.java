@@ -15,6 +15,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.Dictionary;
@@ -155,12 +157,17 @@ public class XMap implements Exportable {
 				m_dockPanel.setHeight("100%");
 				m_dockPanel.setWidth("100%");
 			}});
-		
-		m_mapView.addChangeListener(new ChangeListener() {
+		m_mapView.addChangeHandler(new ChangeHandler() {
 			@Override
-			public void onChange(Widget sender) {
+			public void onChange(ChangeEvent event) {
 				mapChanged();
-			}});
+			}	
+		});
+		//m_mapView.addChangeListener(new ChangeListener() {
+		//	@Override
+		//	public void onChange(Widget sender) {
+		//		mapChanged();
+		//	}});
 
 		HorizontalPanel bar = new HorizontalPanel();
 		bar.add(resizeMap);

@@ -18,6 +18,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.controls.HoverEvent;
 import com.moesol.gwt.maps.client.controls.HoverHandler;
 import com.moesol.gwt.maps.client.events.MapViewChangeEvent;
+import com.moesol.gwt.maps.client.graphics.IActiveTool;
+import com.moesol.gwt.maps.client.graphics.IShapeEditor;
 import com.moesol.gwt.maps.client.stats.MapStateDialog;
 import com.moesol.gwt.maps.client.stats.StatsDialogBox;
 import com.moesol.gwt.maps.client.touch.*;
@@ -31,7 +33,7 @@ import com.moesol.gwt.maps.client.touch.TouchStartEvent;
 import com.moesol.gwt.maps.client.touch.TouchStartHandler;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 public class MapController implements 
-	HasHandlers,
+	HasHandlers, IActiveTool,
 	MouseMoveHandler, MouseDownHandler, MouseUpHandler, MouseOutHandler,
 	MouseWheelHandler, EventPreview, KeyDownHandler, KeyUpHandler, KeyPressHandler,
 	TouchStartHandler, TouchMoveHandler, TouchEndHandler, TouchCancelHandler
@@ -47,8 +49,7 @@ public class MapController implements
 	private int m_keyVelocity = 1;
 	private boolean m_bUseDragTracker = true;
 	WorldCoords m_wc = new WorldCoords();
-	
-	//CircleTool m_cir;
+	IShapeEditor m_editor = null;
 	
 	private HasText m_msg = new HasText() {
 		@Override
@@ -77,17 +78,20 @@ public class MapController implements
 	public MapController(MapView map, final EventBus eventBus) {
 		m_map = map;
 		m_eventBus = eventBus;
-
+		
 		if (!s_previewInstalled) {
 			s_previewInstalled = true;
 			DOM.addEventPreview(this);
 		}
 	}
+	
+	@Override
+	public void setEditor(IShapeEditor shapeEditor) {
+		m_editor = shapeEditor;
+	}
 
 	public MapController withMsg(HasText msg) {
 		m_msg = msg;
-		//CanvasTool ct = m_map.getDivManager().getCanvasTool();
-		//m_cir = new CircleTool(ct);
 		return this;
 	}
 
@@ -111,14 +115,21 @@ public class MapController implements
 		m_bUseDragTracker = bUseDragTracker;
 	}
 
-
 	@Override
 	public void onMouseDown(MouseDownEvent event) {
+		if (m_editor != null){
+			if( m_editor.handleMouseDown(event)){
+				//if (m_editor.needsUpdate()) {
+					//m_editor.done();
+					//m_editor.updateCanvas();
+				//}
+				return;
+			}
+		}
 		Widget sender = (Widget) event.getSource();
+		DOM.setCapture(sender.getElement());
 		int x = event.getX();
 		int y = event.getY();
-		
-		DOM.setCapture(sender.getElement());
 		boolean bMouseDown = m_doubleClickTracker.onMouseDown(x, y);
 		if (bMouseDown) {
 			// If the browser will not generate double-click event previews
@@ -126,12 +137,18 @@ public class MapController implements
 			// See event preview code.
 			// zoomAndCenter(x, y, true);
 			m_dragTracker = null;
-		} else if( m_bUseDragTracker ){
+		} else if(m_bUseDragTracker){
 			m_dragTracker = new DragTracker(x, y, m_map.getWorldCenter());
 		}
 	}
 	@Override
 	public void onMouseMove(MouseMoveEvent event) {
+
+		if (m_editor != null){
+			if (m_editor.handleMouseMove(event)){
+				return;
+			}
+		}
 		int x = event.getX();
 		int y = event.getY();
 		m_moveClientX = event.getClientX();
@@ -143,18 +160,27 @@ public class MapController implements
 
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
+		if (m_editor != null){
+			if ( m_editor.handleMouseOut(event)){
+				return;
+			}
+		}
 		m_hoverTimer.cancel();
 	}
 
 	@Override
 	public void onMouseUp(MouseUpEvent event) {
-		m_hoverTimer.cancel();
+		if (m_editor != null){
+			if (m_editor.handleMouseUp(event)){
+				return;
+			}
+		}
 		Widget sender = (Widget) event.getSource();
-		int x = event.getX();
-		int y = event.getY();
 		DOM.releaseCapture(sender.getElement());
-
+		m_hoverTimer.cancel();
 		try {
+			int x = event.getX();
+			int y = event.getY();
 			maybeDragMap(x, y);
 			if (m_dragTracker != null) {
 				m_map.dumbUpdateView();
@@ -406,5 +432,4 @@ public class MapController implements
 		};
 		m_viewChangeTimer.schedule(minEventFireIntervalMillis);
 	}
-
 }

@@ -28,7 +28,7 @@ public class TiledImageLayer {
 	private final Panel m_nonDimLayoutPanel;
 	private final TileImageCache m_tileImageMgr = new TileImageCache(m_tileImageEngineListener);
 	
-	private final double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_MEERS;
+	private final double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_METERS;
 	private final double MeterPerDeg  = EarthCirMeters/360.0;
 	
 	private TileCoords[] m_tileCoords;

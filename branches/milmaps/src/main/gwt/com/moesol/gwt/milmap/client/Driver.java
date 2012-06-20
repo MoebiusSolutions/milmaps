@@ -12,11 +12,14 @@ import java.util.List;
 
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
+import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.place.shared.Place;
@@ -64,6 +67,7 @@ import com.moesol.gwt.maps.client.controls.SearchControl;
 import com.moesol.gwt.maps.client.controls.TagControl;
 import com.moesol.gwt.maps.client.controls.TextControl;
 import com.moesol.gwt.maps.client.gin.MapsGinjector;
+import com.moesol.gwt.maps.client.overlayeditor.OverlayEditor;
 import com.moesol.gwt.maps.client.place.MapsActivityMapper;
 import com.moesol.gwt.maps.client.place.MapsPlaceHistoryMapper;
 import com.moesol.gwt.maps.client.stats.StatsDialogBox;
@@ -87,6 +91,7 @@ public class Driver implements EntryPoint {
 	private final Grid m_tiles = new Grid(TILE_DY, TILE_DX);
 	private SuggestBox m_levelBox;
 	TextControl m_textControl = null;
+	OverlayEditor m_ovlEditor = null;
 	
 	private Place defaultPlace = new TileMapServicePlace(new String[]{"BMNG@EPSG:4326@png"}, 0, 0);
 	
@@ -230,11 +235,18 @@ public class Driver implements EntryPoint {
 		oracle.add("3");
 		m_levelBox = new SuggestBox();
 		
-		m_map.addChangeListener(new ChangeListener() {
+		m_map.addChangeHandler(new ChangeHandler() {
 			@Override
-			public void onChange(Widget sender) {
+			public void onChange(ChangeEvent event) {
 				mapChanged();
-			}});
+			}	
+		});
+		
+		//m_map.addChangeHandler(new ChangeHandler() {
+		//	@Override
+		//	public void onChange(Widget sender) {
+		//		mapChanged();
+		//	}});
 		
 		
 
@@ -291,6 +303,12 @@ public class Driver implements EntryPoint {
 		lp.add(tag);
 		lp.setWidgetRightWidth(tag,10, Style.Unit.PX, 35, Style.Unit.PX);
 		lp.setWidgetBottomHeight(tag, 60, Style.Unit.PX, 22, Style.Unit.PX);
+		
+		// Map OverlayEditor control
+		OverlayEditor editor = new OverlayEditor(m_map, true);
+		lp.add(editor);
+		lp.setWidgetRightWidth(editor,10, Style.Unit.PX, 35, Style.Unit.PX);
+		lp.setWidgetBottomHeight(editor, 84, Style.Unit.PX, 22, Style.Unit.PX);
 		
 		SearchControl flyToControl = new SearchControl();
 		lp.add(flyToControl);
@@ -415,6 +433,8 @@ public class Driver implements EntryPoint {
 	protected void mapChanged() {
 		m_centerLabel.setText(m_map.getCenter() +"," + 
 				MapScale.forScale(m_map.getProjection().getEquatorialScale()));
+		
+		//Window.alert("mapChanged");
 		String s = m_map.getDivManager().getCurrentDiv().getBestLayerData();
 		if(s != null && m_textControl != null){
 			m_textControl.setText(s);
@@ -425,7 +445,6 @@ public class Driver implements EntryPoint {
 		int h = Window.getClientHeight();
 		int w = Window.getClientWidth();
 		m_map.resizeMap(w - 50, h - 50);
-		
 		updateTileInfo();
 	}
 

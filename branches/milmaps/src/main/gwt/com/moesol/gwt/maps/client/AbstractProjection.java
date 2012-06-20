@@ -24,7 +24,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	protected IProjection.T m_projType;
 	protected final WorldDimension m_wdSize = new WorldDimension(); // Whole world
 																  // map size
-	public double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_MEERS;
+	public double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_METERS;
 	public double MeterPerDeg  = EarthCirMeters/360.0;
 	
 	protected int m_scrnDpi = DOTS_PER_INCH;   // screen dot per inch
@@ -215,7 +215,7 @@ public abstract class AbstractProjection implements IProjection, HasHandlers {
 	public String toString() {
 		return "AbstractProjection ["
 				+ "m_projType=" + m_projType + ", m_wdSize=" + m_wdSize
-				+ ", EarthRadius=" + IProjection.EARTH_RADIUS_MEERS + ", EarthCirMeters="
+				+ ", EarthRadius=" + IProjection.EARTH_RADIUS_METERS + ", EarthCirMeters="
 				+ EarthCirMeters + ", MeterPerDeg=" + MeterPerDeg
 				+ ", m_scrnDpi=" + m_scrnDpi + ", m_scrnMpp=" + m_scrnMpp
 				+ ", m_eqScale=" + m_eqScale + ", m_origMapWidthSize="
