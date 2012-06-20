@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    (c) Copyright, Moebius Solutions, Inc., 2012
+
+                           All Rights Reserved
+
+    LICENSE: GPLv3
+
+-->
+<module rename-to='mapsample'>
+	<!-- Inherit the core Web Toolkit stuff. -->
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.http.HTTP" />
+	<inherits name="com.google.gwt.xml.XML" />
+
+	<inherits name="com.moesol.gwt.maps.Maps" />
+
+	<!-- <stylesheet src='milmaps-stylesheet.css' /> -->
+	<servlet path='/wwLayerConfigs'
+		class="com.moesol.gwt.maps.server.WorldwindLayerConfigs" />
+	<servlet path='/tms'
+		class="com.moesol.gwt.maps.server.tms.RemoteTileMapServiceImpl" />
+
+	<!-- Specify the app entry point class. -->
+	<entry-point class='com.moesol.mapsample.client.MapSample' />
+
+	<!-- Specify the paths for translatable code -->
+	<source path='client' />
+	<source path='shared' />
+
+</module>
