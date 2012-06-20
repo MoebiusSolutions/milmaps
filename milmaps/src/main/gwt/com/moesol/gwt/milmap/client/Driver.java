@@ -12,7 +12,6 @@ import java.util.List;
 
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
-import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -28,7 +27,6 @@ import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
@@ -40,7 +38,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.AbstractProjection;
 import com.moesol.gwt.maps.client.DeclutterEngine;
 import com.moesol.gwt.maps.client.DivManager;
@@ -64,7 +61,6 @@ import com.moesol.gwt.maps.client.controls.MapDimmerControl;
 import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
 import com.moesol.gwt.maps.client.controls.PositionControl;
 import com.moesol.gwt.maps.client.controls.SearchControl;
-import com.moesol.gwt.maps.client.controls.TagControl;
 import com.moesol.gwt.maps.client.controls.TextControl;
 import com.moesol.gwt.maps.client.gin.MapsGinjector;
 import com.moesol.gwt.maps.client.overlayeditor.OverlayEditor;
@@ -297,12 +293,6 @@ public class Driver implements EntryPoint {
 		lp.add(dimmer);
 		lp.setWidgetRightWidth(dimmer,10, Style.Unit.PX, 60, Style.Unit.PX);
 		lp.setWidgetBottomHeight(dimmer, 10, Style.Unit.PX, 34, Style.Unit.PX);
-		
-		// Map tag control
-		TagControl tag = new TagControl(m_map, true);
-		lp.add(tag);
-		lp.setWidgetRightWidth(tag,10, Style.Unit.PX, 35, Style.Unit.PX);
-		lp.setWidgetBottomHeight(tag, 60, Style.Unit.PX, 22, Style.Unit.PX);
 		
 		// Map OverlayEditor control
 		OverlayEditor editor = new OverlayEditor(m_map, true);
