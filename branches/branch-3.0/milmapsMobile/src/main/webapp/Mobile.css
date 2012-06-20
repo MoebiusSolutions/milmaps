@@ -1,0 +1,15 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
+.toolButton {
+	width: 55px;
+	height: 55px;
+    z-index: 5000;
+}
+* {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);  
+}
