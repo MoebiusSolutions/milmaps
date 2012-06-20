@@ -83,16 +83,17 @@ public class SelectShape implements IShapeTool{
 			tool = createShapeEditTool(selectedShape);
 			m_editor.setShapeTool(tool);
 			tool.hilite();
+			for (IShape obj : m_objs) {
+				if ( obj != selectedShape ){
+					obj.selected(false).render(context);
+				}
+			} 
 		}
 		else{
 			m_editor.setShapeTool(null);
-		}
-		for (IShape obj : m_objs) {
-			if ( obj != selectedShape ){
-				obj.selected(false);
-				obj.render(context);
-			}
-		}   	
+			m_editor.deselectAllShapes();
+			m_editor.clearCanvas().renderObjects();
+		}  	
     }
 	
 	@Override

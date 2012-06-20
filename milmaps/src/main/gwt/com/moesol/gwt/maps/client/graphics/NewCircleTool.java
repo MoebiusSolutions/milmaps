@@ -71,7 +71,7 @@ public class NewCircleTool implements IShapeTool {
 				int y = event.getY();
 				m_circle.getRadiusAnchorTool().handleMouseMove(event);
 				m_radHandle.setCenter(x, y);
-				m_editor.updateCanvas(true,true);
+				m_editor.clearCanvas().renderObjects();
 				drawCircle();
 				return true;
 			}
@@ -102,7 +102,7 @@ public class NewCircleTool implements IShapeTool {
 		IShapeTool tool = new EditCircleTool(m_editor);
 		tool.setShape((IShape)m_circle);
 		m_editor.setShapeTool(tool);
-		m_editor.updateCanvas(false,true);
+		m_editor.renderObjects();
 		drawCircle();
 		m_circle = null;
 		return true;

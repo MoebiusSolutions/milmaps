@@ -21,7 +21,6 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.IProjection;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
-import com.moesol.gwt.maps.client.ViewDimension;
 import com.moesol.gwt.maps.client.ViewWorker;
 import com.moesol.gwt.maps.client.WorldCoords;
 
@@ -57,26 +56,6 @@ public class ShapeEditor implements IShapeEditor, ICoordConverter {
 		}
 	}
 	
-	private void refreshCanvas(boolean erase, boolean show){
-		// TODO we may want to remove the check for empty.
-		if(erase || show){
-			checkForException();
-			Context2d context = m_canvas.canvas().getContext2d();
-			if(erase){
-				int w = m_canvas.canvas().getOffsetWidth();
-				int h = m_canvas.canvas().getOffsetHeight();
-				context.clearRect(0, 0, w, h);
-			}
-			if(show){
-				for (IShape obj : m_objs){
-					if(obj.isSelected() == false){
-						obj.render(context);
-					}
-				}
-			}
-		}
-	}
-	
 	@Override
 	public CanvasTool getCanvasTool() {
 		return m_canvas;
@@ -90,10 +69,10 @@ public class ShapeEditor implements IShapeEditor, ICoordConverter {
 	
 	@Override
 	public void setShapeTool(IShapeTool shape) {
-		if(shape != null && shape.getType() != "SelectTool"){
-			deselectAllShapes();
-		}
-		m_shapeTool= shape;
+		//if(shape != null && shape.getType() != "SelectTool"){
+		//	deselectAllShapes();
+		//}
+		m_shapeTool = shape;
 	}
 	
 	@Override
@@ -144,8 +123,25 @@ public class ShapeEditor implements IShapeEditor, ICoordConverter {
 	}
 	
 	@Override
-	public void updateCanvas(boolean erase, boolean show) {
-		refreshCanvas(erase,show);
+	public IShapeEditor clearCanvas() {
+		checkForException();
+		Context2d context = m_canvas.canvas().getContext2d();
+		int w = m_canvas.canvas().getOffsetWidth();
+		int h = m_canvas.canvas().getOffsetHeight();
+		context.clearRect(0, 0, w, h);
+		return this;
+	}
+
+	@Override
+	public IShapeEditor renderObjects() {
+		checkForException();
+		Context2d context = m_canvas.canvas().getContext2d();
+		for (IShape obj : m_objs){
+			if(obj.isSelected() == false){
+				obj.render(context);
+			}
+		}
+		return this;
 	}
 	
 	@Override

@@ -17,10 +17,10 @@ public interface IShape {
     public abstract String id();
     // public abstract whichHandle(); ????
     public abstract boolean touchesCoordinates();
-    public abstract void selected(boolean selected);
+    public abstract IShape selected(boolean selected);
+    public abstract IShape render(Context2d context);
+    public abstract IShape erase(Context2d context);
     public abstract boolean isSelected();
-    public abstract void render(Context2d context);
-    public abstract void erase(Context2d context);
     public abstract boolean needsUpdate();
     public abstract boolean positionTouches(GeodeticCoords position);
 	IAnchorTool getAnchorByPosition(GeodeticCoords position);
