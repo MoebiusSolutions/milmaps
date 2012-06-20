@@ -24,5 +24,6 @@ public interface IShapeEditor extends IHandlerTool{
     public abstract IShape findById(String id);
     public abstract ICoordConverter getCoordinateConverter();
     public abstract boolean needsUpdate();
-    public abstract void updateCanvas(boolean erase, boolean show);
+    public abstract IShapeEditor clearCanvas();
+    public abstract IShapeEditor renderObjects();
 }

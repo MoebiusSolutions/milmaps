@@ -68,6 +68,11 @@ public class EditCircleTool implements IShapeTool{
 		m_mouseDown = true;
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
 		m_anchorTool = m_circle.getAnchorByPosition(gc);
+		if(m_anchorTool == null){
+			m_circle.selected(false);
+			m_editor.clearCanvas().renderObjects();
+			m_editor.setShapeTool(new SelectShape(m_editor));
+		}
 		return true;
 	}
 
@@ -76,7 +81,7 @@ public class EditCircleTool implements IShapeTool{
 		if (m_mouseDown == true){
 			if (m_anchorTool != null){
 				m_anchorTool.handleMouseMove(event);
-				m_editor.updateCanvas(true,true);
+				m_editor.clearCanvas().renderObjects();
 				return draw(true);
 			}
 		}
@@ -89,7 +94,7 @@ public class EditCircleTool implements IShapeTool{
 		if (m_anchorTool == null){
 			return false;
 		}	
-		m_editor.updateCanvas(false,true);
+		m_editor.renderObjects();
 		return m_anchorTool.handleMouseUp(event);
 	}
 

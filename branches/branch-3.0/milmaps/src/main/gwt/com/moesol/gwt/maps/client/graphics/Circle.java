@@ -275,23 +275,26 @@ public class Circle implements IShape {
 	}
 
 	@Override
-	public void selected(boolean selected) {
+	public IShape selected(boolean selected) {
 		m_bSeletected = selected;
+		return this;
+	}
+
+	@Override
+	public IShape render(Context2d ct) {
+		draw(ct);
+		return this;
+	}
+
+	@Override
+	public IShape erase(Context2d ct) {
+		_erase(ct);
+		return this;
 	}
 	
 	@Override
 	public boolean isSelected() {
 		return m_bSeletected;
-	}
-
-	@Override
-	public void render(Context2d ct) {
-		draw(ct);
-	}
-
-	@Override
-	public void erase(Context2d ct) {
-		_erase(ct);
 	}
 
 	@Override
