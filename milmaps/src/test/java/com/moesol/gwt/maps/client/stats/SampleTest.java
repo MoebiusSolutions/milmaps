@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client.stats;
 
 import static org.junit.Assert.*;
@@ -8,7 +15,9 @@ public class SampleTest {
 
 	@Test
 	public void testCallTree() {
+		Sample.ROOT.getChildren().clear();
 		Sample.MAP_UPDATE_VIEW.beginSample();
+		// Do work.
 		Sample.MAP_UPDATE_VIEW.endSample();
 		
 		assertEquals(1, Sample.ROOT.getChildren().size());

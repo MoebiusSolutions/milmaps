@@ -1,4 +1,14 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -7,28 +17,44 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * @see MapView.addLayer
  */
 public class LayerSet implements IsSerializable {
+	private String m_styleName = "moesol-MapTile";
+    private String m_id;
 	private String m_server;
 	private String m_data = "";
 	private int m_skipLevels = 0;
 	private String m_urlPattern = "{server}?T={data}&L={level}&X={x}&Y={y}";
 	private boolean m_active = true; // If set to false engine will not render.
-	private boolean m_zeroTop;
-	private boolean m_alwaysDraw = false;
-	private boolean m_useToScale = true;
+	private boolean m_tiled = true;
+	private boolean m_dimmable = true;
+	private boolean m_zeroTop = false;
+	private boolean m_alwaysDraw = false; 
 	private boolean m_autoRefreshOnTimer = false;
-	private int m_epsg = 4326;
-	private int m_minLevel = -20;
+	private String m_srs = "EPSG:4326";
+	private int m_minLevel = 0;
 	private int m_maxLevel = 20;
 	private int m_zIndex = 4;
 	private int m_startLevel = 0;
 
-	private int m_dx = 512; // cell width in pixels
-	private int m_dy = 512; // cell height in pixels
+	private int m_origPixWidth = 512; // cell width in pixels
+	private int m_origPixHeight = 512; // cell height in pixels
+
 	//private double m_degWidth = 180.0; // default, but note that world wind uses 36.0
 	//private double m_degHeight = 180.0;
 	private double m_startLevelTileWidthInDeg = 180.0;
 	private double m_startLevelTileHeightInDeg = 180.0;
-	
+	private Map<String, Object> m_properties;
+
+	public String getStyleName() {
+		return m_styleName;
+	}
+	public void setStyleName(String styleName) {
+		m_styleName = styleName;
+	}
+	public LayerSet withStyleName(String styleName) {
+		setStyleName(styleName);
+		return this;
+	}
+
 	public double getStartLevelTileWidthInDeg() {
 		return m_startLevelTileWidthInDeg;
 	}
@@ -51,16 +77,17 @@ public class LayerSet implements IsSerializable {
 		m_startLevelTileHeightInDeg = degHeight;
 	}
 	
-	public int getEpsg() {
-		return m_epsg;
+	
+	public String getSrs() {
+		return m_srs;
 	}
 
-	public void setEpsg(int epsg) {
-		m_epsg = epsg;
+	public void setSrs(String srs) {
+		m_srs = srs;
 	}
 	
-	public LayerSet withEpsg(int epsg) {
-		setEpsg(epsg);
+	public LayerSet withSrs(String srs) {
+		setSrs(srs);
 		return this;
 	}
 
@@ -72,15 +99,7 @@ public class LayerSet implements IsSerializable {
 	public void setStartLevel(int level) {
 		m_startLevel = level;
 	}
-	
-	public void setUseToScale( boolean flag ){
-		m_useToScale = flag;
-	}
-	
-	public boolean useToScale(){
-		return m_useToScale;
-	}
-	
+
 	public void setZIndex(int index) {
 		m_zIndex = index;
 	}
@@ -123,6 +142,19 @@ public class LayerSet implements IsSerializable {
 		m_data = data;
 		return this;
 	}
+    
+    public String  getId() {
+        return m_id;
+    }
+    
+    public void setId(String id) {
+        m_id = id;
+    }
+    
+    public LayerSet withId(String id) {
+        m_id = id;
+        return this;
+    }
 
 	public String getServer() {
 		return m_server;
@@ -175,6 +207,36 @@ public class LayerSet implements IsSerializable {
 	}
 	public LayerSet withActive(boolean active) {
 		setActive(active); return this;
+	}
+	
+	/**
+	 * return true if each layer requires multiple tiles
+	 * @return
+	 */
+	public boolean isTiled() {
+		return m_tiled;
+	}
+	public void setTiled(boolean t) {
+		m_tiled = t;
+	}
+	public LayerSet withTiled(boolean t) {
+		setTiled(t);
+		return this;
+	}
+	
+	/**
+	 * return true if each layer requires multiple tiles
+	 * @return
+	 */
+	public boolean isDimmable() {
+		return m_dimmable;
+	}
+	public void setDimmable(boolean d) {
+		m_dimmable = d;
+	}
+	public LayerSet withDimmable(boolean d) {
+		setDimmable(d);
+		return this;
 	}
 
 	/**
@@ -232,13 +294,13 @@ public class LayerSet implements IsSerializable {
 	 * @return pixel width of tiles in this layer set.
 	 */
 	public int getPixelWidth() {
-		return m_dx;
+		return m_origPixWidth;
 	}
 	public void setPixelWidth(int dx) {
-		m_dx = dx;
+		m_origPixWidth = dx;
 	}
 	public LayerSet withPixelWidth(int dx) {
-		m_dx = dx;
+		m_origPixWidth = dx;
 		return this;
 	}
 
@@ -246,15 +308,16 @@ public class LayerSet implements IsSerializable {
 	 * @return pixel height of tiles in this layer set.
 	 */
 	public int getPixelHeight() {
-		return m_dy;
+		return m_origPixHeight;
 	}
 	public void setPixelHeight(int dy) {
-		m_dy = dy;
+		m_origPixHeight = dy;
 	}
 	public LayerSet withPixelHeight(int dy) {
-		m_dy = dy;
+		m_origPixHeight = dy;
 		return this;
 	}
+	
 
 	/**
 	 * @return true if this layer set should be refreshed periodically. For
@@ -298,11 +361,6 @@ public class LayerSet implements IsSerializable {
 		return this;
 	}
 
-	public LayerSet withUseToScale(boolean useToScale) {
-		setUseToScale(useToScale);
-		return this;
-	}
-
 	public LayerSet withStartLevel(int startLevel) {
 		setStartLevel(startLevel);
 		return this;
@@ -341,6 +399,42 @@ public class LayerSet implements IsSerializable {
 	}
 	public LayerSet withMaxLevel(int l) {
 		setMaxLevel(l); return this;
+	}
+	
+	/**
+	 * @return Custom properties map for this layer set. Lazy created if null.
+	 * These properties are used in the URL pattern. There are some predefine
+	 * property names that will get ignored:
+	 * <ul>
+	 * <li>"server" = layerSet.getServer()
+	 * <li>"data" = layerSet.getData()
+	 * <li>"level" - level being requested
+	 * <li>"srs" = layerSet.getSrs()
+	 * <li>"imgSize" = layerSet.getPixelWidth()
+	 * <li>"width" - width of WMS request
+	 * <li>"height" - height of WMS request
+	 * <li>"x" - column of tile being requested
+	 * <li>"y" - row of tile being requested
+	 * <li>"bbox" - bounding box of WMS request
+	 * <li>"quakKey" -MS virtual earth style quad key tile reference
+	 * <li>"quad" - Google style quad tile reference
+	 * </ul>
+	 * <p>Suggest use of a prefix to avoid future collisions.
+	 * Example "my.property" = "world", URL pattern of "hello {my.property}" would
+	 * result in a URL of "hello world".
+	 */
+	public Map<String, Object> getProperties() {
+		if (m_properties == null) {
+			m_properties = new HashMap<String, Object>();
+		}
+		return m_properties;
+	}
+	public void setProperties(Map<String, Object> properties) {
+		m_properties = properties;
+	}
+	public LayerSet withProperties(Map<String, Object> properties) {
+		setProperties(properties);
+		return this;
 	}
 
 }

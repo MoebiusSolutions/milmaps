@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client.stats;
 
 import java.util.HashSet;
@@ -8,9 +15,10 @@ import com.moesol.gwt.maps.client.WallClock;
 public enum Sample {
 	ROOT,
 	MAP_UPDATE_VIEW,
-	MAP_PRE_UPDATE_VIEW,
+	MAP_FULL_UPDATE,
+	MAP_PARTIAL_UPDATE,
 	BEST_LAYER,
-	MAP_POSITION_ICONS,
+	DIV_POSITION_ICONS,
 	DECLUTTER_LABELS,
 	INCREMENTAL_DECLUTTER,
 	ARRANGE_TILES,

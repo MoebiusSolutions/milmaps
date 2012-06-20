@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import java.util.ArrayList;
@@ -5,7 +12,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
 
 public class MapJsApi implements EntryPoint {
@@ -44,7 +50,7 @@ public class MapJsApi implements EntryPoint {
 
 	public static MapView newMapView(String id) {
 		RootPanel root = RootPanel.get(id);
-		MapView map = new MapView(Projection.T.CylEquiDist);
+		MapView map = new MapView(new CylEquiDistProj());
 //		map.addLayers(getWorldWindLayerSets());
 		root.add(map);
 //		map.updateView();

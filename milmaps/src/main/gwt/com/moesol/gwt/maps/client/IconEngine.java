@@ -1,109 +1,84 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.moesol.gwt.maps.client.IProjection.ZoomFlag;
 import com.moesol.gwt.maps.client.stats.Sample;
 
 public class IconEngine {
 	private final IMapView m_mapView;
-	private final WidgetPositioner widgetPositioner;
+	private final ViewWorker m_viewWorker;
+	//private final DivManager m_divMgr;
+
 	
 	public IconEngine(IMapView mv) {
 		m_mapView = mv;
-		widgetPositioner = mv.getWidgetPositioner();
+		m_viewWorker = m_mapView.getViewport().getVpWorker();
+		//m_divMgr = m_mapView.getDivManager();
 	}
 
-	// RFH: drawIcons is basically the same as positionIcons with extra scale,
-	// offsetX, offsetY
-	// If animation just called doUpdateView then drawIcons could be removed.
-	public void drawIcons(double scale, double offsetX, double offsetY) {
-		IProjection projection = m_mapView.getProjection();
-		IProjection tempProj = m_mapView.getTempProjection();
-
-		ZoomFlag flag = projection.getZoomFlag();
-		double val = (flag == ZoomFlag.IN ? projection.getPrevScale()
-				: projection.getScale());
-		tempProj.setScale(val);
-
-		List<Icon> icons = m_mapView.getIconLayer().getIcons();
-		for (Icon icon : icons) {
-			drawIcon(icon, scale, offsetX, offsetY);
-		}
-	}
-
-	public void positionIcons() {
-		Sample.MAP_POSITION_ICONS.beginSample();
+	public void positionIcons(WidgetPositioner widgetPositioner, DivWorker divWorker) {
+		Sample.DIV_POSITION_ICONS.beginSample();
 		
 		List<Icon> icons = m_mapView.getIconLayer().getIcons();
 		for (Icon icon : icons) {
-			positionOneIcon(icon);
+			positionOneIcon(icon, widgetPositioner, divWorker);
 		}
 		
-		Sample.MAP_POSITION_ICONS.endSample();
+		Sample.DIV_POSITION_ICONS.endSample();
+	}
+	
+	public DivCoords getIconDivCoords( DivWorker dw, GeodeticCoords gc){
+		WorldCoords wc = dw.geodeticToWc(gc);
+		return dw.worldToDiv(wc);
 	}
 
-	// RFH: drawIcon is basically the same as positionOneIcon with extra scale,
-	// offsetX, offsetY
-	// If animation just called doUpdateView then drawIcon could be removed.
-	private void drawIcon(Icon icon, double scale, double offsetX, double offsetY) {
-		IProjection tempProj = m_mapView.getTempProjection();
-		ViewPort viewPort = m_mapView.getViewport();
-		
-		WorldCoords wc = tempProj.geodeticToWorld(icon.getLocation());
-		ViewCoords vc = viewPort.worldToView(wc, false);
-		
-		int baseX = (int) (scale * vc.getX() - offsetX);
-		int baseY = (int) (scale * vc.getY() - offsetY);
+	public void positionOneIcon(Icon icon, WidgetPositioner widgetPositioner, 
+														    DivWorker divWorker) {
+		DivCoords dc = getIconDivCoords(divWorker, icon.getLocation());
 		
 		Image image = icon.getImage();
 		if (image != null) {
 			widgetPositioner.place(image, 
-					baseX + icon.getIconOffset().getX(), 
-					baseY + icon.getIconOffset().getY());
+					dc.getX() + icon.getIconOffset().getX(), 
+					dc.getY() + icon.getIconOffset().getY(), 
+					icon.getZIndex());
 		}
 		
 		Label label = icon.getLabel();
 		if (label != null) {
+			// We may want to move this block of code
+			//int width = 0;
+			//int height = 0;
+			//if (label.getOffsetWidth() > 0) {
+			//	width = label.getOffsetWidth();
+			//	height = label.getOffsetHeight();
+			//}
+			//else if (label.getText().length() > 0) {
+			//	width = (int)(label.getText().length()*CharWidthInPixels +0.5);
+			//	height = CharHeightInPixels;
+			//}
+			//// End of block
 			widgetPositioner.place(label, 
-					baseX + icon.getDeclutterOffset().getX(), 
-					baseY + icon.getDeclutterOffset().getY());
-		}
-
-		Image leader = icon.getLabelLeaderImage();
-		if (leader != null) {
-			widgetPositioner.place(leader, 
-					baseX - DeclutterEngine.LEADER_IMAGE_WIDTH / 2, 
-					baseY - DeclutterEngine.LEADER_IMAGE_HEIGHT / 2);
-		}
-	}
-
-	public void positionOneIcon(Icon icon) {
-		IProjection projection = m_mapView.getProjection();
-		WorldCoords wc = projection.geodeticToWorld(icon.getLocation());
-		ViewCoords vc = m_mapView.getViewport().worldToView(wc, true);
-		
-		Image image = icon.getImage();
-		if (image != null) {
-			widgetPositioner.place(image, 
-					vc.getX() + icon.getIconOffset().getX(), 
-					vc.getY() + icon.getIconOffset().getY());
-		}
-		
-		Label label = icon.getLabel();
-		if (label != null) {
-			widgetPositioner.place(label, 
-					vc.getX() + icon.getDeclutterOffset().getX(), 
-					vc.getY() + icon.getDeclutterOffset().getY());
+					dc.getX() + icon.getDeclutterOffset().getX(), 
+					dc.getY() + icon.getDeclutterOffset().getY(),
+					icon.getZIndex() );
 		}
 		
 		Image leader = icon.getLabelLeaderImage();
 		if (leader != null) {
 			widgetPositioner.place(leader, 
-					vc.getX() - DeclutterEngine.LEADER_IMAGE_WIDTH / 2, 
-					vc.getY() - DeclutterEngine.LEADER_IMAGE_HEIGHT / 2);
+					dc.getX() - DeclutterEngine.LEADER_IMAGE_WIDTH / 2, 
+					dc.getY() - DeclutterEngine.LEADER_IMAGE_HEIGHT / 2,
+					icon.getZIndex());
 		}
 	}
 

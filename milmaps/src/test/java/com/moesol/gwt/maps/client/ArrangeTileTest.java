@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 
@@ -21,8 +28,10 @@ public class ArrangeTileTest {
 			}
 		}
 	};
-	private IProjection m_proj = new CylEquiDistProj( 512, 180, 180);
-	private ViewPort m_VP = new ViewPort();
+	private IProjection m_proj = new CylEquiDistProj();// 512, 180, 180);
+	private ViewPort m_vp = new ViewPort();
+	private TileBuilder m_tb = new TileBuilder();
+	DivWorker m_divWorker = new DivWorker();
 	
 	private final double EarthCirMeters  = 2.0*Math.PI*6378137;
 	private final double MeterPerDeg  = EarthCirMeters/360.0;
@@ -34,9 +43,15 @@ public class ArrangeTileTest {
 	int m_tilePixWidth  = 512;
 	int m_tilePixHeight = 512;
 	
-	int m_dpi = 75;
+	int m_dpi = AbstractProjection.DOTS_PER_INCH;
 
-	private GeodeticCoords m_geo = new GeodeticCoords();
+	public ArrangeTileTest(){
+		m_vp.setDivWorker(m_divWorker);
+		m_tb.setProjection(m_proj);
+		m_tb.setDivWorker(m_divWorker);
+		m_divWorker.setProjection(m_proj);
+	}
+	
 	
 	protected void compareTileCoords(TileCoords[] c, TileCoords[] d ){
 		int cn = c.length;
@@ -45,12 +60,14 @@ public class ArrangeTileTest {
 		for ( int i = 0; i < cn; i++ ){
 			TileCoords tc = c[i];
 			TileCoords td = d[i];
-			assertEquals(tc.getX(), td.getX());
-			assertEquals(tc.getY(), td.getY());
-			assertEquals(tc.getOffsetX(), td.getOffsetX());
-			assertEquals(tc.getOffsetY(), td.getOffsetY());
-			assertEquals(tc.getDrawTileWidth(),td.getDrawTileWidth());
-			assertEquals(tc.getDrawTileWidth(),td.getDrawTileWidth());				
+			if ( tc != null && td != null ){
+				assertEquals(tc.getX(), td.getX());
+				assertEquals(tc.getY(), td.getY());
+				assertEquals(tc.getOffsetX(), td.getOffsetX());
+				assertEquals(tc.getOffsetY(), td.getOffsetY());
+				assertEquals(tc.getDrawTileWidth(),td.getDrawTileWidth());
+				assertEquals(tc.getDrawTileWidth(),td.getDrawTileWidth());	
+			}
 		}	
 	}
 	
@@ -75,45 +92,26 @@ public class ArrangeTileTest {
 		assertEquals(c.getOffsetY(), offsetY);
 	}
 	
-	
+
 	@Test
 	public void testArrangeTiles(){
-		m_VP.setProjection(m_proj);
-		m_VP.setSize(2400,1200);
+		m_vp.setProjection(m_proj);
+		m_vp.setSize(600,400);
+		m_tb.setMapViewWorker(m_vp.getVpWorker());
 		for ( int j = 0; j < 3; j++ ){
 		    LayerSet ls = createLayerSet(j);
-		    m_geo = Degrees.geodetic(0, 0);
-			m_proj.setViewGeoCenter(m_geo);
+		    GeodeticCoords geo = Degrees.geodetic(0, 0);
+			//m_proj.setViewGeoCenter(m_geo);
 			for ( int level = 0; level < 3; level++){
 				double factor = ( level< 1 ? 1 : 2 );
 				m_proj.zoomByFactor(factor);
 				double lsScale = findScale(m_dpi, level, ls);
-				TileCoords[] tc = m_VP.arrangeTiles(ls, lsScale, level);
+				TileCoords[] tc = m_tb.arrangeTiles(level, ls, lsScale);
 				compareTileCoords( tc, tc );
 			}
 		}
 	}
-	
-	@Test
-	public void testFindTile(){
-		m_VP.setProjection(m_proj);
-		m_VP.setSize(600,400);
-		m_geo = Degrees.geodetic(0, 0);
-		for ( int j = 0; j < 3; j++ ){
-		    LayerSet ls = createLayerSet(j);
-		    int tileSize = ls.getPixelWidth();
-		    double degWidth = ls.getStartLevelTileWidthInDeg();
-		    double degHeight = ls.getStartLevelTileHeightInDeg();
-			m_proj.initialize( tileSize, degWidth, degHeight );
-			m_proj.setViewGeoCenter(m_geo);
-			for ( int level = 0; level < 1; level++){
-				double factor = ( level< 1 ? 1 : 2 );
-				m_proj.zoomByFactor(factor);
-				TileCoords tc = m_VP.findTile(ls, level, m_geo);
-				compareTileCoord( tc, level, j);
-			}
-		}
-	}
+
 	
 	@Test
 	public void testQuadkey(){
@@ -151,7 +149,7 @@ public class ArrangeTileTest {
 				for ( int y = 0; y < count; y++ ){
 					tc.setX(x);
 					tc.setY(y);
-					String url = tc.makeTileURL( ls, level, x+y);
+					String url = tc.makeTileURL( null, ls, level, x+y);
 					String expectedStr = getExpectedUrl( x, y );
 					assertEquals( expectedStr, url );
 				}
@@ -186,7 +184,7 @@ public class ArrangeTileTest {
 			ls.setServer("http://TestServer"); 
 			ls.setData("cylendrical");
 			ls.setUrlPattern("{server}/{data}/MapServer/tile/{level}/{y}/{x}");
-       	    ls.setEpsg(4326);
+       	    ls.setSrs("EPSG:4326");
        	    ls.setZeroTop(true);
        	    ls.setAutoRefreshOnTimer(false);
 			ls.setStartLevelTileHeightInDeg(90);
@@ -199,7 +197,7 @@ public class ArrangeTileTest {
 			ls.setServer("http://bv.moesol.com/rpf-ww-server"); 
 			ls.setData("BMNG (Shaded %2B Bathymetry) Tiled - 5.2004");
 			ls.setUrlPattern("{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}");
-       	    ls.setEpsg(4326);
+			ls.setSrs("EPSG:4326");
        	    ls.setZeroTop(false);
        	    ls.setAutoRefreshOnTimer(false);
 			ls.setStartLevelTileHeightInDeg(36);

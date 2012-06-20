@@ -1,9 +1,17 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RequiresResize;
+import com.moesol.gwt.maps.client.graphics.CanvasTool;
 
 /**
  * Puts the MapView into a panel so that the map will fill the
@@ -13,9 +21,11 @@ public class MapPanel extends Composite implements RequiresResize {
 	private final MapView m_mapView;
 	private int lastWidth = 0;
 	private int lastHeight = 0;
+	private CanvasTool m_canvas;
 	
 	public MapPanel(MapView mapView) {
 		m_mapView = mapView;
+		m_canvas = mapView.getDivManager().getCanvasTool();
 		initWidget(m_mapView);
 		
 		// IE7 blows, just periodically sync...
@@ -50,14 +60,17 @@ public class MapPanel extends Composite implements RequiresResize {
 		}
 		
 		m_mapView.resizeMap(width, height);
-		m_mapView.updateView();
-		
+		m_canvas.setSize(width, height);
 		lastWidth = width;
 		lastHeight = height;
 	}
 
 	public MapView getMapView() {
 		return m_mapView;
+	}
+	
+	public void setCanvas(CanvasTool ct){
+		m_canvas = ct;
 	}
 
 }

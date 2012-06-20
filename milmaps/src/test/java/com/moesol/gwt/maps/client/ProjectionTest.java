@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import static org.junit.Assert.*;
@@ -9,23 +16,20 @@ import com.moesol.gwt.maps.client.units.Degrees;
 
 public class ProjectionTest {
 	
-	private IProjection m_proj = new CylEquiDistProj( 512, 180, 180);
+	private IProjection m_proj = Projection.createProj(IProjection.T.CylEquiDist);
 	private CylProj m_cylProj = new CylProj(512,180);
-	
-	private TileXY m_tile = new TileXY();
-	private GeodeticCoords m_geo = new GeodeticCoords();
 	
 	public double EarthRadius = 6378137;
 	public double EarthCirMeters  = 2.0*Math.PI*6378137;
 	public double MeterPerDeg  = EarthCirMeters/360.0;
 	
-	protected int m_scrnDpi = 75;   // screen dot per inch
-	protected double m_scrnMpp = 2.54/7500.0; // screen meter per pixel
+	protected int m_scrnDpi = AbstractProjection.DOTS_PER_INCH;   // screen dot per inch
+	protected double m_scrnMpp = 2.54/9600.0; // screen meter per pixel
 	protected int m_orgTilePixSize = 512;
 	protected double m_orgTileWidthInDeg = 180;
 	
 	public ProjectionTest(){
-
+		m_proj.initialize(512, 180, 180);
 	}
 	
 	@Test
@@ -91,6 +95,20 @@ public class ProjectionTest {
 		m_proj.zoomByFactor(2);
 		checkViewToWorld(2);
 	}
+	
+	@Test
+	public void testComputeLevel() {
+		double dScale = m_proj.getBaseEquatorialScale();
+		double inc;
+		for( int j = 1; j < 10; j++ ){
+			inc = (1/10.2)*j;
+			for( int i = 0; i < 20; i ++){
+				double f = (1<<i) + inc;
+				int level = m_proj.getLevelFromScale(dScale*f, 0);
+				assertEquals(i, level);
+			}
+		}
+	}
 
 	@Test
 	public void testViewToWorld() {
@@ -153,41 +171,7 @@ public class ProjectionTest {
 			}
 		}
 	}
-	
-	protected TileXY findTile( double lat, double lng, int level ){
-		double degSize = 180.0/Math.pow(2.0, level);
-		m_tile.m_x = (int)(( 180 + lng )/degSize);
-    	m_tile.m_y = (int)(( 90 + lat )/degSize);	
-    	return m_tile;
-	}
-	
-	@Test
-	public void testFindTile() {
-		for ( int latInc = 0; latInc < 3; latInc++ ){
-			double lat = -60.0 + latInc*60;
-			for ( int lngInc = 0; lngInc < 3; lngInc++ ){
-				double lng = -120.0 + lngInc*120;
-				m_geo = Degrees.geodetic(lat, lng);
-				for ( int level = 1; level < 4; level++ ){
-					double dFactor = Math.pow(2,level);
-					m_proj.zoomByFactor(dFactor);
-					int pixSize = m_proj.getOrigTilePixelSize();
-					double degW = m_proj.getOrigTileDegWidth();
-					double degH = m_proj.getOrigTileDegHeight();
-					TileXY tile = m_proj.geoPosToTileXY( level, pixSize, degW, degH, m_geo );
-					TileXY tile2 = findTile( lat, lng, level );		
-					if ( tile.m_x != tile2.m_x )
-						tile.m_x += 0;
-					if ( tile.m_y != tile2.m_y )
-						tile.m_y += 0;
-					assertEquals(tile.m_x, tile2.m_x);
-					assertEquals( tile.m_y, tile2.m_y);
-					m_proj.zoomByFactor(1.0/dFactor);
-				}
-			}
-		}
-	}
-	
+
 	// 1852 meters/ nautical mile so 1 deg = 60*1852 meters = 111,120 meters.
 	// mpp is meters per pixel.
 	// level_n_mpp = (level_0_mpp)/2^n so level_n_scale =
@@ -206,47 +190,6 @@ public class ProjectionTest {
 		return ((mpp * Math.pow(2, level)) / l_mpp);
 	}
 	
-
-	@Test
-	public void testScaleAdjustSize(){
-		double fudge = 0.5;
-		for ( int i = 0; i < 4; i++ ){
-			double dFactor = Math.pow(2,i) + fudge;
-			m_proj.zoomByFactor(dFactor);
-			int level = computeLevel( 0, m_proj.getScale() );
-			int width  = m_proj.adjustSize(level, 512);
-			int scaledWidth =  m_proj.adjustSize(512);
-			assertEquals( scaledWidth, width, 1 );
-		}
-	}
-
-	@Test
-	public void testAdjustSize(){
-		double fudge = 0.5;
-		for ( int i = 0; i < 4; i++ ){
-			double dFactor = Math.pow(2,i) + fudge;
-			m_proj.zoomByFactor(dFactor);
-			int level = computeLevel( 0, m_proj.getScale() );
-			int width  = m_proj.adjustSize(level, 512);
-			double dZ = (1 + fudge/Math.pow(2,i));
-			int expValue = (int)(dZ*512);
-			m_proj.zoomByFactor(1.0/dFactor);
-			assertEquals( expValue, width, 1 );
-		}
-		// this next loop checks for negative levels
-		fudge = 0.2;
-		for ( int i = 0; i < 4; i++ ){
-			int j = -1*i;
-			double dFactor = Math.pow(2,j) + fudge;
-			m_proj.zoomByFactor(dFactor);
-			int level = computeLevel( 0, m_proj.getScale() );
-			int width  = m_proj.adjustSize( level, 512 );
-			double dZ = (Math.pow(2,j)+fudge);
-			int expValue = (int)(dZ*512);
-			m_proj.zoomByFactor(1.0/dFactor);
-			assertEquals( expValue, width, 1 );
-		}
-	}
 	
 	@Test
 	public void testgGeoToPixel(){

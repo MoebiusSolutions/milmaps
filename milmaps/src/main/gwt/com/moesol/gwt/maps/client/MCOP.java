@@ -1,13 +1,9 @@
-/*
- * $Id$
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
  *
- * (c) Copyright, Moebius Solutions, Inc., 2006
+ *                        All Rights Reserved
  *
- *                       All Rights Reserved
- *
- * This material may be reproduced by or for the U. S. Government
- * pursuant to the copyright license under the clause at
- * DFARS 252.227-7014 (OCT 2001).
+ * LICENSE: GPLv3
  */
 package com.moesol.gwt.maps.client;
 
@@ -47,7 +43,7 @@ public class MCOP implements EntryPoint {
 		AbsolutePanel controlsAndMap = new AbsolutePanel();
 		
 		m_msg = new Label("msg...");
-		m_map = new MapView(Projection.T.CylEquiDist);
+		m_map = new MapView();
 		loadLayerConfigsFromClient();
 		
 		int w = Window.getClientWidth() - 20;

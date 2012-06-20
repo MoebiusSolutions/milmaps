@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.maps.tools;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -12,4 +19,11 @@ public class Placement {
 	public int y;
 	public int width;
 	public int height;
+	public int zindex;
+	
+	@Override
+	public String toString() {
+		return "Placement [w=" + w + ", x=" + x + ", y=" + y + ", width="
+				+ width + ", height=" + height + ", zindex=" + zindex + "]";
+	}
 }

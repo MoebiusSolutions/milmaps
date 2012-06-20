@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.maps.server.tms;
 
 import java.awt.Graphics2D;
@@ -166,10 +173,13 @@ public abstract class AbstractFeatureTileRenderer implements
 
 		double featureLat = feature.getLat();
 		double featureLng = feature.getLng();
-		BoundingBox bbox = new BoundingBox(featureLat + halfIconLatSpan,
-											featureLng - halfIconLngSpan,
-											featureLat - halfIconLatSpan,
-											featureLng + halfIconLngSpan);
+		BoundingBox bbox = BoundingBox.builder()
+				.left(featureLng - halfIconLngSpan)
+				.bottom(featureLat - halfIconLatSpan)
+				.right(featureLng + halfIconLngSpan)
+				.top(featureLat + halfIconLatSpan)
+				.degrees()
+				.build();
 
 		return bbox.contains(lat, lng);
 	}

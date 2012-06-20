@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.xmilmaps.client;
 
 import org.timepedia.exporter.client.Export;
@@ -8,6 +15,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.Dictionary;
@@ -20,14 +29,13 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.moesol.gwt.maps.client.AbstractProjection;
 import com.moesol.gwt.maps.client.IconLayer;
 import com.moesol.gwt.maps.client.LayerSet;
 import com.moesol.gwt.maps.client.LayerSetJson;
 import com.moesol.gwt.maps.client.MapPanel;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.controls.FlyToController;
-import com.moesol.gwt.maps.client.controls.MapDimmerControl;
-import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
 
 @ExportPackage("milmaps")
 
@@ -44,7 +52,7 @@ public class XMap implements Exportable {
 	
 	final DockLayoutPanel m_dockPanel = new DockLayoutPanel(Unit.PX);
 
-	private int m_scrnDpi = 75;
+	private int m_scrnDpi = AbstractProjection.DOTS_PER_INCH;
 	private LayoutPanel m_lp;
 	MapView m_mapView;
 	
@@ -149,12 +157,17 @@ public class XMap implements Exportable {
 				m_dockPanel.setHeight("100%");
 				m_dockPanel.setWidth("100%");
 			}});
-		
-		m_mapView.addChangeListener(new ChangeListener() {
+		m_mapView.addChangeHandler(new ChangeHandler() {
 			@Override
-			public void onChange(Widget sender) {
+			public void onChange(ChangeEvent event) {
 				mapChanged();
-			}});
+			}	
+		});
+		//m_mapView.addChangeListener(new ChangeListener() {
+		//	@Override
+		//	public void onChange(Widget sender) {
+		//		mapChanged();
+		//	}});
 
 		HorizontalPanel bar = new HorizontalPanel();
 		bar.add(resizeMap);

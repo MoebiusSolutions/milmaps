@@ -1,12 +1,12 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
-import com.moesol.gwt.maps.client.units.AngleUnit;
-//------------------------------------------------------------------------------
-// http://msdn.microsoft.com/en-us/library/bb259689.aspx
-// <copyright company="Microsoft">
-//     Copyright (c) 2006-2009 Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
 import com.moesol.gwt.maps.client.units.Degrees;
 
 
@@ -19,7 +19,6 @@ public class MercProj
     private static final double MaxLongitude = 180;
     
     private GeodeticCoords m_geoPt = new GeodeticCoords();
-    private PixelXY m_pixel = new PixelXY();
     private TileXY m_tile = new TileXY();
 
     /// <summary>
@@ -94,7 +93,7 @@ public class MercProj
     /// to 23 (highest detail).</param>
     /// <param name="pixelX">Output parameter receiving the X coordinate in pixels.</param>
     /// <param name="pixelY">Output parameter receiving the Y coordinate in pixels.</param>
-    public PixelXY latLngToPixelXY( int levelOfDetail, double latitude, double longitude )
+    public WorldCoords latLngToPixelXY( int levelOfDetail, double latitude, double longitude )
     {
         latitude = clip(latitude, MinLatitude, MaxLatitude);
         longitude = clip(longitude, MinLongitude, MaxLongitude);
@@ -103,9 +102,9 @@ public class MercProj
         double sinLatitude = Math.sin(latitude * Math.PI / 180);
         double y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
         int mapSize = mapSize(levelOfDetail);
-        m_pixel.m_x = (int) clip(x * mapSize + 0.5, 0, mapSize - 1);
-        m_pixel.m_y = mapSize - (int) clip(y * mapSize + 0.5, 0, mapSize - 1);
-        return m_pixel;
+        int wx = (int) clip(x * mapSize + 0.5, 0, mapSize - 1);
+        int wy = mapSize - (int) clip(y * mapSize + 0.5, 0, mapSize - 1);
+        return new WorldCoords(wx, wy);
     }
 
 
@@ -161,11 +160,9 @@ public class MercProj
     /// <param name="tileY">Tile Y coordinate.</param>
     /// <param name="pixelX">Output parameter receiving the pixel X coordinate.</param>
     /// <param name="pixelY">Output parameter receiving the pixel Y coordinate.</param>
-    public PixelXY tileXYToPixelXY( int tileX, int tileY )
+    public WorldCoords tileXYToPixelXY( int tileX, int tileY )
     {
-        m_pixel.m_x = tileX * 256;
-        m_pixel.m_y = tileY * 256;
-        return m_pixel;
+    	return new WorldCoords(tileX * 256, tileY * 256);
     }
 
 

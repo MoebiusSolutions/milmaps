@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client.controls;
 
 import com.google.gwt.core.client.GWT;
@@ -5,11 +12,7 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -46,10 +49,11 @@ public class MapPanZoomControl extends Composite {
 	private Presenter m_presenter = new Presenter();
 
 	private MapView m_map;
+	private boolean m_doingMapAction = false;
 
 	private int m_maxPanPixels;
 	private int m_millisBetweenConsecutiveActions;
-
+	
 	@UiField
 	DivElement clickHighlight;
 
@@ -174,7 +178,7 @@ public class MapPanZoomControl extends Composite {
 
 			m_dx = m_presenter.calculateDelta(panButtonWidth, eventRelativeX,
 					m_maxPanPixels);
-			m_dy = m_presenter.calculateDelta(panButtonHeight, eventRelativeY,
+			m_dy = -m_presenter.calculateDelta(panButtonHeight, eventRelativeY,
 					m_maxPanPixels);
 		}
 	}
@@ -195,11 +199,12 @@ public class MapPanZoomControl extends Composite {
 	@UiHandler("zoomInButton")
 	public void onZoomInButtonMouseDown(MouseDownEvent e) {
 		e.preventDefault();
-		zoomInButton.addStyleName("map-PanZoomControlZoomInButtonMouseDown");
+		resetStyleNamesTo(zoomInButton, true, "map-PanZoomControlZoomInButtonMouse");
 		startZoomLoop(m_zoomInButtonTimer);
 	}
 
 	private void startZoomLoop(Timer zoomTimer) {
+		m_doingMapAction = true;
 		zoomTimer.run();
 		zoomTimer.scheduleRepeating(m_millisBetweenConsecutiveActions);
 	}
@@ -207,41 +212,78 @@ public class MapPanZoomControl extends Composite {
 	@UiHandler("zoomInButton")
 	public void onZoomInButtonMouseUp(MouseUpEvent e) {
 		e.preventDefault();
-		zoomInButton.removeStyleName("map-PanZoomControlZoomInButtonMouseDown");
+		resetStyleNamesTo(zoomInButton, true, "map-PanZoomControlZoomInButtonMouseOver");
 		stopZoomLoop(m_zoomInButtonTimer);
 	}
 
 	private void stopZoomLoop(Timer zoomTimer) {
 		zoomTimer.cancel();
+		if ( m_doingMapAction ){
+			m_doingMapAction = false;
+			m_map.updateView();
+		}
 	}
 
 	@UiHandler("zoomInButton")
+	public void onZoomInButtonMouseOver(MouseOverEvent e) {
+		e.preventDefault();
+		resetStyleNamesTo(zoomInButton, true, "map-PanZoomControlZoomInButtonMouseOver");
+		stopZoomLoop(m_zoomInButtonTimer);
+	}
+        
+	@UiHandler("zoomInButton")
 	public void onZoomInButtonMouseOut(MouseOutEvent e) {
 		e.preventDefault();
-		zoomInButton.removeStyleName("map-PanZoomControlZoomInButtonMouseDown");
+		resetStyleNamesTo(zoomInButton, true, "map-PanZoomControlZoomInButtonMouse");
 		stopZoomLoop(m_zoomInButtonTimer);
 	}
 
 	@UiHandler("zoomOutButton")
 	public void onZoomOutButtonMouseDown(MouseDownEvent e) {
 		e.preventDefault();
-		zoomOutButton.addStyleName("map-PanZoomControlZoomOutButtonMouseDown");
+		resetStyleNamesTo(zoomOutButton, false, "map-PanZoomControlZoomOutButtonMouse");
 		startZoomLoop(m_zoomOutButtonTimer);
 	}
 
 	@UiHandler("zoomOutButton")
 	public void onZoomOutButtonMouseUp(MouseUpEvent e) {
 		e.preventDefault();
-		zoomOutButton
-				.removeStyleName("map-PanZoomControlZoomOutButtonMouseDown");
+		resetStyleNamesTo(zoomOutButton, false, "map-PanZoomControlZoomOutButtonMouseOver");
 		stopZoomLoop(m_zoomOutButtonTimer);
 	}
 
 	@UiHandler("zoomOutButton")
 	public void onZoomOutButtonMouseOut(MouseOutEvent e) {
 		e.preventDefault();
-		zoomOutButton
-				.removeStyleName("map-PanZoomControlZoomOutButtonMouseDown");
+		resetStyleNamesTo(zoomOutButton, false, "map-PanZoomControlZoomOutButtonMouse");
 		stopZoomLoop(m_zoomOutButtonTimer);
 	}
+        
+	@UiHandler("zoomOutButton")
+	public void onZoomOutButtonMouseOver(MouseOverEvent e) {
+		e.preventDefault();
+		resetStyleNamesTo(zoomOutButton, false, "map-PanZoomControlZoomOutButtonMouseOver");
+		stopZoomLoop(m_zoomOutButtonTimer);
+	}
+        
+    /**
+     * Catch-all method for making sure only one button type is set on the element at any time.
+     * This is the easiest necessary step to take cases such as the user hold-clicking on a button,
+     * dragging onto the other button, and releasing their click. 
+     * 
+     * @param button
+     * @param isInButton
+     * @param newName 
+     */
+    private void resetStyleNamesTo(HTML button, boolean isInButton, String newName) {
+        if (isInButton) {
+            button.removeStyleName("map-PanZoomControlZoomInButtonMouse");
+            button.removeStyleName("map-PanZoomControlZoomInButtonMouseOver");
+        }
+        else {
+            button.removeStyleName("map-PanZoomControlZoomOutButtonMouse");
+            button.removeStyleName("map-PanZoomControlZoomOutButtonMouseOver");
+        }
+        button.addStyleName(newName);
+    }
 }

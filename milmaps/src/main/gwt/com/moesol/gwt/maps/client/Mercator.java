@@ -1,46 +1,57 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import com.moesol.gwt.maps.client.WorldCoords.Builder;
 import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
+import com.moesol.gwt.maps.shared.BoundingBox;
 
 // EPSG:3857 Mercator projection
 
 public class Mercator extends AbstractProjection {	
-	private static double DEG_ERROR = 10000;
 
+	private static final BoundingBox BOUNDS 
+		= BoundingBox.builder().bottom(-85.05113).top(85.05113).left(-180).right(180).degrees().build();
+
+	public Mercator( ){
+		super();
+		m_projType = IProjection.T.Mercator;
+		this.initialize(256, 360.0,  2*85.05113);
+	}
 	
 	public Mercator( int pixWidth, double degWidth, double degHeight) {
 		super();
+		m_projType = IProjection.T.Mercator;
 		this.initialize(pixWidth, degWidth, degHeight);
-		m_minLat = -85.05113;
-		m_maxLat = 85.05113;
 	}
 	
 	@Override
-	public boolean doesSupport( int espg ){
-		switch ( espg ){
-		case 900913:
+	public boolean doesSupport( String srs ){
+		if (srs.equals("EPSG:900913")) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	@Override
 	public IProjection cloneProj(){
-		IProjection proj = new Mercator( m_orgTilePixSize,
-										 m_origTileDegWidth, 
-										 m_origTileDegHeight );
-		proj.setViewGeoCenter(this.getViewGeoCenter());
+		IProjection proj = new Mercator( );
+		proj.copyFrom(this);
 		return proj;
 	}
-    
+
 
 	@Override
 	public WorldDimension getWorldDimension() {
 		int wdX  = (int)(mapSize()+0.5);
-		double height = verticalDist( m_minLat, m_maxLat);
+		double height = verticalDist(getDegreeBoundingBox().bottom(), getDegreeBoundingBox().top());
 		int wdY = (int) (height+ 0.5);
 
 		m_wdSize.setWidth(wdX);
@@ -48,11 +59,7 @@ public class Mercator extends AbstractProjection {
 		return m_wdSize;
 	}
 	
-	@Override
-	public void setViewSize(ViewDimension vp) {
-		m_vpSize.copyFrom(vp);
-	}
-	
+	// TODO can this method be pulled up?
 	@Override
 	public GeodeticCoords worldToGeodetic(WorldCoords w) {
 		Stats.incrementWorldToGeodetic();
@@ -61,9 +68,12 @@ public class Mercator extends AbstractProjection {
 		// to extend the whole world
 		double pix = w.getX() % m_wdSize.getWidth();
 		double lng = xPixToDegLng(pix);
-		if (w.getX() > 10 && lng == m_minLng)
-			lng = m_maxLng;
+		if (w.getX() > 10 && lng == getDegreeBoundingBox().left()) {
+			lng = getDegreeBoundingBox().right();
+		}
+		lng = wrapLng(lng);
 		double lat = yPixToDegLat( w.getY() );
+		lat = Math.max(Math.min(lat,BOUNDS.getTopLat()),BOUNDS.getBotLat());
 		return Degrees.geodetic(lat, lng);
 	}
 	
@@ -82,6 +92,28 @@ public class Mercator extends AbstractProjection {
 		return builder.build();
 	}
 	
+	@Override
+	public GeodeticCoords mapCoordsToGeodetic(MapCoords w) {
+		// we have to mod by world size in case we had
+		// to extend the whole world
+		
+		double lng = xPixToDegLng(w.getX() % m_wdSize.getWidth());
+		if (w.getX() > 10 && lng == getDegreeBoundingBox().left()) {
+			lng = getDegreeBoundingBox().right();
+		}
+		lng = wrapLng(lng);
+		double lat = yPixToDegLat(w.getY());
+		return Degrees.geodetic(lat, lng);
+	}
+	
+
+	@Override
+	public MapCoords geodeticToMapCoords(GeodeticCoords g) {
+		return MapCoords.builder()
+				.setX(lng2PixX(g.getLambda(AngleUnit.DEGREES)))
+				.setY(lat2PixY(g.getPhi(AngleUnit.DEGREES))).build();
+	}
+	
 	//protected double degPixToScale(double deg, int pix) {
 	//	double mpp = deg*(111120.0 / pix);
 	//	return (m_scrnMpp / mpp);
@@ -95,7 +127,7 @@ public class Mercator extends AbstractProjection {
 	 * @return a double (the y value).
 	 */
 	protected double lat2PixY( double dLat ){
-		dLat = clip(dLat, m_minLat, m_maxLat);
+		dLat = clip(dLat, getDegreeBoundingBox().bottom(), getDegreeBoundingBox().top());
         double sinLat = Math.sin(DegToRad*dLat);
         double y = 0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI);
         return (y * mapSize());
@@ -108,7 +140,7 @@ public class Mercator extends AbstractProjection {
 	 */
 	protected double lng2PixX( double dLng )
 	{
-		dLng = clip(dLng, m_minLng, m_maxLng);
+		dLng = clip(dLng, getDegreeBoundingBox().left(), getDegreeBoundingBox().right());
 		double x = (dLng + 180)/360;
 		return (x * mapSize());
 	}
@@ -180,7 +212,6 @@ public class Mercator extends AbstractProjection {
 	 * 		pixels in double value.
 	 */
 	protected double horizontalDist( double lng1, double lng2 ){
-		double dR   = EarthRadius*m_scale;
 		double x1 = lng2PixX( lng1 );
 		double x2 = lng2PixX( lng2 );
 		return Math.abs(x2 - x1);
@@ -193,35 +224,12 @@ public class Mercator extends AbstractProjection {
 	 * @return
 	 */
 	protected double verticalDist( double lat1, double lat2 ){
-		double y1 = lat2PixY( lat1 );
-		double y2 = lat2PixY( lat2 );
+		double y1 = latDegToPixY( lat1 );
+		double y2 = latDegToPixY( lat2 );
 		return Math.abs(y2 - y1);
 	}
 
-	// This is based on the microsoft version.
-	// This routine is based on 
-	@Override
-	public TileXY geoPosToTileXY( int level, int pixSize, 
-								  double degW, double degH, GeodeticCoords g ){
-        double lat = clip(g.getPhi(AngleUnit.DEGREES),   m_minLat, m_maxLat);
-        double lng = clip(g.getLambda(AngleUnit.DEGREES), -180.0, 180.0);
-
-        double x = (lng + 180) / 360; 
-        double sinLat = Math.sin(lat * Math.PI / 180);
-        double y = 0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI);
-
-        int mapSize = (int) ( pixSize << level );
-        double pixX = clip(x * mapSize + 0.5, 0, mapSize);
-        double pixY = clip(y * mapSize + 0.5, 0, mapSize);
-		m_tile.m_x =  (int)Math.floor(pixX/ pixSize);
-		m_tile.m_y =  (int)Math.floor(pixY/pixSize);
-		// translate so it is based on row zero at the bottom of the map
-		int j = (1<<level) - 1;
-		m_tile.m_y = j - m_tile.m_y;
-		return m_tile;
-	}
-	
-	   /// <summary>
+	/// <summary>
     /// Determines the ground resolution (in meters per pixel) at a specified
     /// latitude and level of detail.
     /// </summary>
@@ -230,13 +238,13 @@ public class Mercator extends AbstractProjection {
     /// <param name="levelOfDetail">Level of detail, from 1 (lowest detail)
     /// to 23 (highest detail).</param>
     /// <returns>The ground resolution, in meters per pixel.</returns>
-    protected  double groundResolution( double lat, int levelOfDetail )
-    {
-        lat = clip(lat, m_minLat, m_maxLat);
-        int mapSize = (int) (m_orgTilePixSize << levelOfDetail);
-        //return Math.cos(lat * Math.PI / 180) * EarthCirMeters / mapSize;
-        return (EarthCirMeters/mapSize);
-    }
+    //protected  double groundResolution( double lat, int levelOfDetail )
+    //{
+    //    lat = clip(lat, m_minLat, m_maxLat);
+    //    int mapSize = (int) (m_orgTilePixSize << levelOfDetail);
+    //    //return Math.cos(lat * Math.PI / 180) * EarthCirMeters / mapSize;
+    //    return (EarthCirMeters/mapSize);
+    //}
     
 	@Override
     public int getNumXtiles(double tileDegWidth){
@@ -249,40 +257,10 @@ public class Mercator extends AbstractProjection {
     public int getNumYtiles(double tileDegWidth){
     	return getNumXtiles(tileDegWidth);
     }
-  
-    
-	protected double orig_yPixToDegLat( int level, double pix ){
-		// First we need to translate the pixel since the y direction is reversed
-		double mapSize = m_orgTilePixSize << level;
-		pix = mapSize - pix;
-        double y = 0.5 - (clip(pix, 0, mapSize -1 ) / mapSize);
-        double lat = 90 - 360 * Math.atan(Math.exp(-y * 2 * Math.PI)) / Math.PI;
-        return lat;
+
+	@Override
+	public BoundingBox getDegreeBoundingBox() {
+		return BOUNDS;
 	}
-	
-	protected double orig_xPixToDegLng( int level, double pix ){
-        double mapSize = m_orgTilePixSize << level;
-        double x = (pix / mapSize) - 0.5;   
-        return (x*360);		
-	}
-    
-    @Override
-    public WorldCoords tileXYToTopLeftXY( int level, int pixSize, TileXY tile  ){
-    	int topLeftX = tile.m_x*pixSize;
-    	int topLeftY = (tile.m_y+1)*pixSize;
-    	double lat = orig_yPixToDegLat( level, topLeftY);
-    	double lng = orig_xPixToDegLng( level, topLeftX);
-    	m_tileGeoPos = Degrees.geodetic(lat, lng);
-    	return geodeticToWorld(m_tileGeoPos);
-    }
-    
-    @Override
-	public int adjustSize(  int size ){   
-    	// scale = origScale*2^z  so z = log(scale/origScale)/log(2)
-    	int z = (int)Math.max(0,(( Math.log(m_scale)- Math.log(m_origScale))/Math.log(2)));
-    	double mapSize =  m_origMapWidthSize<<z;
-    	double scaledMapSize =  mapSize();
-    	double factor = scaledMapSize/mapSize;
-    	return (int)(factor*size);
-    }
+
 }

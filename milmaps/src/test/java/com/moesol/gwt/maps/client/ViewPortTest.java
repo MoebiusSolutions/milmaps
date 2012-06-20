@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import static org.junit.Assert.*;
@@ -9,7 +16,7 @@ import org.junit.Test;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class ViewPortTest {
-	private IProjection m_p = new CylEquiDistProj( 512, 180, 180) {
+	private IProjection m_p = new CylEquiDistProj( ){//512, 180, 180) {
 		{
 			// Now that we are using 180 degree tiles by default we need to set
 			// back to 36 degree tiles here

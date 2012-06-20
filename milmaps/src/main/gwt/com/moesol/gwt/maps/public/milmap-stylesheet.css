@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 .gwt-Image { /*  border: 1px inset; */
 	
 }
@@ -47,6 +54,22 @@
 	color: black;
 }
 
+.map-TextControl {
+	font-family: arial;
+	font-size: 13px;
+	z-index: 10000;
+	right: 0px;
+}
+
+.map-TextControl .map-OutlinedLabelText {
+	color: white;
+}
+
+.map-TextControl .map-OutlinedLabelOutline {
+	color: black;
+}
+
+
 .map-SearchControl {
 	margin-top: 2px;
 	z-index: 10000;
@@ -58,6 +81,11 @@
 }
 
 .map-TagControl {
+	margin-top: 2px;
+	z-index: 10000;
+}
+
+.map-OverlayEditor {
 	margin-top: 2px;
 	z-index: 10000;
 }
@@ -121,6 +149,18 @@
 	margin: 4px 2px 4px 0px;
 }
 
+.map-OverlayContolOffButton {
+	background-position: 15px -255px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+.map-OverlayContolOnButton {
+	background-position: 15px -240px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
 
 .map-SearchControlInput {
 	float: right;
@@ -136,7 +176,7 @@
 	background-image: url('images/map_round2.png');
 	background-repeat: no-repeat;
 	height: 121px;
-	width: 56px;
+	width: 67px;
 }
 
 .map-PanZoomControlPanButton {
@@ -153,11 +193,12 @@
 	position: absolute;
 	z-index: 5000;
 	display: none;
+	margin-left: 6px;
 }
 
 .map-PanZoomControlZoom {
 	height: 45px;
-	padding-top: 7px;
+	padding-top: 9px;
 }
 
 .map-PanZoomControlZoom div {
@@ -167,33 +208,90 @@
 }
 
 .map-PanZoomControlZoomInButton {
-	margin: 0 auto;
+	margin-left: 24px;
 	background-image: url('images/map_roundbtn1.png');
 }
 
-.map-PanZoomControlZoomInButton {
-	margin: 0 auto;
-	background-image: url('images/map_roundbtn1.png');
-}
-
-.map-PanZoomControlZoomInButtonMouseDown {
+.map-PanZoomControlZoomInButtonMouseOver {
+	margin-left: 24px;
 	background-image: url('images/map_roundbtn1_o.png');
 }
 
 .map-PanZoomControlZoomOutButton {
-	margin: 4px auto;
+	margin: 7px auto;
+	margin-left: 24px;
 	background-image: url('images/map_roundbtn2.png');
 }
 
-.map-PanZoomControlZoomOutButtonMouseDown {
+.map-PanZoomControlZoomOutButtonMouseOver {
+	margin: 7px auto;
+	margin-left: 24px;
 	background-image: url('images/map_roundbtn2_o.png');
 }
 
-.map-PanZoomControlZoomOutButton {
-	margin: 4px auto;
-	background-image: url('images/map_roundbtn2.png');
+.map-DimmerControl2 {
 }
 
-.map-PanZoomControlZoomOutButtonMouseDown {
-	background-image: url('images/map_roundbtn2_o.png');
+.map-DimmerControl2Panel {
+	background-image: url('images/map_control_bg.png');
+}
+
+.map-ControlTransparent {
+	opacity: 0.5;
+}
+
+.map-ControlPanel2 {
+	background-repeat: no-repeat;
+    position: absolute;
+	bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+	width: 67px;
+	height: 42px;
+}
+
+.map-ControlButton2 {
+	background-repeat: no-repeat;
+    position: absolute;
+	bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+	width: 20px;
+	height: 20px;
+}
+
+.map-DimmerControl2Dim {
+    margin-left: 10px;
+    margin-top: 9px;
+}
+
+.map-DimmerControl2DimButton {
+	background-image: url('images/map_dark.png');
+}
+
+.map-DimmerControl2DimButtonOver {
+	background-image: url('images/map_dark_o.png');
+}
+
+.map-DimmerControl2Brighten {
+    margin-left: 36px;
+    margin-top: 9px;
+}
+
+.map-DimmerControl2BrightenButton {
+	background-image: url('images/map_light.png');
+}
+
+.map-DimmerControl2BrightenButtonOver {
+	background-image: url('images/map_light_o.png');
+}
+
+/*Graphics styles*/
+.milmaps-canvas {
+	position: absolute;
+	backgroundColor: transparent;
+	/*border: 1px solid blue;*/
+	z-index: 4000;
 }

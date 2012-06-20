@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import java.util.HashMap;
@@ -18,7 +25,9 @@ public class TileCoords {
 	private int m_tileHeight = 512;
 	private int m_drawTileWidth;
 	private int m_drawTileHeight;
+	private boolean m_tiled = true;
 	private boolean m_inViewPort = false;
+	private boolean m_bZeroTop = false;
 	private double m_degWidth = 180.0;
 	private double m_degHeight = 180.0;
 	
@@ -49,6 +58,14 @@ public class TileCoords {
 		m_offsetY = oy;
 	}
 	
+	public boolean isZeroTop() {
+		return m_bZeroTop;
+	}
+
+	public void setZeroTop( boolean bZeroTop) {
+		m_bZeroTop = bZeroTop;
+	}
+	
 	public int getOffsetX() {
 		return m_offsetX;
 	}
@@ -69,6 +86,7 @@ public class TileCoords {
 	public String toString() {
 		return "[l="+ m_level +",ox=" + getOffsetX() + ",oy=" + getOffsetY()
 		+ ",w=" + getTileWidth() + ",h=" + getTileHeight()
+		+ ",dw=" + getDrawTileWidth() + ",dh=" + getDrawTileHeight()
 		+ ",x=" + getX() + ",y=" + getY() + "]";
 	}
 
@@ -172,6 +190,14 @@ public class TileCoords {
 		}
 		return true;
 	}
+	
+	public boolean isTiled() {
+		return m_tiled;
+	}
+
+	public void setTiled(boolean tiled) {
+		m_tiled = tiled;
+	}
 
 	public boolean isInViewPort() {
 		return m_inViewPort;
@@ -189,37 +215,57 @@ public class TileCoords {
 		m_level = Math.max(0,level);
 	}
 
-	public String makeTileURL(LayerSet layerSet, int level, long dynamicCounter) {
+	public String makeTileURL(ViewBox vb,LayerSet layerSet, 
+							  int level, long dynamicCounter) {
 		if (level < 0) {
 			level = 0;
 		}
-		return doMakeTileURL(layerSet, computeLevelFromSkipLevel(layerSet, level), dynamicCounter);
+		return doMakeTileURL(vb, layerSet, 
+							 computeLevelFromSkipLevel(layerSet, level), 
+							 dynamicCounter);
 	}
+	
 
-	String doMakeTileURL(LayerSet layerSet, int levelInUrl, long dynamicCounter) {
-		Map<String, String> replacements = new HashMap<String, String>();
-
+	String doMakeTileURL(ViewBox vb, LayerSet layerSet, 
+						 int levelInUrl, long dynamicCounter ) {
+		Map<String, Object> replacements = new HashMap<String, Object>(layerSet.getProperties());
+		int width;
+		int height;
+		String bBoxStr;
 		replacements.put("server", layerSet.getServer());
 		replacements.put("data", encode(layerSet.getData()));
 		replacements.put("level", Integer.toString(levelInUrl));
-		replacements.put("epsg", Integer.toString(layerSet.getEpsg()));
+		replacements.put("srs", layerSet.getSrs());
 		replacements.put("imgSize", Integer.toString(layerSet.getPixelWidth()));
-		replacements.put("width", Integer.toString(layerSet.getPixelWidth()));
-		replacements.put("height", Integer.toString(layerSet.getPixelHeight()));
+		if (layerSet.isTiled()) {
+			width   = layerSet.getPixelWidth();
+			height  = layerSet.getPixelHeight();
+			bBoxStr = computeBbox(layerSet);
+		}
+		else {
+			if (vb == null) {
+				throw new IllegalArgumentException("ViewBox shouldn't be null");
+			}	
+			width   = vb.getWidth();
+			height  = vb.getHeight();
+			bBoxStr = vb.getWmsString();			
+		}
+		replacements.put("width", Integer.toString(width));
+		replacements.put("height", Integer.toString(height));
 		replacements.put("x", Integer.toString(getX()));
 		replacements.put("y", Integer.toString(getY()));
-		replacements.put("bbox", computeBbox(layerSet, levelInUrl));
+		replacements.put("bbox", bBoxStr);
 		replacements.put("quadkey", computeQuadKey(layerSet, levelInUrl));
 		replacements.put("quad", computeQuad(layerSet, levelInUrl));
 		
 		String returnStr = layerSet.getUrlPattern();
-		for (Entry<String, String> e : replacements.entrySet()) {
-			returnStr = returnStr.replaceAll("\\{" + e.getKey() + "\\}", e.getValue());
+		for (Entry<String, Object> e : replacements.entrySet()) {
+			returnStr = returnStr.replaceAll("\\{" + e.getKey() + "\\}", e.getValue().toString());
 		}
 		return maybeAppendDynamicCounter(layerSet, returnStr, dynamicCounter);
 	}
 
-	private String computeBbox(LayerSet layerSet, int levelInUrl) {
+	private String computeBbox(LayerSet layerSet ) {
 		// WMS-C says that for EPSG:4326 we have a top level bounding box of -180 -90, 180 90
 		// We know our x, y, degWidth, degHeight so we can compute the bbox.
 		double left =   getX() * getDegWidth() - 180.0;
@@ -256,9 +302,9 @@ public class TileCoords {
 			return returnStr;
 		}
 		if (returnStr.contains("?")) {
-			return returnStr + "#" + dynamicCounter;
+			return returnStr + "&_=" + dynamicCounter;
 		}
-		return returnStr + "#" + dynamicCounter;
+		return returnStr + "?_=" + dynamicCounter;
 	}
 
 	private static String encode(String v) {

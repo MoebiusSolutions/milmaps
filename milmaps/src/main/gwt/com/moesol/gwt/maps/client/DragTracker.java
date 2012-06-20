@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 public class DragTracker {
@@ -28,15 +35,8 @@ public class DragTracker {
 				.build();
 	}
 	
-	public ViewCoords updateView(int x, int y) {
-		int newDeltaPortX = x - m_origPort.getX();
-		int newDeltaPortY = m_origPort.getY() - y;  // Flip y axis
-		computeSameAsLast(newDeltaPortX, newDeltaPortY);
-		m_deltaPort = new ViewCoords(newDeltaPortX, newDeltaPortY);
-		return ViewCoords.builder()
-			.setX(m_origWorld.getX() - m_deltaPort.getX())
-			.setY(m_origWorld.getY() - m_deltaPort.getY())
-			.build();
+	public ViewCoords getDelta(){
+		return m_deltaPort;
 	}
 
 	private void computeSameAsLast(int newDeltaPortX, int newDeltaPortY) {

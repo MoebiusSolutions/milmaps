@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client.tms;
 
 import java.util.ArrayList;
@@ -112,7 +119,6 @@ public class TileMapServiceActivity extends AbstractActivity implements
 			    ls.setStartLevel(1);
 			    ls.withPixelWidth(256).setPixelHeight(256);
 			    ls.setAlwaysDraw(true);
-			    ls.setUseToScale(false);
 			    ls.setZIndex(4);
 			    ls.setLevelRange(-2, 12);
 				displayedItems.add(tileMapMetadata);
@@ -149,8 +155,7 @@ public class TileMapServiceActivity extends AbstractActivity implements
 	private void goToNewPlace() {
 		placeController.goTo(new TileMapServicePlace(getLayerIds(), mapView
 				.getCenter().getPhi(AngleUnit.DEGREES), mapView.getCenter()
-				.getLambda(AngleUnit.DEGREES), mapView.getViewport()
-				.getLevel()));
+				.getLambda(AngleUnit.DEGREES)));
 	}
 
 	@Override

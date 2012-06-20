@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    (c) Copyright, Moebius Solutions, Inc., 2012
+
+                           All Rights Reserved
+
+    LICENSE: GPLv3
+
+-->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <servlet>
         <servlet-name>tms</servlet-name>
@@ -8,14 +17,6 @@
         <servlet-name>RemoteLogger</servlet-name>
         <servlet-class>com.google.gwt.logging.server.RemoteLoggingServiceImpl</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>tagControlServiceImpl</servlet-name>
-        <servlet-class>com.moesol.gwt.maps.server.TagControlServiceImpl</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>tagControlServiceImpl</servlet-name>
-        <url-pattern>/mil.usmc.pli.Application/tagControl</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>tms</servlet-name>
         <url-pattern>/com.moesol.gwt.maps.Test/tms</url-pattern>

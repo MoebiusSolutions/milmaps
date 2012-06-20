@@ -1,10 +1,12 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.moesol.gwt.maps.client.GeodeticCoords;
-import com.moesol.gwt.maps.client.controls.Tag;
-import com.moesol.gwt.maps.client.controls.TagControlService;
-import com.moesol.gwt.maps.client.units.AngleUnit;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -13,14 +15,22 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.moesol.gwt.maps.client.GeodeticCoords;
+import com.moesol.gwt.maps.client.controls.Tag;
+import com.moesol.gwt.maps.client.controls.TagControlService;
+import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class TagControlServiceImpl extends RemoteServiceServlet implements TagControlService {
 
@@ -41,7 +51,7 @@ public class TagControlServiceImpl extends RemoteServiceServlet implements TagCo
     };
 
     @Override
-    public boolean saveTagToDisk(String name, GeodeticCoords gc) {
+    public boolean saveTagToDisk(String name, GeodeticCoords gc, String symbol) {
         try {
             Tag[] existingTags = loadTagsFromDisk();
             if (existingTags != null) {
@@ -59,6 +69,7 @@ public class TagControlServiceImpl extends RemoteServiceServlet implements TagCo
             tag.setAttribute("lambda", Double.toString(gc.getLambda(AngleUnit.DEGREES)));
             tag.setAttribute("phi", Double.toString(gc.getPhi(AngleUnit.DEGREES)));
             tag.setAttribute("alt", Double.toString(gc.getAltitude()));
+            tag.setAttribute("symbol", symbol);
             doc.appendChild(tag);
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -111,6 +122,7 @@ public class TagControlServiceImpl extends RemoteServiceServlet implements TagCo
             FileInputStream fis = null;
             String name;
             GeodeticCoords geo;
+            String symbol;
             try {
                 fis = new FileInputStream(tagFile);
                 int c;
@@ -124,10 +136,11 @@ public class TagControlServiceImpl extends RemoteServiceServlet implements TagCo
                         Double.parseDouble(tag.getAttribute("phi")),
                         AngleUnit.DEGREES,
                         Double.parseDouble(tag.getAttribute("alt")));
+                symbol = tag.getAttribute("symbol");
             } finally {
                 fis.close();
             }
-            tags[i++] = new Tag(name, geo);
+            tags[i++] = new Tag(name, geo, symbol);
         }
         return tags;
     }

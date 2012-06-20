@@ -1,4 +1,13 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.shared;
+
+import com.moesol.gwt.maps.client.units.Radians;
 
 public class BoundingBox {
 	
@@ -30,8 +39,31 @@ public class BoundingBox {
 			top = v;
 			return this;
 		}
+		public DegreesBuilder degrees() {
+			return new DegreesBuilder(this);
+		}
+		public RadiansBuilder radians() {
+			return new RadiansBuilder(this);
+		}
+	}
+	public static class DegreesBuilder extends Builder {
+		private final Builder builder;
+		
+		public DegreesBuilder(Builder b) {
+			builder = b;
+		}
 		public BoundingBox build() {
-			return new BoundingBox(top, left, bottom, right);
+			return new BoundingBox(builder.top, builder.left, builder.bottom, builder.right);
+		}
+	}
+	public static class RadiansBuilder extends Builder {
+		private final Builder builder;
+		
+		public RadiansBuilder(Builder b) {
+			builder = b;
+		}
+		public BoundingBox build() {
+			return new BoundingBox(Radians.asDegrees(builder.top), Radians.asDegrees(builder.left), Radians.asDegrees(builder.bottom), Radians.asDegrees(builder.right));
 		}
 	}
 	
@@ -41,7 +73,7 @@ public class BoundingBox {
 
 	// TODO consider just hidding this as package private or
 	// Using WMS order from BBOX left,bottom,right,top
-	public BoundingBox(double topLat, double leftLon, double botLat, double rightLon) {
+	private BoundingBox(double topLat, double leftLon, double botLat, double rightLon) {
 		if (topLat < botLat) {
 			throw new IllegalArgumentException(
 					"Top lat must be greater than bottom lat: top=" + topLat + " bottom=" + botLat);
@@ -89,11 +121,14 @@ public class BoundingBox {
 	}
 	
 	private static double wrapLon(double lng) {
+		int k = (int)Math.abs((lng/360));
 		if (lng > 180.0) {
-			while (lng > 180.0)
+			lng -= k*360;
+			if (lng > 180.0)
 				lng -= 360.0;
 		} else if (lng < -180.0) {
-			while (lng < -180.0)
+			lng += k*360;
+			if (lng < -180.0)
 				lng += 360.0;
 		}
 		return lng;
@@ -133,17 +168,29 @@ public class BoundingBox {
 	public double getTopLat() {
 		return m_topLat;
 	}
+	public double top() {
+		return getTopLat();
+	}
 
 	public double getLeftLon() {
 		return m_leftLon;
+	}
+	public double left() {
+		return getLeftLon();
 	}
 
 	public double getBotLat() {
 		return m_botLat;
 	}
+	public double bottom() {
+		return getBotLat();
+	}
 
 	public double getRightLon() {
 		return m_rightLon;
+	}
+	public double right() {
+		return getRightLon();
 	}
 
 	public double getLatSpan() {
@@ -161,6 +208,10 @@ public class BoundingBox {
 			}
 		}
 		return dist;
+	}
+	
+	public String getWmsString(){
+		return m_leftLon + "," + m_botLat + "," + m_rightLon + "," + m_topLat;
 	}
 
 	@Override

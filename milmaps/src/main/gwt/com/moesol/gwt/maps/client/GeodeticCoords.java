@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -5,7 +12,7 @@ import com.moesol.gwt.maps.client.stats.Stats;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Radians;
 
-// TODO move the three coordinate classes to their own package (coords).
+// TODO move the three coordinate classes to their own package (coords or units).
 /**
  * Immutable geodetic coordinates.
  * @author hastings
@@ -32,13 +39,27 @@ public class GeodeticCoords implements IsSerializable {
 		public double getPhi() { return m_phi; }
 		public double getLatitude() { return m_phi; }
 		public double getAltitude() { return m_altitude; }
-		public Builder degrees() { m_angleUnit = AngleUnit.DEGREES; return this; }
-		public Builder radians() { m_angleUnit = AngleUnit.RADIANS; return this; }
+		public Builder degrees() {
+			if (m_angleUnit != null && m_angleUnit != AngleUnit.DEGREES) {
+				throw new IllegalStateException("Angle unit cannot be changed");
+			}
+			m_angleUnit = AngleUnit.DEGREES; return this; 
+		}
+		public Builder radians() { 
+			if (m_angleUnit != null && m_angleUnit != AngleUnit.RADIANS) {
+				throw new IllegalStateException("Angle unit cannot be changed");
+			}
+			m_angleUnit = AngleUnit.RADIANS; return this; 
+		}
+		public Builder latitude(double lat) { return setLatitude(lat); }
+		public Builder longitude(double lng) { return setLongitude(lng); }
 		public GeodeticCoords build() {
+			if (m_angleUnit == null) {
+				throw new IllegalStateException("No angle unit specified, use degrees() or radians()");
+			}
 			return new GeodeticCoords(m_lambda, m_phi, m_angleUnit, m_altitude);
 		}
 	}
-	
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -73,6 +94,29 @@ public class GeodeticCoords implements IsSerializable {
 		m_lambda = angleUnit.toRadians(lambda);
 		m_phi = angleUnit.toRadians(phi);
 		m_altitude = altitude;
+	}
+	
+	public class GetLatitude {
+		public double degrees() {
+			return getPhi(AngleUnit.DEGREES);
+		}
+		public double radians() {
+			return getPhi(AngleUnit.RADIANS);
+		}
+	}
+	public class GetLongitude {
+		public double degrees() {
+			return getLambda(AngleUnit.DEGREES);
+		}
+		public double radians() {
+			return getLambda(AngleUnit.RADIANS);
+		}
+	}
+	public GetLatitude latitude() {
+		return new GetLatitude();
+	}
+	public GetLongitude longitude() {
+		return new GetLongitude();
 	}
 	
 	/**
@@ -132,7 +176,7 @@ public class GeodeticCoords implements IsSerializable {
 	
 	@Override
 	public String toString() {
-		return "[lon=" + Radians.asDegrees(m_lambda) + ", lat=" + Radians.asDegrees(m_phi) + ", alt=" + m_altitude + "]";
+		return "[ lat: " + Radians.asDegrees(m_phi) + ", lng: " + Radians.asDegrees(m_lambda) + " ]";
 	}
 
 }

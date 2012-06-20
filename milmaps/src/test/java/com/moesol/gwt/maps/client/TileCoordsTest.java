@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import static org.junit.Assert.*;
@@ -41,21 +48,36 @@ public class TileCoordsTest {
 		ls.setServer("server");
 		ls.setSkipLevels(0);
 		
-		String url = tc.doMakeTileURL(ls, 1, 1);
+		String url = tc.doMakeTileURL(null,ls, 1, 1);
 		assertEquals("server?T=data+with+space&L=1&X=2&Y=3", url);
 		
 		ls.setAutoRefreshOnTimer(true);
-		url = tc.doMakeTileURL(ls, 1, 23);
-		assertEquals("server?T=data+with+space&L=1&X=2&Y=3#23", url);
+		url = tc.doMakeTileURL(null, ls, 1, 23);
+		assertEquals("server?T=data+with+space&L=1&X=2&Y=3&_=23", url);
 		
 		ls.setAutoRefreshOnTimer(false);
 		ls.setUrlPattern("{server}/tileset/{data}/level/{level}/x/{x}/y/{y}");
-		url = tc.doMakeTileURL(ls, 1, 1);
+		url = tc.doMakeTileURL(null,ls, 1, 1);
 		assertEquals("server/tileset/data+with+space/level/1/x/2/y/3", url);
 		
 		ls.setAutoRefreshOnTimer(true);
-		url = tc.doMakeTileURL(ls, 1, 49);
-		assertEquals("server/tileset/data+with+space/level/1/x/2/y/3#49", url);
+		url = tc.doMakeTileURL(null,ls, 1, 49);
+		assertEquals("server/tileset/data+with+space/level/1/x/2/y/3?_=49", url);
 	}
 
+	@Test
+	public void testDoMakeTileURLReplacements() {
+		TileCoords tc = new TileCoords(2, 3);
+		TileCoords.setGlobalURLProvider(m_provider);
+		
+		LayerSet ls = new LayerSet();
+		ls.setData("data with space");
+		ls.setServer("server");
+		ls.setSkipLevels(0);
+		ls.getProperties().put("my.world", "world");
+		ls.setUrlPattern("hello {my.world}");
+		
+		String url = tc.doMakeTileURL(null,ls, 1, 1);
+		assertEquals("hello world", url);
+	}
 }

@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client.controls;
 
 import mil.geotransj.GeoTransException;
@@ -11,6 +18,7 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.LatLonString;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
+import com.moesol.gwt.maps.client.WorldCoords;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
 /**
@@ -48,7 +56,8 @@ public class PositionControl extends Composite {
 	
 	public void mouseMove( int x, int y ) {
 		ViewCoords vc = new ViewCoords(x, y);
-		GeodeticCoords gc = m_mapView.getProjection().viewToGeodetic(vc);
+		WorldCoords wc = m_mapView.getViewport().getVpWorker().viewToWorld(vc);
+		GeodeticCoords gc = m_mapView.getProjection().worldToGeodetic(wc);
 		String pos = LatLonString.build(gc.getPhi(AngleUnit.DEGREES), 
 										gc.getLambda(AngleUnit.DEGREES));
 		String mgrsPos = "";

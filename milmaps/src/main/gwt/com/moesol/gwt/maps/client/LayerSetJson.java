@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -10,15 +17,18 @@ public class LayerSetJson extends JavaScriptObject {
 	protected LayerSetJson() { }
 	
 	public final native String getServer(String def) /*-{ return this.server || def; }-*/;
+    public final native String getId(String def) /*-{ return this.id || def; }-*/;
 	public final native String getData(String def) /*-{ return this.data || def; }-*/;
 	public final native int getSkipLevels(int def) /*-{ return this.skipLevels || def; }-*/;
 	public final native String getUrlPattern(String def) /*-{ return this.urlPattern || def; }-*/;
+	public final native boolean isTiled(boolean def) /*-{ return this.tiled != undefined ? this.tiled : def; }-*/;
+	public final native boolean isDimmable(boolean def) /*-{ return this.dimmable != undefined ? this.dimmable : def; }-*/;
 	public final native boolean isZeroTop(boolean def) /*-{ return this.zeroTop != undefined ? this.zeroTop : def; }-*/;
 	public final native boolean isAlwaysDraw(boolean def) /*-{ return this.alwaysDraw != undefined ? this.alwaysDraw : def; }-*/;
-	public final native boolean isUseToScale(boolean def) /*-{ return this.useToScale != undefined ? this.useToScale : def; }-*/;
+	public final native boolean isBackgroundMap(boolean def) /*-{ return this.isBackgroundMap != undefined ? this.isBackgroundMap : def; }-*/;
 	public final native boolean isAutoRefreshOnTimer(boolean def) /*-{ return this.autoRefreshOnTimer != undefined ? this.autoRefreshOnTimer : def; }-*/;
 	public final native boolean isActive(boolean def) /*-{ return this.active != undefined ? this.active : def; }-*/;
-	public final native int getEpsg(int def) /*-{ return this.epsg || def; }-*/;
+	public final native String getSrs(String def) /*-{ return this.srs || def; }-*/;
 	public final native int getMinLevel(int def) /*-{ return this.minLevel || def; }-*/;
 	public final native int getMaxLevel(int def) /*-{ return this.maxLevel || def; }-*/;
 	public final native int getZIndex(int def) /*-{ return this.zIndex || def; }-*/;
@@ -34,15 +44,17 @@ public class LayerSetJson extends JavaScriptObject {
 		LayerSet layerSet = new LayerSet();
 		layerSet
 			.withServer(getServer(layerSet.getServer()))
+            .withId(getId(layerSet.getId()))
 			.withData(getData(layerSet.getData()))
 			.withSkipLevels(getSkipLevels(layerSet.getSkipLevels()))
 			.withUrlPattern(getUrlPattern(layerSet.getUrlPattern()))
+			.withTiled(isTiled(layerSet.isTiled()))
+			.withDimmable(isTiled(layerSet.isDimmable()))
 			.withZeroTop(isZeroTop(layerSet.isZeroTop()))
 			.withAlwaysDraw(isAlwaysDraw(layerSet.isAlwaysDraw()))
-			.withUseToScale(isUseToScale(layerSet.useToScale()))
 			.withAutoRefreshOnTimer(isAutoRefreshOnTimer(layerSet.isAutoRefreshOnTimer()))
 			.withActive(isActive(layerSet.isActive()))
-			.withEpsg(getEpsg(layerSet.getEpsg()))
+			.withSrs(getSrs(layerSet.getSrs()))
 			.withZIndex(getZIndex(layerSet.getZIndex()))
 			.withStartLevel(getStartLevel(layerSet.getStartLevel()))
 			.withPixelWidth(getPixelWidth(layerSet.getPixelWidth()))

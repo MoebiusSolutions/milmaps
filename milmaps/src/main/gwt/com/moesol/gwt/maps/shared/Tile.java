@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.shared;
 
 
@@ -55,7 +62,9 @@ public class Tile {
 		m_lng = -180.0 + m_x * m_dlng;
 		m_lat = -90.0 + m_y * m_dlat;
 
-		m_bbox = new BoundingBox(m_lat + m_dlat, m_lng, m_lat, m_lng + m_dlng);
+		m_bbox = BoundingBox.builder()
+				.top(m_lat + m_dlat).left(m_lng)
+				.bottom(m_lat).right(m_lng + m_dlng).degrees().build();
 		m_tileCenterLng = m_lng + (m_dlng / 2.0);
 		m_degreesPerPixel = m_dlng / m_tilePixelWidth;
 	}

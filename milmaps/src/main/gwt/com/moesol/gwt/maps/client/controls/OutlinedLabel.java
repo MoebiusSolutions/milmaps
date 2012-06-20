@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client.controls;
 
 import com.google.gwt.core.client.GWT;
@@ -66,5 +73,21 @@ public class OutlinedLabel extends Widget {
 		bottomRight.setInnerHTML(safeValue);
 		topRight.setInnerHTML(safeValue);
 		bottomLeft.setInnerHTML(safeValue);
+	}
+        
+	/**
+	 * Set the text value of the label while allowing for the inclusion of HTML tags.
+	 * @param value
+	 */
+	public void setHtml(String value) {
+		text.setInnerHTML(value);
+		top.setInnerHTML(value);
+		right.setInnerHTML(value);
+		bottom.setInnerHTML(value);
+		left.setInnerHTML(value);
+		topLeft.setInnerHTML(value);
+		bottomRight.setInnerHTML(value);
+		topRight.setInnerHTML(value);
+		bottomLeft.setInnerHTML(value);
 	}
 }

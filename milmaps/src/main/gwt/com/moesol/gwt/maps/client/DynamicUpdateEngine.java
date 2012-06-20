@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import java.util.Date;
@@ -10,6 +17,7 @@ public class DynamicUpdateEngine {
 	private final EventBus m_eventBus;
 	private Timer m_dynamicTimer = null;
 	private int m_dynamicRefreshMillis = 10000;
+	private boolean m_dynamicUpdateNeeded = false;
 	public interface TimeProvider {
 		long now();
 	}
@@ -55,6 +63,7 @@ public class DynamicUpdateEngine {
 			return;
 		}
 		SymbologyRefreshEvent.fire(m_eventBus, m_mapView);
+		m_dynamicUpdateNeeded = true;
 		m_mapView.updateView();
 	}
 
@@ -64,4 +73,11 @@ public class DynamicUpdateEngine {
 		return milliSeconds;
 	}
 
+	public boolean isDynamicUpdateNeeded() {
+		return m_dynamicUpdateNeeded;
+	}
+	public void setDynamicUpdateNeeded(boolean dynamicUpdateNeeded) {
+		m_dynamicUpdateNeeded = dynamicUpdateNeeded;
+	}
+	
 }

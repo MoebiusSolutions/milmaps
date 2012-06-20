@@ -1,14 +1,26 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client.controls;
 
-import com.google.gwt.core.client.GWT;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -19,21 +31,30 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.Icon;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
-import java.io.Serializable;
+import com.moesol.gwt.maps.client.ViewWorker;
 
 public class TagControl extends Composite implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private boolean m_bTagOn = false;
     private String m_name;
-    GeodeticCoords m_gc;
+    private GeodeticCoords m_gc;
+    private String m_symbol;
     MapView m_mapView;
     private AddTagDialog m_box = null;
     private int m_nameCount = 0;
+    private boolean tagControlServiceOn = false;
     private TagControlServiceAsync tagControlService = GWT.create(TagControlService.class);
 
     // add tag dialog class ----------------------------------
@@ -43,7 +64,7 @@ public class TagControl extends Composite implements Serializable {
             super();
         }
 
-        public boolean setTag(MapView map, GeodeticCoords gc, String name) {
+        public boolean setTag(MapView map, GeodeticCoords gc, String name, String symbol) {
             if (name != null && name.length() > 1) {
                 final List<Icon> icons = m_mapView.getIconLayer().getIcons();
                 boolean bUnique = true;
@@ -59,7 +80,7 @@ public class TagControl extends Composite implements Serializable {
                     Icon icon = new Icon(2010);
                     icon.setLocation(gc);
                     //String url = "http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg";
-                    String url = "images/icon.jpeg";
+                    String url = "images/icons/" + symbol + ".jpeg";
                     icon.setIconUrl(url);
                     icon.setLabel(name);
                     Image im = icon.getImage();
@@ -77,6 +98,53 @@ public class TagControl extends Composite implements Serializable {
         }
     }
     // End of add tag dialog class ------------------------------------
+
+    // add symbol selection dialog box
+    private class SymbolSelectionDialog extends DialogBox {
+
+        private SymbolSelectionDialog(final Image image, final TextBox iconName) {
+            final DialogBox me = this;
+            setText("Symbol Selection");
+            setGlassEnabled(true);
+            SymbolCell cell = new SymbolCell();
+            CellList<String> cellList = new CellList<String>(cell);
+            final SingleSelectionModel<String> selectionModel = new SingleSelectionModel<String>();
+            cellList.setSelectionModel(selectionModel);
+            selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+
+                @Override
+                public void onSelectionChange(SelectionChangeEvent event) {
+                    String selected = selectionModel.getSelectedObject();
+                    if (selected != null) {
+                        image.setUrl("images/icons/" + selected + ".jpeg");
+                        iconName.setText(selected);
+                        me.hide(true);
+                    }
+                }
+            });
+
+            List<String> list = new ArrayList<String>();
+            list.add("sfap-----------");
+            list.add("sffp-----------");
+            list.add("sfgpucec-------");
+            list.add("sngpuuacsa-----");
+            cellList.setRowData(0, list);
+            setWidget(cellList);
+        }
+    }
+    // End symbol selection dialog box
+
+    static class SymbolCell extends AbstractCell<String> {
+
+        @Override
+        public void render(Context context, String value, SafeHtmlBuilder sb) {
+            sb.appendHtmlConstant("<table><tr><td>");
+            sb.appendHtmlConstant("<img src='images/icons/" + value + ".jpeg'/>");
+            sb.appendHtmlConstant("</td><td>");
+            sb.appendHtmlConstant(value);
+            sb.appendHtmlConstant("</td></tr></table>");
+        }
+    }
 
     // remove tag dialog class ----------------------------------
     private class RemoveTagDialog extends DialogBox {
@@ -161,10 +229,7 @@ public class TagControl extends Composite implements Serializable {
         addStyleName("map-TagControl");
         setZindex(100000);
 
-        // Initialize the service proxy.
-        if (tagControlService == null) {
-            tagControlService = GWT.create(TagControlService.class);
-        }
+
         // Set up the callback object.
         AsyncCallback<Tag[]> callback = new AsyncCallback<Tag[]>() {
 
@@ -179,7 +244,7 @@ public class TagControl extends Composite implements Serializable {
                     Icon icon = new Icon(2010);
                     icon.setLocation(tag.getGeodeticCoords());
                     //String url = "http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg";
-                    String url = "images/icon.jpeg";
+                    String url = "images/icons/" + tag.getSymbol() + ".jpeg";
                     icon.setIconUrl(url);
                     icon.setLabel(tag.getName());
                     Image im = icon.getImage();
@@ -189,14 +254,17 @@ public class TagControl extends Composite implements Serializable {
                 }
             }
         };
-        tagControlService.loadTagsFromDisk(callback);
+        if (tagControlServiceOn) {
+            tagControlService.loadTagsFromDisk(callback);
+        }
     }
 
     public void mouseDown(int x, int y) {
         if (m_bTagOn) {
-        	ViewCoords vc = new ViewCoords(x, y);
+            ViewCoords vc = new ViewCoords(x, y);
             m_mapView.setFocus(false);
-            m_gc = m_mapView.getProjection().viewToGeodetic(vc);
+            ViewWorker worker = m_mapView.getViewport().getVpWorker();
+            m_gc = m_mapView.getProjection().worldToGeodetic(worker.viewToWorld(vc));
             m_bTagOn = false;
             if (m_box == null) {
                 m_box = addDialogWidget("Add Tag");
@@ -221,6 +289,28 @@ public class TagControl extends Composite implements Serializable {
         box.setText(header);
 
         final VerticalPanel panel = new VerticalPanel();
+        // Add icon selection drop list
+        HorizontalPanel iconPanel = new HorizontalPanel();
+        final Image image = new Image("images/icons/sfap-----------.jpeg");
+        iconPanel.add(image);
+        Button button = new Button("Select Symbol");
+        iconPanel.add(button);
+        final TextBox iconName = new TextBox();
+        iconName.setVisible(false);
+        iconName.setText("sfap-----------");
+        iconPanel.add(iconName);
+        button.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                // show cell list
+                SymbolSelectionDialog symbolSelectionDialog = new SymbolSelectionDialog(image, iconName);
+                symbolSelectionDialog.getElement().getStyle().setProperty("zIndex", Integer.toString(9000));
+                symbolSelectionDialog.setPopupPosition(box.getPopupLeft(), box.getPopupTop());
+                symbolSelectionDialog.show();
+            }
+        });
+        panel.add(iconPanel);
         final TextArea ta = new TextArea();
         ta.setCharacterWidth(20);
         ta.setVisibleLines(1);
@@ -233,30 +323,29 @@ public class TagControl extends Composite implements Serializable {
             @Override
             public void onClick(ClickEvent event) {
                 m_name = ta.getText();
-                if (box.setTag(m_mapView, m_gc, m_name) == true) {
+                m_symbol = iconName.getText();
+                if (box.setTag(m_mapView, m_gc, m_name, m_symbol) == true) {
                     m_bTagOn = false;
                     saveTagToDisk();
                 }
             }
 
             private void saveTagToDisk() {
-                // Initialize the service proxy.
-                if (tagControlService == null) {
-                    tagControlService = GWT.create(TagControlService.class);
+                if (tagControlServiceOn) {
+                    // Set up the callback object.
+                    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            Window.alert("Internal Server Error:" + caught.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(Boolean result) {
+                        }
+                    };
+                    tagControlService.saveTagToDisk(m_name, m_gc, m_symbol, callback);
                 }
-                // Set up the callback object.
-                AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Internal Server Error:" + caught.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(Boolean result) {
-                    }
-                };
-                tagControlService.saveTagToDisk(m_name, m_gc, callback);
             }
         };
         btnSave.addClickHandler(saveHandler);
@@ -289,7 +378,7 @@ public class TagControl extends Composite implements Serializable {
 
     public RemoveTagDialog removeDialogWidget(final String header) {//, String content) {
         final List<Icon> icons = m_mapView.getIconLayer().getIcons();
-        if (icons.size() == 0) {
+        if (icons.isEmpty()) {
             return null;
         }
         final RemoveTagDialog box = new RemoveTagDialog();
@@ -334,23 +423,21 @@ public class TagControl extends Composite implements Serializable {
             }
 
             private void deleteTagFromDisk(String name) {
-                // Initialize the service proxy.
-                if (tagControlService == null) {
-                    tagControlService = GWT.create(TagControlService.class);
+                if (tagControlServiceOn) {
+                    // Set up the callback object.
+                    AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            Window.alert("Internal Server Error:" + caught.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(Boolean result) {
+                        }
+                    };
+                    tagControlService.deleteTagFromDisk(name, callback);
                 }
-                // Set up the callback object.
-                AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Internal Server Error:" + caught.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(Boolean result) {
-                    }
-                };
-                tagControlService.deleteTagFromDisk(name, callback);
             }
         };
         btnDelete.addClickHandler(deleteHandler);

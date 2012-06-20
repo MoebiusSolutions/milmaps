@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    (c) Copyright, Moebius Solutions, Inc., 2012
+
+                           All Rights Reserved
+
+    LICENSE: GPLv3
+
+-->
 <TileMapService version="1.0.0" services="http://localhost:8080/geowebcache">
   <Title>Tile Map Service</Title>
   <Abstract>A Tile Map Service served by GeoWebCache</Abstract>

@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import com.moesol.gwt.maps.client.units.AngleUnit;
@@ -11,7 +18,7 @@ public class CylProj {
 	
 	protected GeodeticCoords m_vpGeoCenter = new GeodeticCoords(); // viewport Center
 	protected final WorldDimension m_wdSize = new WorldDimension(); // Whole world map size
-	protected final ViewDimension m_vpSize = new ViewDimension(); // viewPort size
+	protected ViewDimension m_vpSize = new ViewDimension(); // viewPort size
 	protected final ViewCoords m_returnedViewCoords = new ViewCoords();
 	protected final WorldCoords m_returnedWorldCoords = new WorldCoords();
 	protected final WorldCoords m_wc = new WorldCoords();
@@ -23,8 +30,8 @@ public class CylProj {
 	public double EarthCirMeters  = 2.0*Math.PI*6378137;
 	public double MeterPerDeg  = EarthCirMeters/360.0;
 	
-	protected int m_scrnDpi = 75;   // screen dot per inch
-	protected double m_scrnMpp = 2.54/7500.0; // screen meter per pixel
+	protected int m_scrnDpi = AbstractProjection.DOTS_PER_INCH;   // screen dot per inch
+	protected double m_scrnMpp = 2.54/(m_scrnDpi*100.0); // screen meter per pixel
 	protected double m_scale = 0;   // map scale
 	protected double m_prevScale;
 	
@@ -93,7 +100,7 @@ public class CylProj {
 	}
 	
 	public void setViewSize(ViewDimension vp) {
-		m_vpSize.copyFrom(vp);
+		m_vpSize = vp;
 	}
 
 	public GeodeticCoords worldToGeodetic(WorldCoords w) {

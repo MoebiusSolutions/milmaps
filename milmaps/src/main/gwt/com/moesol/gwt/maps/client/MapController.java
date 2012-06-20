@@ -1,36 +1,28 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.event.dom.client.MouseWheelEvent;
-import com.google.gwt.event.dom.client.MouseWheelHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventPreview;
-import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.*;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 import com.moesol.gwt.maps.client.controls.HoverEvent;
 import com.moesol.gwt.maps.client.controls.HoverHandler;
+import com.moesol.gwt.maps.client.events.MapViewChangeEvent;
+import com.moesol.gwt.maps.client.graphics.IActiveTool;
+import com.moesol.gwt.maps.client.graphics.IShapeEditor;
+import com.moesol.gwt.maps.client.stats.MapStateDialog;
 import com.moesol.gwt.maps.client.stats.StatsDialogBox;
-import com.moesol.gwt.maps.client.touch.Touch;
+import com.moesol.gwt.maps.client.touch.*;
 import com.moesol.gwt.maps.client.touch.TouchCancelEvent;
 import com.moesol.gwt.maps.client.touch.TouchCancelHandler;
 import com.moesol.gwt.maps.client.touch.TouchEndEvent;
@@ -40,14 +32,15 @@ import com.moesol.gwt.maps.client.touch.TouchMoveHandler;
 import com.moesol.gwt.maps.client.touch.TouchStartEvent;
 import com.moesol.gwt.maps.client.touch.TouchStartHandler;
 import com.moesol.gwt.maps.client.units.AngleUnit;
-
 public class MapController implements 
-	HasHandlers,
+	HasHandlers, IActiveTool,
 	MouseMoveHandler, MouseDownHandler, MouseUpHandler, MouseOutHandler,
 	MouseWheelHandler, EventPreview, KeyDownHandler, KeyUpHandler, KeyPressHandler,
 	TouchStartHandler, TouchMoveHandler, TouchEndHandler, TouchCancelHandler
 {
 	private static boolean s_previewInstalled = false;
+	private static final int S_KEY = 83;//(int)'s';
+	private static final int F_KEY = 70;//(int)'f';
 	private final MapView m_map;
 	private final DoubleClickTracker m_doubleClickTracker = new DoubleClickTracker();
 	private final MouseWheelTracker m_mouseWheelTracker = new MouseWheelTracker();
@@ -55,6 +48,9 @@ public class MapController implements
 	private int m_wheelAccum = 0;
 	private int m_keyVelocity = 1;
 	private boolean m_bUseDragTracker = true;
+	WorldCoords m_wc = new WorldCoords();
+	IShapeEditor m_editor = null;
+	
 	private HasText m_msg = new HasText() {
 		@Override
 		public void setText(String text) {
@@ -82,11 +78,16 @@ public class MapController implements
 	public MapController(MapView map, final EventBus eventBus) {
 		m_map = map;
 		m_eventBus = eventBus;
-
+		
 		if (!s_previewInstalled) {
 			s_previewInstalled = true;
 			DOM.addEventPreview(this);
 		}
+	}
+	
+	@Override
+	public void setEditor(IShapeEditor shapeEditor) {
+		m_editor = shapeEditor;
 	}
 
 	public MapController withMsg(HasText msg) {
@@ -106,8 +107,7 @@ public class MapController implements
 	}
 
 	public void zoomAndCenter(int x, int y, boolean bZoomIn) {
-		double zoomFactor = (bZoomIn ? 2.0 : 0.5 );
-		m_map.zoomOnPixel(x,y,zoomFactor);
+		m_map.zoomToNextLevelOnPixel(x,y,bZoomIn);
 
 	}
 
@@ -115,13 +115,21 @@ public class MapController implements
 		m_bUseDragTracker = bUseDragTracker;
 	}
 
-
 	@Override
 	public void onMouseDown(MouseDownEvent event) {
+		if (m_editor != null){
+			if( m_editor.handleMouseDown(event)){
+				//if (m_editor.needsUpdate()) {
+					//m_editor.done();
+					//m_editor.updateCanvas();
+				//}
+				return;
+			}
+		}
 		Widget sender = (Widget) event.getSource();
+		DOM.setCapture(sender.getElement());
 		int x = event.getX();
 		int y = event.getY();
-		DOM.setCapture(sender.getElement());
 		boolean bMouseDown = m_doubleClickTracker.onMouseDown(x, y);
 		if (bMouseDown) {
 			// If the browser will not generate double-click event previews
@@ -129,12 +137,18 @@ public class MapController implements
 			// See event preview code.
 			// zoomAndCenter(x, y, true);
 			m_dragTracker = null;
-		} else if( m_bUseDragTracker ){
+		} else if(m_bUseDragTracker){
 			m_dragTracker = new DragTracker(x, y, m_map.getWorldCenter());
 		}
 	}
 	@Override
 	public void onMouseMove(MouseMoveEvent event) {
+
+		if (m_editor != null){
+			if (m_editor.handleMouseMove(event)){
+				return;
+			}
+		}
 		int x = event.getX();
 		int y = event.getY();
 		m_moveClientX = event.getClientX();
@@ -146,19 +160,31 @@ public class MapController implements
 
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
-		m_hoverTimer .cancel();
+		if (m_editor != null){
+			if ( m_editor.handleMouseOut(event)){
+				return;
+			}
+		}
+		m_hoverTimer.cancel();
 	}
 
 	@Override
 	public void onMouseUp(MouseUpEvent event) {
-		m_hoverTimer.cancel();
+		if (m_editor != null){
+			if (m_editor.handleMouseUp(event)){
+				return;
+			}
+		}
 		Widget sender = (Widget) event.getSource();
-		int x = event.getX();
-		int y = event.getY();
 		DOM.releaseCapture(sender.getElement());
-
+		m_hoverTimer.cancel();
 		try {
+			int x = event.getX();
+			int y = event.getY();
 			maybeDragMap(x, y);
+			if (m_dragTracker != null) {
+				m_map.dumbUpdateView();
+			}
 			m_map.setFocus(true);
 		} finally {
 			m_dragTracker = null;
@@ -167,15 +193,16 @@ public class MapController implements
 
 	private void maybeDragMap(int x, int y) {
 		if (m_dragTracker == null) {
-			// Not dragging
-			return;
+			return; // Not dragging
 		}
 		WorldCoords newWorldCenter = m_dragTracker.update(x, y);
 		if (m_dragTracker.isSameAsLast()) {
 			return;
 		}
+		
+		m_map.cancelAnimations();
 		m_map.setWorldCenter(newWorldCenter);
-		m_map.updateView();
+		m_map.partialUpdateView();
 	}
 	private void maybeHover(MouseMoveEvent event) {
 		m_hoverTimer .cancel();
@@ -227,7 +254,7 @@ public class MapController implements
 	@Override
 	public void onMouseWheel(final MouseWheelEvent event) {
 		m_wheelAccum += event.getDeltaY();
-		int jumpPoint = 8;
+//		int jumpPoint = 8;
 
 		ViewCoords vCoords = m_mouseWheelTracker.getViewCoordinates();
 		//	DJD NOTE: removed centering of the map when we zoom with wheel, beacuse
@@ -243,17 +270,18 @@ public class MapController implements
 			zoomAndCenter(vCoords.getX(), vCoords.getY(), false);
 		}
 		//MapViewChangeEvent.fire(m_eventBus, m_map);
+                
+                // Don't let containing elements in the browser catch the same scroll wheel event
+                DOM.eventPreventDefault(DOM.eventGetCurrentEvent());
 	}
 
 	@Override
 	public boolean onEventPreview(Event event) {
-
-//		if (m_map.getMapControls().handleEventPreview(event)) {
-//			return false;
-//		}
-
-		if (!DOM.isOrHasChild(m_map.getElement(), DOM.eventGetTarget(event))) {
-			return true;
+		Element target = DOM.eventGetTarget(event);
+		if (target != null) {
+			if (!DOM.isOrHasChild(m_map.getElement(), target)) {
+				return true;
+			}
 		}
 
 		onEventPreviewForMap(event);
@@ -273,7 +301,6 @@ public class MapController implements
 			zoomAndCenter(m_doubleClickTracker.getX(), m_doubleClickTracker.getY(), true);
 			DOM.eventPreventDefault(event);
 			break;
-
 		case Event.ONKEYDOWN:
 		case Event.ONKEYUP:
 			switch (DOM.eventGetKeyCode(event)) {
@@ -309,10 +336,10 @@ public class MapController implements
 	private void onKeyDownWithControl(int keyCode) {
 		switch (keyCode) {
 		case KeyCodes.KEY_UP:
-			m_map.animateZoom(2);
+			m_map.animateZoomToNextLevel(true);
 			break;
 		case KeyCodes.KEY_DOWN:
-			m_map.animateZoom(1/2.0);
+			m_map.animateZoomToNextLevel(false);
 			break;
 		}
 	}
@@ -331,18 +358,26 @@ public class MapController implements
 		case KeyCodes.KEY_DOWN:
 			moveMap(0, -1);
 			break;
+		case F_KEY:
+			m_map.fullUpdateView();
+			break;
+		case S_KEY:
+			new MapStateDialog(m_map).show();
+			break;	
 		}
 		if (m_keyVelocity < 64) {
 			m_keyVelocity += 1;
 		}
 	}
 
-	private void moveMap(int x, int y) {
+	private void moveMap(int directionX, int directionY) {
 		int xdist = m_keyVelocity;
 		int ydist = m_keyVelocity;
-		WorldCoords v = m_map.getWorldCenter();
-		v = v.translate(x * xdist, y * ydist);
-		m_map.setWorldCenter(v);
+		WorldCoords wc = m_map.getWorldCenter();
+		wc = wc.translate(directionX * xdist, directionY * ydist);
+		
+		m_map.cancelAnimations();
+		m_map.setWorldCenter(wc);
 		m_map.updateView();
 	}
 
@@ -374,11 +409,12 @@ public class MapController implements
 			@Override
 			public void run() {
 				final IProjection newProjection = m_map.getProjection();
-				final GeodeticCoords newCenter = newProjection.getViewGeoCenter();
+				ViewPort viewport = m_map.getViewport();
+				final GeodeticCoords newCenter = viewport.getVpWorker().getGeoCenter();
 
 				if (m_oldCenter.equals(newCenter)) {
-					if (m_oldViewSize.equals(newProjection.getViewSize())) {
-						if (m_oldScale == newProjection.getScale()) {
+					if (m_oldViewSize.equals(viewport.getVpWorker().getDimension())) {
+						if (m_oldScale == newProjection.getEquatorialScale()) {
 							m_map.onIdle();
 							return; // Nothing has changed.
 						}
@@ -386,9 +422,8 @@ public class MapController implements
 				}
 
 				m_oldCenter = newCenter;
-				m_oldViewSize.setHeight(newProjection.getViewSize().getHeight());
-				m_oldViewSize.setWidth(newProjection.getViewSize().getWidth());
-				m_oldScale = newProjection.getScale();
+				m_oldViewSize = viewport.getVpWorker().getDimension();
+				m_oldScale = newProjection.getEquatorialScale();
 				
 				MapViewChangeEvent.fire(m_eventBus, m_map);
 				
@@ -397,5 +432,4 @@ public class MapController implements
 		};
 		m_viewChangeTimer.schedule(minEventFireIntervalMillis);
 	}
-
 }

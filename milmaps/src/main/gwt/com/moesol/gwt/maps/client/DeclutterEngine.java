@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import java.util.List;
@@ -69,6 +76,7 @@ public class DeclutterEngine {
 	private IconEngine iconEngine;
 	private long incrementStart;
 	private Timer m_timer = null;
+	private DivWorker divWorker;
 	
 	static class GridCoords {
 		final int row;
@@ -156,8 +164,9 @@ public class DeclutterEngine {
 	 * @param icons
 	 * @param iconEngine
 	 */
-	public void incrementalDeclutter(List<Icon> icons, IconEngine iconEngine) {
+	public void incrementalDeclutter(List<Icon> icons, IconEngine iconEngine, DivWorker divWorker) {
 		cancelIncrementalDeclutter();
+		this.divWorker = divWorker;
 		markingIconIndex = -1;
 		searchLabelIndex = 0;
 		positionIconIndex = 0;
@@ -184,7 +193,7 @@ public class DeclutterEngine {
 				searchLabelIndex++;
 			}
 			while (positionIconIndex < iconList.size() && haveMoreTime()) {
-				iconEngine.positionOneIcon(iconList.get(positionIconIndex));
+				iconEngine.positionOneIcon(iconList.get(positionIconIndex), m_mapView.getWidgetPositioner(), divWorker);
 				positionIconIndex++;
 			}
 			if (!haveMoreTime()) {

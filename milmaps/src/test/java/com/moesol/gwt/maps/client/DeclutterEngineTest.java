@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import static org.junit.Assert.*;
@@ -64,6 +71,7 @@ public class DeclutterEngineTest {
 	private DeclutterEngine engine;
 	private IconEngine iconEngine;
 	private RecordingIconPlacer widgetPositioner = new RecordingIconPlacer();
+	private DivWorker divWorker = new DivWorker();
 
 	@Before
 	public void before() {
@@ -95,6 +103,11 @@ public class DeclutterEngineTest {
 			}
 		};
 		Icon.LABEL_STYLER = mock(Icon.LabelStyler.class);
+		
+		divWorker.setProjection(m_projection);
+		divWorker.setDivBaseDimensions(512, 512);
+		divWorker.setOffsetInWcX(256);
+		divWorker.setOffsetInWcY(512);
 
 		/* Reset to match test in case we use different values later */
 		engine = new DeclutterEngine(m_mapView);
@@ -376,10 +389,6 @@ public class DeclutterEngineTest {
 		renderToPng(icons, "all4x8.png");
 	}
 
-	private IconListBuilder builder() {
-		return new IconListBuilder();
-	}
-
 	private void renderToPng(List<Icon> icons, String name) throws IOException {
 		File imageTarget = new File("target", "images");
 		imageTarget.mkdirs();
@@ -406,16 +415,20 @@ public class DeclutterEngineTest {
 		}
 
 		for (Icon icon : icons) {
-			iconEngine.positionOneIcon(icon);
+			iconEngine.positionOneIcon(icon, widgetPositioner, divWorker);
 		}
 
 		graphics.setColor(Color.RED);
 		for (Placement p : widgetPositioner.images) {
+			p.width = m_imageMock.getOffsetWidth();
+			p.height = m_imageMock.getOffsetHeight();
 			graphics.drawRect(p.x, p.y, p.width, p.height);
 		}
 
 		graphics.setColor(Color.YELLOW);
 		for (Placement p : widgetPositioner.labels) {
+			p.width = m_labelMock.getOffsetWidth();
+			p.height = m_labelMock.getOffsetHeight();
 			graphics.drawRect(p.x, p.y, p.width, p.height);
 		}
 
@@ -453,6 +466,10 @@ public class DeclutterEngineTest {
 		assertTrue(name, compareImages(expected, generated));
 	}
 
+	private IconListBuilder builder() {
+		return new IconListBuilder();
+	}
+	
 	boolean compareImages(BufferedImage i1, BufferedImage i2) {
 		return compareDataBuffers(i1.getData().getDataBuffer(), i2.getData().getDataBuffer());
 	}

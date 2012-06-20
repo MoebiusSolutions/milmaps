@@ -1,89 +1,109 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.Panel;
+import com.moesol.gwt.maps.client.DivWorker.BoxBounds;
+import com.moesol.gwt.maps.client.DivWorker.ImageBounds;
 import com.moesol.gwt.maps.client.stats.Sample;
 
+
 /**
- * Images are placed into an absolute panel. The z-index (zIndex) style is used
- * to ensure the images are layered correctly. We divide the z-index values
- * into three groups.
- * <ol>
- * <li>Real tiles for the current zoom level</li>
- * <li>Animated tiles being zoomed</li>
- * <li>Tiles not in use</li>
- * </ol>
- * Each group is separated by 1000 z-index values. That way within a group the z-index
- * defines which LayerSet has priority. Therefore we have:
- * <table>
- * <tr><td>Real</td><td>2000 - 2999</td></tr>
- * <tr><td>Animated</td><td>1000 - 1999</td></tr>
- * <tr><td>Not in Use</td><td>0 - 999</td></tr>
- * </table> 
+ * Images are placed into an absolute panel. 
  **/
 public class TiledImageLayer {
 	private final TileImageLoadListener m_tileImageLoadListener = new TileImageLoadListener();
 	private final MyTileImageEngineListener m_tileImageEngineListener = new MyTileImageEngineListener();
 	/** The one and only layer set this tiled image layer will render */
 	private final LayerSet m_layerSet;
-	private final AbsolutePanel m_absolutePanel;
-	private final TileImageEngine m_tileImageEngine = new TileImageEngine(this,m_tileImageEngineListener);
-	private final int REAL_ZOFFSET = 2000;
-	private final int ANIMATED_ZOFFSET = 1000;
-	private final int NOT_IN_USE_ZOFFSET = 0;
 	
-	private final double EarthCirMeters  = 2.0*Math.PI*6378137;
+	private final Panel m_dimLayoutPanel;
+	private final Panel m_nonDimLayoutPanel;
+	private final TileImageCache m_tileImageMgr = new TileImageCache(m_tileImageEngineListener);
+	
+	private final double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_METERS;
 	private final double MeterPerDeg  = EarthCirMeters/360.0;
 	
 	private TileCoords[] m_tileCoords;
 	private int m_level;
-	private final MapView m_mapView;
+	private DivWorker m_divWorker;
+	private final ImageBounds m_imgBounds = DivWorker.newImageBounds();
+	private final DivPanel m_divPanel;
 	/** Marked as priority when this image layer is the best for the scale */
 	private boolean m_priority = false;
 	
+	
 	private class MyTileImageEngineListener implements TileImageEngineListener {
 		@Override
-		public Object createImage(TileCoords tileCoords) {
-			Image image = new Image();
-			image.addLoadListener(m_tileImageLoadListener);
-			String url = tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter());
+		public Object createImage(ViewBox vb, TileCoords tileCoords) {
+			ImageDiv image = new ImageDiv();
+			image.addHandlers(m_tileImageLoadListener);
+			String url = tileCoords.makeTileURL(vb, getLayerSet(), getLevel(), getDynamicCounter());
 			image.setUrl(url);
-			image.setStyleName("moesol-MapTile");
-			m_absolutePanel.add(image);
+			image.setStyleName(m_layerSet.getStyleName());
+
+			layoutPanel().add(image);
 			return image;
 		}
-
 		@Override
 		public void destroyImage(Object object) {
-			Image image = (Image)object;
-			image.removeLoadListener(m_tileImageLoadListener);
+			ImageDiv image = (ImageDiv)object;
+			image.removeHandlers();
+			image.removeImage();
 			image.removeFromParent();
 		}
 		
 		@Override
-		public void useImage(TileCoords tileCoords, Object object) {
-			Image image = (Image)object;
+		public void useImage(ViewBox vb, TileCoords tileCoords, Object object) {
+			ImageDiv image = (ImageDiv)object;
 			// Better performance in IE7 to skip for non-auto update, but always setting fixes some IE7 issues.
-			image.setUrl(tileCoords.makeTileURL(getLayerSet(), getLevel(), getDynamicCounter()));
+			image.setUrl(tileCoords.makeTileURL(vb, getLayerSet(), getLevel(), getDynamicCounter()));
+			image.setVisible(true);
 		}
 
 		@Override
 		public void hideImage(Object object) {
-			Image image = (Image)object;
-			image.setPixelSize(512, 512);
-			m_absolutePanel.setWidgetPosition(image, -513, -513);
+			ImageDiv image = (ImageDiv)object;
+			image.setVisible(false);
 		}
 	};
+	
+	
+	public int getImgBoundLeft(){ return m_imgBounds.left; }
+	public int getImgBoundRight(){ return m_imgBounds.right; }
+	
+	public int getImgBoundTop(){ return m_imgBounds.top; }
+	public int getImgBoundBottom(){ return m_imgBounds.bottom; }
 
-	public TiledImageLayer(MapView mapView, LayerSet layerSet, AbsolutePanel absolutePanel) {
-		m_mapView = mapView;
+	public TiledImageLayer( DivPanel divPanel, LayerSet layerSet ) {
+		m_divPanel = divPanel;
 		m_layerSet = layerSet;
-		m_absolutePanel = absolutePanel;
-		m_tileImageLoadListener.setTileImageEngine(m_tileImageEngine);
+		m_divWorker = divPanel.getDivWorker();
+		m_dimLayoutPanel = divPanel.getTileLayerPanel();
+		m_nonDimLayoutPanel = divPanel.getNonDimTileLayerPanel();
+		m_tileImageLoadListener.setTileImageEngine(m_tileImageMgr);
+	}
+	
+	public void clearTileImages(){
+		m_tileImageMgr.clear();
 	}
 	
 	public long getDynamicCounter() {
-		return m_mapView.getDynamicCounter();
+		return m_divPanel.getDynamicCounter();
+	}
+	
+	private Panel layoutPanel(){
+		if (m_layerSet.isDimmable()) {
+			return m_dimLayoutPanel;
+		}
+		return m_nonDimLayoutPanel;
 	}
 
 	public void setTileCoords(TileCoords[] tileCoords) {
@@ -94,94 +114,85 @@ public class TiledImageLayer {
 	  return m_tileCoords;
 	}
 	
-	
-	public void hideAnimatedTiles(){
-		if ( m_mapView.getMapBrightness() < 1.0 ){
-			if ( areAllLoaded() && !m_mapView.isMapActionSuspended() ){
-				m_tileImageEngine.doHideAnimatedImages();
-			}	
-		}
+	public void removeAllTiles() {
+		m_tileImageMgr.removeAllImages();
 	}
 	
 	/**
 	 * Draw scaled images. Only called from animation.
 	 */
-	public void drawTileImages( double scale, double offsetX, double offsetY  ) {
-		m_tileImageEngine.setAllZIndex(NOT_IN_USE_ZOFFSET + m_layerSet.getZIndex());
-		if ( m_tileCoords != null ){
-		    for (int i = 0; i < m_tileCoords.length; i++) {
-				 drawImage( m_tileCoords[i], scale, offsetX, offsetY );
-		    }
-		}
-	}
 	
-	private void drawImage( TileCoords tileCoords, double scale, double offsetX, double offsetY ){
-		if (tileCoords != null) {
-			// passing false in forces a redraw.
-			Image image = (Image)m_tileImageEngine.findImage(tileCoords, scale, false, true);
-			if ( image != null ) {
-				if ( m_layerSet.isAlwaysDraw() == false ){
-					image.getElement().getStyle().setOpacity(m_mapView.getMapBrightness());
-				}
-				setImageZIndex(image, ANIMATED_ZOFFSET + m_layerSet.getZIndex());
-				int width = (int)(tileCoords.getDrawTileWidth()*scale + 0.5);
-				int height = (int)(tileCoords.getDrawTileHeight()*scale + 0.5);
-				image.setPixelSize(width, height);
-				int left = (int)(tileCoords.getOffsetX()*scale - offsetX);
-				int top  = (int)(tileCoords.getOffsetY()*scale - offsetY);
-				m_absolutePanel.setWidgetPosition( image, left , top );
-			}
-		}
-	}
 
-	public void updateView() {
+	public void updateView(ViewBox vb) {
 		Sample.LAYER_UPDATE_VIEW.beginSample();
 		try {
-			if ( (m_layerSet.isAlwaysDraw() == false && isPriority() == false ) ){
-				m_tileImageEngine.hideUnplacedImages();
-				return; 
-			}
-			if (!m_layerSet.isActive()) {
-				m_tileImageEngine.hideUnplacedImages();
-				return; // do nothing.
-			}
-			
-			Sample.LAYER_POSITION_IMAGES.beginSample();
-			positionImages();
-			Sample.LAYER_POSITION_IMAGES.endSample();
+			_updateView(vb);
 		} finally {
 			Sample.LAYER_UPDATE_VIEW.endSample();
 		}
 	}
-
-	private void positionImages() {
-		for (int i = 0; i < m_tileCoords.length; i++) {
-			positionOneImage(m_tileCoords[i]);
+	
+	private void _updateView(ViewBox vb) {
+		if ( (m_layerSet.isAlwaysDraw() == false && isPriority() == false ) ){
+			m_tileImageMgr.hideUnplacedImages();
+			return;
+		}
+		if (!m_layerSet.isActive()) {
+			m_tileImageMgr.hideUnplacedImages();
+			return; // do nothing.
 		}
 		
-		Sample.LAYER_HIDE_IMAGES.beginSample();
-		m_tileImageEngine.hideUnplacedImages();
-		Sample.LAYER_HIDE_IMAGES.endSample();
+		Sample.LAYER_POSITION_IMAGES.beginSample();
+		positionImages(vb);
+		Sample.LAYER_POSITION_IMAGES.endSample();
+		
+		m_tileImageMgr.hideUnplacedImages();
 	}
 
-	private void positionOneImage(TileCoords tileCoords) {
+	private void clipImgBoundsToDiv(){
+		DivDimensions dim = m_divWorker.getDivBaseDimensions();
+		m_imgBounds.left = Math.max(0, m_imgBounds.left);
+		m_imgBounds.right = Math.min(dim.getWidth(), m_imgBounds.right);
+		m_imgBounds.top = Math.max(0, m_imgBounds.top);
+		m_imgBounds.bottom = Math.min(dim.getHeight(), m_imgBounds.bottom);
+	}
+	
+	private void positionImages(ViewBox vb) {
+		m_imgBounds.left   = Integer.MAX_VALUE;
+		m_imgBounds.right  = Integer.MIN_VALUE;
+		m_imgBounds.top    = Integer.MAX_VALUE;
+		m_imgBounds.bottom = Integer.MIN_VALUE;
+		DivDimensions divBaseDim = m_divWorker.getDivBaseDimensions();
+		for (int i = 0; i < m_tileCoords.length; i++) {
+			positionOneImage(vb, m_tileCoords[i]);
+			m_divWorker.computeImageBounds(m_tileCoords[i],divBaseDim, m_imgBounds);
+		}
+		// note, we are clipping the images by the div's boundaries
+		clipImgBoundsToDiv();
+	}
+
+
+	private void positionOneImage(ViewBox vb, TileCoords tileCoords) {
 		if (tileCoords == null) {
 			return;
 		}
+		ImageDiv image = (ImageDiv)m_tileImageMgr.findOrCreateImage(vb,tileCoords);
+		setImageZIndex(image, m_layerSet.getZIndex());
+		int x = tileCoords.getOffsetX();
+		int y = tileCoords.getOffsetY();
+		int width = tileCoords.getTileWidth();
+		int height = tileCoords.getTileHeight();
+		BoxBounds b = m_divWorker.computePercentBounds(x, y, width, height);
 		
-		Image image = (Image)m_tileImageEngine.findOrCreateImage(tileCoords);
-		
-		if ( m_layerSet.isAlwaysDraw() == false ){
-			image.getElement().getStyle().setOpacity(m_mapView.getMapBrightness());
-		}
-		setImageZIndex(image, REAL_ZOFFSET + m_layerSet.getZIndex());
-		image.setPixelSize(tileCoords.getDrawTileWidth(), tileCoords.getDrawTileHeight());
-		m_absolutePanel.setWidgetPosition(image, tileCoords.getOffsetX(), tileCoords.getOffsetY());
+		Style imageStyle = image.getElement().getStyle();
+		imageStyle.setLeft(b.left, Unit.PCT);
+		imageStyle.setRight(100 - b.right, Unit.PCT);
+		imageStyle.setTop(b.top, Unit.PCT);
+		imageStyle.setBottom(100 - b.bottom, Unit.PCT);
 	}
 
-	private void setImageZIndex(Image image, int zIndex) {
-		// Note if you try and use "zindex" it WON'T work.
-		image.getElement().getStyle().setProperty("zIndex", Integer.toString(zIndex) );
+	private void setImageZIndex(ImageDiv image, int zIndex) {
+		image.getElement().getStyle().setZIndex(zIndex);
 	}
 
 	public void setLevel(int level) {
@@ -197,8 +208,8 @@ public class TiledImageLayer {
 	}
 	
 	public boolean areAllLoaded() {
-		Image image = (Image)m_tileImageEngine.firstUnloadedImage();
-		if (image != null) {
+		ImageDiv image = (ImageDiv)m_tileImageMgr.firstUnloadedImage();
+		if (image!= null) {
 			System.out.println("Waiting for " + image.getUrl());
 		}
 		return image == null;
@@ -214,7 +225,7 @@ public class TiledImageLayer {
 	}
 
 	public void destroy() {
-		m_tileImageEngine.clear();
+		m_tileImageMgr.clear();
 	}
 
 	public boolean isPriority() {
@@ -238,9 +249,12 @@ public class TiledImageLayer {
 
 	// dpi is pixels per inch for physical screen
 	public int findLevel(double dpi, double projScale) {
+		if (m_layerSet.isTiled() == false){
+			return -1;
+		}
 		double mpp = 2.54 / (dpi * 100); // meters per pixel for physical screen
 		double m_dx = m_layerSet.getPixelWidth();
-		double l_mpp = m_layerSet.getStartLevelTileWidthInDeg()* (MeterPerDeg / m_dx);
+		double l_mpp = (m_layerSet.getStartLevelTileWidthInDeg()*MeterPerDeg)/m_dx;
 		// compute the best level.
 		if ( projScale == 0.0 ){
 			projScale = (mpp / l_mpp);
@@ -254,9 +268,9 @@ public class TiledImageLayer {
 	public double findScale( double dpi, int level ) {
 		double mpp = 2.54 / (dpi * 100);
 		double m_dx = m_layerSet.getPixelWidth();
-		double l_mpp = m_layerSet.getStartLevelTileWidthInDeg()* (MeterPerDeg / m_dx);
+		double l_mpp = (m_layerSet.getStartLevelTileWidthInDeg()*MeterPerDeg)/m_dx;
 		// we want to return ( (mpp*2^n)/(l_mpp) );
 		return ((mpp * Math.pow(2, level)) / l_mpp);
 	}
-	
+
 }

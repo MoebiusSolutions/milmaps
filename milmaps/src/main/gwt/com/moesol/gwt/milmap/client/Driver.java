@@ -1,13 +1,9 @@
-/*
- * $Id$
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
  *
- * (c) Copyright, Moebius Solutions, Inc., 2006
+ *                        All Rights Reserved
  *
- *                       All Rights Reserved
- *
- * This material may be reproduced by or for the U. S. Government
- * pursuant to the copyright license under the clause at
- * DFARS 252.227-7014 (OCT 2001).
+ * LICENSE: GPLv3
  */
 package com.moesol.gwt.milmap.client;
 
@@ -16,13 +12,14 @@ import java.util.List;
 
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
+import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.place.shared.Place;
@@ -31,12 +28,10 @@ import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -46,16 +41,21 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.moesol.gwt.maps.client.AbstractProjection;
 import com.moesol.gwt.maps.client.DeclutterEngine;
+import com.moesol.gwt.maps.client.DivManager;
+import com.moesol.gwt.maps.client.DivPanel;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ILayerConfig;
 import com.moesol.gwt.maps.client.ILayerConfigAsync;
+import com.moesol.gwt.maps.client.IProjection;
 import com.moesol.gwt.maps.client.Icon;
 import com.moesol.gwt.maps.client.LayerSet;
 import com.moesol.gwt.maps.client.LayerSetJson;
 import com.moesol.gwt.maps.client.MapPanel;
 import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
+import com.moesol.gwt.maps.client.ViewDimension;
 import com.moesol.gwt.maps.client.WallClock;
 import com.moesol.gwt.maps.client.WidgetPositioner;
 import com.moesol.gwt.maps.client.WorldCoords;
@@ -65,7 +65,9 @@ import com.moesol.gwt.maps.client.controls.MapPanZoomControl;
 import com.moesol.gwt.maps.client.controls.PositionControl;
 import com.moesol.gwt.maps.client.controls.SearchControl;
 import com.moesol.gwt.maps.client.controls.TagControl;
+import com.moesol.gwt.maps.client.controls.TextControl;
 import com.moesol.gwt.maps.client.gin.MapsGinjector;
+import com.moesol.gwt.maps.client.overlayeditor.OverlayEditor;
 import com.moesol.gwt.maps.client.place.MapsActivityMapper;
 import com.moesol.gwt.maps.client.place.MapsPlaceHistoryMapper;
 import com.moesol.gwt.maps.client.stats.StatsDialogBox;
@@ -73,6 +75,7 @@ import com.moesol.gwt.maps.client.tms.TileMapServicePlace;
 import com.moesol.gwt.maps.client.tms.TileMapServiceView;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
+import com.moesol.gwt.maps.client.units.MapScale;
 
 public class Driver implements EntryPoint {
 	private static final int MAP_EDGE_HOVER_MAX_PAN_PER_INTERVAL_PIXELS = 10;
@@ -82,14 +85,15 @@ public class Driver implements EntryPoint {
 	private static final int TILE_DY = 3;
 	private static final int TILE_DX = 4;
 	private static Dictionary OPTIONS = Dictionary.getDictionary("milMap_options");
-	private int m_scrnDpi = 75;
+	private int m_scrnDpi = AbstractProjection.DOTS_PER_INCH;
 	private MapView m_map;
-	//private PositionControl m_mousePosLabel;
 	private final Label m_centerLabel = new Label();
 	private final Grid m_tiles = new Grid(TILE_DY, TILE_DX);
 	private SuggestBox m_levelBox;
+	TextControl m_textControl = null;
+	OverlayEditor m_ovlEditor = null;
 	
-	private Place defaultPlace = new TileMapServicePlace(new String[]{"BMNG@EPSG:4326@png"}, 0, 0, 0);
+	private Place defaultPlace = new TileMapServicePlace(new String[]{"BMNG@EPSG:4326@png"}, 0, 0);
 	
 	private MapsGinjector injector = GWT.create(MapsGinjector.class);
 	EventBus eventBus;
@@ -106,6 +110,7 @@ public class Driver implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		PlaceHistoryHandler historyHandler = null;
+		
 		if (isTrue("showLayerPanel", false)) {
 			eventBus = injector.getEventBus();
 			PlaceController placeController = injector.getPlaceController();
@@ -151,8 +156,10 @@ public class Driver implements EntryPoint {
 		DOM.setInnerHTML(mapPanel.getElement(), "");
 		
 		final DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.PX);
-		dockPanel.setHeight("420px");
-		dockPanel.setWidth("600px");
+		dockPanel.setHeight("100%");
+		dockPanel.setWidth("100%");
+		//dockPanel.setHeight("420px");
+		//dockPanel.setWidth("600px");
 		mapPanel.add(dockPanel);
 
 		// loadLayerConfigsFromServer();
@@ -162,7 +169,7 @@ public class Driver implements EntryPoint {
 		MapPanel mapFillPanel = new MapPanel(m_map);
 		m_map.setDpi( m_scrnDpi );
 		m_map.getController().withHoverDelayMillis(MAP_HOVER_DELAY_MILLIS);
-		
+		m_map.setDeclutterLabels(true);
 		//new EdgeHoverPanControl(m_map, MAP_EDGE_HOVER_RADIUS_PIXELS,
 		//		MAP_EDGE_HOVER_PAN_INTERVAL,
 		//		MAP_EDGE_HOVER_MAX_PAN_PER_INTERVAL_PIXELS);
@@ -177,7 +184,6 @@ public class Driver implements EntryPoint {
 //				bc.animateShow(e.getClientX(), e.getClientY());
 //			}
 //		});
-		
 		if (isTrue("showSomeIcons", false)) {
 			addSomeIcons();
 		}
@@ -185,38 +191,43 @@ public class Driver implements EntryPoint {
 		m_map.updateView();
 		
 
-		Button removeIcons = new Button("Remove Icons", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				removeIcons();
-			}});
-		Button moveIcons = new Button("Move Icons", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				moveIcons();
-			}});
-		Button showLeaders = new Button("Show Leaders", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				showLeaders();
-			}
-		});
-		Button resizeMap = new Button("Fill Viewport", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				dockPanel.setHeight("100%");
-				dockPanel.setWidth("100%");
-			}});
-		Button benchmarks = new Button("Benchmarks", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				runBenchmarks();
-			}});
-		Button stats = new Button("Stats", new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				stats();
-			}});
+		//Button removeIcons = new Button("Remove Icons", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		removeIcons();
+		//	}});
+		//Button moveIcons = new Button("Move Icons", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		moveIcons();
+		//	}});
+		//Button showLeaders = new Button("Show Leaders", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		showLeaders();
+		//	}
+		//});
+		//Button benchmarks = new Button("Benchmarks", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		runBenchmarks();
+		//	}});
+		//Button stats = new Button("Stats", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		stats();
+		//	}});
+		//Button memoryTest = new Button("Memory Test", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		memoryTest();
+		//	}});
+		
+		//Button declutter = new Button("Declutter", new ClickHandler() {
+		//	@Override
+		//	public void onClick(ClickEvent event) {
+		//		declutterTest();
+		//	}});
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
 		oracle.add("0");
 		oracle.add("01");
@@ -224,62 +235,85 @@ public class Driver implements EntryPoint {
 		oracle.add("3");
 		m_levelBox = new SuggestBox();
 		
-		m_map.addChangeListener(new ChangeListener() {
+		m_map.addChangeHandler(new ChangeHandler() {
 			@Override
-			public void onChange(Widget sender) {
+			public void onChange(ChangeEvent event) {
 				mapChanged();
-			}});
-
-		HorizontalPanel bar = new HorizontalPanel();
-		bar.add(removeIcons);
-		bar.add(moveIcons);
-		bar.add(showLeaders);
-		bar.add(resizeMap);
-		bar.add(benchmarks);
-		bar.add(stats);
-
-		dockPanel.addNorth(bar, 20);
+			}	
+		});
 		
-		LayoutPanel hp = new LayoutPanel();
-		dockPanel.add(hp);
+		//m_map.addChangeHandler(new ChangeHandler() {
+		//	@Override
+		//	public void onChange(Widget sender) {
+		//		mapChanged();
+		//	}});
+		
+		
+
+        // removing button bar for demo purposes
+		//HorizontalPanel bar = new HorizontalPanel();
+//		bar.add(removeIcons);
+//		bar.add(moveIcons);
+//		bar.add(showLeaders);
+//		bar.add(declutter);
+//		bar.add(benchmarks);
+//		bar.add(stats);
+//		bar.add(memoryTest);
+
+//		dockPanel.addNorth(bar, 20);
+		
+		LayoutPanel lp = new LayoutPanel();
+		dockPanel.add(lp);
 
 		if (isTrue("showLayerPanel", false)) {
-			addTileMapServiceView(hp);
+			addTileMapServiceView(lp);
 		}
 		
 		// The map viewport
-		hp.add(mapFillPanel);
+		lp.add(mapFillPanel);
 		//count = hp.getWidgetCount();
 		//hp.setWidgetLeftWidth(mapFillPanel,0, Style.Unit.PCT, 100, Style.Unit.PCT);
 		// The map controls
-		MapPanZoomControl mapControls = new MapPanZoomControl(m_map, 15, 100);
+		MapPanZoomControl mapControls = new MapPanZoomControl(m_map, 15, 10);
 		mapControls.getElement().getStyle().setZIndex(100000);
-		hp.add(mapControls);
-		hp.setWidgetLeftWidth(mapControls,0, Style.Unit.PX, 56, Style.Unit.PX);
-		hp.setWidgetTopHeight(mapControls,0, Style.Unit.PX, 121, Style.Unit.PX);
+		lp.add(mapControls);
+		lp.setWidgetLeftWidth(mapControls,0, Style.Unit.PX, 56, Style.Unit.PX);
+		lp.setWidgetTopHeight(mapControls,0, Style.Unit.PX, 121, Style.Unit.PX);
 		
 		//The mouse position label;
 		PositionControl mousePosLabel = new PositionControl(m_map);
-		hp.add(mousePosLabel);
-		hp.setWidgetRightWidth(mousePosLabel, 10, Style.Unit.PX, 500, Style.Unit.PX );
-		hp.setWidgetTopHeight(mousePosLabel, 10, Style.Unit.PX, 20, Style.Unit.PX );
+		lp.add(mousePosLabel);
+		lp.setWidgetRightWidth(mousePosLabel, 10, Style.Unit.PX, 500, Style.Unit.PX );
+		lp.setWidgetTopHeight(mousePosLabel, 10, Style.Unit.PX, 20, Style.Unit.PX );
+
+		//The Text control;
+		m_textControl= new TextControl();
+		lp.add(m_textControl);
+		lp.setWidgetLeftWidth(m_textControl, 10, Style.Unit.PX, 500, Style.Unit.PX );
+		lp.setWidgetBottomHeight(m_textControl, 10, Style.Unit.PX, 20, Style.Unit.PX );
 		
 		// Map dimmer control
 		MapDimmerControl dimmer = new MapDimmerControl(m_map, true);
-		hp.add(dimmer);
-		hp.setWidgetRightWidth(dimmer,10, Style.Unit.PX, 35, Style.Unit.PX);
-		hp.setWidgetBottomHeight(dimmer, 10, Style.Unit.PX, 22, Style.Unit.PX);
+		lp.add(dimmer);
+		lp.setWidgetRightWidth(dimmer,10, Style.Unit.PX, 60, Style.Unit.PX);
+		lp.setWidgetBottomHeight(dimmer, 10, Style.Unit.PX, 34, Style.Unit.PX);
 		
 		// Map tag control
 		TagControl tag = new TagControl(m_map, true);
-		hp.add(tag);
-		hp.setWidgetRightWidth(tag,10, Style.Unit.PX, 35, Style.Unit.PX);
-		hp.setWidgetBottomHeight(tag, 40, Style.Unit.PX, 22, Style.Unit.PX);
+		lp.add(tag);
+		lp.setWidgetRightWidth(tag,10, Style.Unit.PX, 35, Style.Unit.PX);
+		lp.setWidgetBottomHeight(tag, 60, Style.Unit.PX, 22, Style.Unit.PX);
+		
+		// Map OverlayEditor control
+		OverlayEditor editor = new OverlayEditor(m_map, true);
+		lp.add(editor);
+		lp.setWidgetRightWidth(editor,10, Style.Unit.PX, 35, Style.Unit.PX);
+		lp.setWidgetBottomHeight(editor, 84, Style.Unit.PX, 22, Style.Unit.PX);
 		
 		SearchControl flyToControl = new SearchControl();
-		hp.add(flyToControl);
-		hp.setWidgetRightWidth(flyToControl, 10, Style.Unit.PX, 160, Style.Unit.PX);
-		hp.setWidgetTopHeight(flyToControl, 10, Style.Unit.PX, 50, Style.Unit.PX);
+		lp.add(flyToControl);
+		lp.setWidgetRightWidth(flyToControl, 10, Style.Unit.PX, 160, Style.Unit.PX);
+		lp.setWidgetTopHeight(flyToControl, 10, Style.Unit.PX, 50, Style.Unit.PX);
 		
 		flyToControl.addSearchHandler(new FlyToController(m_map));
 		
@@ -300,7 +334,9 @@ public class Driver implements EntryPoint {
 			Image img = new Image("images/leader-images.png", i * DeclutterEngine.LEADER_IMAGE_WIDTH, 0,
 					DeclutterEngine.LEADER_IMAGE_WIDTH, DeclutterEngine.LEADER_IMAGE_HEIGHT);
 			img.getElement().getStyle().setZIndex(3020);
-			widgetPositioner.place(img, 200, 200);
+			
+			widgetPositioner.place(img, 200, 200,
+					4000);
 		}
 	}
 
@@ -355,17 +391,18 @@ public class Driver implements EntryPoint {
 	}
 
 	private void addSomeIcons() {
-		Icon icon = new Icon();
-		icon.setIconUrl("http://www.moesol.com/icons/moesol_logo_small.jpg");
-		icon.setLocation(new GeodeticCoords(0,0,AngleUnit.DEGREES));
-		icon.getImage().setPixelSize(212/2, 86/2);
-		m_map.getIconLayer().addIcon(icon);
+		//Icon icon = new Icon();
+		//icon.setIconUrl("http://www.moesol.com/icons/moesol_logo_small.jpg");
+		//icon.setLocation(new GeodeticCoords(0,0,AngleUnit.DEGREES));
+		//icon.getImage().setPixelSize(212/2, 86/2);
+		//m_map.getIconLayer().addIcon(icon);
 
-		// int num = 1024, workable, sluggish
-		// int num = 512, better
-		// int num = 256, good
-		// int num = 128, rocking
-		int num = 128;
+		 //int num = 1024; // workable, sluggish
+		 //int num = 512;  // better
+		 //int num = 256;  // good
+		 //int num = 128;  // rocking
+		/*
+		int num = 10;
 		double maxx = 360.0;
 		double maxy = 30.0;
 		double incx = maxx/num;
@@ -373,30 +410,41 @@ public class Driver implements EntryPoint {
 		double lat = 0.0;
 		double lng = -180.0;
 		for (int i = 0; i < num; i++) {
-			addOneIcon(lat, lng);
+			addOneIcon(i, lat, lng);
 			lat += incy;
 			lng += incx;
 		}
+		*/
+		addOneIcon(0,0.0,90.0);
+		
 	}
 
-	private void addOneIcon(double lat, double lng) {
+	private void addOneIcon(int i, double lat, double lng) {
 		Icon icon;
 		icon = new Icon();
+		icon.setLabel("icon number " + i);
 		icon.setIconUrl("http://www.moesol.com/products/mx/js/mil_picker/mil_picker_images/sfapmfq--------.jpeg");
 		icon.setLocation(new GeodeticCoords(lng, lat, AngleUnit.DEGREES));
-		icon.getImage().setPixelSize(16, 16);
+		icon.setImageSize(new ViewDimension(16,16));
+		icon.setZIndex(2010);
 		m_map.getIconLayer().addIcon(icon);
 	}
 
 	protected void mapChanged() {
-		m_centerLabel.setText(m_map.getCenter() +"," + m_map.getViewport().getLevel());
+		m_centerLabel.setText(m_map.getCenter() +"," + 
+				MapScale.forScale(m_map.getProjection().getEquatorialScale()));
+		
+		//Window.alert("mapChanged");
+		String s = m_map.getDivManager().getCurrentDiv().getBestLayerData();
+		if(s != null && m_textControl != null){
+			m_textControl.setText(s);
+		}
 	}
 
 	protected void resizeMap() {
 		int h = Window.getClientHeight();
 		int w = Window.getClientWidth();
 		m_map.resizeMap(w - 50, h - 50);
-		
 		updateTileInfo();
 	}
 
@@ -474,19 +522,19 @@ public class Driver implements EntryPoint {
 		Window.alert("New geo/world/view = " + cl + " or " + perSec + "k/sec");
 		
 
-		// Value objects with trival pools
-		GeodeticCoords[] gcPool = new GeodeticCoords[100];
-		for (int i = 0; i < gcPool.length; i++) {
-			gcPool[i] = new GeodeticCoords();
-		}
-		WorldCoords[] wcPool = new WorldCoords[100];
-		for (int i = 0; i < wcPool.length; i++) {
-			wcPool[i] = new WorldCoords();
-		}
-		ViewCoords[] vcPool = new ViewCoords[100];
-		for (int i = 0; i < vcPool.length; i++) {
-			vcPool[i] = new ViewCoords();
-		}
+		// Value objects with trivial pools
+		//GeodeticCoords[] gcPool = new GeodeticCoords[100];
+		//for (int i = 0; i < gcPool.length; i++) {
+		//	gcPool[i] = new GeodeticCoords();
+		//}
+		//WorldCoords[] wcPool = new WorldCoords[100];
+		//for (int i = 0; i < wcPool.length; i++) {
+		//	wcPool[i] = new WorldCoords();
+		//}
+		//ViewCoords[] vcPool = new ViewCoords[100];
+		//for (int i = 0; i < vcPool.length; i++) {
+		//	vcPool[i] = new ViewCoords();
+		//}
 				
 //		cl.start();
 //		for (int i = 0; i < N; i++) {
@@ -509,6 +557,23 @@ public class Driver implements EntryPoint {
 	
 	public void stats() {
 		new StatsDialogBox().show();
+	}
+	
+	public void memoryTest(){
+		DivManager divMgr = m_map.getDivManager();
+		DivPanel dp = divMgr.getCurrentDiv();
+		IProjection proj = m_map.getProjection();
+		double eqScale = proj.getEquatorialScale();
+		for ( int i = 0; i < 1; i++){
+			dp.removeAllTiles();
+			dp.doUpdate(eqScale);
+		}
+	}
+	
+	public void declutterTest(){
+		boolean flag =  !m_map.isDeclutterLabels();
+		m_map.setDeclutterLabels(flag);
+		m_map.dumbUpdateView();
 	}
 
 	protected void goRight() {

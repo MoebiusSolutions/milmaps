@@ -1,3 +1,10 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
 package com.moesol.gwt.maps.client;
 
 import static org.junit.Assert.*;
@@ -22,6 +29,20 @@ public class GeodeticCoordsTest {
 				.setLambda(23).setPhi(24).degrees().setAltitude(25)
 				.build();
 		assertEquals(expected, result);
+	}
+	
+	@Test
+	public void testDSL() {
+		GeodeticCoords example = Degrees.geodetic(-117, 33);
+		assertEquals(-117, example.latitude().degrees(), 0.0);
+		assertEquals(33, example.longitude().degrees(), 0.0);
+	}
+	
+	@Test
+	public void testLegacyUsage() {
+		GeodeticCoords example = Degrees.geodetic(-117, 33);
+		assertEquals(-117, example.getPhi(AngleUnit.DEGREES), 0.0);
+		assertEquals(33, example.getLambda(AngleUnit.DEGREES), 0.0);
 	}
 
 }
