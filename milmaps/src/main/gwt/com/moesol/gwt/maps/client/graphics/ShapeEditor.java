@@ -35,6 +35,7 @@ public class ShapeEditor implements IShapeEditor, ICoordConverter {
 	public ShapeEditor(MapView mapView) {
 		super();
 		m_map = mapView;
+		m_map.setShapeEditor(this);
 		m_canvas = m_map.getDivManager().getCanvasTool();
 		m_map.getViewPanel().add(m_canvas.canvas());
 		m_mapControl = m_map.getController();
@@ -69,9 +70,6 @@ public class ShapeEditor implements IShapeEditor, ICoordConverter {
 	
 	@Override
 	public void setShapeTool(IShapeTool shape) {
-		//if(shape != null && shape.getType() != "SelectTool"){
-		//	deselectAllShapes();
-		//}
 		m_shapeTool = shape;
 	}
 	
@@ -123,12 +121,20 @@ public class ShapeEditor implements IShapeEditor, ICoordConverter {
 	}
 	
 	@Override
-	public IShapeEditor clearCanvas() {
-		checkForException();
+	public IShapeEditor clearCanvas(){
 		Context2d context = m_canvas.canvas().getContext2d();
 		int w = m_canvas.canvas().getOffsetWidth();
 		int h = m_canvas.canvas().getOffsetHeight();
-		context.clearRect(0, 0, w, h);
+		context.clearRect(0, 0, w, h);	
+		return this;
+	}
+	
+	@Override
+	public IShapeEditor clearExistingObjs() {
+		checkForException();
+		if(!m_objs.isEmpty()){
+			clearCanvas();
+		}
 		return this;
 	}
 
@@ -137,9 +143,7 @@ public class ShapeEditor implements IShapeEditor, ICoordConverter {
 		checkForException();
 		Context2d context = m_canvas.canvas().getContext2d();
 		for (IShape obj : m_objs){
-			if(obj.isSelected() == false){
-				obj.render(context);
-			}
+			obj.render(context);
 		}
 		return this;
 	}

@@ -90,7 +90,6 @@ public class SelectShape implements IShapeTool{
 			} 
 		}
 		else{
-			m_editor.setShapeTool(null);
 			m_editor.deselectAllShapes();
 			m_editor.clearCanvas().renderObjects();
 		}  	

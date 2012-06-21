@@ -20,8 +20,6 @@ public class EditCircleTool implements IShapeTool{
 	private Circle m_circle = null;
 	private Canvas m_canvas = null;
 	private boolean m_mouseDown = false;
-	private final AnchorHandle m_centerHandle = new AnchorHandle();
-	private final AnchorHandle m_radHandle = new AnchorHandle();
 	private IAnchorTool m_anchorTool = null;
 	private ICoordConverter m_convert;
 	private IShapeEditor m_editor;
@@ -32,32 +30,17 @@ public class EditCircleTool implements IShapeTool{
 		m_convert = se.getCoordinateConverter();
 	}
 	
-	private boolean draw(boolean bshowHandles) {
+	private void drawHandles() {
 		if (m_circle != null && m_canvas != null) {
 			Context2d context = m_canvas.getContext2d();
-			// Circle
-			//m_circle.erase(context);
-			m_circle.render(context);
-			if (bshowHandles){
-				// Center Handle
-				GeodeticCoords gc = m_circle.getCenter();
-				ViewCoords vc = m_convert.geodeticToView(gc);
-				m_centerHandle.setCenter(vc.getX(), vc.getY());
-				m_centerHandle.draw(context);
-				// Radius handle
-				gc = m_circle.getRadiusPos();
-				vc = m_convert.geodeticToView(gc);
-				m_radHandle.setCenter(vc.getX(), vc.getY());
-				m_radHandle.draw(context);
-			}
-			return true;
+			m_circle.drawHandles(context);
 		}
-		return false;
 	}
 	
 	@Override
 	public void hilite() {
-		draw(true);
+		m_editor.renderObjects();
+		drawHandles();
 	}
 	
 	@Override
@@ -82,7 +65,8 @@ public class EditCircleTool implements IShapeTool{
 			if (m_anchorTool != null){
 				m_anchorTool.handleMouseMove(event);
 				m_editor.clearCanvas().renderObjects();
-				return draw(true);
+				drawHandles();
+				return true;
 			}
 		}
 		return false;
@@ -108,7 +92,7 @@ public class EditCircleTool implements IShapeTool{
 
 	@Override
 	public void done() {
-		draw(false);
+		m_editor.clearCanvas().renderObjects();
 	}
 
 	@Override

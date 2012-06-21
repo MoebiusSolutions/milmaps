@@ -18,8 +18,9 @@ public interface IShape {
     // public abstract whichHandle(); ????
     public abstract boolean touchesCoordinates();
     public abstract IShape selected(boolean selected);
-    public abstract IShape render(Context2d context);
     public abstract IShape erase(Context2d context);
+    public abstract IShape render(Context2d context);
+    public abstract IShape drawHandles(Context2d context);
     public abstract boolean isSelected();
     public abstract boolean needsUpdate();
     public abstract boolean positionTouches(GeodeticCoords position);
