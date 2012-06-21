@@ -25,6 +25,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.moesol.gwt.maps.client.graphics.IShapeEditor;
 import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
@@ -60,6 +61,8 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	private double m_previousEqScale;
 	private final EventBus m_eventBus;
 	private final DynamicUpdateEngine m_dynamicUpdateEngine;
+	
+	private IShapeEditor m_shapeEditor;
 
 	public MapView() {
 		this(new SimpleEventBus());
@@ -132,6 +135,20 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		m_mapProj = proj;
 		m_previousEqScale = proj.getEquatorialScale();
 		m_viewPort.setProjection(proj);
+	}
+	
+	public IShapeEditor getShapeEditor() {
+		return m_shapeEditor;
+	}
+	
+	public void setShapeEditor(IShapeEditor shapeEditor) {
+		m_shapeEditor = shapeEditor;
+	}
+	
+	private void renderShapes(){
+		if(m_shapeEditor != null){
+			m_shapeEditor.clearExistingObjs().renderObjects();
+		}
 	}
 	
 	private boolean setProjFromLayerSet(LayerSet ls) {
@@ -459,13 +476,14 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		m_divMgr.doUpdateDivsCenterScale( m_mapProj.getEquatorialScale() );
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
 		m_divMgr.positionIcons();
+		renderShapes();
 		Sample.MAP_FULL_UPDATE.endSample();
 	}
 	
 	public void partialUpdateView() {
 		Sample.MAP_PARTIAL_UPDATE.beginSample();
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
-		//m_divMgr.positionIcons();
+		renderShapes();
 		Sample.MAP_PARTIAL_UPDATE.endSample();
 	}
 	
@@ -673,9 +691,4 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	public HandlerRegistration addChangeHandler(ChangeHandler handler) {
 		return addDomHandler(handler, ChangeEvent.getType());
 	}
-
-//        private boolean iconsHaveMoved() {
-//                return m_iconLayer.iconsHaveMoved();
-//        }
-	
 }

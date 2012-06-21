@@ -20,7 +20,6 @@ public class NewCircleTool implements IShapeTool {
 	private boolean m_mouseDown = false;
 	private Canvas m_canvas = null;
 	private Circle m_circle = null;
-	private final AnchorHandle m_radHandle = new AnchorHandle();
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
 
@@ -30,11 +29,10 @@ public class NewCircleTool implements IShapeTool {
 		m_convert = editor.getCoordinateConverter();
 	}
 	
-	private void drawCircle(){
+	private void drawHandles(){
 		Context2d context = m_canvas.getContext2d();
 		//m_circle.erase(context);
-		m_circle.render(context);
-		m_radHandle.draw(context);
+		m_circle.drawHandles(context);
 	}
 	
 	@Override
@@ -55,6 +53,7 @@ public class NewCircleTool implements IShapeTool {
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords center = m_convert.viewToGeodetic(vc);
 		m_circle = new Circle().withCenter(center);
+		m_editor.addShape(m_circle);
 		m_circle.selected(true);
 		m_circle.setCoordConverter(m_editor.getCoordinateConverter());
 		IAnchorTool tool = m_circle.getRadiusAnchorTool();
@@ -66,19 +65,15 @@ public class NewCircleTool implements IShapeTool {
 	public boolean handleMouseMove(MouseMoveEvent event) {
 		if (m_mouseDown) {
 			if (m_circle != null && m_canvas != null) {
-				
-				int x = event.getX();
-				int y = event.getY();
 				m_circle.getRadiusAnchorTool().handleMouseMove(event);
-				m_radHandle.setCenter(x, y);
 				m_editor.clearCanvas().renderObjects();
-				drawCircle();
+				drawHandles();
 				return true;
 			}
 		}
 		return false;
 	}
-
+	/*
 	private boolean drawCenterHandle() {
 		if (m_circle != null && m_canvas != null) {
 			Context2d context = m_canvas.getContext2d();
@@ -91,19 +86,18 @@ public class NewCircleTool implements IShapeTool {
 		}
 		return false;
 	}
-
+	*/
 	@Override
 	public boolean handleMouseUp(MouseUpEvent event) {
 		m_mouseDown = false;
 		m_circle.getRadiusAnchorTool().handleMouseUp(event);
-		drawCenterHandle();
-		m_editor.addShape(m_circle);
+		//drawCenterHandle();
 		// we are done with initial creation so set the edit tool
 		IShapeTool tool = new EditCircleTool(m_editor);
 		tool.setShape((IShape)m_circle);
 		m_editor.setShapeTool(tool);
 		m_editor.renderObjects();
-		drawCircle();
+		drawHandles();
 		m_circle = null;
 		return true;
 	}

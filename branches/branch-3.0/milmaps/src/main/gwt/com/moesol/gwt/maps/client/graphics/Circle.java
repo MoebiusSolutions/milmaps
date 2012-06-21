@@ -23,6 +23,8 @@ import com.moesol.gwt.maps.client.algorithms.*;
 public class Circle implements IShape {
 	private static final int NUM_CIR_PTS = 50;
 	private static final RangeBearingS m_rb = new RangeBearingS();
+	private final AnchorHandle m_centerHandle = new AnchorHandle();
+	private final AnchorHandle m_radHandle = new AnchorHandle();
 	private ICoordConverter m_convert;
 	private GeodeticCoords m_center = null;
 	private GeodeticCoords m_radiusPos = null;
@@ -38,6 +40,7 @@ public class Circle implements IShape {
 	private String m_id;
 	private CssColor m_color = CssColor.make(255, 255, 255);
 	private boolean m_bSeletected = false;
+	
 
 	public CssColor getColor() {
 		return m_color;
@@ -281,14 +284,31 @@ public class Circle implements IShape {
 	}
 
 	@Override
+	public IShape erase(Context2d ct) {
+		_erase(ct);
+		return this;
+	}
+	
+	@Override
 	public IShape render(Context2d ct) {
 		draw(ct);
 		return this;
 	}
-
+	
 	@Override
-	public IShape erase(Context2d ct) {
-		_erase(ct);
+	public IShape drawHandles(Context2d context) {
+		if (context != null) {
+			// Center Handle
+			GeodeticCoords gc = getCenter();
+			ViewCoords vc = m_convert.geodeticToView(gc);
+			m_centerHandle.setCenter(vc.getX(), vc.getY());
+			m_centerHandle.draw(context);
+			// Radius handle
+			gc = getRadiusPos();
+			vc = m_convert.geodeticToView(gc);
+			m_radHandle.setCenter(vc.getX(), vc.getY());
+			m_radHandle.draw(context);
+		}
 		return this;
 	}
 	
