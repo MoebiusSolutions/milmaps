@@ -1,0 +1,27 @@
+package com.moesol.gwt.maps.client;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Degrees;
+
+public class GeodeticCoordsTest {
+
+	@Test
+	public void testBuilder() {
+		GeodeticCoords expected = Degrees.geodetic(-117, 33);
+		GeodeticCoords result = GeodeticCoords.builder()
+				.setLatitude(-117).setLongitude(33).degrees()
+				.build();
+		assertEquals(expected, result);
+		
+		expected = new GeodeticCoords(23, 24, AngleUnit.DEGREES, 25);
+		result = GeodeticCoords.builder()
+				.setLambda(23).setPhi(24).degrees().setAltitude(25)
+				.build();
+		assertEquals(expected, result);
+	}
+
+}
