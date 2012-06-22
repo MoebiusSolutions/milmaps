@@ -1,0 +1,13 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<g:HTMLPanel styleName="map-PanZoomControl">
+		<g:HTML styleName="map-PanZoomControlPanButton" ui:field="panButton">
+			<div class="map-PanZoomControlPanClickHighlight" ui:field="clickHighlight" />
+		</g:HTML>
+		<div class="map-PanZoomControlZoom">
+			<g:HTML styleName="map-PanZoomControlZoomInButton" ui:field="zoomInButton" />
+			<g:HTML styleName="map-PanZoomControlZoomOutButton" ui:field="zoomOutButton" />
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder>
