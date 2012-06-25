@@ -1,0 +1,119 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
+package com.moesol.gwt.maps.client.graphics;
+
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.moesol.gwt.maps.client.GeodeticCoords;
+import com.moesol.gwt.maps.client.ViewCoords;
+
+public class EditEllipseTool implements IShapeTool{
+	private Ellipse m_ellipse = null;
+	private Canvas m_canvas = null;
+	private boolean m_mouseDown = false;
+	private IAnchorTool m_anchorTool = null;
+	private ICoordConverter m_convert;
+	private IShapeEditor m_editor;
+
+	public EditEllipseTool(IShapeEditor se) {
+		m_editor = se;
+		m_canvas = se.getCanvasTool().canvas();
+		m_convert = se.getCoordinateConverter();
+	}
+	
+	private void drawHandles() {
+		if (m_ellipse != null && m_canvas != null) {
+			Context2d context = m_canvas.getContext2d();
+			m_ellipse.drawHandles(context);
+		}
+	}
+	
+	@Override
+	public void hilite() {
+		m_editor.renderObjects();
+		drawHandles();
+	}
+	
+	@Override
+	public boolean handleMouseDown(MouseDownEvent event) {
+		// Get Selected Anchor
+		int x = event.getX();
+		int y = event.getY();
+		m_mouseDown = true;
+		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
+		m_anchorTool = m_ellipse.getAnchorByPosition(gc);
+		if(m_anchorTool == null){
+			m_ellipse.selected(false);
+			m_editor.clearCanvas().renderObjects();
+			m_editor.setShapeTool(new SelectShape(m_editor));
+		}
+		return true;
+	}
+
+	@Override
+	public boolean handleMouseMove(MouseMoveEvent event) {
+		if (m_mouseDown == true){
+			if (m_anchorTool != null){
+				m_anchorTool.handleMouseMove(event);
+				//m_ellipse.upDateRngBrg();
+				m_editor.clearCanvas().renderObjects();
+				drawHandles();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean handleMouseUp(MouseUpEvent event) {
+		m_mouseDown = false;
+		if (m_anchorTool == null){
+			return false;
+		}	
+		m_editor.renderObjects();
+		return m_anchorTool.handleMouseUp(event);
+	}
+
+	@Override
+	public boolean handleMouseOut(MouseOutEvent event) {
+		if (m_anchorTool == null){
+			return false;
+		}
+		return m_anchorTool.handleMouseOut(event);
+	}
+
+	@Override
+	public void done() {
+		m_editor.clearCanvas().renderObjects();
+	}
+
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return "edit_ellipse_tool";
+	}
+	
+	@Override
+	public void setShape(IShape shape){
+		m_ellipse = (Ellipse)shape; 
+	}
+
+	@Override
+	public IShape getShape() {
+		return (IShape)m_ellipse;
+	}
+
+	@Override
+	public void setAnchor(IAnchorTool anchor) {
+		m_anchorTool = anchor;
+	}
+}

@@ -15,9 +15,19 @@ public class RngBrg {
 		m_ranegKm = rngKm;
 		m_bearing = brgDeg;
 	}
+	
+	public void setRanegKm(double rangeKm) {
+		m_ranegKm = rangeKm;
+	}
+	
 	public double getRanegKm() {
 		return m_ranegKm;
 	}
+	
+	public void setBearing(double bearing) {
+		m_bearing = bearing;
+	}
+
 	public double getBearing() {
 		return m_bearing;
 	}

@@ -12,6 +12,7 @@ import com.moesol.gwt.maps.client.ViewCoords;
 public class Func {
 	private static double RadToDeg = 57.29577951;
 	private static double DegToRad = 0.017453293;
+	public static double TWO_PI = 2*Math.PI;
 	public static int PIX_SELECT_TOLERANCE = 3;
 	
 	public static double RadToDeg(double radian){
@@ -76,6 +77,22 @@ public class Func {
 		double aSqr = (vc.getX()-px)*(vc.getX()-px);
 		double bSqr = (vc.getY()-py)*(vc.getY()-py);
 		return Math.sqrt( aSqr + bSqr); 
+	}
+	
+	public static int computePixelDistance(ViewCoords vc, ViewCoords vr) {
+		int xDist = Math.abs(vc.getX() - vr.getX());
+		int yDist = Math.abs(vc.getY() - vr.getY());
+		return (int) (Math.sqrt(xDist * xDist + yDist * yDist));
+	}
+	
+	public static double wrap360(double deg) {
+		int k = (int)Math.abs((deg/360));
+		if (deg > 360) {
+			deg -= k*360;
+		} else if (deg < 0) {
+			deg += k*360;
+		}
+		return deg;
 	}
 }
 

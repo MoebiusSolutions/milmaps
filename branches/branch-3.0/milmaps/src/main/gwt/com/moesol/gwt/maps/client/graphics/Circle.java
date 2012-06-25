@@ -8,48 +8,35 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
-import com.moesol.gwt.maps.client.units.Distance;
-import com.moesol.gwt.maps.client.units.DistanceUnit;
+import com.moesol.gwt.maps.client.algorithms.Func;
+import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
+import com.moesol.gwt.maps.client.algorithms.RngBrg;
 
-import com.moesol.gwt.maps.client.algorithms.*;
-
-public class Circle implements IShape {
+public class Circle extends AbstractShape {
 	private static final int NUM_CIR_PTS = 50;
 	private static final RangeBearingS m_rb = new RangeBearingS();
 	private final AnchorHandle m_centerHandle = new AnchorHandle();
 	private final AnchorHandle m_radHandle = new AnchorHandle();
-	private ICoordConverter m_convert;
 	private GeodeticCoords m_center = null;
 	private GeodeticCoords m_radiusPos = null;
-	private Distance m_radius = null;
 	private RngBrg m_radRngBrg = null;
-	private ViewCoords m_vCenter;
 	private ViewCoords[] m_pts = null;
-	private int m_iRadius;
-	private boolean m_needsUpdate = false;
 	//private boolean m_mouseDown = true;
 	private IAnchorTool m_radiusTool = null;
 	private IAnchorTool m_centerTool = null;
-	private String m_id;
-	private CssColor m_color = CssColor.make(255, 255, 255);
-	private boolean m_bSeletected = false;
 	
 
-	public CssColor getColor() {
-		return m_color;
+	public Circle(){
+		m_id = "Circle";
+		m_pts = new ViewCoords[NUM_CIR_PTS];
 	}
-
-	public void setColor(CssColor color) {
-		m_color = color;
-	}
-
+	
 	private void checkForException() {
 		if (m_convert == null) {
 			throw new IllegalStateException("Circle: m_convert = null");
@@ -191,51 +178,23 @@ public class Circle implements IShape {
 		return m_centerTool;
 	}
 
-	// TODO change the following distance calculation to
-	// something usable. This next routine is temporary.
-
-	private Distance computeDistance() {
-		double dist = m_rb.gcDistanceFromTo(m_center, m_radiusPos);
-		return new Distance(dist, DistanceUnit.KILOMETERS);
-	}
-
-	private void computeRadius() {
-		m_radius = computeDistance();
-	}
-
-	// Shape interface implementation
-	public void setCoordConverter(ICoordConverter cc) {
-		m_convert = cc;
-	}
-
-	private int computePixelDistance(ViewCoords vc, ViewCoords vr) {
-		int xDist = Math.abs(vc.getX() - vr.getX());
-		int yDist = Math.abs(vc.getY() - vr.getY());
-		return (int) (Math.sqrt(xDist * xDist + yDist * yDist));
-	}
-
-	public ViewCoords[] createBoundary(int size) {
-		if (size < 3) {
-			throw new IllegalArgumentException("array size is less than 3");
-		}
+	private void createBoundary() {
 		checkForException();
-		m_pts = new ViewCoords[size];
-		double degInc = 360.0 / (size - 1);
+		double degInc = 360.0 / (NUM_CIR_PTS - 1);
 		double distKm = m_radRngBrg.getRanegKm();
-		for (int i = 0; i < size - 1; i++) {
+		for (int i = 0; i < NUM_CIR_PTS - 1; i++) {
 			double brng = degInc * i;
 			GeodeticCoords gc = m_rb.gcPointFrom(m_center, brng, distKm);
 			m_pts[i] = m_convert.geodeticToView(gc);
 		}
-		m_pts[size - 1] = m_pts[0];
-		return m_pts;
+		m_pts[NUM_CIR_PTS - 1] = m_pts[0];
 	}
 
 	private void drawBoundary(Context2d context) {
 		context.beginPath();
 		context.setStrokeStyle(m_color);
 		context.setLineWidth(2);
-		createBoundary(NUM_CIR_PTS);
+		createBoundary();
 		context.moveTo(m_pts[0].getX(), m_pts[0].getY());
 		for (int i = 1; i < NUM_CIR_PTS; i++) {
 			context.lineTo(m_pts[i].getX(), m_pts[i].getY());
@@ -244,54 +203,16 @@ public class Circle implements IShape {
 		context.stroke();
 	}
 
-	private void draw(Context2d context) {
-		if (context != null) {
-			m_vCenter = m_convert.geodeticToView(m_center);
-			ViewCoords vr = m_convert.geodeticToView(m_radiusPos);
-			m_iRadius = computePixelDistance(m_vCenter, vr);
-			drawBoundary(context);
-		}
-	}
-
-	private void _erase(Context2d context) {
-		if (m_vCenter != null && context != null) {
-			int rad = m_iRadius + 50;
-			context.clearRect(m_vCenter.getX() - rad, m_vCenter.getY() - rad,
-					m_vCenter.getX() + rad, m_vCenter.getY() + rad);
-		}
-	}
-
-	@Override
-	public void setId(String id) {
-		m_id = id;
-	}
-
-	@Override
-	public String id() {
-		return "Circle";
-	}
-
-	@Override
-	public boolean touchesCoordinates() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public IShape selected(boolean selected) {
-		m_bSeletected = selected;
-		return this;
-	}
 
 	@Override
 	public IShape erase(Context2d ct) {
-		_erase(ct);
+		//_erase(ct);
 		return this;
 	}
 	
 	@Override
 	public IShape render(Context2d ct) {
-		draw(ct);
+		drawBoundary(ct);
 		return this;
 	}
 	
@@ -306,36 +227,8 @@ public class Circle implements IShape {
 			// Radius handle
 			gc = getRadiusPos();
 			vc = m_convert.geodeticToView(gc);
-			m_radHandle.setCenter(vc.getX(), vc.getY());
-			m_radHandle.draw(context);
+			m_radHandle.setCenter(vc.getX(), vc.getY()).draw(context);
 		}
-		return this;
-	}
-	
-	@Override
-	public boolean isSelected() {
-		return m_bSeletected;
-	}
-
-	@Override
-	public boolean needsUpdate() {
-		if (m_needsUpdate) {
-			m_needsUpdate = false;
-			return true;
-		}
-		return false;
-	}
-
-	public Distance getRadius() {
-		return m_radius;
-	}
-
-	public void setRadius(Distance radius) {
-		m_radius = radius;
-	}
-
-	public Circle withRadius(Distance radius) {
-		setRadius(radius);
 		return this;
 	}
 
@@ -365,11 +258,6 @@ public class Circle implements IShape {
 		return this;
 	}
 
-	public void setCenterRadiusPos(GeodeticCoords center, GeodeticCoords radius) {
-		setCenter(center);
-		setRadiusPos(radius);
-		m_radRngBrg = m_rb.RngBrgFromTo(m_center, m_radiusPos);
-	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
 		if (m_pts != null) {

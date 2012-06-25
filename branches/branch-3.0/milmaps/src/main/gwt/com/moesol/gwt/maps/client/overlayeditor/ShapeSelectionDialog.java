@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.moesol.gwt.maps.client.graphics.IShapeEditor;
 import com.moesol.gwt.maps.client.graphics.IShapeTool;
 import com.moesol.gwt.maps.client.graphics.NewCircleTool;
+import com.moesol.gwt.maps.client.graphics.NewEllipseTool;
 import com.moesol.gwt.maps.client.graphics.SelectShape;
 
 public class ShapeSelectionDialog extends DialogBox {
@@ -74,6 +75,11 @@ public class ShapeSelectionDialog extends DialogBox {
         if(strShape.compareTo(obj[3]) == 0){
         	return new NewCircleTool(editor);
         }
+        
+        if(strShape.compareTo(obj[4]) == 0){
+        	return new NewEllipseTool(editor);
+        }
+        
         if(strShape.compareTo(obj[5]) == 0){
         	return new SelectShape(editor);
         }
