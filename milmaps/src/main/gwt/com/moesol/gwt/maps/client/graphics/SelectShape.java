@@ -52,7 +52,7 @@ public class SelectShape implements IShapeTool{
     		tool = new EditCircleTool(m_editor);
     	}
     	if( strShape.compareTo("Ellipse") == 0){
-    		return null;
+    		tool = new EditEllipseTool(m_editor);
     	}
     	if (tool != null){
     		tool.setShape(obj);

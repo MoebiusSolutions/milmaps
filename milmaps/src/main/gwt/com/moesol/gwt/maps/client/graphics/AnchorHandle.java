@@ -22,8 +22,9 @@ public class AnchorHandle {
 		return m_color;
 	}
 
-	public void setColor(CssColor color) {
+	public AnchorHandle setColor(CssColor color) {
 		m_color = color;
+		return this;
 	}
 	
 	public int getSize() {
@@ -34,17 +35,20 @@ public class AnchorHandle {
 		return m_lineWidth;
 	}
 
-	public void setLineWidth(int lineWidth) {
+	public AnchorHandle setLineWidth(int lineWidth) {
 		m_lineWidth = lineWidth;
+		return this;
 	}
 
-	public void setSize(int size) {
+	public AnchorHandle setSize(int size) {
 		m_size = size;
+		return this;
 	}
 	
-	public void setCenter(int x, int y){
+	public AnchorHandle setCenter(int x, int y){
 		m_x = x;
 		m_y = y;
+		return this;
 	}
 	
 	public boolean isSelected(int x, int y){
@@ -57,9 +61,10 @@ public class AnchorHandle {
 		return false;
 	}
 	
-	public void setStrokeColor(int r, int g, int b, double a){
+	public AnchorHandle setStrokeColor(int r, int g, int b, double a){
 		String stColor = "rgba(" + r + "," + g + "," + b + "," + a +")";
 		m_color = CssColor.make(stColor);
+		return this;
 	}
 	
 	
