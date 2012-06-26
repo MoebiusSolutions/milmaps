@@ -175,9 +175,10 @@ public class Ellipse extends AbstractShape {
 		checkForException();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
 		if (m_smnPos == null || !m_smnPos.equals(gc)) {
-			m_smnPos = gc;
-			double rangeKm = m_rb.gcDistanceFromTo(m_center, m_smnPos);
+			double rangeKm = m_rb.gcDistanceFromTo(m_center, gc);
+			double bearing = m_smnRngBrg.getBearing();
 			m_smnRngBrg.setRanegKm(rangeKm);
+			m_smnPos = m_rb.gcPointFrom(m_center, bearing , rangeKm);
 			m_needsUpdate = true;
 		}
 	}
@@ -458,5 +459,4 @@ public class Ellipse extends AbstractShape {
 		}
 		return null;
 	}
-
 }
