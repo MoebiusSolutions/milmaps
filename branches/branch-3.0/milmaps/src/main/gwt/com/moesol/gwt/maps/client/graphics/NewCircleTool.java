@@ -46,7 +46,7 @@ public class NewCircleTool implements IShapeTool {
 	}
 
 	@Override
-	public boolean handleMouseDown(MouseDownEvent event) {
+	public void handleMouseDown(MouseDownEvent event) {
 		m_mouseDown = true;
 		int x = event.getX();
 		int y = event.getY();
@@ -58,24 +58,21 @@ public class NewCircleTool implements IShapeTool {
 		m_circle.setCoordConverter(m_editor.getCoordinateConverter());
 		IAnchorTool tool = m_circle.getRadiusAnchorTool();
 		m_editor.setAnchorTool(tool);
-		return true;
 	}
 
 	@Override
-	public boolean handleMouseMove(MouseMoveEvent event) {
+	public void handleMouseMove(MouseMoveEvent event) {
 		if (m_mouseDown) {
 			if (m_circle != null && m_canvas != null) {
 				m_circle.getRadiusAnchorTool().handleMouseMove(event);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
-				return true;
 			}
 		}
-		return false;
 	}
 
 	@Override
-	public boolean handleMouseUp(MouseUpEvent event) {
+	public void handleMouseUp(MouseUpEvent event) {
 		m_mouseDown = false;
 		m_circle.getRadiusAnchorTool().handleMouseUp(event);
 		//drawCenterHandle();
@@ -86,12 +83,10 @@ public class NewCircleTool implements IShapeTool {
 		m_editor.renderObjects();
 		drawHandles();
 		m_circle = null;
-		return true;
 	}
 
 	@Override
-	public boolean handleMouseOut(MouseOutEvent event) {
-		return false;
+	public void handleMouseOut(MouseOutEvent event) {
 	}
 
 	@Override

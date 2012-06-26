@@ -44,7 +44,7 @@ public class EditCircleTool implements IShapeTool{
 	}
 	
 	@Override
-	public boolean handleMouseDown(MouseDownEvent event) {
+	public void handleMouseDown(MouseDownEvent event) {
 		// Get Selected Anchor
 		int x = event.getX();
 		int y = event.getY();
@@ -56,38 +56,36 @@ public class EditCircleTool implements IShapeTool{
 			m_editor.clearCanvas().renderObjects();
 			m_editor.setShapeTool(new SelectShape(m_editor));
 		}
-		return true;
 	}
 
 	@Override
-	public boolean handleMouseMove(MouseMoveEvent event) {
+	public void handleMouseMove(MouseMoveEvent event) {
 		if (m_mouseDown == true){
 			if (m_anchorTool != null){
 				m_anchorTool.handleMouseMove(event);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
-				return true;
 			}
 		}
-		return false;
 	}
 
 	@Override
-	public boolean handleMouseUp(MouseUpEvent event) {
+	public void handleMouseUp(MouseUpEvent event) {
 		m_mouseDown = false;
 		if (m_anchorTool == null){
-			return false;
+			return;
 		}	
 		m_editor.renderObjects();
-		return m_anchorTool.handleMouseUp(event);
+		m_anchorTool.handleMouseUp(event);
+		return;
 	}
 
 	@Override
-	public boolean handleMouseOut(MouseOutEvent event) {
+	public void handleMouseOut(MouseOutEvent event) {
 		if (m_anchorTool == null){
-			return false;
+			return;
 		}
-		return m_anchorTool.handleMouseOut(event);
+		m_anchorTool.handleMouseOut(event);
 	}
 
 	@Override

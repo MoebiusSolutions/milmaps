@@ -199,34 +199,30 @@ public class ShapeEditor implements IShapeEditor, ICoordConverter {
 	// Handler Events
 	
 	@Override
-	public boolean handleMouseDown(MouseDownEvent event) {
+	public void handleMouseDown(MouseDownEvent event) {
 		if (m_shapeTool != null){
-			return m_shapeTool.handleMouseDown(event);
+			m_shapeTool.handleMouseDown(event);
 		}
-		return false;
 	}
 
 	@Override
-	public boolean handleMouseMove(MouseMoveEvent event) {
+	public void handleMouseMove(MouseMoveEvent event) {
 		if (m_shapeTool != null){
-			return m_shapeTool.handleMouseMove(event);
+			m_shapeTool.handleMouseMove(event);
 		}
-		return false;
 	}
 
 	@Override
-	public boolean handleMouseUp(MouseUpEvent event) {
+	public void handleMouseUp(MouseUpEvent event) {
 		if (m_shapeTool != null){
-			return m_shapeTool.handleMouseUp(event);
+			m_shapeTool.handleMouseUp(event);
 		}
-		return false;
 	}
 
 	@Override
-	public boolean handleMouseOut(MouseOutEvent event) {
+	public void handleMouseOut(MouseOutEvent event) {
 		if (m_shapeTool != null){
-			return m_shapeTool.handleMouseOut(event);
+			m_shapeTool.handleMouseOut(event);
 		}
-		return false;
 	}
 }

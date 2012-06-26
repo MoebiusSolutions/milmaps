@@ -11,6 +11,10 @@ public class RngBrg {
 	private double m_ranegKm; // Distance in kilometers
 	private double m_bearing; // Bearing in degrees
 	
+	public RngBrg(){
+
+	}
+	
 	public RngBrg(double rngKm, double brgDeg){
 		m_ranegKm = rngKm;
 		m_bearing = brgDeg;
