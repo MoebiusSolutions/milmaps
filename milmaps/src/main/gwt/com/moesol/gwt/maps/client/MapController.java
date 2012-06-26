@@ -118,13 +118,8 @@ public class MapController implements
 	@Override
 	public void onMouseDown(MouseDownEvent event) {
 		if (m_editor != null){
-			if( m_editor.handleMouseDown(event)){
-				//if (m_editor.needsUpdate()) {
-					//m_editor.done();
-					//m_editor.updateCanvas();
-				//}
-				return;
-			}
+			m_editor.handleMouseDown(event);
+			return;
 		}
 		Widget sender = (Widget) event.getSource();
 		DOM.setCapture(sender.getElement());
@@ -145,9 +140,8 @@ public class MapController implements
 	public void onMouseMove(MouseMoveEvent event) {
 
 		if (m_editor != null){
-			if (m_editor.handleMouseMove(event)){
-				return;
-			}
+			m_editor.handleMouseMove(event);
+			return;
 		}
 		int x = event.getX();
 		int y = event.getY();
@@ -161,9 +155,8 @@ public class MapController implements
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
 		if (m_editor != null){
-			if ( m_editor.handleMouseOut(event)){
-				return;
-			}
+			m_editor.handleMouseOut(event);
+			return;
 		}
 		m_hoverTimer.cancel();
 	}
@@ -171,9 +164,8 @@ public class MapController implements
 	@Override
 	public void onMouseUp(MouseUpEvent event) {
 		if (m_editor != null){
-			if (m_editor.handleMouseUp(event)){
-				return;
-			}
+			m_editor.handleMouseUp(event);
+			return;
 		}
 		Widget sender = (Widget) event.getSource();
 		DOM.releaseCapture(sender.getElement());

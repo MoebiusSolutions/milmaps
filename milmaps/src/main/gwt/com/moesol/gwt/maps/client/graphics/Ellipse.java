@@ -126,36 +126,28 @@ public class Ellipse extends AbstractShape {
 		if (m_smjTool == null) {
 			m_smjTool = new IAnchorTool() {
 				@Override
-				public boolean handleMouseDown(MouseDownEvent event) {
-					// m_mouseDown = true;
-					return true;
+				public void handleMouseDown(MouseDownEvent event) {
 				}
 
 				@Override
-				public boolean handleMouseMove(MouseMoveEvent event) {
-					int x = event.getX();
-					int y = event.getY();
-					setSmjFromPix(x, y);
-					setSmnPosFromSmjBrg();
-					//upDateRngBrg();
-					return true;
+				public void handleMouseMove(MouseMoveEvent event) {;
+				    if (event != null){
+						setSmjFromPix(event.getX(), event.getY());
+						setSmnPosFromSmjBrg();
+				    }
 				}
 
 				@Override
-				public boolean handleMouseUp(MouseUpEvent event) {
+				public void handleMouseUp(MouseUpEvent event) {
 					// m_mouseDown = false;
 					int x = event.getX();
 					int y = event.getY();
 					setSmjFromPix(x, y);
 					setSmnPosFromSmjBrg();
-					//upDateRngBrg();
-					return true;
 				}
 
 				@Override
-				public boolean handleMouseOut(MouseOutEvent event) {
-					// m_mouseDown = false;
-					return true;
+				public void handleMouseOut(MouseOutEvent event) {
 				}
 
 				@Override
@@ -196,34 +188,26 @@ public class Ellipse extends AbstractShape {
 		if (m_smnTool == null) {
 			m_smnTool = new IAnchorTool() {
 				@Override
-				public boolean handleMouseDown(MouseDownEvent event) {
-					// m_mouseDown = true;
-					return true;
+				public void handleMouseDown(MouseDownEvent event) {
 				}
 
 				@Override
-				public boolean handleMouseMove(MouseMoveEvent event) {
-					// if (m_mouseDown == true) {
+				public void handleMouseMove(MouseMoveEvent event) {
 					int x = event.getX();
 					int y = event.getY();
 					setSmnRangePix(x, y);
-					// }
-					return true;
 				}
 
 				@Override
-				public boolean handleMouseUp(MouseUpEvent event) {
+				public void handleMouseUp(MouseUpEvent event) {
 					// m_mouseDown = false;
 					int x = event.getX();
 					int y = event.getY();
 					setSmnRangePix(x, y);
-					return true;
 				}
 
 				@Override
-				public boolean handleMouseOut(MouseOutEvent event) {
-					// m_mouseDown = false;
-					return true;
+				public void handleMouseOut(MouseOutEvent event) {
 				}
 
 				@Override
@@ -265,31 +249,27 @@ public class Ellipse extends AbstractShape {
 		if (m_centerTool == null) {
 			m_centerTool = new IAnchorTool() {
 				@Override
-				public boolean handleMouseDown(MouseDownEvent event) {
-					return false;
+				public void handleMouseDown(MouseDownEvent event) {
 				}
 
 				@Override
-				public boolean handleMouseMove(MouseMoveEvent event) {
+				public void handleMouseMove(MouseMoveEvent event) {
 					int x = event.getX();
 					int y = event.getY();
 					setCenterFromPix(x, y);
 					moveAxisPos();
-					return true;
 				}
 
 				@Override
-				public boolean handleMouseUp(MouseUpEvent event) {
+				public void handleMouseUp(MouseUpEvent event) {
 					int x = event.getX();
 					int y = event.getY();
 					setCenterFromPix(x, y);
 					moveAxisPos();
-					return true;
 				}
 
 				@Override
-				public boolean handleMouseOut(MouseOutEvent event) {
-					return false;
+				public void handleMouseOut(MouseOutEvent event) {
 				}
 
 				@Override

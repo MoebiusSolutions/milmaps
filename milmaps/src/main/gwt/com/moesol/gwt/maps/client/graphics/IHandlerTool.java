@@ -18,9 +18,9 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 
 public interface IHandlerTool {
-	public abstract boolean handleMouseDown(MouseDownEvent event);
-	public abstract boolean handleMouseMove(MouseMoveEvent event);
-	public abstract boolean handleMouseUp(MouseUpEvent event);
-	public abstract boolean handleMouseOut(MouseOutEvent event);
+	public abstract void handleMouseDown(MouseDownEvent event);
+	public abstract void handleMouseMove(MouseMoveEvent event);
+	public abstract void handleMouseUp(MouseUpEvent event);
+	public abstract void handleMouseOut(MouseOutEvent event);
 	public abstract void done();
 }

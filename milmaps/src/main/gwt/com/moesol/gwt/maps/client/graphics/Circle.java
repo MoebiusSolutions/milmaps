@@ -65,42 +65,32 @@ public class Circle extends AbstractShape {
 		if (m_radiusTool == null) {
 			m_radiusTool = new IAnchorTool() {
 				@Override
-				public boolean handleMouseDown(MouseDownEvent event) {
-					//m_mouseDown = true;
-					return true;
+				public void handleMouseDown(MouseDownEvent event) {
 				}
 
 				@Override
-				public boolean handleMouseMove(MouseMoveEvent event) {
-					//if (m_mouseDown == true) {
-						int x = event.getX();
-						int y = event.getY();
-						setRadiusFromPix(x, y);
-					//}
-					return true;
+				public void handleMouseMove(MouseMoveEvent event) {
+					int x = event.getX();
+					int y = event.getY();
+					setRadiusFromPix(x, y);
 				}
 
 				@Override
-				public boolean handleMouseUp(MouseUpEvent event) {
-					//m_mouseDown = false;
+				public void handleMouseUp(MouseUpEvent event) {
 					int x = event.getX();
 					int y = event.getY();
 					setRadiusFromPix(x, y);
 					upDateRngBrg();
-					return true;
 				}
 
 				@Override
-				public boolean handleMouseOut(MouseOutEvent event) {
-					//m_mouseDown = false;
+				public void handleMouseOut(MouseOutEvent event) {
 					upDateRngBrg();
-					return true;
 				}
 
 				@Override
 				public void done() {
 					// TODO Auto-generated method stub
-					
 				}
 
 				@Override
@@ -134,31 +124,27 @@ public class Circle extends AbstractShape {
 		if (m_centerTool == null) {
 			m_centerTool = new IAnchorTool() {
 				@Override
-				public boolean handleMouseDown(MouseDownEvent event) {
-					return false;
+				public void handleMouseDown(MouseDownEvent event) {
 				}
 
 				@Override
-				public boolean handleMouseMove(MouseMoveEvent event) {
+				public void handleMouseMove(MouseMoveEvent event) {
 					int x = event.getX();
 					int y = event.getY();
 					setCenterFromPix(x, y);
 					moveRadiusPos();
-					return true;
 				}
 
 				@Override
-				public boolean handleMouseUp(MouseUpEvent event) {
+				public void handleMouseUp(MouseUpEvent event) {
 					int x = event.getX();
 					int y = event.getY();
 					setCenterFromPix(x, y);
 					moveRadiusPos();
-					return true;
 				}
 
 				@Override
-				public boolean handleMouseOut(MouseOutEvent event) {
-					return false;
+				public void handleMouseOut(MouseOutEvent event) {
 				}
 
 				@Override

@@ -60,7 +60,7 @@ public class NewEllipseTool implements IShapeTool {
 	}
 
 	@Override
-	public boolean handleMouseDown(MouseDownEvent event) {
+	public void handleMouseDown(MouseDownEvent event) {
 		m_mouseDown = true;
 		int x = event.getX();
 		int y = event.getY();
@@ -73,25 +73,22 @@ public class NewEllipseTool implements IShapeTool {
 		m_ellipse.getSmnAnchorTool();
 		IAnchorTool tool = m_ellipse.getSmjAnchorTool();
 		m_editor.setAnchorTool(tool);
-		return true;
 	}
 
 	@Override
-	public boolean handleMouseMove(MouseMoveEvent event) {
+	public void handleMouseMove(MouseMoveEvent event) {
 		if (m_mouseDown) {
 			if (m_ellipse != null && m_canvas != null) {
 				m_ellipse.getSmjAnchorTool().handleMouseMove(event);
 				m_editor.clearCanvas().renderObjects();
 				setSmnHandle();
 				drawHandles();
-				return true;
 			}
 		}
-		return false;
 	}
 
 	@Override
-	public boolean handleMouseUp(MouseUpEvent event) {
+	public void handleMouseUp(MouseUpEvent event) {
 		m_mouseDown = false;
 		m_ellipse.getSmjAnchorTool().handleMouseUp(event);
 		//drawCenterHandle();
@@ -102,12 +99,10 @@ public class NewEllipseTool implements IShapeTool {
 		m_editor.renderObjects();
 		drawHandles();
 		m_ellipse = null;
-		return true;
 	}
 
 	@Override
-	public boolean handleMouseOut(MouseOutEvent event) {
-		return false;
+	public void handleMouseOut(MouseOutEvent event) {
 	}
 
 	@Override

@@ -96,26 +96,22 @@ public class SelectShape implements IShapeTool{
     }
 	
 	@Override
-	public boolean handleMouseDown(MouseDownEvent event) {
-		return true;
+	public void handleMouseDown(MouseDownEvent event) {
 	}
 
 	@Override
-	public boolean handleMouseMove(MouseMoveEvent event) {
+	public void handleMouseMove(MouseMoveEvent event) {
 		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
-	public boolean handleMouseUp(MouseUpEvent event) {
+	public void handleMouseUp(MouseUpEvent event) {
 		handleSelect(event);
-		return true;
 	}
 
 	@Override
-	public boolean handleMouseOut(MouseOutEvent event) {
+	public void handleMouseOut(MouseOutEvent event) {
 		// TODO Auto-generated method stub
-		return false;
 	}
 	
 	@Override
