@@ -17,24 +17,22 @@ import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class Circle extends AbstractShape {
-	private static final int NUM_CIR_PTS = 50;
+	private static final int NUM_CIR_PTS = 36;
 	private static final RangeBearingS m_rb = new RangeBearingS();
 	private final AnchorHandle m_centerHandle = new AnchorHandle();
 	private final AnchorHandle m_radHandle = new AnchorHandle();
 	private GeodeticCoords m_center = null;
 	private GeodeticCoords m_radiusPos = null;
 	private RngBrg m_radRngBrg = null;
-	private ViewCoords[] m_pts = null;
 	//private boolean m_mouseDown = true;
 	private IAnchorTool m_radiusTool = null;
 	private IAnchorTool m_centerTool = null;
-	
 
 	public Circle(){
 		m_id = "Circle";
-		m_pts = new ViewCoords[NUM_CIR_PTS];
 	}
 	
 	private void checkForException() {
@@ -163,28 +161,30 @@ public class Circle extends AbstractShape {
 		}
 		return m_centerTool;
 	}
-
-	private void createBoundary() {
-		checkForException();
-		double degInc = 360.0 / (NUM_CIR_PTS - 1);
-		double distKm = m_radRngBrg.getRanegKm();
-		for (int i = 0; i < NUM_CIR_PTS - 1; i++) {
-			double brng = degInc * i;
-			GeodeticCoords gc = m_rb.gcPointFrom(m_center, brng, distKm);
-			m_pts[i] = m_convert.geodeticToView(gc);
-		}
-		m_pts[NUM_CIR_PTS - 1] = m_pts[0];
+	
+	private ViewCoords getBoundaryPt(double brg, double distKm){
+		GeodeticCoords gc = m_rb.gcPointFrom(m_center, brg, distKm);
+		return m_convert.geodeticToView(gc);
 	}
 
 	private void drawBoundary(Context2d context) {
+		checkForException();
+		double degInc = 360.0 / (NUM_CIR_PTS - 1);
+		double distKm = m_radRngBrg.getRanegKm();
+		ViewCoords p = getBoundaryPt( 0, distKm);
+		context.moveTo(p.getX(), p.getY());
+		for (int i = 1; i < NUM_CIR_PTS; i++) {
+			double brng = degInc * i;
+			p = getBoundaryPt( brng, distKm);
+			context.lineTo(p.getX(), p.getY());
+		}
+	}
+
+	private void draw(Context2d context) {
 		context.beginPath();
 		context.setStrokeStyle(m_color);
 		context.setLineWidth(2);
-		createBoundary();
-		context.moveTo(m_pts[0].getX(), m_pts[0].getY());
-		for (int i = 1; i < NUM_CIR_PTS; i++) {
-			context.lineTo(m_pts[i].getX(), m_pts[i].getY());
-		}
+		drawBoundary(context);
 		context.closePath();
 		context.stroke();
 	}
@@ -198,7 +198,7 @@ public class Circle extends AbstractShape {
 	
 	@Override
 	public IShape render(Context2d ct) {
-		drawBoundary(ct);
+		draw(ct);
 		return this;
 	}
 	
@@ -246,15 +246,15 @@ public class Circle extends AbstractShape {
 
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
-		if (m_pts != null) {
-			int n = m_pts.length;
-			if (n > 3) {
-				for (int i = 0; i < n - 1; i++) {
-					double dist = Func.ptLineDist(m_pts[i], m_pts[i+1], px, py);
-					if (dist < eps) {
-						return true;
-					}
-				}
+		double degInc = 360.0 / (NUM_CIR_PTS - 1);
+		double distKm = m_radRngBrg.getRanegKm();
+		for (int i = 1; i < NUM_CIR_PTS-1; i++) {
+			double brg = degInc * i;
+			ViewCoords pt1 = getBoundaryPt( brg, distKm);
+			ViewCoords pt2 = getBoundaryPt( brg + degInc, distKm);
+			double dist = Func.ptLineDist(pt1, pt2, px, py);
+			if (dist < eps) {
+				return true;
 			}
 		}
 		return false;

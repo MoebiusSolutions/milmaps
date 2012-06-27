@@ -24,18 +24,24 @@ import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.ViewWorker;
 import com.moesol.gwt.maps.client.WorldCoords;
 
-public class ShapeEditor implements IShapeEditor, ICoordConverter {
+public class ShapeEditor implements IShapeEditor{
 	private MapView m_map = null;
 	private CanvasTool m_canvas = null;//new CanvasTool();
 	IActiveTool m_mapControl = null;
 	IShapeTool m_shapeTool; 
 	//IAnchorTool m_anchorTool = null;
 	List<IShape> m_objs = new ArrayList<IShape>();
+	ICoordConverter m_converter = new ShortDistConverter();
 
-	public ShapeEditor(MapView mapView) {
+	public ICoordConverter getConverter() {
+		return m_converter;
+	}
+
+	public ShapeEditor(MapView map) {
 		super();
-		m_map = mapView;
+		m_map = map;
 		m_map.setShapeEditor(this);
+		m_converter.setMap(map);
 		m_canvas = m_map.getDivManager().getCanvasTool();
 		m_map.getViewPanel().add(m_canvas.canvas());
 		m_mapControl = m_map.getController();
@@ -150,34 +156,15 @@ public class ShapeEditor implements IShapeEditor, ICoordConverter {
 	
 	@Override
 	public ICoordConverter getCoordinateConverter(){
-		return (ICoordConverter)this; 
+		if (m_converter == null) {
+			throw new IllegalStateException("ShapeEditor: m_converter = null");
+		}
+		return m_converter; 
 	}
 	
-	// Coordinate conversion
 	@Override
-	public ViewCoords geodeticToView(GeodeticCoords gc) {
-		ViewWorker vw = m_map.getViewport().getVpWorker();
-		return vw.geodeticToView(gc);
-	}
-
-	@Override
-	public GeodeticCoords viewToGeodetic(ViewCoords vc) {
-		ViewWorker vw = m_map.getViewport().getVpWorker();
-		WorldCoords wc = vw.viewToWorld(vc);
-		IProjection proj = m_map.getProjection();
-		return proj.worldToGeodetic(wc);
-	}
-
-	@Override
-	public WorldCoords geodeticToWorld(GeodeticCoords gc) {
-		IProjection proj = m_map.getProjection();
-		return proj.geodeticToWorld(gc);
-	}
-
-	@Override
-	public GeodeticCoords worldToGeodetic(WorldCoords wc) {
-		IProjection proj = m_map.getProjection();
-		return proj.worldToGeodetic(wc);
+	public void setCoordConverter(ICoordConverter converter) {
+		m_converter = converter;
 	}
 
 	@Override
