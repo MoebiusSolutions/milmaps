@@ -19,7 +19,7 @@ import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
 
 public class Ellipse extends AbstractShape {
-	private static final int NUM_ELLIPSE_PTS = 50;
+	private static final int NUM_ELLIPSE_PTS = 36;
 	private static final RangeBearingS m_rb = new RangeBearingS();
 	private final AnchorHandle m_centerHandle = new AnchorHandle();
 	private final AnchorHandle m_smjHandle = new AnchorHandle();
@@ -29,8 +29,6 @@ public class Ellipse extends AbstractShape {
 	protected GeodeticCoords m_smnPos = null;
 	protected RngBrg m_smjRngBrg = null;
 	protected RngBrg m_smnRngBrg = null;
-	protected ViewCoords[] m_pts = null;
-	protected RngBrg[] m_rbPts = null;
 	// private boolean m_mouseDown = true;
 	protected IAnchorTool m_centerTool = null;
 	protected IAnchorTool m_smjTool = null;
@@ -38,8 +36,6 @@ public class Ellipse extends AbstractShape {
 
 	public Ellipse() {
 		m_id = "Ellipse";
-		m_pts = new ViewCoords[NUM_ELLIPSE_PTS];
-		m_rbPts = new RngBrg[NUM_ELLIPSE_PTS];
 		m_smjRngBrg = new RngBrg(0,0);
 		m_smnRngBrg = new RngBrg(0,0);
 	}
@@ -68,47 +64,59 @@ public class Ellipse extends AbstractShape {
 		ViewCoords radPt = m_convert.geodeticToView(axisPos);
 		return Func.isClose(radPt, vc, 4);
 	}
-
-	// Used to draw boundary
-	public void computeRngBrgPts(
-			double a, // Semi-major axis in Km
-			double b, // Semi-minor axis in Km
-			double start, // Starting angle in degrees
-			double end, // Ending angle in degrees
-			int numPts // Number of points in array
-	) {
-		double diff = Func.wrap360(end - start);
-		diff = Func.DegToRad(diff);
-		start = Func.DegToRad(start);
-		end = Func.DegToRad(end);
-		double angle, theta;
-		theta = (diff / (numPts - 1));
-		for (int i = 0; i < numPts; i++) {
-			angle = start + (i * theta);
+	
+	private ViewCoords rngBrgToView(double rngKm, double degBrg){
+		GeodeticCoords gc = m_rb.gcPointFrom(m_center, degBrg, rngKm);
+		return m_convert.geodeticToView(gc);	
+	}
+	
+	public RngBrg compRngBrg( double brgDeg,
+		double a, // Semi-major axis in Km
+		double b // Semi-minor axis in Km
+	){
+			double angle = Func.DegToRad(brgDeg);
 			double x = (a * Math.cos(angle));
 			double y = (b * Math.sin(angle));
 			if (a != b) {
 				angle = Math.atan2(y, x);
 			}
-			m_rbPts[i] = new RngBrg(Math.sqrt(x * x + y * y),
-					Func.RadToDeg(angle));
-		}
+			double rngKm = Math.sqrt(x*x + y*y);
+			return new RngBrg(rngKm,Func.RadToDeg(angle));	
 	}
-
-	// This creates an ellipse that has the semi-major axis
-	// run along the x-axis or the y-axis. ie rotates only 90 degrees.
-	// Centered at the origin
-	private void createBoundary() {
+	
+	private ViewCoords compViewPt(double rotBrg, double brgDeg, 
+								 double a, double b){
+		double angle = Func.DegToRad(brgDeg);
+		double x = (a * Math.cos(angle));
+		double y = (b * Math.sin(angle));
+		if (a != b) {
+			angle = Math.atan2(y, x);
+		}
+		double rngKm = Math.sqrt(x*x + y*y);
+		return rngBrgToView(rngKm,rotBrg+Func.RadToDeg(angle));	
+	}
+	
+	
+	private void drawBoundary(Context2d context) {
 		double a = m_smjRngBrg.getRanegKm();
 		double b = m_smnRngBrg.getRanegKm();
-		double brg = m_smjRngBrg.getBearing();
-		computeRngBrgPts(a, b, 0, 360, NUM_ELLIPSE_PTS);
-		for (int i = 0; i < NUM_ELLIPSE_PTS; i++) {
-			double degBrg = brg + m_rbPts[i].getBearing();
-			double rngKm = m_rbPts[i].getRanegKm();
-			GeodeticCoords gc = m_rb.gcPointFrom(m_center, degBrg, rngKm);
-			m_pts[i] = m_convert.geodeticToView(gc);
+		double rotBrg = m_smjRngBrg.getBearing();
+		ViewCoords p = compViewPt(rotBrg,0,a,b);
+		context.moveTo(p.getX(), p.getY());
+		double incBrg = 360.0/(NUM_ELLIPSE_PTS-1);
+		for (int i = 1; i < NUM_ELLIPSE_PTS; i++) {
+			p = compViewPt(rotBrg,i*incBrg,a,b);
+			context.lineTo(p.getX(), p.getY());
 		}
+	}
+	
+	private void draw(Context2d context) {
+		context.beginPath();
+		context.setStrokeStyle(m_color);
+		context.setLineWidth(2);
+		drawBoundary(context);
+		context.closePath();
+		context.stroke();
 	}
 	
 	private void setSmnPosFromSmjBrg(){
@@ -285,36 +293,6 @@ public class Ellipse extends AbstractShape {
 		return m_centerTool;
 	}
 
-	public ViewCoords[] createBoundary(int size) {
-		if (size < 3) {
-			throw new IllegalArgumentException("array size is less than 3");
-		}
-		checkForException();
-		m_pts = new ViewCoords[size];
-		double degInc = 360.0 / (size - 1);
-		double distKm = m_smjRngBrg.getRanegKm();
-		for (int i = 0; i < size - 1; i++) {
-			double brng = degInc * i;
-			GeodeticCoords gc = m_rb.gcPointFrom(m_center, brng, distKm);
-			m_pts[i] = m_convert.geodeticToView(gc);
-		}
-		m_pts[size - 1] = m_pts[0];
-		return m_pts;
-	}
-
-	private void drawBoundary(Context2d context) {
-		context.beginPath();
-		context.setStrokeStyle(m_color);
-		context.setLineWidth(2);
-		createBoundary();
-		context.moveTo(m_pts[0].getX(), m_pts[0].getY());
-		for (int i = 1; i < NUM_ELLIPSE_PTS; i++) {
-			context.lineTo(m_pts[i].getX(), m_pts[i].getY());
-		}
-		context.closePath();
-		context.stroke();
-	}
-
 	@Override
 	public IShape selected(boolean selected) {
 		m_bSeletected = selected;
@@ -329,7 +307,7 @@ public class Ellipse extends AbstractShape {
 
 	@Override
 	public IShape render(Context2d context) {
-		drawBoundary(context);
+		draw(context);
 		return this;
 	}
 
@@ -396,16 +374,23 @@ public class Ellipse extends AbstractShape {
 	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
-		if (m_pts != null) {
-			int n = m_pts.length;
-			if (n > 3) {
-				for (int i = 0; i < n - 1; i++) {
-					double dist = Func.ptLineDist(m_pts[i], m_pts[i + 1], px,
-							py);
-					if (dist < eps) {
-						return true;
-					}
-				}
+		double a = m_smjRngBrg.getRanegKm();
+		double b = m_smnRngBrg.getRanegKm();
+		double rotBrg = m_smjRngBrg.getBearing();
+		double incBrg = 360.0/(NUM_ELLIPSE_PTS-1);
+
+		ViewCoords p1 = compViewPt(rotBrg,0,a,b);
+		ViewCoords p2 = compViewPt(rotBrg,incBrg,a,b);
+		double dist = Func.ptLineDist(p1, p2, px, py);
+		if (dist < eps) {
+			return true;
+		}
+		for (int i = 1; i < NUM_ELLIPSE_PTS-1; i++) {
+			p1 = p2;
+			p2 = compViewPt(rotBrg,(i+1)*incBrg,a,b);
+			dist = Func.ptLineDist(p1, p2, px, py);
+			if (dist < eps) {
+				return true;
 			}
 		}
 		return false;
