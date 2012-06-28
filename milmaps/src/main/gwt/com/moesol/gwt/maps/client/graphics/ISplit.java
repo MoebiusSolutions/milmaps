@@ -12,6 +12,8 @@ import com.moesol.gwt.maps.client.ViewCoords;
 public interface ISplit {
 	public abstract void setAjustFlag(boolean flag);
 	
+	public abstract void setSplit(boolean split);
+	
 	public abstract boolean isSplit();
 	
 	public abstract void setMove(int move);
@@ -21,4 +23,6 @@ public interface ISplit {
 	public abstract int shift(ViewCoords p, ViewCoords q);
 	
 	public abstract int getDistance(int move);
+	
+	public abstract int side(int x);
 }
