@@ -28,6 +28,4 @@ public interface ICoordConverter {
 	public abstract WorldCoords viewToWorld(ViewCoords vc);
 	
 	public abstract int mapWidth();
-	
-	public abstract ViewCoords[][] massagePts(ViewCoords[] pts);
 }

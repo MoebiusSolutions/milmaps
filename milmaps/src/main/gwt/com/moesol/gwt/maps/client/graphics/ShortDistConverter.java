@@ -9,37 +9,78 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public class ShortDistConverter extends ConverterBase {
+public class ShortDistConverter extends ConvertBase implements ISplit  {
+	
+	protected boolean m_split   = false;
+	protected boolean m_bAdjust = false;
+	int m_move = DONT_MOVE;
+	
 
-	@Override
-	public ViewCoords[][] massagePts(ViewCoords[] pts) {
-		if (m_map == null) {
-			throw new IllegalStateException("ConverterBase: m_map = null");
+	private int side(ViewCoords p){
+		int width = m_map.getViewport().getWidth();
+		if(p.getX() < width/2){
+			return MOVE_LEFT;
 		}
-		int maxDiff = mapWidth()/2;
-		int length = pts.length;
-		boolean bSplit = false;
-		for (int i = 0; i < length - 1; i++) {
-			if (i > 0){
-				int diff = pts[i].getX() - pts[i-1].getX();
-				if (Math.abs(diff) > maxDiff){
-					bSplit = true;
-					break;
-				}
+		return MOVE_RIGHT;
+	}
+	
+	
+	public boolean moveNextPoint(ViewCoords p, ViewCoords q){; 
+		int  width = mapWidth()/2;
+		if ( Math.abs(q.getX()-p.getX()) > width ){
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public int shift(ViewCoords p, ViewCoords q){
+		int mapWidth = mapWidth();
+		int x;
+		if (moveNextPoint(p, q)){
+			m_split = true;
+			m_bAdjust = !m_bAdjust;
+			if (m_move == DONT_MOVE){
+				m_move = side(p);
 			}
 		}
-		if (bSplit){
-			for (int i = 0; i < length - 1; i++) {
-				if (i > 0){
-					int diff = pts[i].getX() - pts[i-1].getX();
-					if (Math.abs(diff) > maxDiff){
-						bSplit = true;
-						break;
-					}
-				}
-			}			
+		if(m_bAdjust){
+			x = q.getX() + (MOVE_LEFT == m_move ? -1*mapWidth :mapWidth);
 		}
-		return null;
+		else{
+			x = q.getX();
+		}
+		return x;
 	}
 
+
+	@Override
+	public void setAjustFlag(boolean flag) {
+		m_bAdjust = flag;
+		m_split = false;
+	}
+
+
+	@Override
+	public boolean isSplit() {
+		return m_split;
+	}
+
+
+	@Override
+	public void setMove(int move) {
+		this.m_move = move;
+	}
+
+
+	@Override
+	public int getMove() {
+		return m_move;
+	}
+
+
+	@Override
+	public int getDistance(int move) {
+		return (ConvertBase.MOVE_LEFT == move ? -1*mapWidth():mapWidth());
+	}
 }
