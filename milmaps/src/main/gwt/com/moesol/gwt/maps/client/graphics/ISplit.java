@@ -25,4 +25,6 @@ public interface ISplit {
 	public abstract int getDistance(int move);
 	
 	public abstract int side(int x);
+	
+	public abstract int switchMove(int move);	
 }

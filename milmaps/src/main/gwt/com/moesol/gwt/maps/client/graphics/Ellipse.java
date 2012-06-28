@@ -95,18 +95,43 @@ public class Ellipse extends AbstractShape {
 		double rngKm = Math.sqrt(x*x + y*y);
 		return rngBrgToView(rngKm,rotBrg+Func.RadToDeg(angle));	
 	}
-	
-	
-	private void drawBoundary(Context2d context) {
+
+	protected void drawSegments(Context2d context){
 		double a = m_smjRngBrg.getRanegKm();
 		double b = m_smnRngBrg.getRanegKm();
 		double rotBrg = m_smjRngBrg.getBearing();
-		ViewCoords p = compViewPt(rotBrg,0,a,b);
-		context.moveTo(p.getX(), p.getY());
+		ISplit splitter = m_convert.getISplit();
+		ViewCoords p, q = compViewPt(rotBrg,0,a,b);
+		int move = splitter.getMove();
+		int x = q.getX();
+		if ( move!= ConvertBase.DONT_MOVE){
+			x += splitter.getDistance(move);
+		}
+		context.moveTo(x, q.getY());
 		double incBrg = 360.0/(NUM_ELLIPSE_PTS-1);
 		for (int i = 1; i < NUM_ELLIPSE_PTS; i++) {
-			p = compViewPt(rotBrg,i*incBrg,a,b);
-			context.lineTo(p.getX(), p.getY());
+			p = q;
+			q = compViewPt(rotBrg,i*incBrg,a,b);
+			x = splitter.shift(p, q);
+			context.lineTo(x, q.getY());
+		}	
+	}
+	
+	
+	private void drawBoundary(Context2d context) {
+		ISplit splitter = m_convert.getISplit();
+		// MUST initialize with the next three lines
+		splitter.setAjustFlag(false);
+		splitter.setSplit(false);
+		splitter.setMove(ConvertBase.DONT_MOVE);
+		/////////////////////////////////////////
+		drawSegments(context);	
+		
+		if (splitter.isSplit()){
+			// Must initialize with new values.
+			splitter.setAjustFlag(true);
+			splitter.setMove(splitter.switchMove(splitter.getMove()));
+			drawSegments(context);
 		}
 	}
 	
@@ -351,6 +376,15 @@ public class Ellipse extends AbstractShape {
 		setCenter(center);
 		return this;
 	}
+	
+	private void moveHandles(AnchorHandle handle, ViewCoords vc, Context2d context){
+		ISplit splitter = m_convert.getISplit();
+		if(splitter.isSplit()){
+			int side = splitter.switchMove(splitter.side(vc.getX()));
+			int x = vc.getX() + splitter.getDistance(side);
+			handle.setCenter(x, vc.getY()).draw(context);
+		}		
+	}
 
 	@Override
 	public IShape drawHandles(Context2d context) {
@@ -360,15 +394,17 @@ public class Ellipse extends AbstractShape {
 			ViewCoords vc = m_convert.geodeticToView(gc);
 			m_centerHandle.setCenter(vc.getX(), vc.getY());
 			m_centerHandle.draw(context);
+			moveHandles(m_centerHandle, vc, context);
 			// semi-major handle
 			gc = getSmjPos();
 			vc = m_convert.geodeticToView(gc);
 			m_smjHandle.setCenter(vc.getX(), vc.getY()).draw(context);
+			moveHandles(m_smjHandle, vc, context);
 			// semi-minor handle
 			gc = getSmnPos();
 			vc = m_convert.geodeticToView(gc);
 			m_smnHandle.setCenter(vc.getX(), vc.getY()).draw(context);
-
+			moveHandles(m_smnHandle, vc, context);
 		}
 		return this;
 	}
