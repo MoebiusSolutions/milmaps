@@ -167,15 +167,10 @@ public class Circle extends AbstractShape {
 		return m_convert.geodeticToView(gc);
 	}
 	
-	private int switchMove(int move){
-		return (ConvertBase.MOVE_LEFT == move ? ConvertBase.MOVE_RIGHT : 
-												ConvertBase.MOVE_LEFT);	
-	}
-	
 	protected void drawSegments(Context2d context){
 		double degInc = 360.0 / (NUM_CIR_PTS - 1);
 		double distKm = m_radRngBrg.getRanegKm();
-		ISplit splitter = (ISplit)m_convert;
+		ISplit splitter = m_convert.getISplit();
 		ViewCoords p, q;
 		q = getBoundaryPt( 0, distKm);  
 		int move = splitter.getMove();
@@ -196,7 +191,7 @@ public class Circle extends AbstractShape {
 
 	private void drawBoundary(Context2d context) {
 		checkForException();
-		ISplit splitter = (ISplit)m_convert;
+		ISplit splitter = m_convert.getISplit();
 		// MUST initialize with the next three lines
 		splitter.setAjustFlag(false);
 		splitter.setSplit(false);
@@ -207,7 +202,7 @@ public class Circle extends AbstractShape {
 		if (splitter.isSplit()){
 			// Must initialize with new values.
 			splitter.setAjustFlag(true);
-			splitter.setMove(switchMove(splitter.getMove()));
+			splitter.setMove(splitter.switchMove(splitter.getMove()));
 			drawSegments(context);
 		}
 	}
@@ -237,14 +232,14 @@ public class Circle extends AbstractShape {
 	@Override
 	public IShape drawHandles(Context2d context) {
 		if (context != null) {
-			ISplit splitter = (ISplit)m_convert;
+			ISplit splitter = m_convert.getISplit();
 			// Center Handle
 			GeodeticCoords gc = getCenter();
 			ViewCoords vc = m_convert.geodeticToView(gc);
 			m_centerHandle.setCenter(vc.getX(), vc.getY());
 			m_centerHandle.draw(context);
 			if(splitter.isSplit()){
-				int side = switchMove(splitter.side(vc.getX()));
+				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
 				m_centerHandle.setCenter(x, vc.getY()).draw(context);
 			}
@@ -253,7 +248,7 @@ public class Circle extends AbstractShape {
 			vc = m_convert.geodeticToView(gc);
 			m_radHandle.setCenter(vc.getX(), vc.getY()).draw(context);
 			if(splitter.isSplit()){
-				int side = switchMove(splitter.side(vc.getX()));
+				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
 				m_radHandle.setCenter(x, vc.getY()).draw(context);
 			}
@@ -287,36 +282,25 @@ public class Circle extends AbstractShape {
 		return this;
 	}
 	
-	
 	protected boolean ptClose(int px, int py, double eps){
 		double degInc = 360.0 / (NUM_CIR_PTS - 1);
 		double distKm = m_radRngBrg.getRanegKm();
-		ISplit splitter = (ISplit)m_convert;
 		/////////////////////////////////////////
 		ViewCoords p, q = getBoundaryPt( 0, distKm);  
-		ViewCoords s, r = q;
-		int move = splitter.getMove();
-		int x = r.getX();
-		if ( move != ConvertBase.DONT_MOVE){
-			x += splitter.getDistance(move);
-			r = new ViewCoords(x,q.getY());
-		}
-		for (int i = 1; i < NUM_CIR_PTS-1; i++) {
+		for (int i = 1; i < NUM_CIR_PTS; i++) {
 			double brg = degInc * i;
 			p = q;
 			q = getBoundaryPt( brg, distKm);
-			s = new ViewCoords(splitter.shift(p, q),q.getY());
-			double dist = Func.ptLineDist(r, s, px, py);
+			double dist = Func.ptLineDist(p, q, px, py);
 			if (dist < eps) {
 				return true;
 			}
-			r = s;
 		}
 		return false;
 	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
-		ISplit splitter = (ISplit)m_convert;
+		ISplit splitter = m_convert.getISplit();
 		// MUST initialize with the next two lines
 		splitter.setAjustFlag(false);
 		splitter.setSplit(false);
@@ -325,7 +309,7 @@ public class Circle extends AbstractShape {
 		boolean touches = ptClose(px, py, eps);
 		if (touches == false && splitter.isSplit()){
 			splitter.setAjustFlag(true);
-			splitter.setMove(switchMove(splitter.getMove()));
+			splitter.setMove(splitter.switchMove(splitter.getMove()));
 			return ptClose(px, py, eps);
 		}
 		return touches;
