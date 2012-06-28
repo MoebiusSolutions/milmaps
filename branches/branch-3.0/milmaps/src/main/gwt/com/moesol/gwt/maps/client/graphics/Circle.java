@@ -197,8 +197,9 @@ public class Circle extends AbstractShape {
 	private void drawBoundary(Context2d context) {
 		checkForException();
 		ISplit splitter = (ISplit)m_convert;
-		// MUST initialize with the next two lines
+		// MUST initialize with the next three lines
 		splitter.setAjustFlag(false);
+		splitter.setSplit(false);
 		splitter.setMove(ConvertBase.DONT_MOVE);
 		/////////////////////////////////////////
 		drawSegments(context);
@@ -236,15 +237,26 @@ public class Circle extends AbstractShape {
 	@Override
 	public IShape drawHandles(Context2d context) {
 		if (context != null) {
+			ISplit splitter = (ISplit)m_convert;
 			// Center Handle
 			GeodeticCoords gc = getCenter();
 			ViewCoords vc = m_convert.geodeticToView(gc);
 			m_centerHandle.setCenter(vc.getX(), vc.getY());
 			m_centerHandle.draw(context);
+			if(splitter.isSplit()){
+				int side = switchMove(splitter.side(vc.getX()));
+				int x = vc.getX() + splitter.getDistance(side);
+				m_centerHandle.setCenter(x, vc.getY()).draw(context);
+			}
 			// Radius handle
 			gc = getRadiusPos();
 			vc = m_convert.geodeticToView(gc);
 			m_radHandle.setCenter(vc.getX(), vc.getY()).draw(context);
+			if(splitter.isSplit()){
+				int side = switchMove(splitter.side(vc.getX()));
+				int x = vc.getX() + splitter.getDistance(side);
+				m_radHandle.setCenter(x, vc.getY()).draw(context);
+			}
 		}
 		return this;
 	}
@@ -281,42 +293,33 @@ public class Circle extends AbstractShape {
 		double distKm = m_radRngBrg.getRanegKm();
 		ISplit splitter = (ISplit)m_convert;
 		/////////////////////////////////////////
-		ViewCoords p;
-		ViewCoords q = getBoundaryPt( 0, distKm); 
+		ViewCoords p, q = getBoundaryPt( 0, distKm);  
+		ViewCoords s, r = q;
 		int move = splitter.getMove();
-		int x = q.getX();
+		int x = r.getX();
 		if ( move != ConvertBase.DONT_MOVE){
 			x += splitter.getDistance(move);
-			//q = new ViewCoords(x,q.getY());
+			r = new ViewCoords(x,q.getY());
 		}
 		for (int i = 1; i < NUM_CIR_PTS-1; i++) {
 			double brg = degInc * i;
 			p = q;
 			q = getBoundaryPt( brg, distKm);
-			x = splitter.shift(p, q);
-			ViewCoords t = new ViewCoords(x,q.getY());
-			double dist = Func.ptLineDist(p, t, px, py);
+			s = new ViewCoords(splitter.shift(p, q),q.getY());
+			double dist = Func.ptLineDist(r, s, px, py);
 			if (dist < eps) {
 				return true;
 			}
+			r = s;
 		}
 		return false;
-	}
-
-	protected boolean ptCloseToEdge2(int px, int py, double eps) {
-		ISplit splitter = (ISplit)m_convert;
-		// MUST initialize with the next two lines
-		splitter.setAjustFlag(true);
-		int move = switchMove(splitter.getMove());
-		splitter.setMove(move);
-		/////////////////////////////////////////
-		return ptClose(px, py, eps);
 	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
 		ISplit splitter = (ISplit)m_convert;
 		// MUST initialize with the next two lines
 		splitter.setAjustFlag(false);
+		splitter.setSplit(false);
 		splitter.setMove(ConvertBase.DONT_MOVE);
 		/////////////////////////////////////////
 		boolean touches = ptClose(px, py, eps);

@@ -15,15 +15,6 @@ public class ShortDistConverter extends ConvertBase implements ISplit  {
 	protected boolean m_bAdjust = false;
 	int m_move = DONT_MOVE;
 	
-
-	private int side(ViewCoords p){
-		int width = m_map.getViewport().getWidth();
-		if(p.getX() < width/2){
-			return MOVE_LEFT;
-		}
-		return MOVE_RIGHT;
-	}
-	
 	
 	public boolean moveNextPoint(ViewCoords p, ViewCoords q){; 
 		int  width = mapWidth()/2;
@@ -34,6 +25,15 @@ public class ShortDistConverter extends ConvertBase implements ISplit  {
 	}
 	
 	@Override
+	public int side(int x) {
+		int width = m_map.getViewport().getWidth();
+		if(x < width/2){
+			return MOVE_LEFT;
+		}
+		return MOVE_RIGHT;
+	}	
+	
+	@Override
 	public int shift(ViewCoords p, ViewCoords q){
 		int mapWidth = mapWidth();
 		int x;
@@ -41,7 +41,7 @@ public class ShortDistConverter extends ConvertBase implements ISplit  {
 			m_split = true;
 			m_bAdjust = !m_bAdjust;
 			if (m_move == DONT_MOVE){
-				m_move = side(p);
+				m_move = side(p.getX());
 			}
 		}
 		if(m_bAdjust){
@@ -57,9 +57,12 @@ public class ShortDistConverter extends ConvertBase implements ISplit  {
 	@Override
 	public void setAjustFlag(boolean flag) {
 		m_bAdjust = flag;
-		m_split = false;
 	}
 
+	@Override
+	public void setSplit(boolean split) {
+		m_split = split;
+	}
 
 	@Override
 	public boolean isSplit() {
