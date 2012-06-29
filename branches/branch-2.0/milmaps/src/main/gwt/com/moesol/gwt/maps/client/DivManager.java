@@ -13,7 +13,10 @@ import java.util.List;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 
 public class DivManager {
-	private static int LEVEL_RANGE = 1;
+	/**
+	 * This value can be changed, but behavior is undefine if this is changed after a map is created.
+	 */
+	public static int LEVEL_RANGE = 1;
 	public static final int NUMDIVS = 20;
 	private int m_currentLevel = 0;
 	private int m_oldLevel = 0;
@@ -27,11 +30,11 @@ public class DivManager {
 	private List<LayerSet> m_layerSets = new ArrayList<LayerSet>();
 	private DivDimensions m_lastResize = new DivDimensions();
 	
-	public DivManager(IMapView map){
+	public DivManager(IMapView map) {
 		m_map = map;
 	}
 	
-	public void attachDivsTo(AbsolutePanel lp){
+	public void attachDivsTo(AbsolutePanel lp) {
 		for( int i = 0; i < NUMDIVS; i++ ){
 			m_dpArray[i] = new DivPanel(i);
 			lp.add(m_dpArray[i]);
@@ -73,7 +76,7 @@ public class DivManager {
 		return mapView;
 	}
 	
-	public boolean isProjectionSet(){
+	public boolean isProjectionSet() {
 		return ( m_proj != null );
 	}
 	
