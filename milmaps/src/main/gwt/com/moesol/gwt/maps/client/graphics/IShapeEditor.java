@@ -10,6 +10,8 @@ package com.moesol.gwt.maps.client.graphics;
 
 import java.util.List;
 
+import com.google.gwt.user.client.Event;
+
 public interface IShapeEditor extends IHandlerTool {
 	public abstract void setEventFocus(boolean on);
 

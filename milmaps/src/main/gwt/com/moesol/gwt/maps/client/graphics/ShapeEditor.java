@@ -17,6 +17,7 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.IProjection;
 import com.moesol.gwt.maps.client.MapView;
@@ -210,6 +211,13 @@ public class ShapeEditor implements IShapeEditor{
 	public void handleMouseOut(MouseOutEvent event) {
 		if (m_shapeTool != null){
 			m_shapeTool.handleMouseOut(event);
+		}
+	}
+
+	@Override
+	public void handleMouseDblClick(Event event) {
+		if (m_shapeTool != null){
+			m_shapeTool.handleMouseDblClick(event);
 		}
 	}
 }

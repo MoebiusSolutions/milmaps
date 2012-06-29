@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
@@ -105,5 +106,9 @@ public class NewCircleTool implements IShapeTool {
 
 	@Override
 	public void hilite() {	
+	}
+
+	@Override
+	public void handleMouseDblClick(Event event) {
 	}
 }

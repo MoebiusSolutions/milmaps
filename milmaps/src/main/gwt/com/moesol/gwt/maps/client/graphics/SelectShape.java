@@ -17,6 +17,7 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
@@ -101,7 +102,6 @@ public class SelectShape implements IShapeTool{
 
 	@Override
 	public void handleMouseMove(MouseMoveEvent event) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -111,39 +111,35 @@ public class SelectShape implements IShapeTool{
 
 	@Override
 	public void handleMouseOut(MouseOutEvent event) {
-		// TODO Auto-generated method stub
 	}
 	
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public IShape getShape() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void done() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void setShape(IShape shape) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void setAnchor(IAnchorTool anchor) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void hilite() {
-		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	public void handleMouseDblClick(Event event) {
 	}
 }
