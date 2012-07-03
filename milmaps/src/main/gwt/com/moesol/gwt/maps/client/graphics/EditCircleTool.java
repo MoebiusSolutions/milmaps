@@ -9,15 +9,12 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public class EditCircleTool implements IShapeTool{
+public class EditCircleTool extends AbstractEditTool{
+	
 	private Circle m_circle = null;
 	private Canvas m_canvas = null;
 	private boolean m_mouseDown = false;
@@ -45,10 +42,10 @@ public class EditCircleTool implements IShapeTool{
 	}
 	
 	@Override
-	public void handleMouseDown(MouseDownEvent event) {
+	public boolean handleMouseDown(Event event) {
 		// Get Selected Anchor
-		int x = event.getX();
-		int y = event.getY();
+		int x = event.getClientX();
+		int y = event.getClientY();
 		m_mouseDown = true;
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
 		m_anchorTool = m_circle.getAnchorByPosition(gc);
@@ -57,36 +54,38 @@ public class EditCircleTool implements IShapeTool{
 			m_editor.clearCanvas().renderObjects();
 			m_editor.setShapeTool(new SelectShape(m_editor));
 		}
+		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public void handleMouseMove(MouseMoveEvent event) {
+	public boolean handleMouseMove(Event event) {
 		if (m_mouseDown == true){
 			if (m_anchorTool != null){
 				m_anchorTool.handleMouseMove(event);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
+				return CAPTURE_EVENT;
 			}
 		}
+		return PASS_EVENT;
 	}
 
 	@Override
-	public void handleMouseUp(MouseUpEvent event) {
+	public boolean handleMouseUp(Event event) {
 		m_mouseDown = false;
 		if (m_anchorTool == null){
-			return;
+			return PASS_EVENT;
 		}	
 		m_editor.renderObjects();
-		m_anchorTool.handleMouseUp(event);
-		return;
+		return m_anchorTool.handleMouseUp(event);
 	}
 
 	@Override
-	public void handleMouseOut(MouseOutEvent event) {
+	public boolean handleMouseOut(Event event) {
 		if (m_anchorTool == null){
-			return;
+			return PASS_EVENT;
 		}
-		m_anchorTool.handleMouseOut(event);
+		return m_anchorTool.handleMouseOut(event);
 	}
 
 	@Override
@@ -113,9 +112,5 @@ public class EditCircleTool implements IShapeTool{
 	@Override
 	public void setAnchor(IAnchorTool anchor) {
 		m_anchorTool = anchor;
-	}
-
-	@Override
-	public void handleMouseDblClick(Event event) {
 	}
 }

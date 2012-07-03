@@ -8,21 +8,14 @@
 
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.Event;
 
 public interface IHandlerTool {
-	public abstract void handleMouseDown(MouseDownEvent event);
-	public abstract void handleMouseMove(MouseMoveEvent event);
-	public abstract void handleMouseUp(MouseUpEvent event);
-	public abstract void handleMouseOut(MouseOutEvent event);
-	public abstract void handleMouseDblClick(Event event);
-	public abstract void done();
+	public abstract boolean handleMouseDown(Event event);
+	public abstract boolean handleMouseMove(Event event);
+	public abstract boolean handleMouseUp(Event event);
+	public abstract boolean handleMouseOut(Event event);
+	public abstract boolean handleMouseDblClick(Event event);
+	public abstract boolean handleKeyDown(Event event);
+	public abstract boolean handleKeyUp(Event event);
 }

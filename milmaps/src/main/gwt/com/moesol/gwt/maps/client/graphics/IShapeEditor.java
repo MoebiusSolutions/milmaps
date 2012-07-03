@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.Event;
 
-public interface IShapeEditor extends IHandlerTool {
+public interface IShapeEditor {//extends IHandlerTool {
 	public abstract void setEventFocus(boolean on);
 
 	public abstract CanvasTool getCanvasTool();
@@ -46,5 +46,8 @@ public interface IShapeEditor extends IHandlerTool {
 	public abstract IShapeEditor clearExistingObjs();
 
 	public abstract IShapeEditor renderObjects();
-
+	
+	public abstract boolean onEventPreview(Event event);
+	
+	public abstract void done();
 }

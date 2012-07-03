@@ -9,17 +9,13 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 
-public class NewEllipseTool implements IShapeTool {
+public class NewEllipseTool extends  AbstractNewTool {
 	private boolean m_mouseDown = false;
 	private Canvas m_canvas = null;
 	private Ellipse m_ellipse = null;
@@ -61,10 +57,10 @@ public class NewEllipseTool implements IShapeTool {
 	}
 
 	@Override
-	public void handleMouseDown(MouseDownEvent event) {
+	public boolean handleMouseDown(Event event) {
 		m_mouseDown = true;
-		int x = event.getX();
-		int y = event.getY();
+		int x = event.getClientX();
+		int y = event.getClientY();
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords center = m_convert.viewToGeodetic(vc);
 		m_ellipse = new Ellipse().withCenter(center);
@@ -74,10 +70,11 @@ public class NewEllipseTool implements IShapeTool {
 		m_ellipse.getSmnAnchorTool();
 		IAnchorTool tool = m_ellipse.getSmjAnchorTool();
 		m_editor.setAnchorTool(tool);
+		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public void handleMouseMove(MouseMoveEvent event) {
+	public boolean handleMouseMove(Event event) {
 		if (m_mouseDown) {
 			if (m_ellipse != null && m_canvas != null) {
 				m_ellipse.getSmjAnchorTool().handleMouseMove(event);
@@ -86,10 +83,11 @@ public class NewEllipseTool implements IShapeTool {
 				drawHandles();
 			}
 		}
+		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public void handleMouseUp(MouseUpEvent event) {
+	public boolean handleMouseUp(Event event) {
 		m_mouseDown = false;
 		m_ellipse.getSmjAnchorTool().handleMouseUp(event);
 		//drawCenterHandle();
@@ -100,10 +98,7 @@ public class NewEllipseTool implements IShapeTool {
 		m_editor.renderObjects();
 		drawHandles();
 		m_ellipse = null;
-	}
-
-	@Override
-	public void handleMouseOut(MouseOutEvent event) {
+		return CAPTURE_EVENT;
 	}
 
 	@Override
@@ -119,14 +114,5 @@ public class NewEllipseTool implements IShapeTool {
 	@Override
 	public void setAnchor(IAnchorTool anchor) {
 		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void hilite() {
-		// TODO Auto-generated method stub	
-	}
-
-	@Override
-	public void handleMouseDblClick(Event event) {
 	}
 }
