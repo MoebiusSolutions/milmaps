@@ -9,28 +9,30 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public class EditEllipseTool extends AbstractEditTool{
-	private Ellipse m_ellipse = null;
+public class EditFreeFormTool extends AbstractEditTool{
+	private FreeForm m_freeForm = null;
 	private Canvas m_canvas = null;
 	private boolean m_mouseDown = false;
 	private IAnchorTool m_anchorTool = null;
 	private ICoordConverter m_convert;
 	private IShapeEditor m_editor;
+	private boolean m_cntrlKeydown = false;
 
-	public EditEllipseTool(IShapeEditor se) {
+	public EditFreeFormTool(IShapeEditor se) {
 		m_editor = se;
 		m_canvas = se.getCanvasTool().canvas();
 		m_convert = se.getCoordinateConverter();
 	}
 	
 	private void drawHandles() {
-		if (m_ellipse != null && m_canvas != null) {
+		if (m_freeForm != null && m_canvas != null) {
 			Context2d context = m_canvas.getContext2d();
-			m_ellipse.drawHandles(context);
+			m_freeForm.drawHandles(context);
 		}
 	}
 	
@@ -47,9 +49,9 @@ public class EditEllipseTool extends AbstractEditTool{
 		int y = event.getClientY();
 		m_mouseDown = true;
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		m_anchorTool = m_ellipse.getAnchorByPosition(gc);
+		m_anchorTool = m_freeForm.getAnchorByPosition(gc);
 		if(m_anchorTool == null){
-			m_ellipse.selected(false);
+			m_freeForm.selected(false);
 			m_editor.clearCanvas().renderObjects();
 			m_editor.setShapeTool(new SelectShape(m_editor));
 		}
@@ -63,8 +65,8 @@ public class EditEllipseTool extends AbstractEditTool{
 				m_anchorTool.handleMouseMove(event);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
-				return CAPTURE_EVENT;
 			}
+			return CAPTURE_EVENT;
 		}
 		return PASS_EVENT;
 	}
@@ -76,7 +78,8 @@ public class EditEllipseTool extends AbstractEditTool{
 			return PASS_EVENT;
 		}	
 		m_editor.renderObjects();
-		return m_anchorTool.handleMouseUp(event);
+		m_anchorTool.handleMouseUp(event);
+		return CAPTURE_EVENT;
 	}
 
 	@Override
@@ -95,21 +98,39 @@ public class EditEllipseTool extends AbstractEditTool{
 	@Override
 	public String getType() {
 		// TODO Auto-generated method stub
-		return "edit_ellipse_tool";
+		return "edit_freeForm_tool";
 	}
 	
 	@Override
 	public void setShape(IShape shape){
-		m_ellipse = (Ellipse)shape; 
+		m_freeForm = (FreeForm)shape; 
 	}
 
 	@Override
 	public IShape getShape() {
-		return (IShape)m_ellipse;
+		return (IShape)m_freeForm;
 	}
 
 	@Override
 	public void setAnchor(IAnchorTool anchor) {
 		m_anchorTool = anchor;
+	}
+
+	@Override
+	public boolean handleKeyDown(Event event) {
+		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
+			m_cntrlKeydown = true;
+			return CAPTURE_EVENT;
+		}
+		return PASS_EVENT;
+	}
+
+	@Override
+	public boolean handleKeyUp(Event event) {
+		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
+			m_cntrlKeydown = false;
+			return CAPTURE_EVENT;
+		}
+		return PASS_EVENT;
 	}
 }

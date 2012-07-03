@@ -13,19 +13,15 @@ import java.util.List;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.moesol.gwt.maps.client.GeodeticCoords;
-import com.moesol.gwt.maps.client.IProjection;
 import com.moesol.gwt.maps.client.MapView;
-import com.moesol.gwt.maps.client.ViewCoords;
-import com.moesol.gwt.maps.client.ViewWorker;
-import com.moesol.gwt.maps.client.WorldCoords;
 
 public class ShapeEditor implements IShapeEditor{
+	protected static final boolean PASS_EVENT = true;
+	protected static final boolean CAPTURE_EVENT = false;
+	
 	private MapView m_map = null;
 	private CanvasTool m_canvas = null;//new CanvasTool();
 	IActiveTool m_mapControl = null;
@@ -133,7 +129,7 @@ public class ShapeEditor implements IShapeEditor{
 		int w = m_canvas.canvas().getOffsetWidth();
 		int h = m_canvas.canvas().getOffsetHeight();
 		context.clearRect(0, 0, w, h);	
-		return this;
+		return (IShapeEditor)this;
 	}
 	
 	@Override
@@ -142,7 +138,7 @@ public class ShapeEditor implements IShapeEditor{
 		if(!m_objs.isEmpty()){
 			clearCanvas();
 		}
-		return this;
+		return (IShapeEditor)this;
 	}
 
 	@Override
@@ -179,45 +175,117 @@ public class ShapeEditor implements IShapeEditor{
 		return false;
 	}
 
-	@Override
+	//@Override
 	public void done() {
 		// TODO Auto-generated method stub
 		
 	}
 	// Handler Events
 	
-	@Override
-	public void handleMouseDown(MouseDownEvent event) {
+	//@Override
+	public boolean handleMouseDown(Event event) {
 		if (m_shapeTool != null){
 			m_shapeTool.handleMouseDown(event);
+			return false;
 		}
+		return true;
 	}
 
-	@Override
-	public void handleMouseMove(MouseMoveEvent event) {
+	//@Override
+	public boolean handleMouseMove(Event event) {
 		if (m_shapeTool != null){
 			m_shapeTool.handleMouseMove(event);
+			return false;
 		}
+		return true;
 	}
 
-	@Override
-	public void handleMouseUp(MouseUpEvent event) {
+	//@Override
+	public boolean handleMouseUp(Event event) {
 		if (m_shapeTool != null){
 			m_shapeTool.handleMouseUp(event);
+			return false;
 		}
+		return true;
 	}
 
-	@Override
-	public void handleMouseOut(MouseOutEvent event) {
+	//@Override
+	public boolean handleMouseOut(Event event) {
 		if (m_shapeTool != null){
 			m_shapeTool.handleMouseOut(event);
+			return false;
 		}
+		return true;
+	}
+
+	//@Override
+	public boolean handleMouseDblClick(Event event) {
+		if (m_shapeTool != null){
+			m_shapeTool.handleMouseDblClick(event);
+			return false;
+		}
+		return true;
+	}
+
+	//@Override
+	public boolean handleKeyDown(Event event) {
+		if (m_shapeTool != null){
+			m_shapeTool.handleKeyDown(event);
+			return false;
+		}
+		return true;
+	}
+
+	//@Override
+	public boolean handleKeyUp(Event event) {
+		if (m_shapeTool != null){
+			m_shapeTool.handleKeyUp(event);
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean keyDownCode(Event event){
+		if (DOM.eventGetKeyCode(event) == KeyCodes.KEY_CTRL){
+			return m_shapeTool.handleKeyDown(event);
+		}
+		return PASS_EVENT;
+	}
+	
+	private boolean keyUpCode(Event event){
+		if (DOM.eventGetKeyCode(event) == KeyCodes.KEY_CTRL){
+			return m_shapeTool.handleKeyUp(event);
+		}
+		return PASS_EVENT;
 	}
 
 	@Override
-	public void handleMouseDblClick(Event event) {
-		if (m_shapeTool != null){
-			m_shapeTool.handleMouseDblClick(event);
+	public boolean onEventPreview(Event event) {
+		DOM.eventPreventDefault(event);
+		boolean rtn = true;
+		switch (DOM.eventGetType(event)) {
+		case Event.ONMOUSEDOWN:
+			rtn = handleMouseDown(event);
+			break;
+		case Event.ONMOUSEUP:
+			rtn = handleMouseUp(event);
+			break;
+		case Event.ONMOUSEMOVE:
+			rtn = handleMouseMove(event);
+			break;
+		case Event.ONMOUSEOUT:
+			rtn = handleMouseOut(event);
+			break;
+		case Event.ONDBLCLICK:
+			rtn = handleMouseDblClick(event);
+			break;
+		case Event.ONKEYDOWN:
+			rtn = keyDownCode(event);
+			break;
+		case Event.ONKEYUP:
+			rtn = keyUpCode(event);
+			break;
 		}
+		return rtn;
 	}
 }

@@ -7,16 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.moesol.gwt.maps.client.GeodeticCoords;
-import com.moesol.gwt.maps.client.ViewCoords;
-import com.moesol.gwt.maps.client.algorithms.Func;
-import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
-import com.moesol.gwt.maps.client.algorithms.RngBrg;
 
 public class Sector {/*extends AbstractShape {
 		private static final int NUM_ELLIPSE_PTS = 50;
@@ -361,19 +351,19 @@ public class Sector {/*extends AbstractShape {
 		@Override
 		public IShape selected(boolean selected) {
 			m_bSeletected = selected;
-			return this;
+			return (IShape)this;
 		}
 
 		@Override
 		public IShape erase(Context2d context) {
 			// TODO Auto-generated method stub
-			return null;
+			return (IShape)null;
 		}
 
 		@Override
 		public IShape render(Context2d context) {
 			drawBoundary(context);
-			return this;
+			return (IShape)this;
 		}
 
 		//
@@ -435,7 +425,7 @@ public class Sector {/*extends AbstractShape {
 				m_smnHandle.setCenter(vc.getX(), vc.getY()).draw(context);
 
 			}
-			return this;
+			return (IShape)this;
 		}
 
 		public boolean ptCloseToEdge(int px, int py, double eps) {

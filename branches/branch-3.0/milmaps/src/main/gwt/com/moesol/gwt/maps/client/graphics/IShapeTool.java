@@ -14,4 +14,5 @@ public interface IShapeTool extends IHandlerTool {
 	public abstract void setShape(IShape shape);
 	public abstract void setAnchor(IAnchorTool anchor);
 	public abstract IShape getShape();
+	public abstract void done();
 }

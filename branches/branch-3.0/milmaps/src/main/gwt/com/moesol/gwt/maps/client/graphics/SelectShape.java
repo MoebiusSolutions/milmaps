@@ -11,17 +11,13 @@ import java.util.List;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
 public class SelectShape implements IShapeTool{
+	protected static final boolean PASS_EVENT = true;
+	protected static final boolean CAPTURE_EVENT = false;
 	//private boolean m_mouseDown = false;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
@@ -55,15 +51,18 @@ public class SelectShape implements IShapeTool{
     	if( strShape.compareTo("Ellipse") == 0){
     		tool = new EditEllipseTool(m_editor);
     	}
+    	if( strShape.compareTo("Free Form") == 0){
+    		tool = new EditFreeFormTool(m_editor);
+    	}
     	if (tool != null){
     		tool.setShape(obj);
     	}
         return tool;
     }
     
-    private void handleSelect(@SuppressWarnings("rawtypes") MouseEvent event){
-		int x = event.getX();
-		int y = event.getY();
+    private boolean handleSelect(Event event){
+		int x = event.getClientX();
+		int y = event.getClientY();
 		Canvas canvas = m_editor.getCanvasTool().canvas();
 		Context2d context = canvas.getContext2d();
 		int width = canvas.getOffsetWidth();
@@ -83,7 +82,9 @@ public class SelectShape implements IShapeTool{
 			selectedShape.selected(true);
 			tool = createShapeEditTool(selectedShape);
 			m_editor.setShapeTool(tool);
-			tool.hilite();
+			if (tool != null){
+				tool.hilite();
+			}
 			for (IShape obj : m_objs) {
 				if ( obj != selectedShape ){
 					obj.selected(false).render(context);
@@ -94,23 +95,27 @@ public class SelectShape implements IShapeTool{
 			m_editor.deselectAllShapes();
 			m_editor.clearCanvas().renderObjects();
 		}  	
+		return CAPTURE_EVENT;
     }
 	
 	@Override
-	public void handleMouseDown(MouseDownEvent event) {
+	public boolean handleMouseDown(Event event) {
+		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public void handleMouseMove(MouseMoveEvent event) {
+	public boolean handleMouseMove(Event event) {
+		return PASS_EVENT;
 	}
 
 	@Override
-	public void handleMouseUp(MouseUpEvent event) {
-		handleSelect(event);
+	public boolean handleMouseUp(Event event) {
+		return handleSelect(event);
 	}
 
 	@Override
-	public void handleMouseOut(MouseOutEvent event) {
+	public boolean handleMouseOut(Event event) {
+		return CAPTURE_EVENT;
 	}
 	
 	@Override
@@ -140,6 +145,18 @@ public class SelectShape implements IShapeTool{
 	}
 
 	@Override
-	public void handleMouseDblClick(Event event) {
+	public boolean handleMouseDblClick(Event event) {
+		return CAPTURE_EVENT;
+	}
+
+	@Override
+	public boolean handleKeyDown(Event event) {
+		int x = 0;
+		return CAPTURE_EVENT;
+	}
+
+	@Override
+	public boolean handleKeyUp(Event event) {
+		return CAPTURE_EVENT;
 	}
 }

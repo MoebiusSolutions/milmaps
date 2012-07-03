@@ -45,7 +45,7 @@ public abstract class AbstractShape implements IShape{
 	@Override
 	public IShape selected(boolean selected) {
 		m_bSeletected = selected;
-		return this;
+		return (IShape)this;
 	}
 	
 	@Override

@@ -117,10 +117,6 @@ public class MapController implements
 
 	@Override
 	public void onMouseDown(MouseDownEvent event) {
-		if (m_editor != null){
-			m_editor.handleMouseDown(event);
-			return;
-		}
 		Widget sender = (Widget) event.getSource();
 		DOM.setCapture(sender.getElement());
 		int x = event.getX();
@@ -138,11 +134,6 @@ public class MapController implements
 	}
 	@Override
 	public void onMouseMove(MouseMoveEvent event) {
-
-		if (m_editor != null){
-			m_editor.handleMouseMove(event);
-			return;
-		}
 		int x = event.getX();
 		int y = event.getY();
 		m_moveClientX = event.getClientX();
@@ -154,19 +145,11 @@ public class MapController implements
 
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
-		if (m_editor != null){
-			m_editor.handleMouseOut(event);
-			return;
-		}
 		m_hoverTimer.cancel();
 	}
 
 	@Override
 	public void onMouseUp(MouseUpEvent event) {
-		if (m_editor != null){
-			m_editor.handleMouseUp(event);
-			return;
-		}
 		Widget sender = (Widget) event.getSource();
 		DOM.releaseCapture(sender.getElement());
 		m_hoverTimer.cancel();
@@ -263,21 +246,22 @@ public class MapController implements
 		}
 		//MapViewChangeEvent.fire(m_eventBus, m_map);
                 
-                // Don't let containing elements in the browser catch the same scroll wheel event
-                DOM.eventPreventDefault(DOM.eventGetCurrentEvent());
+        // Don't let containing elements in the browser catch the same scroll wheel event
+        DOM.eventPreventDefault(DOM.eventGetCurrentEvent());
 	}
 
 	@Override
 	public boolean onEventPreview(Event event) {
+		if (m_editor != null){
+			return m_editor.onEventPreview(event);
+		}
 		Element target = DOM.eventGetTarget(event);
 		if (target != null) {
 			if (!DOM.isOrHasChild(m_map.getElement(), target)) {
 				return true;
 			}
 		}
-
 		onEventPreviewForMap(event);
-
 		// Allow the event to file
 		return true;
 	}
@@ -290,7 +274,8 @@ public class MapController implements
 			break;
 
 		case Event.ONDBLCLICK:
-			zoomAndCenter(m_doubleClickTracker.getX(), m_doubleClickTracker.getY(), true);
+			zoomAndCenter(m_doubleClickTracker.getX(), 
+						  m_doubleClickTracker.getY(), true);
 			DOM.eventPreventDefault(event);
 			break;
 		case Event.ONKEYDOWN:

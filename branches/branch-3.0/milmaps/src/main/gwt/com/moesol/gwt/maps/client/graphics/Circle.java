@@ -8,10 +8,6 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
@@ -70,31 +66,31 @@ public class Circle extends AbstractShape {
 		if (m_radiusTool == null) {
 			m_radiusTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(MouseDownEvent event) {
+				public boolean handleMouseDown(Event event) {
+					return PASS_EVENT;
 				}
 
 				@Override
-				public void handleMouseMove(MouseMoveEvent event) {
-					int x = event.getX();
-					int y = event.getY();
+				public boolean handleMouseMove(Event event) {
+					int x = event.getClientX();
+					int y = event.getClientY();
 					setRadiusFromPix(x, y);
+					return CAPTURE_EVENT;
 				}
 
 				@Override
-				public void handleMouseUp(MouseUpEvent event) {
-					int x = event.getX();
-					int y = event.getY();
+				public boolean  handleMouseUp(Event event) {
+					int x = event.getClientX();
+					int y = event.getClientY();
 					setRadiusFromPix(x, y);
 					upDateRngBrg();
+					return CAPTURE_EVENT;
 				}
 
 				@Override
-				public void handleMouseOut(MouseOutEvent event) {
+				public boolean handleMouseOut(Event event) {
 					upDateRngBrg();
-				}
-
-				@Override
-				public void done() {
+					return CAPTURE_EVENT;
 				}
 
 				@Override
@@ -108,7 +104,18 @@ public class Circle extends AbstractShape {
 				}
 
 				@Override
-				public void handleMouseDblClick(Event event) {
+				public boolean handleMouseDblClick(Event event) {
+					return PASS_EVENT;
+				}
+
+				@Override
+				public boolean handleKeyDown(Event event) {
+					return PASS_EVENT;
+				}
+
+				@Override
+				public boolean handleKeyUp(Event event) {
+					return PASS_EVENT;
 				}
 			};
 		}
@@ -144,31 +151,31 @@ public class Circle extends AbstractShape {
 		if (m_centerTool == null) {
 			m_centerTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(MouseDownEvent event) {
+				public boolean handleMouseDown(Event event) {
+					return PASS_EVENT;
 				}
 
 				@Override
-				public void handleMouseMove(MouseMoveEvent event) {
-					int x = event.getX();
-					int y = event.getY();
+				public boolean handleMouseMove(Event event) {
+					int x = event.getClientX();
+					int y = event.getClientY();
 					setCenterFromPix(x, y);
 					moveRadiusPos();
+					return CAPTURE_EVENT;
 				}
 
 				@Override
-				public void handleMouseUp(MouseUpEvent event) {
-					int x = event.getX();
-					int y = event.getY();
+				public boolean handleMouseUp(Event event) {
+					int x = event.getClientX();
+					int y = event.getClientY();
 					setCenterFromPix(x, y);
 					moveRadiusPos();
+					return CAPTURE_EVENT;
 				}
 
 				@Override
-				public void handleMouseOut(MouseOutEvent event) {
-				}
-
-				@Override
-				public void done() {					
+				public boolean handleMouseOut(Event event) {
+					return CAPTURE_EVENT;
 				}
 
 				@Override
@@ -179,10 +186,6 @@ public class Circle extends AbstractShape {
 						return Func.isClose(radPt, vc, 4);						
 					}
 					return false;
-				}
-				
-				@Override
-				public void handleMouseDblClick(Event event) {
 				}
 			};
 		}
@@ -248,13 +251,13 @@ public class Circle extends AbstractShape {
 	@Override
 	public IShape erase(Context2d ct) {
 		//_erase(ct);
-		return this;
+		return (IShape)this;
 	}
 	
 	@Override
 	public IShape render(Context2d ct) {
 		draw(ct);
-		return this;
+		return (IShape)this;
 	}
 	
 	@Override
@@ -281,7 +284,7 @@ public class Circle extends AbstractShape {
 				m_radHandle.setCenter(x, vc.getY()).draw(context);
 			}
 		}
-		return this;
+		return (IShape)this;
 	}
 
 	public GeodeticCoords getRadiusPos() {
@@ -331,19 +334,7 @@ public class Circle extends AbstractShape {
 	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
-		ISplit splitter = m_convert.getISplit();
-		// MUST initialize with the next two lines
-		splitter.setAjustFlag(false);
-		splitter.setSplit(false);
-		splitter.setMove(ConvertBase.DONT_MOVE);
-		/////////////////////////////////////////
-		boolean touches = ptClose(px, py, eps);
-		if (touches == false && splitter.isSplit()){
-			splitter.setAjustFlag(true);
-			splitter.setMove(splitter.switchMove(splitter.getMove()));
-			return ptClose(px, py, eps);
-		}
-		return touches;
+		return ptClose(px, py, eps);
 	}
 
 	@Override
