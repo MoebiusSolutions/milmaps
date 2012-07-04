@@ -51,9 +51,19 @@ public class EditFreeFormTool extends AbstractEditTool{
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
 		m_anchorTool = m_freeForm.getAnchorByPosition(gc);
 		if(m_anchorTool == null){
-			m_freeForm.selected(false);
-			m_editor.clearCanvas().renderObjects();
-			m_editor.setShapeTool(new SelectShape(m_editor));
+			if (m_cntrlKeydown){
+				int j = m_freeForm.pointHitSegment(x,y);
+				if (j < m_freeForm.size()){
+					m_freeForm.insertVertex(j, x, y);
+					m_editor.clearCanvas().renderObjects();
+					drawHandles();
+				}
+			}
+			else{
+				m_freeForm.selected(false);
+				m_editor.clearCanvas().renderObjects();
+				m_editor.setShapeTool(new SelectShape(m_editor));
+			}
 		}
 	}
 
