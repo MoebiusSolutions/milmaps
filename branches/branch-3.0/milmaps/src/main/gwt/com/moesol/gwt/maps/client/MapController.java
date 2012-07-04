@@ -114,9 +114,16 @@ public class MapController implements
 	public void setUseDragTracker( boolean bUseDragTracker ){
 		m_bUseDragTracker = bUseDragTracker;
 	}
+	
+	protected boolean blockEvent(){
+		return (m_editor != null);
+	}
 
 	@Override
 	public void onMouseDown(MouseDownEvent event) {
+		if (blockEvent()){
+			return;
+		}
 		Widget sender = (Widget) event.getSource();
 		DOM.setCapture(sender.getElement());
 		int x = event.getX();
@@ -134,6 +141,9 @@ public class MapController implements
 	}
 	@Override
 	public void onMouseMove(MouseMoveEvent event) {
+		if (blockEvent()){
+			return;
+		}
 		int x = event.getX();
 		int y = event.getY();
 		m_moveClientX = event.getClientX();
@@ -150,6 +160,9 @@ public class MapController implements
 
 	@Override
 	public void onMouseUp(MouseUpEvent event) {
+		if (blockEvent()){
+			return;
+		}
 		Widget sender = (Widget) event.getSource();
 		DOM.releaseCapture(sender.getElement());
 		m_hoverTimer.cancel();
@@ -253,7 +266,7 @@ public class MapController implements
 	@Override
 	public boolean onEventPreview(Event event) {
 		if (m_editor != null){
-			return m_editor.onEventPreview(event);
+			m_editor.onEventPreview(event);
 		}
 		Element target = DOM.eventGetTarget(event);
 		if (target != null) {
@@ -274,8 +287,10 @@ public class MapController implements
 			break;
 
 		case Event.ONDBLCLICK:
-			zoomAndCenter(m_doubleClickTracker.getX(), 
-						  m_doubleClickTracker.getY(), true);
+			if (!blockEvent()){		
+				zoomAndCenter(m_doubleClickTracker.getX(), 
+						  	m_doubleClickTracker.getY(), true);
+			}
 			DOM.eventPreventDefault(event);
 			break;
 		case Event.ONKEYDOWN:

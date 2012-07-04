@@ -66,31 +66,27 @@ public class Circle extends AbstractShape {
 		if (m_radiusTool == null) {
 			m_radiusTool = new AbstractPosTool() {
 				@Override
-				public boolean handleMouseDown(Event event) {
-					return PASS_EVENT;
+				public void handleMouseDown(Event event) {
 				}
 
 				@Override
-				public boolean handleMouseMove(Event event) {
+				public void handleMouseMove(Event event) {
 					int x = event.getClientX();
 					int y = event.getClientY();
 					setRadiusFromPix(x, y);
-					return CAPTURE_EVENT;
 				}
 
 				@Override
-				public boolean  handleMouseUp(Event event) {
+				public void  handleMouseUp(Event event) {
 					int x = event.getClientX();
 					int y = event.getClientY();
 					setRadiusFromPix(x, y);
 					upDateRngBrg();
-					return CAPTURE_EVENT;
 				}
 
 				@Override
-				public boolean handleMouseOut(Event event) {
+				public void handleMouseOut(Event event) {
 					upDateRngBrg();
-					return CAPTURE_EVENT;
 				}
 
 				@Override
@@ -104,18 +100,15 @@ public class Circle extends AbstractShape {
 				}
 
 				@Override
-				public boolean handleMouseDblClick(Event event) {
-					return PASS_EVENT;
+				public void handleMouseDblClick(Event event) {
 				}
 
 				@Override
-				public boolean handleKeyDown(Event event) {
-					return PASS_EVENT;
+				public void handleKeyDown(Event event) {
 				}
 
 				@Override
-				public boolean handleKeyUp(Event event) {
-					return PASS_EVENT;
+				public void handleKeyUp(Event event) {
 				}
 			};
 		}
@@ -151,31 +144,27 @@ public class Circle extends AbstractShape {
 		if (m_centerTool == null) {
 			m_centerTool = new AbstractPosTool() {
 				@Override
-				public boolean handleMouseDown(Event event) {
-					return PASS_EVENT;
+				public void handleMouseDown(Event event) {;
 				}
 
 				@Override
-				public boolean handleMouseMove(Event event) {
+				public void handleMouseMove(Event event) {
 					int x = event.getClientX();
 					int y = event.getClientY();
 					setCenterFromPix(x, y);
 					moveRadiusPos();
-					return CAPTURE_EVENT;
 				}
 
 				@Override
-				public boolean handleMouseUp(Event event) {
+				public void handleMouseUp(Event event) {
 					int x = event.getClientX();
 					int y = event.getClientY();
 					setCenterFromPix(x, y);
 					moveRadiusPos();
-					return CAPTURE_EVENT;
 				}
 
 				@Override
-				public boolean handleMouseOut(Event event) {
-					return CAPTURE_EVENT;
+				public void handleMouseOut(Event event) {
 				}
 
 				@Override

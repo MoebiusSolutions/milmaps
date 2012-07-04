@@ -43,7 +43,7 @@ public class NewCircleTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public boolean handleMouseDown(Event event) {
+	public void handleMouseDown(Event event) {
 		m_mouseDown = true;
 		int x = event.getClientX();
 		int y = event.getClientY();
@@ -55,11 +55,10 @@ public class NewCircleTool extends  AbstractNewTool {
 		m_circle.setCoordConverter(m_editor.getCoordinateConverter());
 		IAnchorTool tool = m_circle.getRadiusAnchorTool();
 		m_editor.setAnchorTool(tool);
-		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public boolean handleMouseMove(Event event) {
+	public void handleMouseMove(Event event) {
 		if (m_mouseDown) {
 			if (m_circle != null && m_canvas != null) {
 				m_circle.getRadiusAnchorTool().handleMouseMove(event);
@@ -67,11 +66,10 @@ public class NewCircleTool extends  AbstractNewTool {
 				drawHandles();
 			}
 		}
-		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public boolean handleMouseUp(Event event) {
+	public void handleMouseUp(Event event) {
 		m_mouseDown = false;
 		m_circle.getRadiusAnchorTool().handleMouseUp(event);
 		//drawCenterHandle();
@@ -82,12 +80,10 @@ public class NewCircleTool extends  AbstractNewTool {
 		m_editor.renderObjects();
 		drawHandles();
 		m_circle = null;
-		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public boolean handleMouseOut(Event event) {
-		return CAPTURE_EVENT;
+	public void handleMouseOut(Event event) {
 	}
 
 	@Override

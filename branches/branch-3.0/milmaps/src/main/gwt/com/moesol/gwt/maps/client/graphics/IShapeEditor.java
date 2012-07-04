@@ -47,7 +47,7 @@ public interface IShapeEditor {//extends IHandlerTool {
 
 	public abstract IShapeEditor renderObjects();
 	
-	public abstract boolean onEventPreview(Event event);
+	public abstract void onEventPreview(Event event);
 	
 	public abstract void done();
 }

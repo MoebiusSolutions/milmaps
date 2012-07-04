@@ -245,47 +245,44 @@ public class ShapeEditor implements IShapeEditor{
 		return true;
 	}
 	
-	private boolean keyDownCode(Event event){
+	private void keyDownCode(Event event){
 		if (DOM.eventGetKeyCode(event) == KeyCodes.KEY_CTRL){
-			return m_shapeTool.handleKeyDown(event);
+			m_shapeTool.handleKeyDown(event);
 		}
-		return PASS_EVENT;
 	}
 	
-	private boolean keyUpCode(Event event){
+	private void keyUpCode(Event event){
 		if (DOM.eventGetKeyCode(event) == KeyCodes.KEY_CTRL){
-			return m_shapeTool.handleKeyUp(event);
+			m_shapeTool.handleKeyUp(event);
 		}
-		return PASS_EVENT;
 	}
 
 	@Override
-	public boolean onEventPreview(Event event) {
+	public void onEventPreview(Event event) {
 		DOM.eventPreventDefault(event);
-		boolean rtn = true;
 		switch (DOM.eventGetType(event)) {
 		case Event.ONMOUSEDOWN:
-			rtn = handleMouseDown(event);
+			handleMouseDown(event);
 			break;
 		case Event.ONMOUSEUP:
-			rtn = handleMouseUp(event);
+			handleMouseUp(event);
 			break;
 		case Event.ONMOUSEMOVE:
-			rtn = handleMouseMove(event);
+			handleMouseMove(event);
 			break;
 		case Event.ONMOUSEOUT:
-			rtn = handleMouseOut(event);
+			handleMouseOut(event);
 			break;
 		case Event.ONDBLCLICK:
-			rtn = handleMouseDblClick(event);
+			handleMouseDblClick(event);
 			break;
 		case Event.ONKEYDOWN:
-			rtn = keyDownCode(event);
+			keyDownCode(event);
 			break;
 		case Event.ONKEYUP:
-			rtn = keyUpCode(event);
+			keyUpCode(event);
 			break;
 		}
-		return rtn;
+		return;
 	}
 }
