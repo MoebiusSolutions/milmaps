@@ -60,7 +60,7 @@ public class SelectShape implements IShapeTool{
         return tool;
     }
     
-    private boolean handleSelect(Event event){
+    private void handleSelect(Event event){
 		int x = event.getClientX();
 		int y = event.getClientY();
 		Canvas canvas = m_editor.getCanvasTool().canvas();
@@ -95,27 +95,23 @@ public class SelectShape implements IShapeTool{
 			m_editor.deselectAllShapes();
 			m_editor.clearCanvas().renderObjects();
 		}  	
-		return CAPTURE_EVENT;
     }
 	
 	@Override
-	public boolean handleMouseDown(Event event) {
-		return CAPTURE_EVENT;
+	public void handleMouseDown(Event event) {
 	}
 
 	@Override
-	public boolean handleMouseMove(Event event) {
-		return PASS_EVENT;
+	public void handleMouseMove(Event event) {
 	}
 
 	@Override
-	public boolean handleMouseUp(Event event) {
-		return handleSelect(event);
+	public void handleMouseUp(Event event) {
+		handleSelect(event);
 	}
 
 	@Override
-	public boolean handleMouseOut(Event event) {
-		return CAPTURE_EVENT;
+	public void handleMouseOut(Event event) {
 	}
 	
 	@Override
@@ -145,18 +141,15 @@ public class SelectShape implements IShapeTool{
 	}
 
 	@Override
-	public boolean handleMouseDblClick(Event event) {
-		return CAPTURE_EVENT;
+	public void handleMouseDblClick(Event event) {
 	}
 
 	@Override
-	public boolean handleKeyDown(Event event) {
+	public void handleKeyDown(Event event) {
 		int x = 0;
-		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public boolean handleKeyUp(Event event) {
-		return CAPTURE_EVENT;
+	public void handleKeyUp(Event event) {
 	}
 }

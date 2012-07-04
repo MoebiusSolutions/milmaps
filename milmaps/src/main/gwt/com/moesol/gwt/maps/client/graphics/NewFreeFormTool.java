@@ -60,18 +60,17 @@ public class NewFreeFormTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public boolean handleMouseDown(Event event) {
+	public void handleMouseDown(Event event) {
 		if (m_freeForm == null){
 			m_freeForm = new FreeForm();
 			m_editor.addShape(m_freeForm);
 			m_freeForm.selected(true);
 			m_freeForm.setCoordConverter(m_editor.getCoordinateConverter());
 		}
-		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public boolean handleMouseMove(Event event) {
+	public void handleMouseMove(Event event) {
 		if (m_freeForm != null && m_canvas != null) {
 			m_editor.clearCanvas().renderObjects();
 			drawHandles();
@@ -79,11 +78,10 @@ public class NewFreeFormTool extends  AbstractNewTool {
 			int y = event.getClientY();
 			drawLastLine(x,y);
 		}
-		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public boolean handleMouseUp(Event event) {
+	public void handleMouseUp(Event event) {
 		int x = event.getClientX();
 		int y = event.getClientY();
 		if (m_lastX != x || m_lastY != y){
@@ -91,7 +89,6 @@ public class NewFreeFormTool extends  AbstractNewTool {
 			m_lastY = y;
 			m_freeForm.addVertex(x, y);
 		}
-		return CAPTURE_EVENT;
 	}
 
 	@Override
@@ -113,7 +110,7 @@ public class NewFreeFormTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public boolean handleMouseDblClick(Event event) {
+	public void handleMouseDblClick(Event event) {
 		if (m_freeForm != null){
 			drawHandles();
 			// we are done with initial creation so set the edit tool
@@ -124,6 +121,5 @@ public class NewFreeFormTool extends  AbstractNewTool {
 			drawHandles();
 			m_freeForm = null;
 		}
-		return CAPTURE_EVENT;
 	}
 }

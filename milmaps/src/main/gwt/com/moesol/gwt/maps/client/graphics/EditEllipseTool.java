@@ -41,7 +41,7 @@ public class EditEllipseTool extends AbstractEditTool{
 	}
 	
 	@Override
-	public boolean handleMouseDown(Event event) {
+	public void handleMouseDown(Event event) {
 		// Get Selected Anchor
 		int x = event.getClientX();
 		int y = event.getClientY();
@@ -53,38 +53,33 @@ public class EditEllipseTool extends AbstractEditTool{
 			m_editor.clearCanvas().renderObjects();
 			m_editor.setShapeTool(new SelectShape(m_editor));
 		}
-		return CAPTURE_EVENT;
 	}
 
 	@Override
-	public boolean handleMouseMove(Event event) {
+	public void handleMouseMove(Event event) {
 		if (m_mouseDown == true){
 			if (m_anchorTool != null){
 				m_anchorTool.handleMouseMove(event);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
-				return CAPTURE_EVENT;
 			}
 		}
-		return PASS_EVENT;
 	}
 
 	@Override
-	public boolean handleMouseUp(Event event) {
+	public void handleMouseUp(Event event) {
 		m_mouseDown = false;
-		if (m_anchorTool == null){
-			return PASS_EVENT;
+		if (m_anchorTool != null){
+			m_editor.renderObjects();
+			m_anchorTool.handleMouseUp(event);
 		}	
-		m_editor.renderObjects();
-		return m_anchorTool.handleMouseUp(event);
 	}
 
 	@Override
-	public boolean handleMouseOut(Event event) {
-		if (m_anchorTool == null){
-			return PASS_EVENT;
+	public void handleMouseOut(Event event) {
+		if (m_anchorTool != null){
+			m_anchorTool.handleMouseOut(event);
 		}
-		return m_anchorTool.handleMouseOut(event);
 	}
 
 	@Override

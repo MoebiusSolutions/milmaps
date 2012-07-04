@@ -11,8 +11,6 @@ import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 
 public abstract class AbstractPosTool implements IAnchorTool {
-	protected static final boolean PASS_EVENT = true;
-	protected static final boolean CAPTURE_EVENT = false;
 	protected GeodeticCoords m_geoPos = null;
 
 	public GeodeticCoords getGeoPos() {
@@ -24,17 +22,14 @@ public abstract class AbstractPosTool implements IAnchorTool {
 	}
 	
 	@Override
-	public boolean handleMouseDblClick(Event event) {
-		return PASS_EVENT;
+	public void handleMouseDblClick(Event event) {
 	}
 
 	@Override
-	public boolean handleKeyDown(Event event) {
-		return PASS_EVENT;
+	public void handleKeyDown(Event event) {
 	}
 
 	@Override
-	public boolean handleKeyUp(Event event) {
-		return PASS_EVENT;
+	public void handleKeyUp(Event event) {
 	}
 }

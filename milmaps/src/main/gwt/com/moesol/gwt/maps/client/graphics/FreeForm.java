@@ -41,34 +41,29 @@ public class FreeForm extends AbstractShape {
 		AbstractPosTool tool = new AbstractPosTool(){
 
 			@Override
-			public boolean handleMouseDown(Event event) {
-				return CAPTURE_EVENT;
+			public void handleMouseDown(Event event) {
 			}
 
 			@Override
-			public boolean handleMouseMove(Event event) {
+			public void handleMouseMove(Event event) {
 				int x = event.getClientX();
 				int y = event.getClientY();
 				setPosFromPix(x, y, this);
-				return CAPTURE_EVENT;
 			}
 
 			@Override
-			public boolean handleMouseUp(Event event) {
+			public void handleMouseUp(Event event) {
 				int x = event.getClientX();
 				int y = event.getClientY();
 				setPosFromPix(x, y, this);
-				return CAPTURE_EVENT;
 			}
 
 			@Override
-			public boolean handleMouseOut(Event event) {
-				return CAPTURE_EVENT;
+			public void handleMouseOut(Event event) {
 			}
 
 			@Override
-			public boolean handleMouseDblClick(Event event) {
-				return CAPTURE_EVENT;
+			public void handleMouseDblClick(Event event) {
 			}
 			
 			@Override
