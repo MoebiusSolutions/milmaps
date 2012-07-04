@@ -85,10 +85,12 @@ public class FreeForm extends AbstractShape {
 		 m_handleList.add(h);
 	}
 	
-	public void insertVertex(int i){
+	public void insertVertex(int i, int x, int y){
 		AbstractPosTool tool = newAnchorTool();
+		 setPosFromPix(x,y,tool);
 		m_vertexList.add(i,tool);
 		AnchorHandle h = new AnchorHandle();
+		h.setCenter(x,y);
 		m_handleList.add(i,h);
 	}
 	
@@ -189,7 +191,7 @@ public class FreeForm extends AbstractShape {
 		return (IShape)this;
 	}
 	
-	protected boolean ptClose(int px, int py, double eps){
+	protected int ptClose(int px, int py, double eps){
 		/////////////////////////////////////////
 		ViewCoords p, q = getViewPoint(0);  
 		int n = m_vertexList.size();
@@ -198,15 +200,24 @@ public class FreeForm extends AbstractShape {
 			q = getViewPoint(i);
 			double dist = Func.ptLineDist(p, q, px, py);
 			if (dist < eps) {
-				return true;
+				return i;
 			}
 		}
-		return false;
+		return n;
 	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
 		/////////////////////////////////////////
-		return ptClose(px, py, eps);
+		int j = ptClose(px, py, eps);
+		return (j < m_vertexList.size());
+	}
+	
+	public int pointHitSegment(int px, int py){
+		return ptClose(px, py, Func.PIX_SELECT_TOLERANCE);
+	}
+	
+	public int size(){
+		return m_vertexList.size();
 	}
 	
 	@Override

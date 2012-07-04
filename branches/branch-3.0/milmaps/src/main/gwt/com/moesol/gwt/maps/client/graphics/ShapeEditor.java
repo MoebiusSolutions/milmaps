@@ -259,7 +259,7 @@ public class ShapeEditor implements IShapeEditor{
 
 	@Override
 	public void onEventPreview(Event event) {
-		DOM.eventPreventDefault(event);
+		//DOM.eventPreventDefault(event);
 		switch (DOM.eventGetType(event)) {
 		case Event.ONMOUSEDOWN:
 			handleMouseDown(event);
