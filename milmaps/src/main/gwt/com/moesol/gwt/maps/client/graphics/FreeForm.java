@@ -11,21 +11,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 
 public class FreeForm extends AbstractShape {
+	protected static int TRANSLATE_HANDLE_OFFSET_X = 20;
 	protected List<AnchorHandle> m_handleList = new ArrayList<AnchorHandle>();
 	protected List<AbstractPosTool> m_vertexList = new ArrayList<AbstractPosTool>();
-	
+	protected AbstractPosTool m_translationTool = null;
+	private final AnchorHandle m_translationHandle = new AnchorHandle();
+	private int m_X, m_Y;
 	public FreeForm(){
 		m_id = "Free Form";
+		m_translationHandle.setStrokeColor(255, 0, 0, 1);
 	}
 	
 	protected void checkForExceptions(){
-		
 	}
 	
 	private void setPosFromPix(int x, int y, AbstractPosTool tool) {
@@ -34,10 +38,26 @@ public class FreeForm extends AbstractShape {
 		if (pos == null  || !pos.equals(gc)) {
 			tool.setGeoPos(gc);
 			m_needsUpdate = true;
+			// Update translation handle
+			if (m_vertexList.size() > 0 && tool == m_vertexList.get(0)){
+				x -= TRANSLATE_HANDLE_OFFSET_X;
+				gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
+				getTranslationTool().setGeoPos(gc);
+			}
 		}
 	}
 	
-	protected AbstractPosTool newAnchorTool(){
+	private void moveVerticesByOffset(int x, int y){
+		for (int i = 0; i < m_vertexList.size(); i++){
+			m_handleList.get(i).moveByOffset(x, y);
+			int ix = m_handleList.get(i).getX();
+			int iy = m_handleList.get(i).getY();
+			setPosFromPix(ix,iy,m_vertexList.get(i));
+		}		
+		
+	}
+	
+	protected AbstractPosTool newVertexTool(){
 		AbstractPosTool tool = new AbstractPosTool(){
 
 			@Override
@@ -76,17 +96,66 @@ public class FreeForm extends AbstractShape {
 		return tool;
 	}
 	
+	protected AbstractPosTool getTranslationTool(){
+		if (m_translationTool == null){
+			m_translationTool = new AbstractPosTool(){
+				@Override
+				public void handleMouseDown(Event event) {
+				}
+	
+				@Override
+				public void handleMouseMove(Event event) {
+					int x = event.getClientX()- m_X;
+					int y = event.getClientY()- m_Y;
+					moveVerticesByOffset(x,y);
+					m_X = event.getClientX();
+					m_Y = event.getClientY();
+				}
+	
+				@Override
+				public void handleMouseUp(Event event) {
+					int x = event.getClientX()- m_X;
+					int y = event.getClientY()- m_Y;
+					moveVerticesByOffset(x,y);
+					m_X = event.getClientX();
+					m_Y = event.getClientY();
+				}
+	
+				@Override
+				public void handleMouseOut(Event event) {
+				}
+	
+				@Override
+				public void handleMouseDblClick(Event event) {
+				}
+				
+				@Override
+				public boolean isSlected(GeodeticCoords gc) {
+					ViewCoords vc = m_convert.geodeticToView(gc);
+					ViewCoords pt = m_convert.geodeticToView(m_geoPos);
+					return Func.isClose(pt, vc, 4);
+				}
+			};
+		}
+		return m_translationTool;
+	}
+	
 	public void addVertex(int x, int y){
-		 AbstractPosTool tool = newAnchorTool();
-		 setPosFromPix(x,y,tool);
+		 AbstractPosTool tool = newVertexTool();
 		 m_vertexList.add(tool);
+		 setPosFromPix(x,y,tool);
 		 AnchorHandle h = new AnchorHandle();
 		 h.setCenter(x, y);
 		 m_handleList.add(h);
+		 if (m_vertexList.size() == 1){
+			 x -= TRANSLATE_HANDLE_OFFSET_X;
+			 m_translationHandle.setCenter(x, y);
+			 setPosFromPix(x,y,m_translationTool);
+		 }
 	}
 	
 	public void insertVertex(int i, int x, int y){
-		AbstractPosTool tool = newAnchorTool();
+		AbstractPosTool tool = newVertexTool();
 		 setPosFromPix(x,y,tool);
 		m_vertexList.add(i,tool);
 		AnchorHandle h = new AnchorHandle();
@@ -124,6 +193,10 @@ public class FreeForm extends AbstractShape {
 			return m_vertexList.get(n-1);
 		}
 		return null;
+	}
+	
+	public void removeVertex(AbstractPosTool vertex){
+		m_vertexList.remove(vertex);
 	}
 	
 	public void removeVertex(int i){
@@ -181,12 +254,16 @@ public class FreeForm extends AbstractShape {
 
 	@Override
 	public IShape drawHandles(Context2d context) {
-		if (context != null) {
+		if (context != null &&  m_vertexList.size() > 0) {
 			for (int i = 0; i < m_vertexList.size(); i++){
 				GeodeticCoords gc = m_vertexList.get(i).getGeoPos();
 				ViewCoords v = m_convert.geodeticToView(gc);
 				m_handleList.get(i).setCenter(v.getX(),v.getY()).draw(context);
 			}
+			// translation handle
+			GeodeticCoords gc  = m_translationTool.getGeoPos();
+			ViewCoords v = m_convert.geodeticToView(gc);
+			m_translationHandle.setCenter(v.getX(),v.getY()).draw(context);
 		}
 		return (IShape)this;
 	}
@@ -226,14 +303,20 @@ public class FreeForm extends AbstractShape {
 		ViewCoords vc = m_convert.geodeticToView(position);
 		return ptCloseToEdge( vc.getX(), vc.getY(), Func.PIX_SELECT_TOLERANCE);
 	}
+	
 
 	@Override
 	public IAnchorTool getAnchorByPosition(GeodeticCoords position) {
 		checkForExceptions();
 		for (AbstractPosTool tool : m_vertexList) {
 			if (tool.isSlected(position)){
-				return tool;
+				return (IAnchorTool)tool;
 			}
+		}
+		if (m_translationTool.isSlected(position)){
+			m_X = m_translationHandle.getX();
+			m_Y = m_translationHandle.getY();
+			return m_translationTool;
 		}
 		return null;
 	}

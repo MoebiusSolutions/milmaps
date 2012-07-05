@@ -22,6 +22,7 @@ public class EditFreeFormTool extends AbstractEditTool{
 	private ICoordConverter m_convert;
 	private IShapeEditor m_editor;
 	private boolean m_cntrlKeydown = false;
+	private boolean m_shiftKeydown = false;
 
 	public EditFreeFormTool(IShapeEditor se) {
 		m_editor = se;
@@ -51,7 +52,7 @@ public class EditFreeFormTool extends AbstractEditTool{
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
 		m_anchorTool = m_freeForm.getAnchorByPosition(gc);
 		if(m_anchorTool == null){
-			if (m_cntrlKeydown){
+			if (m_cntrlKeydown && !m_shiftKeydown){
 				int j = m_freeForm.pointHitSegment(x,y);
 				if (j < m_freeForm.size()){
 					m_freeForm.insertVertex(j, x, y);
@@ -63,6 +64,14 @@ public class EditFreeFormTool extends AbstractEditTool{
 				m_freeForm.selected(false);
 				m_editor.clearCanvas().renderObjects();
 				m_editor.setShapeTool(new SelectShape(m_editor));
+			}
+		}
+		else{
+			if (m_cntrlKeydown && m_shiftKeydown){
+				m_freeForm.removeVertex((AbstractPosTool)m_anchorTool);
+				m_editor.clearCanvas().renderObjects();
+				drawHandles();
+				m_anchorTool = null;
 			}
 		}
 	}
@@ -125,12 +134,18 @@ public class EditFreeFormTool extends AbstractEditTool{
 		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
 			m_cntrlKeydown = true;
 		}
+		else if (event.getKeyCode() == KeyCodes.KEY_SHIFT){
+			m_shiftKeydown = true;
+		}
 	}
 
 	@Override
 	public void handleKeyUp(Event event) {
 		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
 			m_cntrlKeydown = false;
+		}
+		else if (event.getKeyCode() == KeyCodes.KEY_SHIFT){
+			m_shiftKeydown = false;
 		}
 	}
 }
