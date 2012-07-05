@@ -27,6 +27,29 @@ public class AnchorHandle {
 		return this;
 	}
 	
+	public int getX() {
+		return m_x;
+	}
+
+	public AnchorHandle setX(int x) {
+		m_x = x;
+		return this;
+	}
+
+	public int getY() {
+		return m_y;
+	}
+
+	public AnchorHandle setY(int y) {
+		m_y = y;
+		return this;
+	}
+	
+	public void moveByOffset(int x, int y){
+		m_x += x;
+		m_y += y;
+	}
+	
 	public int getSize() {
 		return m_size;
 	}
@@ -70,12 +93,9 @@ public class AnchorHandle {
 	
 	public void draw(Context2d context){
 		if (context != null) {
-			context.beginPath();
 			context.setStrokeStyle(m_color);
 			context.setLineWidth(m_lineWidth);
-			context.rect(m_x - m_size/2, m_y - m_size/2, m_size, m_size);
-			context.closePath();
-			context.stroke();
+			context.strokeRect(m_x - m_size/2, m_y - m_size/2, m_size, m_size);
 		}
 	}
 }

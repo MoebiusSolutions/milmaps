@@ -246,15 +246,12 @@ public class ShapeEditor implements IShapeEditor{
 	}
 	
 	private void keyDownCode(Event event){
-		if (DOM.eventGetKeyCode(event) == KeyCodes.KEY_CTRL){
-			m_shapeTool.handleKeyDown(event);
-		}
+		//DOM.eventGetKeyCode(event) == KeyCodes.KEY_CTRL){
+		m_shapeTool.handleKeyDown(event);
 	}
 	
 	private void keyUpCode(Event event){
-		if (DOM.eventGetKeyCode(event) == KeyCodes.KEY_CTRL){
-			m_shapeTool.handleKeyUp(event);
-		}
+		m_shapeTool.handleKeyUp(event);
 	}
 
 	@Override
