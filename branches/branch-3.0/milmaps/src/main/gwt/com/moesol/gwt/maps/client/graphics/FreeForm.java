@@ -216,20 +216,41 @@ public class FreeForm extends AbstractShape {
 	}
 	
 	protected void drawSegments(Context2d context){
-		ViewCoords p = getViewPoint(0);
-		if (p != null){
-			context.moveTo(p.getX(), p.getY());
+		ViewCoords p, q = getViewPoint(0);
+		if (q == null){
+			return;
 		}
+		ISplit splitter = m_convert.getISplit();
+		int move = splitter.getMove();
+		int x = q.getX();
+		if ( move!= ConvertBase.DONT_MOVE){
+			x += splitter.getDistance(move);
+		}
+		context.moveTo(x, q.getY());
 		int n = m_vertexList.size();
 		for (int i = 1; i < n; i++){
-			p = getViewPoint(i);
-			context.lineTo(p.getX(), p.getY());	
+			p = q;
+			q = getViewPoint(i);
+			x = splitter.shift(p, q);
+			context.lineTo(x, q.getY());	
 		}	
 	}
 
 	private void drawBoundary(Context2d context) {
-		checkForExceptions();
+		ISplit splitter = m_convert.getISplit();
+		// MUST initialize with the next three lines
+		splitter.setAjustFlag(false);
+		splitter.setSplit(false);
+		splitter.setMove(ConvertBase.DONT_MOVE);
+		/////////////////////////////////////////
 		drawSegments(context);
+		
+		if (splitter.isSplit()){
+			// Must initialize with new values.
+			splitter.setAjustFlag(true);
+			splitter.setMove(splitter.switchMove(splitter.getMove()));
+			drawSegments(context);
+		}
 	}
 
 	private void draw(Context2d context) {
@@ -255,15 +276,26 @@ public class FreeForm extends AbstractShape {
 	@Override
 	public IShape drawHandles(Context2d context) {
 		if (context != null &&  m_vertexList.size() > 0) {
+			ISplit splitter = m_convert.getISplit();
 			for (int i = 0; i < m_vertexList.size(); i++){
 				GeodeticCoords gc = m_vertexList.get(i).getGeoPos();
 				ViewCoords v = m_convert.geodeticToView(gc);
 				m_handleList.get(i).setCenter(v.getX(),v.getY()).draw(context);
+				if(splitter.isSplit()){
+					int side = splitter.switchMove(splitter.side(v.getX()));
+					int x = v.getX() + splitter.getDistance(side);
+					m_handleList.get(i).setCenter(x, v.getY()).draw(context);
+				}
 			}
 			// translation handle
 			GeodeticCoords gc  = m_translationTool.getGeoPos();
 			ViewCoords v = m_convert.geodeticToView(gc);
 			m_translationHandle.setCenter(v.getX(),v.getY()).draw(context);
+			if(splitter.isSplit()){
+				int side = splitter.switchMove(splitter.side(v.getX()));
+				int x = v.getX() + splitter.getDistance(side);
+				m_translationHandle.setCenter(x, v.getY()).draw(context);
+			}
 		}
 		return (IShape)this;
 	}
@@ -272,12 +304,23 @@ public class FreeForm extends AbstractShape {
 		/////////////////////////////////////////
 		ViewCoords p, q = getViewPoint(0);  
 		int n = m_vertexList.size();
+		ISplit split = m_convert.getISplit();
 		for (int i = 1; i < n; i++) {
 			p = q;
 			q = getViewPoint(i);
-			double dist = Func.ptLineDist(p, q, px, py);
+			int x = split.adjustFirstX(p.getX(), q.getX());
+			double dist = Func.ptLineDist(x, p.getY(), q.getX(), q.getY(), px, py);
 			if (dist < eps) {
 				return i;
+			}
+			// if the x-value changed, then we know we had to shift it
+			// so try shifting one more time and testing. 
+			if (Math.abs(x-p.getX()) > m_convert.mapWidth()/2 ){
+				x =  split.adjustFirstX(q.getX(), p.getX());
+				dist = Func.ptLineDist(p.getX(), p.getY(), x, q.getY(), px, py);
+				if (dist < eps) {
+					return i;
+				}
 			}
 		}
 		return n;

@@ -72,10 +72,53 @@ public class Func {
 		return new ViewCoords(tx, ty);
 	}
 	
+	public static ViewCoords closestPt(int px, int py, 
+									   int qx, int qy, 
+									   double x, double y ) {
+		double x1 = px;
+		double y1 = py;
+		double x2 = qx;
+		double y2 = qy;
+		double Y = y2 - y1;
+		double X = x2 - x1;
+		
+		// A is the vector from (x1,y1) to (x,y)
+		// B is the vector from (x1,y1) to (x2,y2)
+		
+		double AdotB = ((x - x1)*X + (y - y1)*(Y));
+		double magB = Math.sqrt(X*X + Y*Y);
+		// The proj of vector A on the vector B 
+		// is given by proj = AdotB/|B|; hence if we devide by |B| again we have
+		// "w = proj/|B|", where w is a  percentage of the line segment's length.
+		// So the point we want is P = (x1,y1) + wB;
+		// |A|cos(theta) = AdotB/|B| so the closest point is on the 
+		// the line segment B if 0 < AdotB/|B| <= |B|.
+		// and dividing through by |B| we have 0 < AdotB/(|B||B|) <= 1
+
+		double w = AdotB/(magB*magB);
+		if(w <= 0){
+			return new ViewCoords(px, py);
+		}
+		if (w >= 1){
+			return new ViewCoords(qx, qy);
+		}
+
+		int tx = (int)(Math.rint(x1 + w*X));
+		int ty = (int)(Math.rint(y1 + w*Y));
+		return new ViewCoords(tx, ty);
+	}
+	
 	public static double ptLineDist(ViewCoords p, ViewCoords q, double px, double py){
 		ViewCoords vc = closestPt(p,q,px,py);
 		double aSqr = (vc.getX()-px)*(vc.getX()-px);
 		double bSqr = (vc.getY()-py)*(vc.getY()-py);
+		return Math.sqrt( aSqr + bSqr); 
+	}
+	
+	public static double ptLineDist(int px, int py, int qx, int qy, double x, double y){
+		ViewCoords vc = closestPt(px,py,qx,qy,x,y);
+		double aSqr = (vc.getX()-x)*(vc.getX()-x);
+		double bSqr = (vc.getY()-y)*(vc.getY()-y);
 		return Math.sqrt( aSqr + bSqr); 
 	}
 	

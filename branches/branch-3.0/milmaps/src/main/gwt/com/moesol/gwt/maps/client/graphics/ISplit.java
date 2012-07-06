@@ -27,4 +27,6 @@ public interface ISplit {
 	public abstract int side(int x);
 	
 	public abstract int switchMove(int move);	
+	
+	public abstract int adjustFirstX(int x, int z);
 }
