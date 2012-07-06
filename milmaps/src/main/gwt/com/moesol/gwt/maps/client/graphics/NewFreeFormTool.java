@@ -28,6 +28,17 @@ public class NewFreeFormTool extends  AbstractNewTool {
 		m_convert = editor.getCoordinateConverter();
 	}
 	
+	/*
+	private void setplit(Context2d context) {
+		ISplit splitter = m_convert.getISplit();
+		// MUST initialize with the next three lines
+		splitter.setAjustFlag(false);
+		splitter.setSplit(false);
+		splitter.setMove(ConvertBase.DONT_MOVE);
+		/////////////////////////////////////////
+	}
+	*/
+	
 	private void drawLastLine(int x, int y) {
 		AbstractPosTool tool = m_freeForm.getLastPosTool();
 		if (tool == null){
@@ -38,9 +49,9 @@ public class NewFreeFormTool extends  AbstractNewTool {
 		context.setStrokeStyle(m_freeForm.getColor());
 		context.setLineWidth(2);
 		ViewCoords v = m_convert.geodeticToView(tool.getGeoPos());
-		context.moveTo(v.getX(), v.getY());
+		int tx  = m_convert.getISplit().adjustFirstX(v.getX(),x);
+		context.moveTo(tx, v.getY());
 		context.lineTo(x, y);
-		context.closePath();
 		context.stroke();
 	}
 	

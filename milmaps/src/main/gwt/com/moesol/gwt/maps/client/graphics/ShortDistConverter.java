@@ -91,7 +91,17 @@ public class ShortDistConverter extends ConvertBase {
 		@Override
 		public int switchMove(int move){
 			return (MOVE_LEFT == move ? MOVE_RIGHT : MOVE_LEFT);	
-		}		
+		}	
+		
+		@Override
+		public int adjustFirstX(int x, int z){
+			int width = mapWidth();
+			int move = side(z);
+			if ( Math.abs(x-z) > width/2 ){
+				x += (move == ConvertBase.MOVE_LEFT? -1*width : width);
+			}
+			return x;
+		}
 	};
 
 
