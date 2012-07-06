@@ -272,5 +272,11 @@ public class TiledImageLayer {
 		// we want to return ( (mpp*2^n)/(l_mpp) );
 		return ((mpp * Math.pow(2, level)) / l_mpp);
 	}
+	
+	public int boundLevel(int level){
+		int minLevel = m_layerSet.getMinLevel();
+		int maxLevel = m_layerSet.getMaxLevel();
+		return Math.max(Math.min(level, maxLevel),minLevel);
+	}
 
 }
