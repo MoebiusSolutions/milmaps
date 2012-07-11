@@ -138,6 +138,23 @@ public class Func {
 		return deg;
 	}
 	
+	/**
+	 * This routine converts a bearing between 0 and 360 CW from y-axis
+	 * to an angle between -180 and 180 CCW from x-axis.
+	 * @param brgDeg
+	 * @return
+	 */
+	public static double BrgToAngleDeg(double brgDeg){
+		double deg = 90 - brgDeg;
+		while (deg < -180){
+			deg += 360;
+		}
+		while (deg > 180){
+			deg -= 360;;
+		}
+		return deg;
+	}
+	
 	// Taken from "http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm"
 	//===================================================================
 	// cn_PnPoly(): crossing number test for a point in a polygon
@@ -145,7 +162,7 @@ public class Func {
 	//	               V[] = vertex points of a polygon V[n+1] with V[n]=V[0]
 	//	      Return:  0 = outside, 1 = inside
 	// This code is patterned after [Franklin, 2000]
-	public int ptInPoly( ViewCoords p, ViewCoords[] vPts )
+	public static int ptInPoly( ViewCoords p, ViewCoords[] vPts )
 	{
 	    int cn = 0;    // the crossing number counter
 	    int len = vPts.length;
@@ -171,7 +188,7 @@ public class Func {
 	//          =0 for P2 on the line
 	//          <0 for P2 right of the line
 	//  See: the January 2001 Algorithm "Area of 2D and 3D Triangles and Polygons"
-	public  int isLeft( ViewCoords P0, ViewCoords P1, ViewCoords P2 )
+	public static int isLeft( ViewCoords P0, ViewCoords P1, ViewCoords P2 )
 	{
 		return ((P1.getX()-P0.getX())*(P2.getY()-P0.getY())
 				-(P2.getX()-P0.getX())*(P1.getY()-P0.getY()));
@@ -181,7 +198,7 @@ public class Func {
 	//  Input:   P = a point,
 	//           V[] = vertex points of a polygon V[n+1] with V[n]=V[0]
 	//  Return:  wn = the winding number (=0 only if P is outside V[])
-	public int ptInPoly2( ViewCoords p, ViewCoords[] vPts ){
+	public static int ptInPoly2( ViewCoords p, ViewCoords[] vPts ){
 		int    wn = 0;    // the winding number counter
 		int n = vPts.length;
 		// loop through all edges of the polygon
@@ -203,5 +220,7 @@ public class Func {
 		}
 		return wn;
 	}	
+	
+	
 }
 
