@@ -40,7 +40,7 @@ public class SelectShape implements IShapeTool{
     	String strShape = obj.id();
     	IShapeTool tool = null;
     	if( strShape.compareTo("Arc") == 0){
-    		return null;
+    		tool = new EditArcTool(m_editor);
     	}
     	if( strShape.compareTo("Box") == 0){
     		return null;

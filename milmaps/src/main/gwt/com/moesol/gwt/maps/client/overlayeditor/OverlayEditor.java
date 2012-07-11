@@ -32,16 +32,15 @@ public class OverlayEditor extends Composite {
 
     public void setMapView(boolean bHorizontal) {
         // Off button
-        MapButton offBtn = new MapButton();
-        offBtn.addStyleName("map-OverlayContolOffButton");
+        //MapButton offBtn = new MapButton();
+        //offBtn.addStyleName("map-OverlayContolOffButton");
 
-        offBtn.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-            	m_shapeEditor.setEventFocus(false);
-            }
-        });
+        //offBtn.addClickHandler(new ClickHandler() {
+        //    @Override
+        //    public void onClick(ClickEvent event) {
+        //    	m_shapeEditor.setEventFocus(false);
+        //    }
+        //});
 
         // On Button
         MapButton onBtn = new MapButton();
@@ -59,12 +58,12 @@ public class OverlayEditor extends Composite {
 
         if (bHorizontal) {
             HorizontalPanel p = new HorizontalPanel();
-            p.add(offBtn);
+            //p.add(offBtn);
             p.add(onBtn);
             initWidget(p);
         } else {
             VerticalPanel p = new VerticalPanel();
-            p.add(offBtn);
+            //p.add(offBtn);
             p.add(onBtn);
             initWidget(p);
         }
