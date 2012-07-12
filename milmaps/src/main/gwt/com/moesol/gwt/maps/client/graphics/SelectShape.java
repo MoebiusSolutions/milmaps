@@ -55,6 +55,9 @@ public class SelectShape implements IShapeTool{
     	if( strShape.compareTo("Line") == 0){
     		tool = new EditLineTool(m_editor);
     	}
+    	if( strShape.compareTo("Triangle") == 0){
+    		tool = new EditTriangleTool(m_editor);
+    	}
     	if (tool != null){
     		tool.setShape(obj);
     	}
