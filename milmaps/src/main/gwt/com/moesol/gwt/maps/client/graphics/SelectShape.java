@@ -22,8 +22,6 @@ public class SelectShape implements IShapeTool{
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
 	List<IShape> m_objs = null;
-
-	public static String[] m_objName = {"Arc", "Box", "Circle", "Ellipse"};
 	
 	public SelectShape(IShapeEditor editor) {
 		m_editor = editor;
@@ -53,6 +51,9 @@ public class SelectShape implements IShapeTool{
     	}
     	if( strShape.compareTo("Free Form") == 0){
     		tool = new EditFreeFormTool(m_editor);
+    	}
+    	if( strShape.compareTo("Line") == 0){
+    		tool = new EditLineTool(m_editor);
     	}
     	if (tool != null){
     		tool.setShape(obj);

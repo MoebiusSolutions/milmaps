@@ -305,7 +305,7 @@ public class Circle extends AbstractShape {
 		return this;
 	}
 	
-	protected boolean ptClose(int px, int py, double eps){
+	protected boolean ptCloseToEdge(int px, int py, double eps){
 		double degInc = 360.0 / (NUM_CIR_PTS - 1);
 		double distKm = m_radRngBrg.getRanegKm();
 		/////////////////////////////////////////
@@ -320,10 +320,6 @@ public class Circle extends AbstractShape {
 			}
 		}
 		return false;
-	}
-
-	public boolean ptCloseToEdge(int px, int py, double eps) {
-		return ptClose(px, py, eps);
 	}
 
 	@Override

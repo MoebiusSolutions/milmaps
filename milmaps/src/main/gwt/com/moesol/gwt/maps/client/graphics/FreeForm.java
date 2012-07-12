@@ -30,6 +30,9 @@ public class FreeForm extends AbstractShape {
 	}
 	
 	protected void checkForExceptions(){
+		if (m_convert == null) {
+			throw new IllegalStateException("Free Form: m_convert = null");
+		}
 	}
 	
 	private void setPosFromPix(int x, int y, AbstractPosTool tool) {
