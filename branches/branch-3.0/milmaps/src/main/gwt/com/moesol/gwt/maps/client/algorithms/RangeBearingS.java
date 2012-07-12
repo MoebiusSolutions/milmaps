@@ -5,6 +5,7 @@
  *
  * LICENSE: GPLv3
  */
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /*  Latitude/longitude spherical geodesy formulae & scripts (c) Chris Veness 2002-2011            */
 /*   - www.movable-type.co.uk/scripts/latlong.html                                                */

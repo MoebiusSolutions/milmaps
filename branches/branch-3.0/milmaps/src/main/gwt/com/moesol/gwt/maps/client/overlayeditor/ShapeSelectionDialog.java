@@ -18,12 +18,13 @@ import com.moesol.gwt.maps.client.graphics.NewArcTool;
 import com.moesol.gwt.maps.client.graphics.NewCircleTool;
 import com.moesol.gwt.maps.client.graphics.NewEllipseTool;
 import com.moesol.gwt.maps.client.graphics.NewFreeFormTool;
+import com.moesol.gwt.maps.client.graphics.NewLineTool;
 import com.moesol.gwt.maps.client.graphics.SelectShape;
 
 public class ShapeSelectionDialog extends DialogBox {
 	public static String[] obj = {"BackToMap", "Arc", "Box", "Circle", 
-								  "Ellipse", "Free Form", "SelectTool",
-								  "Do Something" };
+								  "Ellipse", "Free Form", "Line",
+								  "SelectTool", "Do Something" };
 	private final IShapeEditor m_shapeEditor;
 	
 	public ShapeSelectionDialog(IShapeEditor se) {
@@ -92,6 +93,10 @@ public class ShapeSelectionDialog extends DialogBox {
         }
         
         if(strShape.compareTo(obj[6]) == 0){
+        	return new NewLineTool(editor);
+        }
+        
+        if(strShape.compareTo(obj[7]) == 0){
         	return new SelectShape(editor);
         }
         return null;
