@@ -12,41 +12,30 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public class NewFreeFormTool extends  AbstractNewTool {
+public class NewTriangleTool extends  AbstractNewTool {
 	private Canvas m_canvas = null;
-	private FreeForm m_freeForm = null;
+	private Triangle m_triangle = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
 	
 	private int m_lastX;
 	private int m_lastY;
 
-	public NewFreeFormTool(IShapeEditor editor) {
+	public NewTriangleTool(IShapeEditor editor) {
 		m_lastX = m_lastY = -10000;
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool().canvas();
 		m_convert = editor.getCoordinateConverter();
 	}
 	
-	/*
-	private void setplit(Context2d context) {
-		ISplit splitter = m_convert.getISplit();
-		// MUST initialize with the next three lines
-		splitter.setAjustFlag(false);
-		splitter.setSplit(false);
-		splitter.setMove(ConvertBase.DONT_MOVE);
-		/////////////////////////////////////////
-	}
-	*/
-	
 	private void drawLastLine(int x, int y) {
-		AbstractPosTool tool = m_freeForm.getLastPosTool();
+		AbstractPosTool tool = m_triangle.getLastPosTool();
 		if (tool == null){
 			return;
 		}
 		Context2d context = m_canvas.getContext2d();
 		context.beginPath();
-		context.setStrokeStyle(m_freeForm.getColor());
+		context.setStrokeStyle(m_triangle.getColor());
 		context.setLineWidth(2);
 		ViewCoords v = m_convert.geodeticToView(tool.getGeoPos());
 		int tx  = m_convert.getISplit().adjustFirstX(v.getX(),x);
@@ -57,32 +46,32 @@ public class NewFreeFormTool extends  AbstractNewTool {
 	
 	private void drawHandles(){
 		Context2d context = m_canvas.getContext2d();
-		m_freeForm.drawHandles(context);
+		m_triangle.drawHandles(context);
 	}
 	
 	@Override
 	public void setShape(IShape shape) {
-		m_freeForm = (FreeForm)shape;
+		m_triangle = (Triangle)shape;
 	}
 
 	@Override
 	public IShape getShape() {
-		return m_freeForm;
+		return m_triangle;
 	}
 
 	@Override
 	public void handleMouseDown(Event event) {
-		if (m_freeForm == null){
-			m_freeForm = new FreeForm();
-			m_editor.addShape(m_freeForm);
-			m_freeForm.selected(true);
-			m_freeForm.setCoordConverter(m_editor.getCoordinateConverter());
+		if (m_triangle == null){
+			m_triangle = new Triangle();
+			m_editor.addShape(m_triangle);
+			m_triangle.selected(true);
+			m_triangle.setCoordConverter(m_editor.getCoordinateConverter());
 		}
 	}
 
 	@Override
 	public void handleMouseMove(Event event) {
-		if (m_freeForm != null && m_canvas != null) {
+		if (m_triangle != null && m_canvas != null) {
 			m_editor.clearCanvas().renderObjects();
 			drawHandles();
 			int x = event.getClientX();
@@ -98,7 +87,17 @@ public class NewFreeFormTool extends  AbstractNewTool {
 		if (m_lastX != x || m_lastY != y){
 			m_lastX = x;
 			m_lastY = y;
-			m_freeForm.addVertex(x, y);
+			m_triangle.addVertex(x, y);
+		}
+		if (m_triangle.size() == 3){
+			drawHandles();
+			// we are done with initial creation so set the edit tool
+			IShapeTool tool = new EditTriangleTool(m_editor);
+			tool.setShape((IShape)m_triangle);
+			m_editor.setShapeTool(tool);
+			m_editor.renderObjects();
+			drawHandles();
+			m_triangle = null;		
 		}
 	}
 
@@ -109,7 +108,7 @@ public class NewFreeFormTool extends  AbstractNewTool {
 
 	@Override
 	public String getType() {
-		return "new_freeform_tool";
+		return "new_triangle_tool";
 	}
 
 	@Override
@@ -122,15 +121,6 @@ public class NewFreeFormTool extends  AbstractNewTool {
 
 	@Override
 	public void handleMouseDblClick(Event event) {
-		if (m_freeForm != null){
-			drawHandles();
-			// we are done with initial creation so set the edit tool
-			IShapeTool tool = new EditFreeFormTool(m_editor);
-			tool.setShape((IShape)m_freeForm);
-			m_editor.setShapeTool(tool);
-			m_editor.renderObjects();
-			drawHandles();
-			m_freeForm = null;
-		}
 	}
+
 }

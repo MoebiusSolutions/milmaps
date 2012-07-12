@@ -181,7 +181,6 @@ public class Line extends AbstractShape {
 		ViewCoords p = m_convert.geodeticToView(gc); 
 		 int x = p.getX()- TRANSLATE_HANDLE_OFFSET_X;
 		 m_translationHandle.setCenter(x, p.getY());
-		 //setPosFromPix(x,p.getY(),m_translationTool);
 	}
 	
 	private void moveLineByOffset(int x, int y){

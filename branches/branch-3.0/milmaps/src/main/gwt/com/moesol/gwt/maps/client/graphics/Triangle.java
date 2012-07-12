@@ -11,27 +11,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 
-public class FreeForm extends AbstractShape {
+public class Triangle extends AbstractShape {
 	protected static int TRANSLATE_HANDLE_OFFSET_X = 20;
-	protected List<AnchorHandle> m_handleList = new ArrayList<AnchorHandle>();
-	protected List<AbstractPosTool> m_vertexList = new ArrayList<AbstractPosTool>();
+	protected AnchorHandle[] m_handleList = new AnchorHandle[3];
+	protected AbstractPosTool[] m_vertexList = new AbstractPosTool[3];
 	protected AbstractPosTool m_translationTool = null;
 	private final AnchorHandle m_translationHandle = new AnchorHandle();
 	private int m_X, m_Y;
-	public FreeForm(){
-		m_id = "Free Form";
+	public Triangle(){
+		m_id = "Triangle";
 		m_translationHandle.setStrokeColor(255, 0, 0, 1);
+		for(int i = 0; i < 3; i++){
+			m_vertexList[i] = null;
+		}
 	}
 	
 	protected void checkForExceptions(){
 		if (m_convert == null) {
-			throw new IllegalStateException("Free Form: m_convert = null");
+			throw new IllegalStateException("Triangle: m_convert = null");
 		}
 	}
 	
@@ -41,21 +43,15 @@ public class FreeForm extends AbstractShape {
 		if (pos == null  || !pos.equals(gc)) {
 			tool.setGeoPos(gc);
 			m_needsUpdate = true;
-			// Update translation handle
-			if (m_vertexList.size() > 0 && tool == m_vertexList.get(0)){
-				x -= TRANSLATE_HANDLE_OFFSET_X;
-				gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-				getTranslationTool().setGeoPos(gc);
-			}
 		}
 	}
 	
 	private void moveVerticesByOffset(int x, int y){
-		for (int i = 0; i < m_vertexList.size(); i++){
-			m_handleList.get(i).moveByOffset(x, y);
-			int ix = m_handleList.get(i).getX();
-			int iy = m_handleList.get(i).getY();
-			setPosFromPix(ix,iy,m_vertexList.get(i));
+		for (int i = 0; i < 3; i++){
+			m_handleList[i].moveByOffset(x, y);
+			int ix = m_handleList[i].getX();
+			int iy = m_handleList[i].getY();
+			setPosFromPix(ix,iy,m_vertexList[i]);
 		}		
 		
 	}
@@ -143,79 +139,74 @@ public class FreeForm extends AbstractShape {
 		return m_translationTool;
 	}
 	
+	private int addVertex(AbstractPosTool tool){
+		for(int i = 0; i < 3; i++){
+			if (m_vertexList[i] == null){
+				m_vertexList[i] = tool;
+				return i;
+			}
+		}
+		return 3;
+	}
+	
 	public void addVertex(int x, int y){
 		 AbstractPosTool tool = newVertexTool();
-		 m_vertexList.add(tool);
-		 setPosFromPix(x,y,tool);
-		 AnchorHandle h = new AnchorHandle();
-		 h.setCenter(x, y);
-		 m_handleList.add(h);
-		 if (m_vertexList.size() == 1){
-			 x -= TRANSLATE_HANDLE_OFFSET_X;
-			 m_translationHandle.setCenter(x, y);
-			 setPosFromPix(x,y,m_translationTool);
+		 int i = addVertex(tool);
+		 if (i < 3){
+			 setPosFromPix(x,y,tool);
+			 AnchorHandle h = new AnchorHandle();
+			 h.setCenter(x, y);
+			 m_handleList[i] = h;
+			 if (i == 0){
+				 x -= TRANSLATE_HANDLE_OFFSET_X;
+				 m_translationHandle.setCenter(x, y);
+			 }
 		 }
 	}
 	
-	public void insertVertex(int i, int x, int y){
-		AbstractPosTool tool = newVertexTool();
-		 setPosFromPix(x,y,tool);
-		m_vertexList.add(i,tool);
-		AnchorHandle h = new AnchorHandle();
-		h.setCenter(x,y);
-		m_handleList.add(i,h);
-	}
-	
 	public IAnchorTool getVertexTool(int i){
-		int n = m_vertexList.size();
-		if (-1 < i && i < n ){
-			return (IAnchorTool)(m_vertexList.get(i));
+		if (-1 < i && i < 3 ){
+			return (IAnchorTool)(m_vertexList[i]);
 		}
 		return null;
 	}
 	
 	public AbstractPosTool getAbstractPosTool(int i){
-		int n = m_vertexList.size();
-		if (-1 < i && i < n ){
-			return m_vertexList.get(i);
+		if (-1 < i && i < 3 ){
+			return m_vertexList[i];
 		}
 		return null;
 	}
 	
 	public AbstractPosTool getLastPosTool(){
-		int n = m_vertexList.size();
-		if (n > 0){
-			return m_vertexList.get(n-1);
+		for(int i = 0; i < 2; i++){
+			if(m_vertexList[i] != null && m_vertexList[i+1] == null){
+				return m_vertexList[i];
+			}
 		}
-		return null;
+		return m_vertexList[2];
 	}
-	
-	public IAnchorTool getLastVertexTool(){
-		int n = m_vertexList.size();
-		if (n > 0){
-			return m_vertexList.get(n-1);
-		}
-		return null;
-	}
-	
-	public void removeVertex(AbstractPosTool vertex){
-		m_vertexList.remove(vertex);
-	}
-	
-	public void removeVertex(int i){
-		// add assertion for i here
-		m_vertexList.remove(i);
-	}
-	
+
 	private ViewCoords getViewPoint(int i){
 		ViewCoords vc = null;
-		if (0 <= i && i < m_vertexList.size()){
-			GeodeticCoords gc = m_vertexList.get(i).getGeoPos();
-			if (gc != null){
-				vc = m_convert.geodeticToView(gc);
+		if (0 <= i && i < 3){
+			if (m_vertexList[i] != null){
+				GeodeticCoords gc = m_vertexList[i].getGeoPos();
+				if (gc != null){
+					vc = m_convert.geodeticToView(gc);
+				}
 			}
 		}
 		return vc;
+	}
+	
+	public int size(){
+		for(int i = 0; i < 3; i++){
+			if(m_vertexList[i] == null){
+				return i;
+			}
+		}
+		return 3;
 	}
 	
 	protected void drawSegments(Context2d context){
@@ -230,12 +221,14 @@ public class FreeForm extends AbstractShape {
 			x += splitter.getDistance(move);
 		}
 		context.moveTo(x, q.getY());
-		int n = m_vertexList.size();
-		for (int i = 1; i < n; i++){
+		int n = size();
+		for (int i = 1; i <= n; i++){
 			p = q;
-			q = getViewPoint(i);
-			x = splitter.shift(p, q);
-			context.lineTo(x, q.getY());	
+			q = getViewPoint(i%3);
+			if (q != null){
+				x = splitter.shift(p, q);
+				context.lineTo(x, q.getY());
+			}
 		}	
 	}
 
@@ -278,26 +271,26 @@ public class FreeForm extends AbstractShape {
 
 	@Override
 	public IShape drawHandles(Context2d context) {
-		if (context != null &&  m_vertexList.size() > 0) {
+		if (context != null &&  size() > 0) {
 			ISplit splitter = m_convert.getISplit();
-			for (int i = 0; i < m_vertexList.size(); i++){
-				GeodeticCoords gc = m_vertexList.get(i).getGeoPos();
+			for (int i = 0; i < size(); i++){
+				GeodeticCoords gc = m_vertexList[i].getGeoPos();
 				ViewCoords v = m_convert.geodeticToView(gc);
-				m_handleList.get(i).setCenter(v.getX(),v.getY()).draw(context);
+				m_handleList[i].setCenter(v.getX(),v.getY()).draw(context);
 				if(splitter.isSplit()){
 					int side = splitter.switchMove(splitter.side(v.getX()));
 					int x = v.getX() + splitter.getDistance(side);
-					m_handleList.get(i).setCenter(x, v.getY()).draw(context);
+					m_handleList[i].setCenter(x, v.getY()).draw(context);
 				}
 			}
 			// translation handle
-			GeodeticCoords gc  = m_translationTool.getGeoPos();
-			ViewCoords v = m_convert.geodeticToView(gc);
-			m_translationHandle.setCenter(v.getX(),v.getY()).draw(context);
+			int x = m_handleList[0].getX()-TRANSLATE_HANDLE_OFFSET_X;
+			int y = m_handleList[0].getY();
+			m_translationHandle.setCenter(x, y).draw(context);
 			if(splitter.isSplit()){
-				int side = splitter.switchMove(splitter.side(v.getX()));
-				int x = v.getX() + splitter.getDistance(side);
-				m_translationHandle.setCenter(x, v.getY()).draw(context);
+				int side = splitter.switchMove(splitter.side(x));
+				x += splitter.getDistance(side);
+				m_translationHandle.setCenter(x, y).draw(context);
 			}
 		}
 		return (IShape)this;
@@ -306,15 +299,18 @@ public class FreeForm extends AbstractShape {
 	protected int ptClose(int px, int py, double eps){
 		/////////////////////////////////////////
 		ViewCoords p, q = getViewPoint(0);  
-		int n = m_vertexList.size();
+		int n = size();
 		ISplit split = m_convert.getISplit();
-		for (int i = 1; i < n; i++) {
+		for (int i = 1; i <= n; i++) {
 			p = q;
-			q = getViewPoint(i);
+			q = getViewPoint(i%3);
+			if (q == null){
+				return i-1;
+			}
 			int x = split.adjustFirstX(p.getX(), q.getX());
 			double dist = Func.ptLineDist(x, p.getY(), q.getX(), q.getY(), px, py);
 			if (dist < eps) {
-				return i;
+				return i%3;
 			}
 			// if the x-value changed, then we know we had to shift it
 			// so try shifting one more time and testing. 
@@ -332,15 +328,11 @@ public class FreeForm extends AbstractShape {
 	public boolean ptCloseToEdge(int px, int py, double eps) {
 		/////////////////////////////////////////
 		int j = ptClose(px, py, eps);
-		return (j < m_vertexList.size());
+		return (j < size());
 	}
 	
 	public int pointHitSegment(int px, int py){
 		return ptClose(px, py, Func.PIX_SELECT_TOLERANCE);
-	}
-	
-	public int size(){
-		return m_vertexList.size();
 	}
 	
 	@Override
@@ -359,11 +351,16 @@ public class FreeForm extends AbstractShape {
 				return (IAnchorTool)tool;
 			}
 		}
-		if (m_translationTool.isSlected(position)){
+		
+		AbstractPosTool tool = getTranslationTool();
+		setPosFromPix(m_translationHandle.getX(),
+					  m_translationHandle.getY(),tool);
+		if (tool.isSlected(position)){
 			m_X = m_translationHandle.getX();
 			m_Y = m_translationHandle.getY();
-			return m_translationTool;
+			return (IAnchorTool)tool;
 		}
 		return null;
 	}
+
 }
