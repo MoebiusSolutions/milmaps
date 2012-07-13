@@ -7,9 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
@@ -17,7 +14,6 @@ import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 
 public class Triangle extends AbstractShape {
-	protected static int TRANSLATE_HANDLE_OFFSET_X = 20;
 	protected AnchorHandle[] m_handleList = new AnchorHandle[3];
 	protected AbstractPosTool[] m_vertexList = new AbstractPosTool[3];
 	protected AbstractPosTool m_translationTool = null;

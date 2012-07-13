@@ -14,11 +14,12 @@ import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.units.AngleUnit;
 
-public class Line extends AbstractSegment {
+public class Rect extends AbstractSegment {
 	private final AnchorHandle m_startHandle = new AnchorHandle();
 	private final AnchorHandle m_endHandle = new AnchorHandle();
-	private RngBrg m_endRngBrg = null;
+	private RngBrg m_diagRngBrg = null;
 	private AbstractPosTool m_startTool = null;
 	private AbstractPosTool m_endTool = null;
 	protected AbstractPosTool m_translationTool = null;
@@ -26,14 +27,14 @@ public class Line extends AbstractSegment {
 	
 	private int m_X, m_Y;
 	
-	public Line(){
-		m_id = "Line";
+	public Rect(){
+		m_id = "Rectangle";
 		m_translationHandle.setStrokeColor(255, 0, 0, 1);
 	}
 	
 	private void checkForException() {
 		if (m_convert == null) {
-			throw new IllegalStateException("Line: m_convert = null");
+			throw new IllegalStateException("Rect: m_convert = null");
 		}
 	}
 	
@@ -51,7 +52,7 @@ public class Line extends AbstractSegment {
 		checkForException();
 		GeodeticCoords startGc = m_startTool.getGeoPos();
 		GeodeticCoords endGc = m_endTool.getGeoPos();
-		m_endRngBrg = m_rb.RngBrgFromTo(startGc, endGc);
+		m_diagRngBrg = m_rb.RngBrgFromTo(startGc, endGc);
 		
 	}
 	
@@ -185,8 +186,8 @@ public class Line extends AbstractSegment {
 		int ix = m_startHandle.getX();
 		int iy = m_startHandle.getY();
 		setPosFromPix(ix,iy,m_startTool);
-		double rngKm = m_endRngBrg.getRanegKm();
-		double brg = m_endRngBrg.getBearing();
+		double rngKm = m_diagRngBrg.getRanegKm();
+		double brg = m_diagRngBrg.getBearing();
 		GeodeticCoords gc = m_rb.gcPointFrom(m_startTool.getGeoPos(), brg, rngKm);
 		m_endTool.setGeoPos(gc);
 		// Update translation handle
@@ -237,28 +238,48 @@ public class Line extends AbstractSegment {
 		return m_translationTool;
 	}
 	
-	protected void drawSegments(Context2d context){
-		GeodeticCoords p = m_startTool.getGeoPos();
-		GeodeticCoords q = m_endTool.getGeoPos();
-		drawSegment(p,q,context);
-	}
-
-	private void drawBoundary(Context2d context) {
-		checkForException();
+	private void drawBoxSide(GeodeticCoords p, 
+			   				   GeodeticCoords q,
+			   				   Context2d context){
 		ISplit splitter = m_convert.getISplit();
 		// MUST initialize with the next three lines
-		splitter.setAjustFlag(false);
-		splitter.setSplit(false);
+		splitter.setAjustFlag(false).setSplit(false);
 		splitter.setMove(ConvertBase.DONT_MOVE);
-		/////////////////////////////////////////
-		drawSegments(context);
-		
+		drawSegment(p,q,context);
 		if (splitter.isSplit()){
 			// Must initialize with new values.
 			splitter.setAjustFlag(true);
 			splitter.setMove(splitter.switchMove(splitter.getMove()));
-			drawSegments(context);
+			drawSegment(p,q,context);
 		}
+	}
+	
+	private void drawSegments(Context2d context){
+		GeodeticCoords tl = m_startTool.getGeoPos();
+		GeodeticCoords br = m_endTool.getGeoPos();
+		GeodeticCoords tr = new GeodeticCoords(br.getLambda(AngleUnit.DEGREES),
+											   tl.getPhi(AngleUnit.DEGREES),
+											   AngleUnit.DEGREES);
+		GeodeticCoords bl = new GeodeticCoords(tl.getLambda(AngleUnit.DEGREES),
+				   							   br.getPhi(AngleUnit.DEGREES),
+				   							   AngleUnit.DEGREES);
+		// Top left to top right
+		drawBoxSide(tl,tr,context);
+		
+		//top right to bottom right
+		drawBoxSide(tr,br,context);
+		
+		// bottom right to bottom left
+		drawBoxSide(br,bl,context);
+		
+		// bottom left to top left
+		drawBoxSide(bl,tl,context);
+	}
+	
+	private void drawBoundary(Context2d context) {
+		checkForException();
+		/////////////////////////////////////////
+		drawSegments(context);
 	}
 
 	private void draw(Context2d context) {
@@ -325,7 +346,7 @@ public class Line extends AbstractSegment {
 		m_endTool.setGeoPos(radPos);
 	}
 
-	public Line withEndPos(GeodeticCoords radPos) {
+	public Rect withEndPos(GeodeticCoords radPos) {
 		setEndPos(radPos);
 		return this;
 	}
@@ -334,22 +355,52 @@ public class Line extends AbstractSegment {
 		return m_startTool.getGeoPos();
 	}
 
-	public void setStartPos(GeodeticCoords pos) {
+	public void setTlPos(GeodeticCoords pos) {
 		if (m_startTool == null){
 			m_startTool = getStartTool();
 		}
 		m_startTool.setGeoPos(pos);
 	}
 
-	public Line withStartPos(GeodeticCoords pos) {
-		setStartPos(pos);
+	public Rect withStartPos(GeodeticCoords pos) {
+		setTlPos(pos);
 		return this;
 	}
 	
 	protected boolean ptClose(int px, int py, double eps){
-		GeodeticCoords p = m_startTool.getGeoPos();
-		GeodeticCoords q = m_endTool.getGeoPos();
-		return ptClose(p,q,px,py,eps);
+		GeodeticCoords tl = m_startTool.getGeoPos();
+		GeodeticCoords br = m_endTool.getGeoPos();
+		
+		// Top left to top right
+		GeodeticCoords p = tl;
+		GeodeticCoords q = new GeodeticCoords(br.getLambda(AngleUnit.DEGREES),
+				  							  tl.getPhi(AngleUnit.DEGREES),
+				  							  AngleUnit.DEGREES);
+		if (ptClose(p,q,px,py,eps)){
+			return true;
+		}
+		//top right to bottom right
+		p = q;
+		q = br;
+		if (ptClose(p,q,px,py,eps)){
+			return true;
+		}
+		// bottom right to bottom left
+		p = br;
+		q = new GeodeticCoords(tl.getLambda(AngleUnit.DEGREES),
+				   			   br.getPhi(AngleUnit.DEGREES),
+				   			   AngleUnit.DEGREES);
+		if (ptClose(p,q,px,py,eps)){
+			return true;
+		}
+		
+		// bottom left to top left
+		p = q;
+		q = tl;
+		if (ptClose(p,q,px,py,eps)){
+			return true;
+		}
+		return false;
 	}
 
 
@@ -371,6 +422,7 @@ public class Line extends AbstractSegment {
 	}
 
 	@Override
+	
 	public IAnchorTool getAnchorByPosition(GeodeticCoords position) {
 		checkForException();
 		AbstractPosTool tool = getEndTool();

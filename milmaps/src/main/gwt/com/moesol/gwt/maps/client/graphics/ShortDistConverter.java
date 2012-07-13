@@ -56,13 +56,15 @@ public class ShortDistConverter extends ConvertBase {
 		}
 		
 		@Override
-		public void setAjustFlag(boolean flag) {
+		public ISplit setAjustFlag(boolean flag) {
 			m_bAdjust = flag;
+			return this;
 		}
 
 		@Override
-		public void setSplit(boolean split) {
+		public ISplit setSplit(boolean split) {
 			m_split = split;
+			return this;
 		}
 
 		@Override
@@ -72,8 +74,9 @@ public class ShortDistConverter extends ConvertBase {
 
 
 		@Override
-		public void setMove(int move) {
+		public ISplit setMove(int move) {
 			m_move = move;
+			return this;
 		}
 
 

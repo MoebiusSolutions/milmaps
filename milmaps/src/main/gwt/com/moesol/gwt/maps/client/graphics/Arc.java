@@ -17,7 +17,6 @@ import com.moesol.gwt.maps.client.algorithms.RngBrg;
 
 public class Arc extends AbstractShape {
 	private static final int NUM_ARC_PTS = 36;
-	private static final RangeBearingS m_rb = new RangeBearingS();
 	private final AnchorHandle m_centerHandle = new AnchorHandle();
 	private final AnchorHandle m_startBrgHandle = new AnchorHandle();
 	private final AnchorHandle m_endBrgHandle = new AnchorHandle();

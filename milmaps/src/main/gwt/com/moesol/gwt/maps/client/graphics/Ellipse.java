@@ -17,7 +17,6 @@ import com.moesol.gwt.maps.client.algorithms.RngBrg;
 
 public class Ellipse extends AbstractShape {
 	private static final int NUM_ELLIPSE_PTS = 36;
-	private static final RangeBearingS m_rb = new RangeBearingS();
 	private final AnchorHandle m_centerHandle = new AnchorHandle();
 	private final AnchorHandle m_smjHandle = new AnchorHandle();
 	private final AnchorHandle m_smnHandle = new AnchorHandle();
