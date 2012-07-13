@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.moesol.gwt.maps.client.graphics.IShapeEditor;
 import com.moesol.gwt.maps.client.graphics.IShapeTool;
 import com.moesol.gwt.maps.client.graphics.NewArcTool;
+import com.moesol.gwt.maps.client.graphics.NewBoxTool;
 import com.moesol.gwt.maps.client.graphics.NewCircleTool;
 import com.moesol.gwt.maps.client.graphics.NewEllipseTool;
 import com.moesol.gwt.maps.client.graphics.NewFreeFormTool;
@@ -81,6 +82,10 @@ public class ShapeSelectionDialog extends DialogBox {
     public IShapeTool createShapeTool(IShapeEditor editor, String strShape) {
         if(strShape.compareTo(obj[1]) == 0){
         	return new NewArcTool(editor);
+        }
+        
+        if(strShape.compareTo(obj[2]) == 0){
+        	return new NewBoxTool(editor);
         }
         
         if(strShape.compareTo(obj[3]) == 0){

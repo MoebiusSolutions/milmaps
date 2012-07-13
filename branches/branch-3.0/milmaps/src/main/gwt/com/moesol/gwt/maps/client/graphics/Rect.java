@@ -238,22 +238,6 @@ public class Rect extends AbstractSegment {
 		return m_translationTool;
 	}
 	
-	private void drawBoxSide(GeodeticCoords p, 
-			   				   GeodeticCoords q,
-			   				   Context2d context){
-		ISplit splitter = m_convert.getISplit();
-		// MUST initialize with the next three lines
-		splitter.setAjustFlag(false).setSplit(false);
-		splitter.setMove(ConvertBase.DONT_MOVE);
-		drawSegment(p,q,context);
-		if (splitter.isSplit()){
-			// Must initialize with new values.
-			splitter.setAjustFlag(true);
-			splitter.setMove(splitter.switchMove(splitter.getMove()));
-			drawSegment(p,q,context);
-		}
-	}
-	
 	private void drawSegments(Context2d context){
 		GeodeticCoords tl = m_startTool.getGeoPos();
 		GeodeticCoords br = m_endTool.getGeoPos();
@@ -263,17 +247,17 @@ public class Rect extends AbstractSegment {
 		GeodeticCoords bl = new GeodeticCoords(tl.getLambda(AngleUnit.DEGREES),
 				   							   br.getPhi(AngleUnit.DEGREES),
 				   							   AngleUnit.DEGREES);
-		// Top left to top right
-		drawBoxSide(tl,tr,context);
-		
-		//top right to bottom right
-		drawBoxSide(tr,br,context);
-		
-		// bottom right to bottom left
-		drawBoxSide(br,bl,context);
-		
-		// bottom left to top left
-		drawBoxSide(bl,tl,context);
+		ISplit splitter = m_convert.getISplit();
+		// MUST initialize with the next three lines
+		splitter.setAjustFlag(false).setSplit(false);
+		splitter.setMove(ConvertBase.DONT_MOVE);
+		drawBoxSides(tl, tr, br, bl,context);
+		if (splitter.isSplit()){
+			// Must initialize with new values.
+			splitter.setAjustFlag(true);
+			splitter.setMove(splitter.switchMove(splitter.getMove()));
+			drawBoxSides(tl, tr, br, bl,context);
+		}
 	}
 	
 	private void drawBoundary(Context2d context) {
@@ -370,34 +354,28 @@ public class Rect extends AbstractSegment {
 	protected boolean ptClose(int px, int py, double eps){
 		GeodeticCoords tl = m_startTool.getGeoPos();
 		GeodeticCoords br = m_endTool.getGeoPos();
+		GeodeticCoords tr = new GeodeticCoords(br.getLambda(AngleUnit.DEGREES),
+											   tl.getPhi(AngleUnit.DEGREES),
+											   AngleUnit.DEGREES);
+		GeodeticCoords bl = new GeodeticCoords(tl.getLambda(AngleUnit.DEGREES),
+				   							   br.getPhi(AngleUnit.DEGREES),
+				   							   AngleUnit.DEGREES);
 		
 		// Top left to top right
-		GeodeticCoords p = tl;
-		GeodeticCoords q = new GeodeticCoords(br.getLambda(AngleUnit.DEGREES),
-				  							  tl.getPhi(AngleUnit.DEGREES),
-				  							  AngleUnit.DEGREES);
-		if (ptClose(p,q,px,py,eps)){
+		if (ptClose(tl,tr,px,py,eps)){
 			return true;
 		}
 		//top right to bottom right
-		p = q;
-		q = br;
-		if (ptClose(p,q,px,py,eps)){
+		if (ptClose(tr,br,px,py,eps)){
 			return true;
 		}
 		// bottom right to bottom left
-		p = br;
-		q = new GeodeticCoords(tl.getLambda(AngleUnit.DEGREES),
-				   			   br.getPhi(AngleUnit.DEGREES),
-				   			   AngleUnit.DEGREES);
-		if (ptClose(p,q,px,py,eps)){
+		if (ptClose(br,bl,px,py,eps)){
 			return true;
 		}
 		
 		// bottom left to top left
-		p = q;
-		q = tl;
-		if (ptClose(p,q,px,py,eps)){
+		if (ptClose(bl,tl,px,py,eps)){
 			return true;
 		}
 		return false;

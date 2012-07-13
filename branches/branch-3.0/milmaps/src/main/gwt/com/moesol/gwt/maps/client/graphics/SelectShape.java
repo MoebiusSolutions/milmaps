@@ -41,7 +41,7 @@ public class SelectShape implements IShapeTool{
     		tool = new EditArcTool(m_editor);
     	}
     	if( strShape.compareTo("Box") == 0){
-    		return null;
+    		tool = new EditBoxTool(m_editor);;
     	}
     	if( strShape.compareTo("Circle") == 0){
     		tool = new EditCircleTool(m_editor);
