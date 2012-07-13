@@ -18,7 +18,6 @@ import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 
 public class FreeForm extends AbstractShape {
-	protected static int TRANSLATE_HANDLE_OFFSET_X = 20;
 	protected List<AnchorHandle> m_handleList = new ArrayList<AnchorHandle>();
 	protected List<AbstractPosTool> m_vertexList = new ArrayList<AbstractPosTool>();
 	protected AbstractPosTool m_translationTool = null;

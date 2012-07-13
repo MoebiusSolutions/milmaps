@@ -8,12 +8,16 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.dom.client.CssColor;
+import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 
 public abstract class AbstractShape implements IShape{
+	protected static int TRANSLATE_HANDLE_OFFSET_X = 20;
 	protected String m_id;
 	protected CssColor m_color = CssColor.make(255, 255, 255);
 	protected boolean m_bSeletected = false;
 	protected boolean m_needsUpdate = false;
+	
+	protected static final RangeBearingS m_rb = new RangeBearingS();
 	
 	protected ICoordConverter m_convert;
 	

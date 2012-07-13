@@ -17,7 +17,6 @@ import com.moesol.gwt.maps.client.algorithms.RngBrg;
 
 public class Circle extends AbstractShape {
 	private static final int NUM_CIR_PTS = 36;
-	private static final RangeBearingS m_rb = new RangeBearingS();
 	private final AnchorHandle m_centerHandle = new AnchorHandle();
 	private final AnchorHandle m_radHandle = new AnchorHandle();
 	private RngBrg m_radRngBrg = null;
@@ -331,7 +330,7 @@ public class Circle extends AbstractShape {
 		if (Func.isClose(centPix, vc, Func.PIX_SELECT_TOLERANCE)) {
 			return true;
 		}
-		return ptCloseToEdge( vc.getX(), vc.getY(), Func.PIX_SELECT_TOLERANCE);
+		return ptCloseToEdge(vc.getX(),vc.getY(),Func.PIX_SELECT_TOLERANCE);
 	}
 
 	@Override

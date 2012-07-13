@@ -13,14 +13,14 @@ import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public class NewLineTool extends  AbstractNewTool {
+public class NewRectTool extends  AbstractNewTool {
 	private boolean m_mouseDown = false;
 	private Canvas m_canvas = null;
-	private Line m_line = null;
+	private Rect m_rect = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
 
-	public NewLineTool(IShapeEditor editor) {
+	public NewRectTool(IShapeEditor editor) {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool().canvas();
 		m_convert = editor.getCoordinateConverter();
@@ -29,17 +29,17 @@ public class NewLineTool extends  AbstractNewTool {
 	private void drawHandles(){
 		Context2d context = m_canvas.getContext2d();
 		//m_circle.erase(context);
-		m_line.drawHandles(context);
+		m_rect.drawHandles(context);
 	}
 	
 	@Override
 	public void setShape(IShape shape) {
-		m_line = (Line)shape;
+		m_rect = (Rect)shape;
 	}
 
 	@Override
 	public IShape getShape() {
-		return (IShape)m_line;
+		return (IShape)m_rect;
 	}
 
 	@Override
@@ -49,19 +49,19 @@ public class NewLineTool extends  AbstractNewTool {
 		int y = event.getClientY();
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords gc = m_convert.viewToGeodetic(vc);
-		m_line = new Line().withStartPos(gc);
-		m_editor.addShape(m_line);
-		m_line.selected(true);
-		m_line.setCoordConverter(m_editor.getCoordinateConverter());
-		IAnchorTool tool = m_line.getEndAnchorTool();
+		m_rect = new Rect().withStartPos(gc);
+		m_editor.addShape(m_rect);
+		m_rect.selected(true);
+		m_rect.setCoordConverter(m_editor.getCoordinateConverter());
+		IAnchorTool tool = m_rect.getEndAnchorTool();
 		m_editor.setAnchorTool(tool);
 	}
 
 	@Override
 	public void handleMouseMove(Event event) {
 		if (m_mouseDown) {
-			if (m_line != null && m_canvas != null) {
-				m_line.getEndAnchorTool().handleMouseMove(event);
+			if (m_rect != null && m_canvas != null) {
+				m_rect.getEndAnchorTool().handleMouseMove(event);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
 			}
@@ -71,15 +71,15 @@ public class NewLineTool extends  AbstractNewTool {
 	@Override
 	public void handleMouseUp(Event event) {
 		m_mouseDown = false;
-		m_line.getEndAnchorTool().handleMouseUp(event);
+		m_rect.getEndAnchorTool().handleMouseUp(event);
 		//drawCenterHandle();
 		// we are done with initial creation so set the edit tool
-		IShapeTool tool = new EditLineTool(m_editor);
-		tool.setShape((IShape)m_line);
+		IShapeTool tool = new EditRectTool(m_editor);
+		tool.setShape((IShape)m_rect);
 		m_editor.setShapeTool(tool);
 		m_editor.renderObjects();
 		drawHandles();
-		m_line = null;
+		m_rect = null;
 	}
 
 	@Override
@@ -93,6 +93,7 @@ public class NewLineTool extends  AbstractNewTool {
 
 	@Override
 	public String getType() {
-		return "new_line_tool";
+		return "new_rect_tool";
 	}
+
 }
