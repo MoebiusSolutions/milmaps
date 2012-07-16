@@ -49,8 +49,11 @@ public class SelectShape implements IShapeTool{
     	if( strShape.compareTo("Ellipse") == 0){
     		tool = new EditEllipseTool(m_editor);
     	}
-    	if( strShape.compareTo("Free Form") == 0){
+    	if( strShape.compareTo("Freeform") == 0){
     		tool = new EditFreeFormTool(m_editor);
+    	}
+    	if( strShape.compareTo("Freehand") == 0){
+    		tool = new EditFreehandTool(m_editor);
     	}
     	if( strShape.compareTo("Line") == 0){
     		tool = new EditLineTool(m_editor);
