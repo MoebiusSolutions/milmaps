@@ -13,14 +13,14 @@ import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public class NewArcTool extends  AbstractNewTool {
+public class NewSectorTool extends  AbstractNewTool {
 	private boolean m_mouseDown = false;
 	private Canvas m_canvas = null;
-	private Arc m_arc = null;
+	private Sector m_sector = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
 
-	public NewArcTool(IShapeEditor editor) {
+	public NewSectorTool(IShapeEditor editor) {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool().canvas();
 		m_convert = editor.getCoordinateConverter();
@@ -29,17 +29,17 @@ public class NewArcTool extends  AbstractNewTool {
 	private void drawHandles(){
 		Context2d context = m_canvas.getContext2d();
 		//m_circle.erase(context);
-		m_arc.drawHandles(context);
+		m_sector.drawHandles(context);
 	}
 	
 	@Override
 	public void setShape(IShape shape) {
-		m_arc = (Arc)shape;
+		m_sector = (Sector)shape;
 	}
 
 	@Override
 	public IShape getShape() {
-		return m_arc;
+		return m_sector;
 	}
 
 	@Override
@@ -49,20 +49,20 @@ public class NewArcTool extends  AbstractNewTool {
 		int y = event.getClientY();
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords center = m_convert.viewToGeodetic(vc);
-		m_arc = new Arc().withCenter(center);
-		m_editor.addShape(m_arc);
-		m_arc.selected(true);
-		m_arc.setCoordConverter(m_editor.getCoordinateConverter());
-		IAnchorTool tool = m_arc.getStartBrgAnchorTool();
+		m_sector = new Sector().withCenter(center);
+		m_editor.addShape(m_sector);
+		m_sector.selected(true);
+		m_sector.setCoordConverter(m_editor.getCoordinateConverter());
+		IAnchorTool tool = m_sector.getStartRngBrgAnchorTool();
 		m_editor.setAnchorTool(tool);
 	}
 
 	@Override
 	public void handleMouseMove(Event event) {
 		if (m_mouseDown) {
-			if (m_arc != null && m_canvas != null) {
-				//m_arc.getStartBrgAnchorTool().handleMouseMove(event);
-				m_arc.initialMouseMove(event);
+			if (m_sector != null && m_canvas != null) {
+				//m_sector.getStartBrgAnchorTool().handleMouseMove(event);
+				m_sector.initialMouseMove(event);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
 			}
@@ -72,15 +72,15 @@ public class NewArcTool extends  AbstractNewTool {
 	@Override
 	public void handleMouseUp(Event event) {
 		m_mouseDown = false;
-		m_arc.getStartBrgAnchorTool().handleMouseUp(event);
+		m_sector.getStartRngBrgAnchorTool().handleMouseUp(event);
 		//drawCenterHandle();
 		// we are done with initial creation so set the edit tool
-		IShapeTool tool = new EditArcTool(m_editor);
-		tool.setShape((IShape)m_arc);
+		IShapeTool tool = new EditSectorTool(m_editor);
+		tool.setShape((IShape)m_sector);
 		m_editor.setShapeTool(tool);
 		m_editor.renderObjects();
 		drawHandles();
-		m_arc = null;
+		m_sector = null;
 	}
 
 	@Override
@@ -94,6 +94,6 @@ public class NewArcTool extends  AbstractNewTool {
 
 	@Override
 	public String getType() {
-		return "new_arc_tool";
+		return "new_sector_tool";
 	}
 }
