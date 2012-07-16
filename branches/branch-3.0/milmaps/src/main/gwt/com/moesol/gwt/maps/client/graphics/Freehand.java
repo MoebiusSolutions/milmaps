@@ -11,20 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 
-public class FreeForm extends AbstractShape {
+public class Freehand extends AbstractShape {
 	protected List<AnchorHandle> m_handleList = new ArrayList<AnchorHandle>();
 	protected List<AbstractPosTool> m_vertexList = new ArrayList<AbstractPosTool>();
 	protected AbstractPosTool m_translationTool = null;
 	private final AnchorHandle m_translationHandle = new AnchorHandle();
 	private int m_X, m_Y;
-	public FreeForm(){
-		m_id = "Freeform";
+	public Freehand(){
+		m_id = "Freehand";
 		m_translationHandle.setStrokeColor(255, 0, 0, 1);
 	}
 	

@@ -19,6 +19,7 @@ import com.moesol.gwt.maps.client.graphics.NewBoxTool;
 import com.moesol.gwt.maps.client.graphics.NewCircleTool;
 import com.moesol.gwt.maps.client.graphics.NewEllipseTool;
 import com.moesol.gwt.maps.client.graphics.NewFreeFormTool;
+import com.moesol.gwt.maps.client.graphics.NewFreehandTool;
 import com.moesol.gwt.maps.client.graphics.NewLineTool;
 import com.moesol.gwt.maps.client.graphics.NewRectTool;
 import com.moesol.gwt.maps.client.graphics.NewSectorTool;
@@ -27,7 +28,7 @@ import com.moesol.gwt.maps.client.graphics.SelectShape;
 
 public class ShapeSelectionDialog extends DialogBox {
 	public static String[] obj = {"BackToMap", "Arc", "Box", "Circle", 
-								  "Ellipse", "Free Form", "Line",
+								  "Ellipse", "Freeform", "Freehand", "Line",
 								  "Rectangle", "Sector", "Triangle",
 								  "SelectTool", "Do Something" };
 	private final IShapeEditor m_shapeEditor;
@@ -102,22 +103,26 @@ public class ShapeSelectionDialog extends DialogBox {
         }
         
         if(strShape.compareTo(obj[6]) == 0){
-        	return new NewLineTool(editor);
+        	return new NewFreehandTool(editor);
         }
         
         if(strShape.compareTo(obj[7]) == 0){
-        	return new NewRectTool(editor);
+        	return new NewLineTool(editor);
         }
         
         if(strShape.compareTo(obj[8]) == 0){
-        	return new NewSectorTool(editor);
+        	return new NewRectTool(editor);
         }
         
         if(strShape.compareTo(obj[9]) == 0){
-        	return new NewTriangleTool(editor);
+        	return new NewSectorTool(editor);
         }
         
         if(strShape.compareTo(obj[10]) == 0){
+        	return new NewTriangleTool(editor);
+        }
+        
+        if(strShape.compareTo(obj[11]) == 0){
         	return new SelectShape(editor);
         }
         return null;
