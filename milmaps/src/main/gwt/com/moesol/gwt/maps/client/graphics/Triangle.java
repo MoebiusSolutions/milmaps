@@ -359,4 +359,10 @@ public class Triangle extends AbstractShape {
 		return null;
 	}
 
+	@Override
+	public IShapeTool createEditTool(IShapeEditor se) {
+	   	IShapeTool tool = new EditTriangleTool(se);
+	   	tool.setShape(this);
+	   	return tool;
+	}
 }

@@ -650,6 +650,13 @@ public class EArc extends AbstractShape{
 		}
 		return (IShape)this;
 	}
+	
+	@Override
+	public IShapeTool createEditTool(IShapeEditor se) {
+	   	IShapeTool tool = new EditEArcTool(se);
+	   	tool.setShape(this);
+	   	return tool;
+	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
 		double a = m_smjRngBrg.getRanegKm();

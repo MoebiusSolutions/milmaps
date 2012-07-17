@@ -346,4 +346,11 @@ public class Circle extends AbstractShape {
 		}
 		return null;
 	}
+	
+	@Override
+	public IShapeTool createEditTool(IShapeEditor se) {
+	   	IShapeTool tool = new EditCircleTool(se);
+	   	tool.setShape(this);
+	   	return tool;
+	}
 }

@@ -512,4 +512,11 @@ public class Arc extends AbstractShape {
 		}
 		return null;
 	}
+
+	@Override
+	public IShapeTool createEditTool(IShapeEditor se) {
+	   	IShapeTool tool = new EditArcTool(se);
+	   	tool.setShape(this);
+	   	return tool;
+	}
 }

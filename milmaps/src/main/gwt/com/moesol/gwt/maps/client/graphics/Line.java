@@ -391,4 +391,11 @@ public class Line extends AbstractSegment {
 		}
 		return null;
 	}
+	
+	@Override
+	public IShapeTool createEditTool(IShapeEditor se) {
+	   	IShapeTool tool = new EditLineTool(se);
+	   	tool.setShape(this);
+	   	return tool;
+	}
 }
