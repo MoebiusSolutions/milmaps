@@ -21,7 +21,7 @@ public class FreeForm extends AbstractShape {
 	protected List<AnchorHandle> m_handleList = new ArrayList<AnchorHandle>();
 	protected List<AbstractPosTool> m_vertexList = new ArrayList<AbstractPosTool>();
 	protected AbstractPosTool m_translationTool = null;
-	private final AnchorHandle m_translationHandle = new AnchorHandle();
+	protected final AnchorHandle m_translationHandle = new AnchorHandle();
 	private int m_X, m_Y;
 	public FreeForm(){
 		m_id = "Freeform";
@@ -299,6 +299,13 @@ public class FreeForm extends AbstractShape {
 			}
 		}
 		return (IShape)this;
+	}
+	
+	@Override
+	public IShapeTool createEditTool(IShapeEditor se) {
+	   	IShapeTool tool = new EditFreeFormTool(se);
+	   	tool.setShape(this);
+	   	return tool;
 	}
 	
 	protected int ptClose(int px, int py, double eps){

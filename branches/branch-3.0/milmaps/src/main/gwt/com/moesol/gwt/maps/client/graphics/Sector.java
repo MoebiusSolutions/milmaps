@@ -25,6 +25,9 @@ public class Sector extends AbstractShape {
 	private AbstractPosTool m_startRngBrgTool = null;
 	private AbstractPosTool m_endRngBrgTool = null;
 	private AbstractPosTool m_centerTool = null;
+	
+	private boolean m_altKeydown = false;
+	private boolean m_shiftKeydown = false;
 
 	public Sector(){
 		m_id = "Sector";
@@ -35,6 +38,30 @@ public class Sector extends AbstractShape {
 			throw new IllegalStateException("Arc: m_convert = null");
 		}
 	}
+	
+	private void moveRngBrgPos(AbstractPosTool tool, 
+							   RngBrg toolRngBrg,
+							   GeodeticCoords pos){
+		if(!m_altKeydown || !m_shiftKeydown){
+			GeodeticCoords cent = m_centerTool.getGeoPos();
+			double rng = m_rb.gcDistanceFromTo(cent, pos);
+			double brg = m_rb.gcBearingFromTo(cent, pos);
+			if(toolRngBrg != null){
+				if (m_altKeydown && !m_shiftKeydown){
+					rng = toolRngBrg.getRanegKm();
+				}
+				else if(!m_altKeydown && m_shiftKeydown){
+					brg = toolRngBrg.getBearing();
+				}
+			}
+			tool.setGeoPos(m_rb.gcPointFrom(cent, brg, rng));
+			if (toolRngBrg != null){
+				toolRngBrg.setBearing(brg);
+				toolRngBrg.setRanegKm(rng);				
+			}
+		}
+		return;
+	}
 
 	private void setStartRngBrgFromPix(int x, int y) {
 		checkForException();
@@ -44,7 +71,7 @@ public class Sector extends AbstractShape {
 		}
 		GeodeticCoords pos = m_startRngBrgTool.getGeoPos();
 		if (pos == null || !pos.equals(gc)){
-			m_startRngBrgTool.setGeoPos(gc);
+			moveRngBrgPos(m_startRngBrgTool,m_startRngBrg,gc);
 			updateStartRngBrg();
 			m_needsUpdate = true;
 		}
@@ -124,7 +151,7 @@ public class Sector extends AbstractShape {
 		}
 		GeodeticCoords pos = m_endRngBrgTool.getGeoPos();
 		if (pos == null || !pos.equals(gc)){
-			m_endRngBrgTool.setGeoPos(gc);
+			moveRngBrgPos(m_endRngBrgTool,m_endRngBrg,gc);
 			updateEndRngBrg();
 			m_needsUpdate = true;
 		}
@@ -135,6 +162,11 @@ public class Sector extends AbstractShape {
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords pos = m_endRngBrgTool.getGeoPos();
 		m_endRngBrg = m_rb.RngBrgFromTo(cent, pos);
+	}
+	
+	public void setKeyboardFlags(boolean altKey, boolean shiftKey){
+		m_altKeydown = altKey;
+		m_shiftKeydown = shiftKey;
 	}
 	
 	public IAnchorTool getEndRngBrgAnchorTool(){
@@ -532,5 +564,12 @@ public class Sector extends AbstractShape {
 			return (IAnchorTool)tool;
 		}
 		return null;
+	}
+	
+	@Override
+	public IShapeTool createEditTool(IShapeEditor se) {
+	   	IShapeTool tool = new EditSectorTool(se);
+	   	tool.setShape(this);
+	   	return tool;
 	}
 }

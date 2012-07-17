@@ -23,6 +23,7 @@ public interface IShape {
     public abstract IShape erase(Context2d context);
     public abstract IShape render(Context2d context);
     public abstract IShape drawHandles(Context2d context);
+    public abstract IShapeTool createEditTool(IShapeEditor se);
     public abstract boolean isSelected();
     public abstract boolean needsUpdate();
     public abstract boolean positionTouches(GeodeticCoords position);

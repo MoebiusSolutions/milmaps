@@ -446,6 +446,13 @@ public class Ellipse extends AbstractShape {
 		}
 		return (IShape)this;
 	}
+	
+	@Override
+	public IShapeTool createEditTool(IShapeEditor se) {
+	   	IShapeTool tool = new EditEllipseTool(se);
+	   	tool.setShape(this);
+	   	return tool;
+	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
 		double a = m_smjRngBrg.getRanegKm();

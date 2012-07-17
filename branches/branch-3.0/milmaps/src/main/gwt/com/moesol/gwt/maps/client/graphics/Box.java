@@ -494,4 +494,11 @@ public class Box extends AbstractSegment {
 		}
 		return null;
 	}
+	
+	@Override
+	public IShapeTool createEditTool(IShapeEditor se) {
+	   	IShapeTool tool = new EditBoxTool(se);
+	   	tool.setShape(this);
+	   	return tool;
+	}
 }

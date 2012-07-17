@@ -33,45 +33,6 @@ public class SelectShape implements IShapeTool{
 		ViewCoords vc = new ViewCoords(x,y);
 		return m_convert.viewToGeodetic(vc);
 	}
-
-    protected IShapeTool createShapeEditTool(IShape obj) {
-    	String strShape = obj.id();
-    	IShapeTool tool = null;
-    	if( strShape.compareTo("Arc") == 0){
-    		tool = new EditArcTool(m_editor);
-    	}
-    	if( strShape.compareTo("Box") == 0){
-    		tool = new EditBoxTool(m_editor);;
-    	}
-    	if( strShape.compareTo("Circle") == 0){
-    		tool = new EditCircleTool(m_editor);
-    	}
-    	if( strShape.compareTo("Ellipse") == 0){
-    		tool = new EditEllipseTool(m_editor);
-    	}
-    	if( strShape.compareTo("Freeform") == 0){
-    		tool = new EditFreeFormTool(m_editor);
-    	}
-    	if( strShape.compareTo("Freehand") == 0){
-    		tool = new EditFreehandTool(m_editor);
-    	}
-    	if( strShape.compareTo("Line") == 0){
-    		tool = new EditLineTool(m_editor);
-    	}
-    	if( strShape.compareTo("Rectangle") == 0){
-    		tool = new EditRectTool(m_editor);
-    	}
-    	if( strShape.compareTo("Sector") == 0){
-    		tool = new EditSectorTool(m_editor);
-    	}
-    	if( strShape.compareTo("Triangle") == 0){
-    		tool = new EditTriangleTool(m_editor);
-    	}
-    	if (tool != null){
-    		tool.setShape(obj);
-    	}
-        return tool;
-    }
     
     private void handleSelect(Event event){
 		int x = event.getClientX();
@@ -93,7 +54,7 @@ public class SelectShape implements IShapeTool{
 		}
 		if (selectedShape != null){
 			selectedShape.selected(true);
-			tool = createShapeEditTool(selectedShape);
+			tool = selectedShape.createEditTool(m_editor);
 			m_editor.setShapeTool(tool);
 			if (tool != null){
 				tool.hilite();
