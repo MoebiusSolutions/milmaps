@@ -12,31 +12,30 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public class NewFreeFormTool extends  AbstractNewTool {
+public class NewArrowTool extends  AbstractNewTool {
 	private Canvas m_canvas = null;
-	private FreeForm m_freeForm = null;
+	private Arrow m_arrow = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
 	
 	private int m_lastX;
 	private int m_lastY;
 
-	public NewFreeFormTool(IShapeEditor editor) {
+	public NewArrowTool(IShapeEditor editor) {
 		m_lastX = m_lastY = -10000;
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool().canvas();
 		m_convert = editor.getCoordinateConverter();
 	}
-
 	
 	private void drawLastLine(int x, int y) {
-		AbstractPosTool tool = m_freeForm.getLastPosTool();
+		AbstractPosTool tool = m_arrow.getLastPosTool();
 		if (tool == null){
 			return;
 		}
 		Context2d context = m_canvas.getContext2d();
 		context.beginPath();
-		context.setStrokeStyle(m_freeForm.getColor());
+		context.setStrokeStyle(m_arrow.getColor());
 		context.setLineWidth(2);
 		ViewCoords v = m_convert.geodeticToView(tool.getGeoPos());
 		int tx  = m_convert.getISplit().adjustFirstX(v.getX(),x);
@@ -47,32 +46,32 @@ public class NewFreeFormTool extends  AbstractNewTool {
 	
 	private void drawHandles(){
 		Context2d context = m_canvas.getContext2d();
-		m_freeForm.drawHandles(context);
+		m_arrow.drawHandles(context);
 	}
 	
 	@Override
 	public void setShape(IShape shape) {
-		m_freeForm = (FreeForm)shape;
+		m_arrow = (Arrow)shape;
 	}
 
 	@Override
 	public IShape getShape() {
-		return m_freeForm;
+		return m_arrow;
 	}
 
 	@Override
 	public void handleMouseDown(Event event) {
-		if (m_freeForm == null){
-			m_freeForm = new FreeForm();
-			m_editor.addShape(m_freeForm);
-			m_freeForm.selected(true);
-			m_freeForm.setCoordConverter(m_editor.getCoordinateConverter());
+		if (m_arrow == null){
+			m_arrow = new Arrow();
+			m_editor.addShape(m_arrow);
+			m_arrow.selected(true);
+			m_arrow.setCoordConverter(m_editor.getCoordinateConverter());
 		}
 	}
 
 	@Override
 	public void handleMouseMove(Event event) {
-		if (m_freeForm != null && m_canvas != null) {
+		if (m_arrow != null && m_canvas != null) {
 			m_editor.clearCanvas().renderObjects();
 			drawHandles();
 			int x = event.getClientX();
@@ -88,7 +87,7 @@ public class NewFreeFormTool extends  AbstractNewTool {
 		if (m_lastX != x || m_lastY != y){
 			m_lastX = x;
 			m_lastY = y;
-			m_freeForm.addVertex(x, y);
+			m_arrow.addVertex(x, y);
 		}
 	}
 
@@ -99,7 +98,7 @@ public class NewFreeFormTool extends  AbstractNewTool {
 
 	@Override
 	public String getType() {
-		return "new_freeform_tool";
+		return "new_arrow_tool";
 	}
 
 	@Override
@@ -112,15 +111,15 @@ public class NewFreeFormTool extends  AbstractNewTool {
 
 	@Override
 	public void handleMouseDblClick(Event event) {
-		if (m_freeForm != null){
+		if (m_arrow != null){
 			drawHandles();
 			// we are done with initial creation so set the edit tool
-			IShapeTool tool = new EditFreeFormTool(m_editor);
-			tool.setShape((IShape)m_freeForm);
+			IShapeTool tool = new EditArrowTool(m_editor);
+			tool.setShape((IShape)m_arrow);
 			m_editor.setShapeTool(tool);
 			m_editor.renderObjects();
 			drawHandles();
-			m_freeForm = null;
+			m_arrow = null;
 		}
 	}
 }

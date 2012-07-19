@@ -81,7 +81,7 @@ public class Sector extends AbstractShape {
 		checkForException();
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords pos = m_startRngBrgTool.getGeoPos();
-		m_startRngBrg = m_rb.RngBrgFromTo(cent, pos);
+		m_startRngBrg = m_rb.gcRngBrgFromTo(cent, pos);
 	}
 	
 	public IAnchorTool getStartRngBrgAnchorTool(){
@@ -161,7 +161,7 @@ public class Sector extends AbstractShape {
 		checkForException();
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords pos = m_endRngBrgTool.getGeoPos();
-		m_endRngBrg = m_rb.RngBrgFromTo(cent, pos);
+		m_endRngBrg = m_rb.gcRngBrgFromTo(cent, pos);
 	}
 	
 	public void setKeyboardFlags(boolean altKey, boolean shiftKey){

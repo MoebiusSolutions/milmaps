@@ -284,7 +284,7 @@ public class RangeBearingS {
 		return new GeodeticCoords(lon2, lat2, AngleUnit.RADIANS);
 	}
 	// new code
-	public RngBrg RngBrgFromTo(GeodeticCoords p, GeodeticCoords q){
+	public RngBrg gcRngBrgFromTo(GeodeticCoords p, GeodeticCoords q){
 		double rngKm = gcDistanceFromTo(p,q);
 		double brgDeg = gcBearingFromTo(p,q);
 		return new RngBrg(rngKm, brgDeg);

@@ -122,5 +122,4 @@ public class NewTriangleTool extends  AbstractNewTool {
 	@Override
 	public void handleMouseDblClick(Event event) {
 	}
-
 }

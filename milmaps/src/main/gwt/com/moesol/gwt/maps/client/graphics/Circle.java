@@ -51,7 +51,7 @@ public class Circle extends AbstractShape {
 		checkForException();
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords radPos = m_radiusTool.getGeoPos();
-		m_radRngBrg = m_rb.RngBrgFromTo(cent, radPos);
+		m_radRngBrg = m_rb.gcRngBrgFromTo(cent, radPos);
 	}
 	
 	public IAnchorTool getRadiusAnchorTool(){

@@ -74,7 +74,7 @@ public class EArc extends AbstractShape{
 		if (pos == null || !pos.equals(gc)){
 			m_smjTool.setGeoPos(gc);
 			GeodeticCoords centGc = m_centerTool.getGeoPos();
-			m_smjRngBrg = m_rb.RngBrgFromTo(centGc, gc);
+			m_smjRngBrg = m_rb.gcRngBrgFromTo(centGc, gc);
 			m_needsUpdate = true;
 		}		
 	}

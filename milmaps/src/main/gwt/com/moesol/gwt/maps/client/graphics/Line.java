@@ -51,7 +51,7 @@ public class Line extends AbstractSegment {
 		checkForException();
 		GeodeticCoords startGc = m_startTool.getGeoPos();
 		GeodeticCoords endGc = m_endTool.getGeoPos();
-		m_endRngBrg = m_rb.RngBrgFromTo(startGc, endGc);
+		m_endRngBrg = m_rb.gcRngBrgFromTo(startGc, endGc);
 		
 	}
 	
