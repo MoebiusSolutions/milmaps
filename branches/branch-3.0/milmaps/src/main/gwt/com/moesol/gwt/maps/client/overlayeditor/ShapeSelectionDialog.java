@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.moesol.gwt.maps.client.graphics.IShapeEditor;
 import com.moesol.gwt.maps.client.graphics.IShapeTool;
 import com.moesol.gwt.maps.client.graphics.NewArcTool;
+import com.moesol.gwt.maps.client.graphics.NewArrowTool;
 import com.moesol.gwt.maps.client.graphics.NewBoxTool;
 import com.moesol.gwt.maps.client.graphics.NewCircleTool;
 import com.moesol.gwt.maps.client.graphics.NewEllipseTool;
@@ -27,7 +28,7 @@ import com.moesol.gwt.maps.client.graphics.NewTriangleTool;
 import com.moesol.gwt.maps.client.graphics.SelectShape;
 
 public class ShapeSelectionDialog extends DialogBox {
-	public static String[] obj = {"BackToMap", "Arc", "Box", "Circle", 
+	public static String[] obj = {"BackToMap", "Arc", "Arrow", "Box", "Circle", 
 								  "Ellipse", "Freeform", "Freehand", "Line",
 								  "Rectangle", "Sector", "Triangle",
 								  "SelectTool", "Do Something" };
@@ -87,42 +88,46 @@ public class ShapeSelectionDialog extends DialogBox {
         }
         
         if(strShape.compareTo(obj[2]) == 0){
-        	return new NewBoxTool(editor);
+        	return new NewArrowTool(editor);
         }
         
         if(strShape.compareTo(obj[3]) == 0){
-        	return new NewCircleTool(editor);
+        	return new NewBoxTool(editor);
         }
         
         if(strShape.compareTo(obj[4]) == 0){
-        	return new NewEllipseTool(editor);
+        	return new NewCircleTool(editor);
         }
         
         if(strShape.compareTo(obj[5]) == 0){
-        	return new NewFreeFormTool(editor);
+        	return new NewEllipseTool(editor);
         }
         
         if(strShape.compareTo(obj[6]) == 0){
-        	return new NewFreehandTool(editor);
+        	return new NewFreeFormTool(editor);
         }
         
         if(strShape.compareTo(obj[7]) == 0){
-        	return new NewLineTool(editor);
+        	return new NewFreehandTool(editor);
         }
         
         if(strShape.compareTo(obj[8]) == 0){
-        	return new NewRectTool(editor);
+        	return new NewLineTool(editor);
         }
         
         if(strShape.compareTo(obj[9]) == 0){
-        	return new NewSectorTool(editor);
+        	return new NewRectTool(editor);
         }
         
         if(strShape.compareTo(obj[10]) == 0){
-        	return new NewTriangleTool(editor);
+        	return new NewSectorTool(editor);
         }
         
         if(strShape.compareTo(obj[11]) == 0){
+        	return new NewTriangleTool(editor);
+        }
+        
+        if(strShape.compareTo(obj[12]) == 0){
         	return new SelectShape(editor);
         }
         return null;

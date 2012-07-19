@@ -52,7 +52,7 @@ public class Rect extends AbstractSegment {
 		checkForException();
 		GeodeticCoords startGc = m_startTool.getGeoPos();
 		GeodeticCoords endGc = m_endTool.getGeoPos();
-		m_diagRngBrg = m_rb.RngBrgFromTo(startGc, endGc);
+		m_diagRngBrg = m_rb.gcRngBrgFromTo(startGc, endGc);
 		
 	}
 	

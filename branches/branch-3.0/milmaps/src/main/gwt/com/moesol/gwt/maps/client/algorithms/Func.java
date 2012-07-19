@@ -138,6 +138,12 @@ public class Func {
 		return deg;
 	}
 	
+	public static double branch(double lng, double refLng){
+		while (lng >= (refLng+180.0)) lng-=360;
+		while (lng <  (refLng-180.0)) lng+=360;
+		return lng;
+	}
+	
 	/**
 	 * This routine converts a bearing between 0 and 360 CW from y-axis
 	 * to an angle between -180 and 180 CCW from x-axis.

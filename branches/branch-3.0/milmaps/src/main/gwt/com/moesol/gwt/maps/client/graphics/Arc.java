@@ -71,7 +71,7 @@ public class Arc extends AbstractShape {
 		checkForException();
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords radPos = m_startBrgTool.getGeoPos();
-		m_startRngBrg = m_rb.RngBrgFromTo(cent, radPos);
+		m_startRngBrg = m_rb.gcRngBrgFromTo(cent, radPos);
 	}
 	
 	public IAnchorTool getStartBrgAnchorTool(){
@@ -153,7 +153,7 @@ public class Arc extends AbstractShape {
 		checkForException();
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords pos = m_endBrgTool.getGeoPos();
-		m_endRngBrg = m_rb.RngBrgFromTo(cent, pos);
+		m_endRngBrg = m_rb.gcRngBrgFromTo(cent, pos);
 	}
 	
 	public IAnchorTool getEndBrgAnchorTool(){

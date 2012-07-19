@@ -48,7 +48,7 @@ public class Box extends AbstractSegment {
 		if (pos == null || !pos.equals(gc)){
 			m_smjTool.setGeoPos(gc);
 			GeodeticCoords cent = m_centerTool.getGeoPos();
-			m_smjRngBrg = m_rb.RngBrgFromTo(cent, gc);
+			m_smjRngBrg = m_rb.gcRngBrgFromTo(cent, gc);
 			m_needsUpdate = true;
 		}		
 	}
