@@ -248,14 +248,12 @@ public class Rect extends AbstractSegment {
 				   							   br.getPhi(AngleUnit.DEGREES),
 				   							   AngleUnit.DEGREES);
 		ISplit splitter = m_convert.getISplit();
-		// MUST initialize with the next three lines
-		splitter.setAjustFlag(false).setSplit(false);
-		splitter.setMove(ConvertBase.DONT_MOVE);
+		// MUST first initialize
+		splitter.initialize(ISplit.NO_ADJUST);
 		drawBoxSides(tl, tr, br, bl,context);
 		if (splitter.isSplit()){
 			// Must initialize with new values.
-			splitter.setAjustFlag(true);
-			splitter.setMove(splitter.switchMove(splitter.getMove()));
+			splitter.initialize(ISplit.ADJUST);
 			drawBoxSides(tl, tr, br, bl,context);
 		}
 	}

@@ -246,17 +246,14 @@ public class Line extends AbstractSegment {
 	private void drawBoundary(Context2d context) {
 		checkForException();
 		ISplit splitter = m_convert.getISplit();
-		// MUST initialize with the next three lines
-		splitter.setAjustFlag(false);
-		splitter.setSplit(false);
-		splitter.setMove(ConvertBase.DONT_MOVE);
+		// MUST first initialize
+		splitter.initialize(ISplit.NO_ADJUST);
 		/////////////////////////////////////////
 		drawSegments(context);
 		
 		if (splitter.isSplit()){
 			// Must initialize with new values.
-			splitter.setAjustFlag(true);
-			splitter.setMove(splitter.switchMove(splitter.getMove()));
+			splitter.initialize(ISplit.ADJUST);
 			drawSegments(context);
 		}
 	}

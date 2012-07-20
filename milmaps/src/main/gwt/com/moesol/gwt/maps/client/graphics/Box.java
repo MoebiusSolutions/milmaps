@@ -53,24 +53,6 @@ public class Box extends AbstractSegment {
 		}		
 	}
 	
-	private ViewCoords rngBrgToView(double rngKm, double degBrg){
-		GeodeticCoords cent = m_centerTool.getGeoPos();
-		GeodeticCoords gc = m_rb.gcPointFrom(cent, degBrg, rngKm);
-		return m_convert.geodeticToView(gc);	
-	}
-	
-	private ViewCoords compViewPt(double rotBrg, double brgDeg, 
-								 double a, double b){
-		double angle = Func.DegToRad(brgDeg);
-		double x = (a * Math.cos(angle));
-		double y = (b * Math.sin(angle));
-		if (a != b) {
-			angle = Math.atan2(y, x);
-		}
-		double rngKm = Math.sqrt(x*x + y*y);
-		return rngBrgToView(rngKm,rotBrg+Func.RadToDeg(angle));	
-	}
-
 	protected void drawSegments(Context2d context){
 		double a = m_smjRngBrg.getRanegKm();
 		double b = m_smnRngBrg.getRanegKm();
@@ -83,14 +65,12 @@ public class Box extends AbstractSegment {
 		GeodeticCoords br = m_rb.gcPointFrom(cent, rotBrg + theta, rngKm);
 		GeodeticCoords bl = m_rb.gcPointFrom(cent, rotBrg + 180 - theta, rngKm);
 		ISplit splitter = m_convert.getISplit();
-		// MUST initialize with the next three lines
-		splitter.setAjustFlag(false).setSplit(false);
-		splitter.setMove(ConvertBase.DONT_MOVE);
+		// MUST first initialize 
+		splitter.initialize(ISplit.NO_ADJUST);
 		drawBoxSides(tl, tr, br, bl,context);
 		if (splitter.isSplit()){
 			// Must initialize with new values.
-			splitter.setAjustFlag(true);
-			splitter.setMove(splitter.switchMove(splitter.getMove()));
+			splitter.initialize(ISplit.ADJUST);
 			drawBoxSides(tl, tr, br, bl,context);
 		}
 	}

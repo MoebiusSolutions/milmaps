@@ -27,6 +27,19 @@ public class ShortDistConverter extends ConvertBase {
 	ISplit m_splitter = new ISplit(){
 		
 		@Override
+		public void initialize(int adjust) {
+			if (adjust == ISplit.NO_ADJUST){
+			setAjustFlag(false);
+			setSplit(false);
+			setMove(ConvertBase.DONT_MOVE);
+			}
+			else{
+				setAjustFlag(true);
+				setMove(switchMove(getMove()));	
+			}
+		}
+		
+		@Override
 		public int side(int x) {
 			int width = m_map.getViewport().getWidth();
 			if(x < width/2){
@@ -37,6 +50,13 @@ public class ShortDistConverter extends ConvertBase {
 		
 		@Override
 		public int shift(ViewCoords p, ViewCoords q){
+			if (p == null){
+				int x = q.getX();
+				if (m_move != ConvertBase.DONT_MOVE) {
+					x += getDistance(m_move);
+				}
+				return x;
+			}
 			int mapWidth = mapWidth();
 			int x;
 			if (moveNextPoint(p, q)){

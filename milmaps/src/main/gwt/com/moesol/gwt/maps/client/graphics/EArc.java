@@ -117,11 +117,8 @@ public class EArc extends AbstractShape{
 		double startDeg = 0;// m_startRngDeg.getBearing();
 		ViewCoords p;
 		ViewCoords q = compViewPt2(rotBrg,startDeg,a,b);
-		int move = splitter.getMove();
-		int x = q.getX();
-		if (move!= ConvertBase.DONT_MOVE){
-			x += splitter.getDistance(move);
-		}
+		// set p to null for first point
+		int x = splitter.shift(null, q);
 		context.moveTo(x, q.getY());
 		double degLen = 360;//adjustDegLen(startDeg,m_endRngDeg.getBearing());
 		double incBrg = degLen/(NUM_ARC_PTS-1);
@@ -136,17 +133,14 @@ public class EArc extends AbstractShape{
 	
 	private void drawBoundary(Context2d context) {
 		ISplit splitter = m_convert.getISplit();
-		// MUST initialize with the next three lines
-		splitter.setAjustFlag(false);
-		splitter.setSplit(false);
-		splitter.setMove(ConvertBase.DONT_MOVE);
+		// MUST first initialize
+		splitter.initialize(ISplit.NO_ADJUST);
 		/////////////////////////////////////////
 		drawSegments(context);	
 		
 		if (splitter.isSplit()){
 			// Must initialize with new values.
-			splitter.setAjustFlag(true);
-			splitter.setMove(splitter.switchMove(splitter.getMove()));
+			splitter.initialize(ISplit.ADJUST);
 			drawSegments(context);
 		}
 	}
