@@ -192,12 +192,8 @@ public class Circle extends AbstractShape {
 		ISplit splitter = m_convert.getISplit();
 		ViewCoords p, q;
 		q = getBoundaryPt( 0, distKm);  
-		int move = splitter.getMove();
-		int x = q.getX();
-		if ( move!= ConvertBase.DONT_MOVE){
-			x += splitter.getDistance(move);
-		}
-		
+		// set p to null for first point
+		int x = splitter.shift(null, q);
 		context.moveTo(x, q.getY());
 		for (int i = 1; i < NUM_CIR_PTS; i++) {
 			p = q;
@@ -211,17 +207,14 @@ public class Circle extends AbstractShape {
 	private void drawBoundary(Context2d context) {
 		checkForException();
 		ISplit splitter = m_convert.getISplit();
-		// MUST initialize with the next three lines
-		splitter.setAjustFlag(false);
-		splitter.setSplit(false);
-		splitter.setMove(ConvertBase.DONT_MOVE);
+		// MUST first initialize
+		splitter.initialize(ISplit.NO_ADJUST);
 		/////////////////////////////////////////
 		drawSegments(context);
 		
 		if (splitter.isSplit()){
 			// Must initialize with new values.
-			splitter.setAjustFlag(true);
-			splitter.setMove(splitter.switchMove(splitter.getMove()));
+			splitter.initialize(ISplit.ADJUST);
 			drawSegments(context);
 		}
 	}

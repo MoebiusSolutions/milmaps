@@ -312,12 +312,8 @@ public class Arc extends AbstractShape {
 		ViewCoords p, q;
 		double startBrg = m_startRngBrg.getBearing();
 		q = getBoundaryPt( startBrg, distKm);  
-		int move = splitter.getMove();
-		int x = q.getX();
-		if ( move!= ConvertBase.DONT_MOVE){
-			x += splitter.getDistance(move);
-		}
-		
+		// set p to null for first point
+		int x = splitter.shift(null, q);
 		context.moveTo(x, q.getY());
 		for (int i = 1; i < NUM_ARC_PTS; i++) {
 			p = q;
@@ -331,17 +327,14 @@ public class Arc extends AbstractShape {
 	private void drawBoundary(Context2d context) {
 		checkForException();
 		ISplit splitter = m_convert.getISplit();
-		// MUST initialize with the next three lines
-		splitter.setAjustFlag(false);
-		splitter.setSplit(false);
-		splitter.setMove(ConvertBase.DONT_MOVE);
+		// MUST initialize 
+		splitter.initialize(ISplit.NO_ADJUST);
 		/////////////////////////////////////////
 		drawSegments(context);
 		
 		if (splitter.isSplit()){
 			// Must initialize with new values.
-			splitter.setAjustFlag(true);
-			splitter.setMove(splitter.switchMove(splitter.getMove()));
+			splitter.initialize(ISplit.ADJUST);
 			drawSegments(context);
 		}
 	}

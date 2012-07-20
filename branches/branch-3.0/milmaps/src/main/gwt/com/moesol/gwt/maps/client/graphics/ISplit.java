@@ -10,6 +10,11 @@ package com.moesol.gwt.maps.client.graphics;
 import com.moesol.gwt.maps.client.ViewCoords;
 
 public interface ISplit {
+	public static int NO_ADJUST = 0;
+	public static int ADJUST = 	1;
+	
+	public abstract void initialize(int adjust);
+	
 	public abstract ISplit setAjustFlag(boolean flag);
 	
 	public abstract ISplit setSplit(boolean split);

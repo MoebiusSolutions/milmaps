@@ -323,12 +323,8 @@ public class Sector extends AbstractShape {
 		double rng = m_startRngBrg.getRanegKm();
 		double brg = m_startRngBrg.getBearing();
 		q = getBoundaryPt( brg, rng);  
-		int move = splitter.getMove();
-		int x = q.getX();
-		if ( move!= ConvertBase.DONT_MOVE){
-			x += splitter.getDistance(move);
-		}
-		
+		// set p to null for first point
+		int x = splitter.shift(null, q);
 		context.moveTo(x, q.getY());
 		for (int i = 1; i < NUM_SEC_PTS; i++) {
 			p = q;
@@ -359,17 +355,14 @@ public class Sector extends AbstractShape {
 	private void drawBoundary(Context2d context) {
 		checkForException();
 		ISplit splitter = m_convert.getISplit();
-		// MUST initialize with the next three lines
-		splitter.setAjustFlag(false);
-		splitter.setSplit(false);
-		splitter.setMove(ConvertBase.DONT_MOVE);
+		// MUST first initialize
+		splitter.initialize(ISplit.NO_ADJUST);
 		/////////////////////////////////////////
 		drawSegments(context);
 		
 		if (splitter.isSplit()){
 			// Must initialize with new values.
-			splitter.setAjustFlag(true);
-			splitter.setMove(splitter.switchMove(splitter.getMove()));
+			splitter.initialize(ISplit.ADJUST);
 			drawSegments(context);
 		}
 	}

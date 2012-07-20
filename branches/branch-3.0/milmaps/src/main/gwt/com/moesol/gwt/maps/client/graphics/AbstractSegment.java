@@ -25,11 +25,8 @@ public abstract class AbstractSegment extends AbstractShape{
 		ViewCoords pt, qt;
 		GeodeticCoords gc = p;
 		qt = m_convert.geodeticToView(p);  
-		int move = splitter.getMove();
-		int x = qt.getX();
-		if ( move!= ConvertBase.DONT_MOVE){
-			x += splitter.getDistance(move);
-		}
+		// set p to null for first point
+		int x = splitter.shift(null, qt);
 		context.moveTo(x, qt.getY());
 		for (int i = 1; i < NUM_LINESEG_PTS-1; i++) {
 			pt = qt;
@@ -101,11 +98,8 @@ public abstract class AbstractSegment extends AbstractShape{
 		ViewCoords pt, qt;
 		GeodeticCoords gc = p;
 		qt = m_convert.geodeticToView(p);  
-		int move = splitter.getMove();
-		int x = qt.getX();
-		if ( move!= ConvertBase.DONT_MOVE){
-			x += splitter.getDistance(move);
-		}
+		// set p to null for first point
+		int x = splitter.shift(null, qt);
 		context.moveTo(x, qt.getY());
 		// first side
 		qt = loopAndDraw(p, q, qt, context);
