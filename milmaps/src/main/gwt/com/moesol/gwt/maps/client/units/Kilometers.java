@@ -8,7 +8,7 @@
 package com.moesol.gwt.maps.client.units;
 
 public class Kilometers implements DistanceUnit {
-	private static double KilometersToMeters = 0.001;
+	private static double KilometersToMeters = 1000.0;
 	public static double asMeters(double d) {
 		return d*KilometersToMeters;
 	}
@@ -31,7 +31,7 @@ public class Kilometers implements DistanceUnit {
 	@Override
 	public double fromMeters(double v) {
 		// TODO Auto-generated method stub
-		return 0;
+		return v/KilometersToMeters;
 	}
 	
 	public static Distance distance(double d) {

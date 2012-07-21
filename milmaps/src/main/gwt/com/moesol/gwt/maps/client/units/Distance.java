@@ -17,10 +17,8 @@ public class Distance implements IsSerializable {
 		private double m_dist;
 		private DistanceUnit m_distUnit;
 		
-		public Builder setMeters(double v) { m_dist = v; return this; }
-		public Builder setKilometers(double v) { m_dist = v; return this; }
-		public double getMeters() { return m_dist; }
-		public double getKilometers() { return m_dist; }
+		public Builder setValue(double v) { m_dist = v; return this; }
+		public double getValue() { return m_dist; }
 		public Builder meters() {
 			if (m_distUnit != null && m_distUnit != DistanceUnit.METERS) {
 				throw new IllegalStateException("Distance unit cannot be changed");
@@ -33,7 +31,7 @@ public class Distance implements IsSerializable {
 			}
 			m_distUnit = DistanceUnit.KILOMETERS; return this; 
 		}
-		public Builder meters(double d) { return setMeters(d); }
+		public Builder value(double d) { return setValue(d); }
 		public Distance build() {
 			if (m_distUnit == null) {
 				throw new IllegalStateException("No distance unit specified, use degrees() or radians()");

@@ -9,7 +9,7 @@ package com.moesol.gwt.maps.client.units;
 
 
 public class Meters implements DistanceUnit {
-	private static double MetersToKilometers = 1000;
+	private static double MetersToKilometers = 0.001;
 	public static double asKilometers(double d) {
 		return d*MetersToKilometers;
 	}

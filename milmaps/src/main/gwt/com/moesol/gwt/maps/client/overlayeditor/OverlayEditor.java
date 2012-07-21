@@ -22,6 +22,7 @@ public class OverlayEditor extends Composite {
 
 	private final IShapeEditor m_shapeEditor;
 	private ShapeSelectionDialog m_shapeSelDlg = null;
+	private ShapeDataDialog m_shapeDataDlg = null;
 	
     public OverlayEditor(MapView mapView, boolean bHorizontal) {
         super();
@@ -31,16 +32,18 @@ public class OverlayEditor extends Composite {
     }
 
     public void setMapView(boolean bHorizontal) {
-        // Off button
-        //MapButton offBtn = new MapButton();
-        //offBtn.addStyleName("map-OverlayContolOffButton");
+        // Data button
+        MapButton dataBtn = new MapButton();
+        dataBtn.addStyleName("map-OverlayContolOffButton");
 
-        //offBtn.addClickHandler(new ClickHandler() {
-        //    @Override
-        //    public void onClick(ClickEvent event) {
-        //    	m_shapeEditor.setEventFocus(false);
-        //    }
-        //});
+        dataBtn.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+            	int x = event.getClientX();
+            	int y = event.getClientY();
+            	showShapeDataDlg(x,y);
+            }
+        });
 
         // On Button
         MapButton onBtn = new MapButton();
@@ -58,12 +61,12 @@ public class OverlayEditor extends Composite {
 
         if (bHorizontal) {
             HorizontalPanel p = new HorizontalPanel();
-            //p.add(offBtn);
+            p.add(dataBtn);
             p.add(onBtn);
             initWidget(p);
         } else {
             VerticalPanel p = new VerticalPanel();
-            //p.add(offBtn);
+            p.add(dataBtn);
             p.add(onBtn);
             initWidget(p);
         }
@@ -77,6 +80,13 @@ public class OverlayEditor extends Composite {
         this.getElement().getStyle().setZIndex(zIndex);
     }
     
+    private void showShapeDataDlg(int x, int y){
+    	m_shapeDataDlg = new ShapeDataDialog(m_shapeEditor);
+    	m_shapeDataDlg.getElement().getStyle().setProperty("zIndex", Integer.toString(9000));
+    	m_shapeDataDlg.setPopupPosition(x-150, y-150);
+    	m_shapeDataDlg.show();
+    }
+    
     private void showShapeSelectionDlg(int x, int y){
     	m_shapeSelDlg = new ShapeSelectionDialog(m_shapeEditor);
     	m_shapeSelDlg.getElement().getStyle().setProperty("zIndex", Integer.toString(9000));
@@ -84,14 +94,3 @@ public class OverlayEditor extends Composite {
     	m_shapeSelDlg.show();
     }
 }
-
-
-/*
-MouseDownHandler mdhandler = new MouseDownHandler(){
-	@Override
-	public void onMouseDown(MouseDownEvent event) {
-		mouseDown(event.getX(), event.getY());
-	}
-};
-m_mapView.addDomHandler(mdhandler, MouseDownEvent.getType());
-*/

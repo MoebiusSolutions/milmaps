@@ -28,33 +28,28 @@ import com.moesol.gwt.maps.client.graphics.NewTriangleTool;
 import com.moesol.gwt.maps.client.graphics.SelectShape;
 
 public class ShapeSelectionDialog extends DialogBox {
-	public static String[] obj = {"BackToMap", "Arc", "Arrow", "Box", "Circle", 
-								  "Ellipse", "Freeform", "Freehand", "Line",
-								  "Rectangle", "Sector", "Triangle",
-								  "SelectTool", "Do Something" };
 	private final IShapeEditor m_shapeEditor;
 	
 	public ShapeSelectionDialog(IShapeEditor se) {
 		m_shapeEditor = se;
-        //final DialogBox me = this;
-        setText("Graphic Selection");
+        setText("New Graphic Test");
         setGlassEnabled(true);
         ListBox list = getListBox(true);
         list.setItemSelected(0, true);
         setWidget(list);
-        list.setSelectedIndex(obj.length-1);
+        list.setSelectedIndex(Obj.name.length-1);
     }
     private int m_selectedItem = 0;
     
-    public String getSelectedItem(){ return obj[m_selectedItem]; }
+    public String getSelectedItem(){ return Obj.name[m_selectedItem]; }
     
     
     
     private ListBox getListBox(boolean dropdown){
         final ListBox listBox = new ListBox();
         //widget.addStyleName("demo-ListBox");
-        for(int i = 0; i < obj.length; i++){
-        	listBox.addItem(obj[i]);
+        for(int i = 0; i < Obj.name.length; i++){
+        	listBox.addItem(Obj.name[i]);
         }
         if(!dropdown){
         	listBox.setVisibleItemCount(3);
@@ -64,7 +59,7 @@ public class ShapeSelectionDialog extends DialogBox {
         	public void onChange(ChangeEvent event){
 	        		m_selectedItem = listBox.getSelectedIndex();
 	        		if (m_selectedItem > 0){
-	        			IShapeTool st = createShapeTool(m_shapeEditor, obj[m_selectedItem]);
+	        			IShapeTool st = createShapeTool(m_shapeEditor, Obj.name[m_selectedItem]);
 	        			m_shapeEditor.setShapeTool(st);
 	        			m_shapeEditor.setEventFocus(true);
 	        		}
@@ -83,51 +78,51 @@ public class ShapeSelectionDialog extends DialogBox {
     }
     
     public IShapeTool createShapeTool(IShapeEditor editor, String strShape) {
-        if(strShape.compareTo(obj[1]) == 0){
+        if(strShape.compareTo(Obj.name[1]) == 0){
         	return new NewArcTool(editor);
         }
         
-        if(strShape.compareTo(obj[2]) == 0){
+        if(strShape.compareTo(Obj.name[2]) == 0){
         	return new NewArrowTool(editor);
         }
         
-        if(strShape.compareTo(obj[3]) == 0){
+        if(strShape.compareTo(Obj.name[3]) == 0){
         	return new NewBoxTool(editor);
         }
         
-        if(strShape.compareTo(obj[4]) == 0){
+        if(strShape.compareTo(Obj.name[4]) == 0){
         	return new NewCircleTool(editor);
         }
         
-        if(strShape.compareTo(obj[5]) == 0){
+        if(strShape.compareTo(Obj.name[5]) == 0){
         	return new NewEllipseTool(editor);
         }
         
-        if(strShape.compareTo(obj[6]) == 0){
+        if(strShape.compareTo(Obj.name[6]) == 0){
         	return new NewFreeFormTool(editor);
         }
         
-        if(strShape.compareTo(obj[7]) == 0){
+        if(strShape.compareTo(Obj.name[7]) == 0){
         	return new NewFreehandTool(editor);
         }
         
-        if(strShape.compareTo(obj[8]) == 0){
+        if(strShape.compareTo(Obj.name[8]) == 0){
         	return new NewLineTool(editor);
         }
         
-        if(strShape.compareTo(obj[9]) == 0){
+        if(strShape.compareTo(Obj.name[9]) == 0){
         	return new NewRectTool(editor);
         }
         
-        if(strShape.compareTo(obj[10]) == 0){
+        if(strShape.compareTo(Obj.name[10]) == 0){
         	return new NewSectorTool(editor);
         }
         
-        if(strShape.compareTo(obj[11]) == 0){
+        if(strShape.compareTo(Obj.name[11]) == 0){
         	return new NewTriangleTool(editor);
         }
         
-        if(strShape.compareTo(obj[12]) == 0){
+        if(strShape.compareTo(Obj.name[12]) == 0){
         	return new SelectShape(editor);
         }
         return null;
