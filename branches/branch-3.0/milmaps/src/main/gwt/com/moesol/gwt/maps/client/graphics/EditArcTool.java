@@ -9,6 +9,7 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
@@ -20,6 +21,9 @@ public class EditArcTool extends AbstractEditTool{
 	private IAnchorTool m_anchorTool = null;
 	private ICoordConverter m_convert;
 	private IShapeEditor m_editor;
+	
+	private boolean m_ctrlKeydown = false;
+	private boolean m_shiftKeydown = false;
 
 	public EditArcTool(IShapeEditor se) {
 		m_editor = se;
@@ -91,7 +95,6 @@ public class EditArcTool extends AbstractEditTool{
 
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
 		return "edit_arc_tool";
 	}
 	
@@ -104,9 +107,30 @@ public class EditArcTool extends AbstractEditTool{
 	public IShape getShape() {
 		return (IShape)m_arc;
 	}
-
+	
 	@Override
 	public void setAnchor(IAnchorTool anchor) {
-		m_anchorTool = anchor;
+	}
+
+	@Override
+	public void handleKeyDown(Event event) {
+		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
+			m_ctrlKeydown = true;
+		}
+		else if (event.getKeyCode() == KeyCodes.KEY_SHIFT){
+			m_shiftKeydown = true;
+		}
+		m_arc.setKeyboardFlags(m_ctrlKeydown, m_shiftKeydown);
+	}
+
+	@Override
+	public void handleKeyUp(Event event) {
+		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
+			m_ctrlKeydown = false;
+		}
+		else if (event.getKeyCode() == KeyCodes.KEY_SHIFT){
+			m_shiftKeydown = false;
+		}
+		m_arc.setKeyboardFlags(m_ctrlKeydown, m_shiftKeydown);
 	}
 }

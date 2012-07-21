@@ -26,7 +26,7 @@ public class Sector extends AbstractShape {
 	private AbstractPosTool m_endRngBrgTool = null;
 	private AbstractPosTool m_centerTool = null;
 	
-	private boolean m_altKeydown = false;
+	private boolean m_ctrlKeydown = false;
 	private boolean m_shiftKeydown = false;
 
 	public Sector(){
@@ -42,15 +42,15 @@ public class Sector extends AbstractShape {
 	private void moveRngBrgPos(AbstractPosTool tool, 
 							   RngBrg toolRngBrg,
 							   GeodeticCoords pos){
-		if(!m_altKeydown || !m_shiftKeydown){
+		if(!m_ctrlKeydown || !m_shiftKeydown){
 			GeodeticCoords cent = m_centerTool.getGeoPos();
 			double rng = m_rb.gcDistanceFromTo(cent, pos);
 			double brg = m_rb.gcBearingFromTo(cent, pos);
 			if(toolRngBrg != null){
-				if (m_altKeydown && !m_shiftKeydown){
+				if (m_ctrlKeydown && !m_shiftKeydown){
 					rng = toolRngBrg.getRanegKm();
 				}
-				else if(!m_altKeydown && m_shiftKeydown){
+				else if(!m_ctrlKeydown && m_shiftKeydown){
 					brg = toolRngBrg.getBearing();
 				}
 			}
@@ -165,7 +165,7 @@ public class Sector extends AbstractShape {
 	}
 	
 	public void setKeyboardFlags(boolean altKey, boolean shiftKey){
-		m_altKeydown = altKey;
+		m_ctrlKeydown = altKey;
 		m_shiftKeydown = shiftKey;
 	}
 	

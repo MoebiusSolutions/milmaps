@@ -18,7 +18,7 @@ public class EditSectorTool extends AbstractEditTool{
 	private Sector m_sector = null;
 	private Canvas m_canvas = null;
 	private boolean m_mouseDown = false;
-	private boolean m_altKeydown = false;
+	private boolean m_ctrlKeydown = false;
 	private boolean m_shiftKeydown = false;
 	private IAnchorTool m_anchorTool = null;
 	private ICoordConverter m_convert;
@@ -114,23 +114,23 @@ public class EditSectorTool extends AbstractEditTool{
 	
 	@Override
 	public void handleKeyDown(Event event) {
-		if (event.getKeyCode() == KeyCodes.KEY_ALT){
-			m_altKeydown = true;
+		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
+			m_ctrlKeydown = true;
 		}
 		else if (event.getKeyCode() == KeyCodes.KEY_SHIFT){
 			m_shiftKeydown = true;
 		}
-		m_sector.setKeyboardFlags(m_altKeydown, m_shiftKeydown);
+		m_sector.setKeyboardFlags(m_ctrlKeydown, m_shiftKeydown);
 	}
 
 	@Override
 	public void handleKeyUp(Event event) {
-		if (event.getKeyCode() == KeyCodes.KEY_ALT){
-			m_altKeydown = false;
+		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
+			m_ctrlKeydown = false;
 		}
 		else if (event.getKeyCode() == KeyCodes.KEY_SHIFT){
 			m_shiftKeydown = false;
 		}
-		m_sector.setKeyboardFlags(m_altKeydown, m_shiftKeydown);
+		m_sector.setKeyboardFlags(m_ctrlKeydown, m_shiftKeydown);
 	}
 }
