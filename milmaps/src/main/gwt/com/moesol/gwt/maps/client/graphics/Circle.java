@@ -14,6 +14,9 @@ import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.units.Bearing;
+import com.moesol.gwt.maps.client.units.Distance;
+import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Circle extends AbstractShape {
 	private static final int NUM_CIR_PTS = 36;
@@ -23,10 +26,24 @@ public class Circle extends AbstractShape {
 	private AbstractPosTool m_radiusTool = null;
 	private AbstractPosTool m_centerTool = null;
 
-	public Circle(){
+	public Circle() {
 		m_id = "Circle";
 	}
-	
+
+	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
+									Distance radius) {
+		Circle circle = new Circle();
+		circle.setCoordConverter(editor.getCoordinateConverter());
+		circle.getCenterTool().setGeoPos(center);
+		double rngKm = radius.getDistance(DistanceUnit.KILOMETERS);
+		GeodeticCoords pos = m_rb.gcPointFrom(center, 90, rngKm);
+		circle.getRadiusTool().setGeoPos(pos);
+		circle.m_radRngBrg = new RngBrg(rngKm,90);
+		IShape shape = (IShape) circle;
+		editor.addShape(shape);
+		return shape.createEditTool(editor);
+	}
+
 	private void checkForException() {
 		if (m_convert == null) {
 			throw new IllegalStateException("Circle: m_convert = null");
@@ -36,11 +53,11 @@ public class Circle extends AbstractShape {
 	private void setRadiusFromPix(int x, int y) {
 		checkForException();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		if(m_radiusTool == null){
+		if (m_radiusTool == null) {
 			m_radiusTool = getRadiusTool();
 		}
 		GeodeticCoords pos = m_radiusTool.getGeoPos();
-		if (pos == null || !pos.equals(gc)){
+		if (pos == null || !pos.equals(gc)) {
 			m_radiusTool.setGeoPos(gc);
 			upDateRngBrg();
 			m_needsUpdate = true;
@@ -53,12 +70,12 @@ public class Circle extends AbstractShape {
 		GeodeticCoords radPos = m_radiusTool.getGeoPos();
 		m_radRngBrg = m_rb.gcRngBrgFromTo(cent, radPos);
 	}
-	
-	public IAnchorTool getRadiusAnchorTool(){
-		if(m_radiusTool == null){
+
+	public IAnchorTool getRadiusAnchorTool() {
+		if (m_radiusTool == null) {
 			m_radiusTool = getRadiusTool();
 		}
-		return (IAnchorTool)m_radiusTool;
+		return (IAnchorTool) m_radiusTool;
 	}
 
 	protected AbstractPosTool getRadiusTool() {
@@ -76,7 +93,7 @@ public class Circle extends AbstractShape {
 				}
 
 				@Override
-				public void  handleMouseUp(Event event) {
+				public void handleMouseUp(Event event) {
 					int x = event.getClientX();
 					int y = event.getClientY();
 					setRadiusFromPix(x, y);
@@ -91,9 +108,9 @@ public class Circle extends AbstractShape {
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
-					if ( m_geoPos != null){
+					if (m_geoPos != null) {
 						ViewCoords radPt = m_convert.geodeticToView(m_geoPos);
-						return Func.isClose(radPt, vc, 4);						
+						return Func.isClose(radPt, vc, 4);
 					}
 					return false;
 				}
@@ -117,7 +134,7 @@ public class Circle extends AbstractShape {
 	private void setCenterFromPix(int x, int y) {
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
 		GeodeticCoords cent = m_centerTool.getGeoPos();
-		if (cent == null  || !cent.equals(gc)) {
+		if (cent == null || !cent.equals(gc)) {
 			m_centerTool.setGeoPos(gc);
 			m_needsUpdate = true;
 		}
@@ -131,19 +148,20 @@ public class Circle extends AbstractShape {
 			m_radiusTool.setGeoPos(m_rb.gcPointFrom(cent, brg, rng));
 		}
 	}
-	
-	public IAnchorTool getCenterAnchorTool(){
-		if(m_centerTool == null){
+
+	public IAnchorTool getCenterAnchorTool() {
+		if (m_centerTool == null) {
 			m_centerTool = getCenterTool();
 		}
-		return (IAnchorTool)m_centerTool;
+		return (IAnchorTool) m_centerTool;
 	}
 
 	protected AbstractPosTool getCenterTool() {
 		if (m_centerTool == null) {
 			m_centerTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(Event event) {;
+				public void handleMouseDown(Event event) {
+					;
 				}
 
 				@Override
@@ -169,9 +187,9 @@ public class Circle extends AbstractShape {
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
-					if ( m_geoPos != null){
+					if (m_geoPos != null) {
 						ViewCoords radPt = m_convert.geodeticToView(m_geoPos);
-						return Func.isClose(radPt, vc, 4);						
+						return Func.isClose(radPt, vc, 4);
 					}
 					return false;
 				}
@@ -179,29 +197,29 @@ public class Circle extends AbstractShape {
 		}
 		return m_centerTool;
 	}
-	
-	private ViewCoords getBoundaryPt(double brg, double distKm){
+
+	private ViewCoords getBoundaryPt(double brg, double distKm) {
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords gc = m_rb.gcPointFrom(cent, brg, distKm);
 		return m_convert.geodeticToView(gc);
 	}
-	
-	protected void drawSegments(Context2d context){
+
+	protected void drawSegments(Context2d context) {
 		double degInc = 360.0 / (NUM_CIR_PTS - 1);
 		double distKm = m_radRngBrg.getRanegKm();
 		ISplit splitter = m_convert.getISplit();
 		ViewCoords p, q;
-		q = getBoundaryPt( 0, distKm);  
+		q = getBoundaryPt(0, distKm);
 		// set p to null for first point
 		int x = splitter.shift(null, q);
 		context.moveTo(x, q.getY());
 		for (int i = 1; i < NUM_CIR_PTS; i++) {
 			p = q;
-			double brng = degInc*i;
-			q = getBoundaryPt( brng, distKm);
+			double brng = degInc * i;
+			q = getBoundaryPt(brng, distKm);
 			x = splitter.shift(p, q);
 			context.lineTo(x, q.getY());
-		}		
+		}
 	}
 
 	private void drawBoundary(Context2d context) {
@@ -209,10 +227,10 @@ public class Circle extends AbstractShape {
 		ISplit splitter = m_convert.getISplit();
 		// MUST first initialize
 		splitter.initialize(ISplit.NO_ADJUST);
-		/////////////////////////////////////////
+		// ///////////////////////////////////////
 		drawSegments(context);
-		
-		if (splitter.isSplit()){
+
+		if (splitter.isSplit()) {
 			// Must initialize with new values.
 			splitter.initialize(ISplit.ADJUST);
 			drawSegments(context);
@@ -228,19 +246,18 @@ public class Circle extends AbstractShape {
 		context.stroke();
 	}
 
-
 	@Override
 	public IShape erase(Context2d ct) {
-		//_erase(ct);
-		return (IShape)this;
+		// _erase(ct);
+		return (IShape) this;
 	}
-	
+
 	@Override
 	public IShape render(Context2d ct) {
 		draw(ct);
-		return (IShape)this;
+		return (IShape) this;
 	}
-	
+
 	@Override
 	public IShape drawHandles(Context2d context) {
 		if (context != null) {
@@ -250,7 +267,7 @@ public class Circle extends AbstractShape {
 			ViewCoords vc = m_convert.geodeticToView(gc);
 			m_centerHandle.setCenter(vc.getX(), vc.getY());
 			m_centerHandle.draw(context);
-			if(splitter.isSplit()){
+			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
 				m_centerHandle.setCenter(x, vc.getY()).draw(context);
@@ -259,13 +276,13 @@ public class Circle extends AbstractShape {
 			gc = getRadiusPos();
 			vc = m_convert.geodeticToView(gc);
 			m_radHandle.setCenter(vc.getX(), vc.getY()).draw(context);
-			if(splitter.isSplit()){
+			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
 				m_radHandle.setCenter(x, vc.getY()).draw(context);
 			}
 		}
-		return (IShape)this;
+		return (IShape) this;
 	}
 
 	public GeodeticCoords getRadiusPos() {
@@ -286,7 +303,7 @@ public class Circle extends AbstractShape {
 	}
 
 	public void setCenter(GeodeticCoords center) {
-		if (m_centerTool == null){
+		if (m_centerTool == null) {
 			m_centerTool = getCenterTool();
 		}
 		m_centerTool.setGeoPos(center);
@@ -296,16 +313,16 @@ public class Circle extends AbstractShape {
 		setCenter(center);
 		return this;
 	}
-	
-	protected boolean ptCloseToEdge(int px, int py, double eps){
+
+	protected boolean ptCloseToEdge(int px, int py, double eps) {
 		double degInc = 360.0 / (NUM_CIR_PTS - 1);
 		double distKm = m_radRngBrg.getRanegKm();
-		/////////////////////////////////////////
-		ViewCoords p, q = getBoundaryPt( 0, distKm);  
+		// ///////////////////////////////////////
+		ViewCoords p, q = getBoundaryPt(0, distKm);
 		for (int i = 1; i < NUM_CIR_PTS; i++) {
 			double brg = degInc * i;
 			p = q;
-			q = getBoundaryPt( brg, distKm);
+			q = getBoundaryPt(brg, distKm);
 			double dist = Func.ptLineDist(p, q, px, py);
 			if (dist < eps) {
 				return true;
@@ -323,27 +340,27 @@ public class Circle extends AbstractShape {
 		if (Func.isClose(centPix, vc, Func.PIX_SELECT_TOLERANCE)) {
 			return true;
 		}
-		return ptCloseToEdge(vc.getX(),vc.getY(),Func.PIX_SELECT_TOLERANCE);
+		return ptCloseToEdge(vc.getX(), vc.getY(), Func.PIX_SELECT_TOLERANCE);
 	}
 
 	@Override
 	public IAnchorTool getAnchorByPosition(GeodeticCoords position) {
 		checkForException();
 		AbstractPosTool tool = getRadiusTool();
-		if (tool.isSlected(position)){
+		if (tool.isSlected(position)) {
 			return tool;
 		}
 		tool = getCenterTool();
-		if (tool.isSlected(position)){
-			return (IAnchorTool)tool;
+		if (tool.isSlected(position)) {
+			return (IAnchorTool) tool;
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-	   	IShapeTool tool = new EditCircleTool(se);
-	   	tool.setShape(this);
-	   	return tool;
+		IShapeTool tool = new EditCircleTool(se);
+		tool.setShape(this);
+		return tool;
 	}
 }
