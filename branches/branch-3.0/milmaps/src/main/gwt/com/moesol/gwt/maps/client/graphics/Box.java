@@ -13,6 +13,9 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.units.Bearing;
+import com.moesol.gwt.maps.client.units.Distance;
+import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Box extends AbstractSegment {
 	private final AnchorHandle m_centerHandle = new AnchorHandle();
@@ -30,6 +33,26 @@ public class Box extends AbstractSegment {
 		m_id = "Box";
 		m_smjRngBrg = new RngBrg(0,0);
 		m_smnRngBrg = new RngBrg(0,0);
+	}
+	
+	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
+									Bearing brg, Distance smj, Distance smn) {
+		Box box = new Box();
+		box.setCoordConverter(editor.getCoordinateConverter());
+		box.getCenterTool().setGeoPos(center);
+		double deg = brg.bearing().degrees();
+		double rngKm = smj.getDistance(DistanceUnit.KILOMETERS);
+		box.m_smjRngBrg.setRanegKm(rngKm).setBearing(deg);
+		GeodeticCoords pos = m_rb.gcPointFrom(center, deg, rngKm);
+		box.getSmjTool().setGeoPos(pos);
+		rngKm = smn.getDistance(DistanceUnit.KILOMETERS);
+		box.m_smnRngBrg.setRanegKm(rngKm).setBearing(deg-90);
+		pos = m_rb.gcPointFrom(center, deg-90, rngKm);
+		box.getSmnTool().setGeoPos(pos);
+
+		IShape shape = (IShape) box;
+		editor.addShape(shape);
+		return shape.createEditTool(editor);
 	}
 
 	private void checkForExceptions() {

@@ -13,6 +13,9 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.ListBox;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.graphics.Arc;
+import com.moesol.gwt.maps.client.graphics.Arrow;
+import com.moesol.gwt.maps.client.graphics.Box;
+import com.moesol.gwt.maps.client.graphics.Circle;
 import com.moesol.gwt.maps.client.graphics.IShape;
 import com.moesol.gwt.maps.client.graphics.IShapeEditor;
 import com.moesol.gwt.maps.client.graphics.IShapeTool;
@@ -75,6 +78,7 @@ public class ShapeDataDialog extends DialogBox {
 					m_shapeEditor.setEventFocus(false);
 				}
 				hideDialog();
+				m_shapeEditor.renderObjects();
 			}
 		});
 		return listBox;
@@ -91,6 +95,30 @@ public class ShapeDataDialog extends DialogBox {
 		Distance rad = Distance.builder().value(4000).kilometers().build();
 		return Arc.create(m_shapeEditor, cent, startBrg, endBrg, rad);
 	}
+	
+	protected IShapeTool createArrow(){
+		GeodeticCoords[] pos = new GeodeticCoords[4];
+		for ( int i = 0; i < 4; i++){
+			pos[i] = new GeodeticCoords(-120 + 4*i, 34 - 4*i, AngleUnit.DEGREES); 
+		}
+		Distance width = Distance.builder().value(400).kilometers().build();
+		return Arrow.create(m_shapeEditor, width, pos);
+	}
+	
+	protected IShapeTool createBox(){
+		GeodeticCoords cent = new GeodeticCoords(10,10,AngleUnit.DEGREES);
+		Bearing brg = Bearing.builder(). value(200).degrees().build();
+		Distance smj = Distance.builder().value(2000).kilometers().build();
+		Distance smn = Distance.builder().value(1000).kilometers().build();
+		return Box.create(m_shapeEditor, cent, brg, smj, smn);
+	}
+	
+	protected IShapeTool createCircle(){
+		GeodeticCoords cent = new GeodeticCoords(10,10,AngleUnit.DEGREES);
+		Distance rad = Distance.builder().value(2000).kilometers().build();
+		return Circle.create(m_shapeEditor, cent, rad);
+	}
+
 
 	public IShapeTool createShapeTool(IShapeEditor editor, String strShape) {
 		if (strShape.compareTo(Obj.name[1]) == 0) {
@@ -98,15 +126,15 @@ public class ShapeDataDialog extends DialogBox {
 		}
 
 		if (strShape.compareTo(Obj.name[2]) == 0) {
-			return new NewArrowTool(editor);
+			return createArrow();
 		}
 
 		if (strShape.compareTo(Obj.name[3]) == 0) {
-			return new NewBoxTool(editor);
+			return createBox();
 		}
 
 		if (strShape.compareTo(Obj.name[4]) == 0) {
-			return new NewCircleTool(editor);
+			return createCircle();
 		}
 
 		if (strShape.compareTo(Obj.name[5]) == 0) {
@@ -143,10 +171,4 @@ public class ShapeDataDialog extends DialogBox {
 		return null;
 	}
 	
-	protected IShapeTool createArc(double lat, double lng){
-		Arc arc = new Arc();
-		GeodeticCoords cent = new GeodeticCoords(lng,lat,AngleUnit.DEGREES);
-		//arc.setCenter(cent).setRadiusPos(radPos);
-		return null;
-	}
 }

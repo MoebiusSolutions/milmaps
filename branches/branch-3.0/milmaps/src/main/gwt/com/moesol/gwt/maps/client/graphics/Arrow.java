@@ -17,6 +17,8 @@ import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.GeoOps;
 import com.moesol.gwt.maps.client.algorithms.Spline;
+import com.moesol.gwt.maps.client.units.Distance;
+import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Arrow extends AbstractShape {
 	protected GeoPolygon m_splinedPolygon = null;
@@ -27,6 +29,19 @@ public class Arrow extends AbstractShape {
 	protected final AnchorHandle m_translationHandle = new AnchorHandle();
 	private int m_X, m_Y;
 	double m_width = 0.0;
+	
+	public static IShapeTool create(IShapeEditor editor, Distance width,
+									GeodeticCoords[] pos) {
+		Arrow arrow = new Arrow();
+		arrow.setWidth(width.getDistance(DistanceUnit.KILOMETERS));
+		arrow.setCoordConverter(editor.getCoordinateConverter());
+		for (int i = 0; i < pos.length; i++){
+			arrow.addVertex(pos[i]);
+		}
+		IShape shape = (IShape) arrow;
+		editor.addShape(shape);
+		return shape.createEditTool(editor);
+	}
 	
 	public Arrow(){
 		m_id = "Arrow";
@@ -145,6 +160,22 @@ public class Arrow extends AbstractShape {
 			};
 		}
 		return m_translationTool;
+	}
+	
+	public void addVertex(GeodeticCoords gc){
+		 AbstractPosTool tool = newVertexTool();
+		 tool.setGeoPos(gc);
+		 m_vertexList.add(tool);
+		 AnchorHandle h = new AnchorHandle();
+		 ViewCoords v = m_convert.geodeticToView(gc);
+		 if (m_vertexList.size() == 1){
+			 int x = v.getX() - TRANSLATE_HANDLE_OFFSET_X;
+			 m_translationHandle.setCenter(x,v.getY());
+			 tool = getTranslationTool();
+			 setPosFromPix(x,v.getY(),tool);		 
+		 }
+		 h.setCenter(v.getX(),v.getY()); 
+		 m_handleList.add(h);
 	}
 	
 	public void addVertex(int x, int y){
