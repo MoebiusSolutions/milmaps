@@ -30,15 +30,21 @@ public class Arrow extends AbstractShape {
 	private int m_X, m_Y;
 	double m_width = 0.0;
 	
-	public static IShapeTool create(IShapeEditor editor, Distance width,
-									GeodeticCoords[] pos) {
+	public static IShape create(ICoordConverter conv, Distance width,
+								GeodeticCoords[] pos) {
 		Arrow arrow = new Arrow();
 		arrow.setWidth(width.getDistance(DistanceUnit.KILOMETERS));
-		arrow.setCoordConverter(editor.getCoordinateConverter());
+		arrow.setCoordConverter(conv);
 		for (int i = 0; i < pos.length; i++){
 			arrow.addVertex(pos[i]);
 		}
-		IShape shape = (IShape) arrow;
+		return (IShape) arrow;
+	}
+	
+	public static IShapeTool create(IShapeEditor editor, Distance width,
+									GeodeticCoords[] pos) {
+		ICoordConverter conv = editor.getCoordinateConverter();
+		IShape shape = create(conv,width,pos);
 		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}

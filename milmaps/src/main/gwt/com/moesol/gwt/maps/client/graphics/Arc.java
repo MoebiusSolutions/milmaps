@@ -35,11 +35,12 @@ public class Arc extends AbstractShape {
 	public Arc() {
 		m_id = "Arc";
 	}
-
-	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
-			Bearing startBrg, Bearing endBrg, Distance radius) {
+	
+	public static IShape create(ICoordConverter conv, GeodeticCoords center,
+									Bearing startBrg, Bearing endBrg, 
+									Distance radius) {
 		Arc arc = new Arc();
-		arc.setCoordConverter(editor.getCoordinateConverter());
+		arc.setCoordConverter(conv);
 		arc.getCenterTool().setGeoPos(center);
 		double deg = startBrg.bearing().degrees();
 		double rngKm = radius.getDistance(DistanceUnit.KILOMETERS);
@@ -48,7 +49,14 @@ public class Arc extends AbstractShape {
 		deg = endBrg.bearing().degrees();
 		gc = m_rb.gcPointFrom(center, deg, rngKm);
 		arc.setEndBearingPos(gc);
-		IShape shape = (IShape) arc;
+		return (IShape) arc;
+	}
+
+	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
+									Bearing startBrg, Bearing endBrg, 
+									Distance radius) {
+		ICoordConverter conv = editor.getCoordinateConverter();
+		IShape shape = create(conv,center,startBrg,endBrg,radius);
 		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}

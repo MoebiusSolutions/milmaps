@@ -14,13 +14,16 @@ import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.units.Bearing;
+import com.moesol.gwt.maps.client.units.Distance;
+import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Ellipse extends AbstractShape {
 	private static final int NUM_ELLIPSE_PTS = 36;
 	private final AnchorHandle m_centerHandle = new AnchorHandle();
 	private final AnchorHandle m_smjHandle = new AnchorHandle();
 	private final AnchorHandle m_smnHandle = new AnchorHandle();
-	
+
 	protected RngBrg m_smjRngBrg = null;
 	protected RngBrg m_smnRngBrg = null;
 	// private boolean m_mouseDown = true;
@@ -30,8 +33,34 @@ public class Ellipse extends AbstractShape {
 
 	public Ellipse() {
 		m_id = "Ellipse";
-		m_smjRngBrg = new RngBrg(0,0);
-		m_smnRngBrg = new RngBrg(0,0);
+		m_smjRngBrg = new RngBrg(0, 0);
+		m_smnRngBrg = new RngBrg(0, 0);
+	}
+
+	public static IShape create(ICoordConverter conv, GeodeticCoords center,
+								Bearing brg, Distance smj, Distance smn) {
+		Ellipse ellipse = new Ellipse();
+		ellipse.setCoordConverter(conv);
+		ellipse.getCenterTool().setGeoPos(center);
+		double deg = brg.bearing().degrees();
+		double rngKm = smj.getDistance(DistanceUnit.KILOMETERS);
+		ellipse.m_smjRngBrg.setRanegKm(rngKm).setBearing(deg);
+		GeodeticCoords pos = m_rb.gcPointFrom(center, deg, rngKm);
+		ellipse.getSmjTool().setGeoPos(pos);
+		rngKm = smn.getDistance(DistanceUnit.KILOMETERS);
+		ellipse.m_smnRngBrg.setRanegKm(rngKm).setBearing(deg - 90);
+		pos = m_rb.gcPointFrom(center, deg - 90, rngKm);
+		ellipse.getSmnTool().setGeoPos(pos);
+
+		return (IShape) ellipse;
+	}
+
+	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
+									Bearing brg, Distance smj, Distance smn) {
+		ICoordConverter conv = editor.getCoordinateConverter();
+		IShape shape = create(conv, center, brg, smj, smn);
+		editor.addShape(shape);
+		return shape.createEditTool(editor);
 	}
 
 	private void checkForExceptions() {
@@ -43,69 +72,68 @@ public class Ellipse extends AbstractShape {
 	private void setSmjFromPix(int x, int y) {
 		checkForExceptions();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		if(m_smjTool == null){
+		if (m_smjTool == null) {
 			m_smjTool = getSmjTool();
 		}
 		GeodeticCoords pos = m_smjTool.getGeoPos();
-		if (pos == null || !pos.equals(gc)){
+		if (pos == null || !pos.equals(gc)) {
 			m_smjTool.setGeoPos(gc);
 			GeodeticCoords cent = m_centerTool.getGeoPos();
 			m_smjRngBrg = m_rb.gcRngBrgFromTo(cent, gc);
 			m_needsUpdate = true;
-		}		
+		}
 	}
-	
-	private ViewCoords rngBrgToView(double rngKm, double degBrg){
+
+	private ViewCoords rngBrgToView(double rngKm, double degBrg) {
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords gc = m_rb.gcPointFrom(cent, degBrg, rngKm);
-		return m_convert.geodeticToView(gc);	
+		return m_convert.geodeticToView(gc);
 	}
-	
-	private ViewCoords compViewPt(double rotBrg, double brgDeg, 
-								 double a, double b){
+
+	private ViewCoords compViewPt(double rotBrg, double brgDeg, double a,
+			double b) {
 		double angle = Func.DegToRad(brgDeg);
 		double x = (a * Math.cos(angle));
 		double y = (b * Math.sin(angle));
 		if (a != b) {
 			angle = Math.atan2(y, x);
 		}
-		double rngKm = Math.sqrt(x*x + y*y);
-		return rngBrgToView(rngKm,rotBrg+Func.RadToDeg(angle));	
+		double rngKm = Math.sqrt(x * x + y * y);
+		return rngBrgToView(rngKm, rotBrg + Func.RadToDeg(angle));
 	}
 
-	protected void drawSegments(Context2d context){
+	protected void drawSegments(Context2d context) {
 		double a = m_smjRngBrg.getRanegKm();
 		double b = m_smnRngBrg.getRanegKm();
 		double rotBrg = m_smjRngBrg.getBearing();
 		ISplit splitter = m_convert.getISplit();
-		ViewCoords p, q = compViewPt(rotBrg,0,a,b);
+		ViewCoords p, q = compViewPt(rotBrg, 0, a, b);
 		// set p to null for first point
 		int x = splitter.shift(null, q);
 		context.moveTo(x, q.getY());
-		double incBrg = 360.0/(NUM_ELLIPSE_PTS-1);
+		double incBrg = 360.0 / (NUM_ELLIPSE_PTS - 1);
 		for (int i = 1; i < NUM_ELLIPSE_PTS; i++) {
 			p = q;
-			q = compViewPt(rotBrg,i*incBrg,a,b);
+			q = compViewPt(rotBrg, i * incBrg, a, b);
 			x = splitter.shift(p, q);
 			context.lineTo(x, q.getY());
-		}	
+		}
 	}
-	
-	
+
 	private void drawBoundary(Context2d context) {
 		ISplit splitter = m_convert.getISplit();
 		// MUST first initialize
 		splitter.initialize(ISplit.NO_ADJUST);
-		/////////////////////////////////////////
-		drawSegments(context);	
-		
-		if (splitter.isSplit()){
+		// ///////////////////////////////////////
+		drawSegments(context);
+
+		if (splitter.isSplit()) {
 			// Must initialize with new values.
 			splitter.initialize(ISplit.ADJUST);
 			drawSegments(context);
 		}
 	}
-	
+
 	private void draw(Context2d context) {
 		context.beginPath();
 		context.setStrokeStyle(m_color);
@@ -114,23 +142,23 @@ public class Ellipse extends AbstractShape {
 		context.closePath();
 		context.stroke();
 	}
-	
-	private void setSmnPosFromSmjBrg(){
+
+	private void setSmnPosFromSmjBrg() {
 		GeodeticCoords smjPos = getSmjPos();
 		GeodeticCoords cenPos = getCenter();
 		double brgDeg = m_rb.gcBearingFromTo(cenPos, smjPos);
-		brgDeg = Func.wrap360(brgDeg-90);
+		brgDeg = Func.wrap360(brgDeg - 90);
 		double disKm = m_smnRngBrg.getRanegKm();
 		m_smnRngBrg.setBearing(brgDeg);
 		GeodeticCoords smnPos = m_rb.gcPointFrom(cenPos, brgDeg, disKm);
-		setSmnPos(smnPos);	
+		setSmnPos(smnPos);
 	}
-	
-	public IAnchorTool getSmjAnchorTool(){
-		if(m_smjTool == null){
+
+	public IAnchorTool getSmjAnchorTool() {
+		if (m_smjTool == null) {
 			m_smjTool = getSmjTool();
 		}
-		return (IAnchorTool)m_smjTool;
+		return (IAnchorTool) m_smjTool;
 	}
 
 	protected AbstractPosTool getSmjTool() {
@@ -141,11 +169,12 @@ public class Ellipse extends AbstractShape {
 				}
 
 				@Override
-				public void handleMouseMove(Event event) {;
-				    if (event != null){
+				public void handleMouseMove(Event event) {
+					;
+					if (event != null) {
 						setSmjFromPix(event.getClientX(), event.getClientY());
 						setSmnPosFromSmjBrg();
-				    }
+					}
 				}
 
 				@Override
@@ -164,9 +193,9 @@ public class Ellipse extends AbstractShape {
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
-					if ( m_geoPos != null){
+					if (m_geoPos != null) {
 						ViewCoords radPt = m_convert.geodeticToView(m_geoPos);
-						return Func.isClose(radPt, vc, 4);						
+						return Func.isClose(radPt, vc, 4);
 					}
 					return false;
 				}
@@ -182,23 +211,23 @@ public class Ellipse extends AbstractShape {
 	private void setSmnRangePix(int x, int y) {
 		checkForExceptions();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		if(m_smnTool == null){
+		if (m_smnTool == null) {
 			m_smnTool = getSmnTool();
 		}
 		GeodeticCoords pos = m_smjTool.getGeoPos();
-		if (pos == null || !pos.equals(gc)){
+		if (pos == null || !pos.equals(gc)) {
 			GeodeticCoords cent = m_centerTool.getGeoPos();
 			double rangeKm = m_rb.gcDistanceFromTo(cent, gc);
 			double bearing = m_smnRngBrg.getBearing();
 			m_smnRngBrg.setRanegKm(rangeKm);
-			pos = m_rb.gcPointFrom(cent, bearing , rangeKm);
+			pos = m_rb.gcPointFrom(cent, bearing, rangeKm);
 			m_smnTool.setGeoPos(pos);
 			m_needsUpdate = true;
-		}	
+		}
 	}
-	
-	public void setSmnAxis(GeodeticCoords smnPos){
-		if(m_smnTool == null){
+
+	public void setSmnAxis(GeodeticCoords smnPos) {
+		if (m_smnTool == null) {
 			m_smnTool = getSmnTool();
 		}
 		m_smnTool.setGeoPos(smnPos);
@@ -207,14 +236,14 @@ public class Ellipse extends AbstractShape {
 		double brg = m_rb.gcBearingFromTo(cent, smnPos);
 		m_smnRngBrg.setRanegKm(rangeKm);
 		m_smnRngBrg.setBearing(brg);
-		m_needsUpdate = true;		
+		m_needsUpdate = true;
 	}
-	
-	public IAnchorTool getSmnAnchorTool(){
-		if(m_smnTool == null){
+
+	public IAnchorTool getSmnAnchorTool() {
+		if (m_smnTool == null) {
 			m_smnTool = getSmnTool();
 		}
-		return (IAnchorTool)m_smnTool;
+		return (IAnchorTool) m_smnTool;
 	}
 
 	protected AbstractPosTool getSmnTool() {
@@ -246,13 +275,13 @@ public class Ellipse extends AbstractShape {
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
-					if ( m_geoPos != null){
+					if (m_geoPos != null) {
 						ViewCoords radPt = m_convert.geodeticToView(m_geoPos);
-						return Func.isClose(radPt, vc, 4);						
+						return Func.isClose(radPt, vc, 4);
 					}
 					return false;
 				}
-				
+
 				@Override
 				public void handleMouseDblClick(Event event) {
 				}
@@ -264,14 +293,14 @@ public class Ellipse extends AbstractShape {
 	private void setCenterFromPix(int x, int y) {
 		checkForExceptions();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		if(m_centerTool == null){
+		if (m_centerTool == null) {
 			m_centerTool = getCenterTool();
 		}
 		GeodeticCoords pos = m_centerTool.getGeoPos();
-		if (pos == null || !pos.equals(gc)){
+		if (pos == null || !pos.equals(gc)) {
 			m_centerTool.setGeoPos(gc);
 			m_needsUpdate = true;
-		}	
+		}
 	}
 
 	private void moveAxisPos() {
@@ -279,7 +308,7 @@ public class Ellipse extends AbstractShape {
 		if (m_smjRngBrg != null) {
 			double rng = m_smjRngBrg.getRanegKm();
 			double brg = m_smjRngBrg.getBearing();
-			
+
 			m_smjTool.setGeoPos(m_rb.gcPointFrom(cent, brg, rng));
 		}
 
@@ -290,11 +319,11 @@ public class Ellipse extends AbstractShape {
 		}
 	}
 
-	public IAnchorTool getCenterAnchorTool(){
-		if(m_centerTool == null){
+	public IAnchorTool getCenterAnchorTool() {
+		if (m_centerTool == null) {
 			m_centerTool = getCenterTool();
 		}
-		return (IAnchorTool)m_centerTool;
+		return (IAnchorTool) m_centerTool;
 	}
 
 	protected AbstractPosTool getCenterTool() {
@@ -327,13 +356,13 @@ public class Ellipse extends AbstractShape {
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
-					if ( m_geoPos != null){
+					if (m_geoPos != null) {
 						ViewCoords radPt = m_convert.geodeticToView(m_geoPos);
-						return Func.isClose(radPt, vc, 4);						
+						return Func.isClose(radPt, vc, 4);
 					}
 					return false;
 				}
-				
+
 				@Override
 				public void handleMouseDblClick(Event event) {
 				}
@@ -345,7 +374,7 @@ public class Ellipse extends AbstractShape {
 	@Override
 	public IShape selected(boolean selected) {
 		m_bSeletected = selected;
-		return (IShape)this;
+		return (IShape) this;
 	}
 
 	@Override
@@ -356,7 +385,7 @@ public class Ellipse extends AbstractShape {
 	@Override
 	public IShape render(Context2d context) {
 		draw(context);
-		return (IShape)this;
+		return (IShape) this;
 	}
 
 	//
@@ -365,7 +394,7 @@ public class Ellipse extends AbstractShape {
 	}
 
 	public void setSmjPos(GeodeticCoords pos) {
-		if (m_smjTool == null){
+		if (m_smjTool == null) {
 			m_smnTool = getSmjTool();
 		}
 		m_smjTool.setGeoPos(pos);
@@ -382,7 +411,7 @@ public class Ellipse extends AbstractShape {
 	}
 
 	public void setSmnPos(GeodeticCoords pos) {
-		if (m_smnTool == null){
+		if (m_smnTool == null) {
 			m_smnTool = getSmnTool();
 		}
 		m_smnTool.setGeoPos(pos);
@@ -398,7 +427,7 @@ public class Ellipse extends AbstractShape {
 	}
 
 	public void setCenter(GeodeticCoords center) {
-		if (m_centerTool == null){
+		if (m_centerTool == null) {
 			m_centerTool = getCenterTool();
 		}
 		m_centerTool.setGeoPos(center);
@@ -408,14 +437,15 @@ public class Ellipse extends AbstractShape {
 		setCenter(center);
 		return this;
 	}
-	
-	private void moveHandles(AnchorHandle handle, ViewCoords vc, Context2d context){
+
+	private void moveHandles(AnchorHandle handle, ViewCoords vc,
+			Context2d context) {
 		ISplit splitter = m_convert.getISplit();
-		if(splitter.isSplit()){
+		if (splitter.isSplit()) {
 			int side = splitter.switchMove(splitter.side(vc.getX()));
 			int x = vc.getX() + splitter.getDistance(side);
 			handle.setCenter(x, vc.getY()).draw(context);
-		}		
+		}
 	}
 
 	@Override
@@ -438,31 +468,31 @@ public class Ellipse extends AbstractShape {
 			m_smnHandle.setCenter(vc.getX(), vc.getY()).draw(context);
 			moveHandles(m_smnHandle, vc, context);
 		}
-		return (IShape)this;
+		return (IShape) this;
 	}
-	
+
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-	   	IShapeTool tool = new EditEllipseTool(se);
-	   	tool.setShape(this);
-	   	return tool;
+		IShapeTool tool = new EditEllipseTool(se);
+		tool.setShape(this);
+		return tool;
 	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
 		double a = m_smjRngBrg.getRanegKm();
 		double b = m_smnRngBrg.getRanegKm();
 		double rotBrg = m_smjRngBrg.getBearing();
-		double incBrg = 360.0/(NUM_ELLIPSE_PTS-1);
+		double incBrg = 360.0 / (NUM_ELLIPSE_PTS - 1);
 
-		ViewCoords p1 = compViewPt(rotBrg,0,a,b);
-		ViewCoords p2 = compViewPt(rotBrg,incBrg,a,b);
+		ViewCoords p1 = compViewPt(rotBrg, 0, a, b);
+		ViewCoords p2 = compViewPt(rotBrg, incBrg, a, b);
 		double dist = Func.ptLineDist(p1, p2, px, py);
 		if (dist < eps) {
 			return true;
 		}
-		for (int i = 1; i < NUM_ELLIPSE_PTS-1; i++) {
+		for (int i = 1; i < NUM_ELLIPSE_PTS - 1; i++) {
 			p1 = p2;
-			p2 = compViewPt(rotBrg,(i+1)*incBrg,a,b);
+			p2 = compViewPt(rotBrg, (i + 1) * incBrg, a, b);
 			dist = Func.ptLineDist(p1, p2, px, py);
 			if (dist < eps) {
 				return true;

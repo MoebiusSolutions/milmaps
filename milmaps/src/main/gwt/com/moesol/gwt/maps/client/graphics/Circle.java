@@ -30,16 +30,22 @@ public class Circle extends AbstractShape {
 		m_id = "Circle";
 	}
 
-	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
-									Distance radius) {
+	public static IShape create(ICoordConverter conv, GeodeticCoords center,
+								Distance radius) {
 		Circle circle = new Circle();
-		circle.setCoordConverter(editor.getCoordinateConverter());
+		circle.setCoordConverter(conv);
 		circle.getCenterTool().setGeoPos(center);
 		double rngKm = radius.getDistance(DistanceUnit.KILOMETERS);
 		GeodeticCoords pos = m_rb.gcPointFrom(center, 90, rngKm);
 		circle.getRadiusTool().setGeoPos(pos);
-		circle.m_radRngBrg = new RngBrg(rngKm,90);
-		IShape shape = (IShape) circle;
+		circle.m_radRngBrg = new RngBrg(rngKm, 90);
+		return (IShape) circle;
+	}
+
+	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
+									Distance radius) {
+		ICoordConverter conv = editor.getCoordinateConverter();
+		IShape shape = create(conv,center,radius);
 		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}
