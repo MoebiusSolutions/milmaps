@@ -21,7 +21,7 @@ public class Box extends AbstractSegment {
 	private final AnchorHandle m_centerHandle = new AnchorHandle();
 	private final AnchorHandle m_smjHandle = new AnchorHandle();
 	private final AnchorHandle m_smnHandle = new AnchorHandle();
-	
+
 	protected RngBrg m_smjRngBrg = null;
 	protected RngBrg m_smnRngBrg = null;
 	// private boolean m_mouseDown = true;
@@ -31,14 +31,14 @@ public class Box extends AbstractSegment {
 
 	public Box() {
 		m_id = "Box";
-		m_smjRngBrg = new RngBrg(0,0);
-		m_smnRngBrg = new RngBrg(0,0);
+		m_smjRngBrg = new RngBrg(0, 0);
+		m_smnRngBrg = new RngBrg(0, 0);
 	}
-	
-	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
+
+	public static IShape create(ICoordConverter conv, GeodeticCoords center,
 									Bearing brg, Distance smj, Distance smn) {
 		Box box = new Box();
-		box.setCoordConverter(editor.getCoordinateConverter());
+		box.setCoordConverter(conv);
 		box.getCenterTool().setGeoPos(center);
 		double deg = brg.bearing().degrees();
 		double rngKm = smj.getDistance(DistanceUnit.KILOMETERS);
@@ -46,11 +46,17 @@ public class Box extends AbstractSegment {
 		GeodeticCoords pos = m_rb.gcPointFrom(center, deg, rngKm);
 		box.getSmjTool().setGeoPos(pos);
 		rngKm = smn.getDistance(DistanceUnit.KILOMETERS);
-		box.m_smnRngBrg.setRanegKm(rngKm).setBearing(deg-90);
-		pos = m_rb.gcPointFrom(center, deg-90, rngKm);
+		box.m_smnRngBrg.setRanegKm(rngKm).setBearing(deg - 90);
+		pos = m_rb.gcPointFrom(center, deg - 90, rngKm);
 		box.getSmnTool().setGeoPos(pos);
 
-		IShape shape = (IShape) box;
+		return (IShape) box;
+	}
+
+	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
+									Bearing brg, Distance smj, Distance smn) {
+		ICoordConverter conv = editor.getCoordinateConverter();
+		IShape shape = create(conv,center,brg,smj,smn);
 		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}
@@ -64,45 +70,44 @@ public class Box extends AbstractSegment {
 	private void setSmjFromPix(int x, int y) {
 		checkForExceptions();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		if(m_smjTool == null){
+		if (m_smjTool == null) {
 			m_smjTool = getSmjTool();
 		}
 		GeodeticCoords pos = m_smjTool.getGeoPos();
-		if (pos == null || !pos.equals(gc)){
+		if (pos == null || !pos.equals(gc)) {
 			m_smjTool.setGeoPos(gc);
 			GeodeticCoords cent = m_centerTool.getGeoPos();
 			m_smjRngBrg = m_rb.gcRngBrgFromTo(cent, gc);
 			m_needsUpdate = true;
-		}		
+		}
 	}
-	
-	protected void drawSegments(Context2d context){
+
+	protected void drawSegments(Context2d context) {
 		double a = m_smjRngBrg.getRanegKm();
 		double b = m_smnRngBrg.getRanegKm();
 		double rotBrg = m_smjRngBrg.getBearing();
 		GeodeticCoords cent = m_centerTool.getGeoPos();
-		double theta = Func.RadToDeg(Math.atan2(b,a));
-		double rngKm = Math.sqrt(a*a+b*b);
+		double theta = Func.RadToDeg(Math.atan2(b, a));
+		double rngKm = Math.sqrt(a * a + b * b);
 		GeodeticCoords tl = m_rb.gcPointFrom(cent, rotBrg - 180 + theta, rngKm);
 		GeodeticCoords tr = m_rb.gcPointFrom(cent, rotBrg - theta, rngKm);
 		GeodeticCoords br = m_rb.gcPointFrom(cent, rotBrg + theta, rngKm);
 		GeodeticCoords bl = m_rb.gcPointFrom(cent, rotBrg + 180 - theta, rngKm);
 		ISplit splitter = m_convert.getISplit();
-		// MUST first initialize 
+		// MUST first initialize
 		splitter.initialize(ISplit.NO_ADJUST);
-		drawBoxSides(tl, tr, br, bl,context);
-		if (splitter.isSplit()){
+		drawBoxSides(tl, tr, br, bl, context);
+		if (splitter.isSplit()) {
 			// Must initialize with new values.
 			splitter.initialize(ISplit.ADJUST);
-			drawBoxSides(tl, tr, br, bl,context);
+			drawBoxSides(tl, tr, br, bl, context);
 		}
 	}
-	
-	
+
 	private void drawBoundary(Context2d context) {
-		drawSegments(context);	
+		drawSegments(context);
 	}
-	
+
 	private void draw(Context2d context) {
 		context.beginPath();
 		context.setStrokeStyle(m_color);
@@ -110,23 +115,23 @@ public class Box extends AbstractSegment {
 		drawBoundary(context);
 		context.stroke();
 	}
-	
-	private void setSmnPosFromSmjBrg(){
+
+	private void setSmnPosFromSmjBrg() {
 		GeodeticCoords smjPos = getSmjPos();
 		GeodeticCoords cenPos = getCenter();
 		double brgDeg = m_rb.gcBearingFromTo(cenPos, smjPos);
-		brgDeg = Func.wrap360(brgDeg-90);
+		brgDeg = Func.wrap360(brgDeg - 90);
 		double disKm = m_smnRngBrg.getRanegKm();
 		m_smnRngBrg.setBearing(brgDeg);
 		GeodeticCoords smnPos = m_rb.gcPointFrom(cenPos, brgDeg, disKm);
-		setSmnPos(smnPos);	
+		setSmnPos(smnPos);
 	}
-	
-	public IAnchorTool getSmjAnchorTool(){
-		if(m_smjTool == null){
+
+	public IAnchorTool getSmjAnchorTool() {
+		if (m_smjTool == null) {
 			m_smjTool = getSmjTool();
 		}
-		return (IAnchorTool)m_smjTool;
+		return (IAnchorTool) m_smjTool;
 	}
 
 	protected AbstractPosTool getSmjTool() {
@@ -137,11 +142,12 @@ public class Box extends AbstractSegment {
 				}
 
 				@Override
-				public void handleMouseMove(Event event) {;
-				    if (event != null){
+				public void handleMouseMove(Event event) {
+					;
+					if (event != null) {
 						setSmjFromPix(event.getClientX(), event.getClientY());
 						setSmnPosFromSmjBrg();
-				    }
+					}
 				}
 
 				@Override
@@ -160,9 +166,9 @@ public class Box extends AbstractSegment {
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
-					if ( m_geoPos != null){
+					if (m_geoPos != null) {
 						ViewCoords radPt = m_convert.geodeticToView(m_geoPos);
-						return Func.isClose(radPt, vc, 4);						
+						return Func.isClose(radPt, vc, 4);
 					}
 					return false;
 				}
@@ -178,23 +184,23 @@ public class Box extends AbstractSegment {
 	private void setSmnRangePix(int x, int y) {
 		checkForExceptions();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		if(m_smnTool == null){
+		if (m_smnTool == null) {
 			m_smnTool = getSmnTool();
 		}
 		GeodeticCoords pos = m_smjTool.getGeoPos();
-		if (pos == null || !pos.equals(gc)){
+		if (pos == null || !pos.equals(gc)) {
 			GeodeticCoords cent = m_centerTool.getGeoPos();
 			double rangeKm = m_rb.gcDistanceFromTo(cent, gc);
 			double bearing = m_smnRngBrg.getBearing();
 			m_smnRngBrg.setRanegKm(rangeKm);
-			pos = m_rb.gcPointFrom(cent, bearing , rangeKm);
+			pos = m_rb.gcPointFrom(cent, bearing, rangeKm);
 			m_smnTool.setGeoPos(pos);
 			m_needsUpdate = true;
-		}	
+		}
 	}
-	
-	public void setSmnAxis(GeodeticCoords smnPos){
-		if(m_smnTool == null){
+
+	public void setSmnAxis(GeodeticCoords smnPos) {
+		if (m_smnTool == null) {
 			m_smnTool = getSmnTool();
 		}
 		m_smnTool.setGeoPos(smnPos);
@@ -203,14 +209,14 @@ public class Box extends AbstractSegment {
 		double brg = m_rb.gcBearingFromTo(cent, smnPos);
 		m_smnRngBrg.setRanegKm(rangeKm);
 		m_smnRngBrg.setBearing(brg);
-		m_needsUpdate = true;		
+		m_needsUpdate = true;
 	}
-	
-	public IAnchorTool getSmnAnchorTool(){
-		if(m_smnTool == null){
+
+	public IAnchorTool getSmnAnchorTool() {
+		if (m_smnTool == null) {
 			m_smnTool = getSmnTool();
 		}
-		return (IAnchorTool)m_smnTool;
+		return (IAnchorTool) m_smnTool;
 	}
 
 	protected AbstractPosTool getSmnTool() {
@@ -242,13 +248,13 @@ public class Box extends AbstractSegment {
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
-					if ( m_geoPos != null){
+					if (m_geoPos != null) {
 						ViewCoords radPt = m_convert.geodeticToView(m_geoPos);
-						return Func.isClose(radPt, vc, 4);						
+						return Func.isClose(radPt, vc, 4);
 					}
 					return false;
 				}
-				
+
 				@Override
 				public void handleMouseDblClick(Event event) {
 				}
@@ -260,14 +266,14 @@ public class Box extends AbstractSegment {
 	private void setCenterFromPix(int x, int y) {
 		checkForExceptions();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		if(m_centerTool == null){
+		if (m_centerTool == null) {
 			m_centerTool = getCenterTool();
 		}
 		GeodeticCoords pos = m_centerTool.getGeoPos();
-		if (pos == null || !pos.equals(gc)){
+		if (pos == null || !pos.equals(gc)) {
 			m_centerTool.setGeoPos(gc);
 			m_needsUpdate = true;
-		}	
+		}
 	}
 
 	private void moveAxisPos() {
@@ -275,7 +281,7 @@ public class Box extends AbstractSegment {
 		if (m_smjRngBrg != null) {
 			double rng = m_smjRngBrg.getRanegKm();
 			double brg = m_smjRngBrg.getBearing();
-			
+
 			m_smjTool.setGeoPos(m_rb.gcPointFrom(cent, brg, rng));
 		}
 
@@ -286,11 +292,11 @@ public class Box extends AbstractSegment {
 		}
 	}
 
-	public IAnchorTool getCenterAnchorTool(){
-		if(m_centerTool == null){
+	public IAnchorTool getCenterAnchorTool() {
+		if (m_centerTool == null) {
 			m_centerTool = getCenterTool();
 		}
-		return (IAnchorTool)m_centerTool;
+		return (IAnchorTool) m_centerTool;
 	}
 
 	protected AbstractPosTool getCenterTool() {
@@ -323,13 +329,13 @@ public class Box extends AbstractSegment {
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
-					if ( m_geoPos != null){
+					if (m_geoPos != null) {
 						ViewCoords radPt = m_convert.geodeticToView(m_geoPos);
-						return Func.isClose(radPt, vc, 4);						
+						return Func.isClose(radPt, vc, 4);
 					}
 					return false;
 				}
-				
+
 				@Override
 				public void handleMouseDblClick(Event event) {
 				}
@@ -341,7 +347,7 @@ public class Box extends AbstractSegment {
 	@Override
 	public IShape selected(boolean selected) {
 		m_bSeletected = selected;
-		return (IShape)this;
+		return (IShape) this;
 	}
 
 	@Override
@@ -352,7 +358,7 @@ public class Box extends AbstractSegment {
 	@Override
 	public IShape render(Context2d context) {
 		draw(context);
-		return (IShape)this;
+		return (IShape) this;
 	}
 
 	//
@@ -361,7 +367,7 @@ public class Box extends AbstractSegment {
 	}
 
 	public void setSmjPos(GeodeticCoords pos) {
-		if (m_smjTool == null){
+		if (m_smjTool == null) {
 			m_smnTool = getSmjTool();
 		}
 		m_smjTool.setGeoPos(pos);
@@ -378,7 +384,7 @@ public class Box extends AbstractSegment {
 	}
 
 	public void setSmnPos(GeodeticCoords pos) {
-		if (m_smnTool == null){
+		if (m_smnTool == null) {
 			m_smnTool = getSmnTool();
 		}
 		m_smnTool.setGeoPos(pos);
@@ -394,7 +400,7 @@ public class Box extends AbstractSegment {
 	}
 
 	public void setCenter(GeodeticCoords center) {
-		if (m_centerTool == null){
+		if (m_centerTool == null) {
 			m_centerTool = getCenterTool();
 		}
 		m_centerTool.setGeoPos(center);
@@ -404,14 +410,15 @@ public class Box extends AbstractSegment {
 		setCenter(center);
 		return this;
 	}
-	
-	private void moveHandles(AnchorHandle handle, ViewCoords vc, Context2d context){
+
+	private void moveHandles(AnchorHandle handle, ViewCoords vc,
+			Context2d context) {
 		ISplit splitter = m_convert.getISplit();
-		if(splitter.isSplit()){
+		if (splitter.isSplit()) {
 			int side = splitter.switchMove(splitter.side(vc.getX()));
 			int x = vc.getX() + splitter.getDistance(side);
 			handle.setCenter(x, vc.getY()).draw(context);
-		}		
+		}
 	}
 
 	@Override
@@ -434,7 +441,7 @@ public class Box extends AbstractSegment {
 			m_smnHandle.setCenter(vc.getX(), vc.getY()).draw(context);
 			moveHandles(m_smnHandle, vc, context);
 		}
-		return (IShape)this;
+		return (IShape) this;
 	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
@@ -442,27 +449,27 @@ public class Box extends AbstractSegment {
 		double b = m_smnRngBrg.getRanegKm();
 		double rotBrg = m_smjRngBrg.getBearing();
 		GeodeticCoords cent = m_centerTool.getGeoPos();
-		double theta = Func.RadToDeg(Math.atan2(b,a));
-		double rngKm = Math.sqrt(a*a+b*b);
+		double theta = Func.RadToDeg(Math.atan2(b, a));
+		double rngKm = Math.sqrt(a * a + b * b);
 		GeodeticCoords tl = m_rb.gcPointFrom(cent, rotBrg - 180 + theta, rngKm);
 		GeodeticCoords tr = m_rb.gcPointFrom(cent, rotBrg - theta, rngKm);
 		GeodeticCoords br = m_rb.gcPointFrom(cent, rotBrg + theta, rngKm);
 		GeodeticCoords bl = m_rb.gcPointFrom(cent, rotBrg + 180 - theta, rngKm);
 		// Top left to top right
-		if (ptClose(tl,tr,px,py,eps)){
+		if (ptClose(tl, tr, px, py, eps)) {
 			return true;
 		}
-		//top right to bottom right
-		if (ptClose(tr,br,px,py,eps)){
+		// top right to bottom right
+		if (ptClose(tr, br, px, py, eps)) {
 			return true;
 		}
 		// bottom right to bottom left
-		if (ptClose(br,bl,px,py,eps)){
+		if (ptClose(br, bl, px, py, eps)) {
 			return true;
 		}
-		
+
 		// bottom left to top left
-		if (ptClose(bl,tl,px,py,eps)){
+		if (ptClose(bl, tl, px, py, eps)) {
 			return true;
 		}
 		return false;
@@ -497,11 +504,11 @@ public class Box extends AbstractSegment {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-	   	IShapeTool tool = new EditBoxTool(se);
-	   	tool.setShape(this);
-	   	return tool;
+		IShapeTool tool = new EditBoxTool(se);
+		tool.setShape(this);
+		return tool;
 	}
 }

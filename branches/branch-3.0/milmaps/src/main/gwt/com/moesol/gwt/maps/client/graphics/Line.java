@@ -31,11 +31,35 @@ public class Line extends AbstractSegment {
 		m_translationHandle.setStrokeColor(255, 0, 0, 1);
 	}
 	
+	public static IShape create(ICoordConverter conv, GeodeticCoords start,
+													  GeodeticCoords end) {
+		Line line = new Line();
+		line.setCoordConverter(conv);
+		line.setEndPts(start, end);
+		return (IShape) line;
+	}
+
+	public static IShapeTool create(IShapeEditor editor, GeodeticCoords start,
+			  											 GeodeticCoords end) {
+		ICoordConverter conv = editor.getCoordinateConverter();
+		IShape shape = create(conv, start, end);
+		editor.addShape(shape);
+		return shape.createEditTool(editor);
+	}
+	
 	private void checkForException() {
 		if (m_convert == null) {
 			throw new IllegalStateException("Line: m_convert = null");
 		}
 	}
+	
+	public void setEndPts(GeodeticCoords start, GeodeticCoords end) {
+		AbstractPosTool tool = getStartTool();
+		tool.setGeoPos(start);
+		tool = getEndTool();
+		tool.setGeoPos(end);
+	}
+
 	
 	private void setPosFromPix(int x, int y, AbstractPosTool tool) {
 		checkForException();

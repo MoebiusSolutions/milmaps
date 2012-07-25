@@ -27,6 +27,22 @@ public class Triangle extends AbstractShape {
 		}
 	}
 	
+	public static IShape create(ICoordConverter conv, GeodeticCoords[] pos) {
+		Triangle tri = new Triangle();
+		tri.setCoordConverter(conv);
+		for (int i = 0; i < pos.length; i++) {
+			tri.addVertex(pos[i]);
+		}
+		return (IShape) tri;
+	}
+
+	public static IShapeTool create(IShapeEditor editor, GeodeticCoords[] pos) {
+		ICoordConverter conv = editor.getCoordinateConverter();
+		IShape shape = create(conv, pos);
+		editor.addShape(shape);
+		return shape.createEditTool(editor);
+	}
+	
 	protected void checkForExceptions(){
 		if (m_convert == null) {
 			throw new IllegalStateException("Triangle: m_convert = null");
@@ -133,6 +149,24 @@ public class Triangle extends AbstractShape {
 			};
 		}
 		return m_translationTool;
+	}
+	
+	private void addVertex(GeodeticCoords pos){
+		AbstractPosTool tool = newVertexTool();
+		int i = addVertex(tool);
+		if (i < 3){
+			tool.setGeoPos(pos);
+			AnchorHandle h = new AnchorHandle();
+			ViewCoords v = m_convert.geodeticToView(pos);
+			h.setCenter(v.getX(), v.getY());
+			m_handleList[i] = h;
+			if (i == 0) {
+				int x = v.getX() - TRANSLATE_HANDLE_OFFSET_X;
+				m_translationHandle.setCenter(x, v.getY());
+				tool = getTranslationTool();
+				setPosFromPix(x, v.getY(), tool);
+			}
+		}	
 	}
 	
 	private int addVertex(AbstractPosTool tool){

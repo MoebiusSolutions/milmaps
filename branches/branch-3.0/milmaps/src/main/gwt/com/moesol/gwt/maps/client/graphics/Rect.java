@@ -12,7 +12,6 @@ import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
-import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
@@ -24,25 +23,49 @@ public class Rect extends AbstractSegment {
 	private AbstractPosTool m_endTool = null;
 	protected AbstractPosTool m_translationTool = null;
 	private final AnchorHandle m_translationHandle = new AnchorHandle();
-	
+
 	private int m_X, m_Y;
-	
-	public Rect(){
+
+	public Rect() {
 		m_id = "Rectangle";
 		m_translationHandle.setStrokeColor(255, 0, 0, 1);
 	}
-	
+
+	public static IShape create(ICoordConverter conv, GeodeticCoords start,
+													  GeodeticCoords end) {
+		Rect rect = new Rect();
+		rect.setCoordConverter(conv);
+		rect.setCornerPts(start, end);
+		return (IShape) rect;
+	}
+
+	public static IShapeTool create(IShapeEditor editor, GeodeticCoords start,
+														 GeodeticCoords end) {
+		ICoordConverter conv = editor.getCoordinateConverter();
+		IShape shape = create(conv, start, end);
+		editor.addShape(shape);
+		return shape.createEditTool(editor);
+	}
+
 	private void checkForException() {
 		if (m_convert == null) {
 			throw new IllegalStateException("Rect: m_convert = null");
 		}
 	}
 	
+	public void setCornerPts(GeodeticCoords start, GeodeticCoords end) {
+		AbstractPosTool tool = getStartTool();
+		tool.setGeoPos(start);
+		tool = getEndTool();
+		tool.setGeoPos(end);
+		updateRngBrg();
+	}
+
 	private void setPosFromPix(int x, int y, AbstractPosTool tool) {
 		checkForException();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
 		GeodeticCoords pos = tool.getGeoPos();
-		if (pos == null  || !pos.equals(gc)) {
+		if (pos == null || !pos.equals(gc)) {
 			tool.setGeoPos(gc);
 			m_needsUpdate = true;
 		}
@@ -53,21 +76,22 @@ public class Rect extends AbstractSegment {
 		GeodeticCoords startGc = m_startTool.getGeoPos();
 		GeodeticCoords endGc = m_endTool.getGeoPos();
 		m_diagRngBrg = m_rb.gcRngBrgFromTo(startGc, endGc);
-		
+
 	}
-	
-	public IAnchorTool getStartAnchorTool(){
-		if(m_startTool == null){
+
+	public IAnchorTool getStartAnchorTool() {
+		if (m_startTool == null) {
 			m_startTool = getStartTool();
 		}
-		return (IAnchorTool)m_startTool;
+		return (IAnchorTool) m_startTool;
 	}
 
 	protected AbstractPosTool getStartTool() {
 		if (m_startTool == null) {
 			m_startTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(Event event) {;
+				public void handleMouseDown(Event event) {
+					;
 				}
 
 				@Override
@@ -75,7 +99,7 @@ public class Rect extends AbstractSegment {
 					int x = event.getClientX();
 					int y = event.getClientY();
 					m_startTool = getStartTool();
-					setPosFromPix(x,y,m_startTool);
+					setPosFromPix(x, y, m_startTool);
 					updateRngBrg();
 					updateTranslationHandle();
 				}
@@ -85,7 +109,7 @@ public class Rect extends AbstractSegment {
 					int x = event.getClientX();
 					int y = event.getClientY();
 					m_startTool = getStartTool();
-					setPosFromPix(x,y,m_startTool);
+					setPosFromPix(x, y, m_startTool);
 					updateRngBrg();
 					updateTranslationHandle();
 				}
@@ -97,9 +121,9 @@ public class Rect extends AbstractSegment {
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
-					if ( m_geoPos != null){
+					if (m_geoPos != null) {
 						ViewCoords radPt = m_convert.geodeticToView(m_geoPos);
-						return Func.isClose(radPt, vc, 4);						
+						return Func.isClose(radPt, vc, 4);
 					}
 					return false;
 				}
@@ -107,12 +131,12 @@ public class Rect extends AbstractSegment {
 		}
 		return m_startTool;
 	}
-	
-	public IAnchorTool getEndAnchorTool(){
-		if(m_endTool == null){
+
+	public IAnchorTool getEndAnchorTool() {
+		if (m_endTool == null) {
 			m_endTool = getEndTool();
 		}
-		return (IAnchorTool)m_endTool;
+		return (IAnchorTool) m_endTool;
 	}
 
 	protected AbstractPosTool getEndTool() {
@@ -127,17 +151,17 @@ public class Rect extends AbstractSegment {
 					int x = event.getClientX();
 					int y = event.getClientY();
 					m_endTool = getEndTool();
-					setPosFromPix(x,y,m_endTool);
+					setPosFromPix(x, y, m_endTool);
 					updateRngBrg();
 					updateTranslationHandle();
 				}
 
 				@Override
-				public void  handleMouseUp(Event event) {
+				public void handleMouseUp(Event event) {
 					int x = event.getClientX();
 					int y = event.getClientY();
 					m_endTool = getEndTool();
-					setPosFromPix(x,y,m_endTool);
+					setPosFromPix(x, y, m_endTool);
 					updateRngBrg();
 					updateTranslationHandle();
 				}
@@ -150,9 +174,9 @@ public class Rect extends AbstractSegment {
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
-					if ( m_geoPos != null){
+					if (m_geoPos != null) {
 						ViewCoords radPt = m_convert.geodeticToView(m_geoPos);
-						return Func.isClose(radPt, vc, 4);						
+						return Func.isClose(radPt, vc, 4);
 					}
 					return false;
 				}
@@ -172,61 +196,62 @@ public class Rect extends AbstractSegment {
 		}
 		return m_endTool;
 	}
-	
+
 	// TODO
-	private void updateTranslationHandle(){
+	private void updateTranslationHandle() {
 		GeodeticCoords gc = m_startTool.getGeoPos();
-		ViewCoords p = m_convert.geodeticToView(gc); 
-		 int x = p.getX()- TRANSLATE_HANDLE_OFFSET_X;
-		 m_translationHandle.setCenter(x, p.getY());
+		ViewCoords p = m_convert.geodeticToView(gc);
+		int x = p.getX() - TRANSLATE_HANDLE_OFFSET_X;
+		m_translationHandle.setCenter(x, p.getY());
 	}
-	
-	private void moveLineByOffset(int x, int y){
+
+	private void moveLineByOffset(int x, int y) {
 		m_startHandle.moveByOffset(x, y);
 		int ix = m_startHandle.getX();
 		int iy = m_startHandle.getY();
-		setPosFromPix(ix,iy,m_startTool);
+		setPosFromPix(ix, iy, m_startTool);
 		double rngKm = m_diagRngBrg.getRanegKm();
 		double brg = m_diagRngBrg.getBearing();
-		GeodeticCoords gc = m_rb.gcPointFrom(m_startTool.getGeoPos(), brg, rngKm);
+		GeodeticCoords gc = m_rb.gcPointFrom(m_startTool.getGeoPos(), brg,
+				rngKm);
 		m_endTool.setGeoPos(gc);
 		// Update translation handle
 		m_translationHandle.setCenter(x, y);
 	}
-	
-	protected AbstractPosTool getTranslationTool(){
-		if (m_translationTool == null){
-			m_translationTool = new AbstractPosTool(){
+
+	protected AbstractPosTool getTranslationTool() {
+		if (m_translationTool == null) {
+			m_translationTool = new AbstractPosTool() {
 				@Override
 				public void handleMouseDown(Event event) {
 				}
-	
+
 				@Override
 				public void handleMouseMove(Event event) {
-					int x = event.getClientX()- m_X;
-					int y = event.getClientY()- m_Y;
-					moveLineByOffset(x,y);
+					int x = event.getClientX() - m_X;
+					int y = event.getClientY() - m_Y;
+					moveLineByOffset(x, y);
 					m_X = event.getClientX();
 					m_Y = event.getClientY();
 				}
-	
+
 				@Override
 				public void handleMouseUp(Event event) {
-					int x = event.getClientX()- m_X;
-					int y = event.getClientY()- m_Y;
-					moveLineByOffset(x,y);
+					int x = event.getClientX() - m_X;
+					int y = event.getClientY() - m_Y;
+					moveLineByOffset(x, y);
 					m_X = event.getClientX();
 					m_Y = event.getClientY();
 				}
-	
+
 				@Override
 				public void handleMouseOut(Event event) {
 				}
-	
+
 				@Override
 				public void handleMouseDblClick(Event event) {
 				}
-				
+
 				@Override
 				public boolean isSlected(GeodeticCoords gc) {
 					ViewCoords vc = m_convert.geodeticToView(gc);
@@ -237,30 +262,28 @@ public class Rect extends AbstractSegment {
 		}
 		return m_translationTool;
 	}
-	
-	private void drawSegments(Context2d context){
+
+	private void drawSegments(Context2d context) {
 		GeodeticCoords tl = m_startTool.getGeoPos();
 		GeodeticCoords br = m_endTool.getGeoPos();
 		GeodeticCoords tr = new GeodeticCoords(br.getLambda(AngleUnit.DEGREES),
-											   tl.getPhi(AngleUnit.DEGREES),
-											   AngleUnit.DEGREES);
+				tl.getPhi(AngleUnit.DEGREES), AngleUnit.DEGREES);
 		GeodeticCoords bl = new GeodeticCoords(tl.getLambda(AngleUnit.DEGREES),
-				   							   br.getPhi(AngleUnit.DEGREES),
-				   							   AngleUnit.DEGREES);
+				br.getPhi(AngleUnit.DEGREES), AngleUnit.DEGREES);
 		ISplit splitter = m_convert.getISplit();
 		// MUST first initialize
 		splitter.initialize(ISplit.NO_ADJUST);
-		drawBoxSides(tl, tr, br, bl,context);
-		if (splitter.isSplit()){
+		drawBoxSides(tl, tr, br, bl, context);
+		if (splitter.isSplit()) {
 			// Must initialize with new values.
 			splitter.initialize(ISplit.ADJUST);
-			drawBoxSides(tl, tr, br, bl,context);
+			drawBoxSides(tl, tr, br, bl, context);
 		}
 	}
-	
+
 	private void drawBoundary(Context2d context) {
 		checkForException();
-		/////////////////////////////////////////
+		// ///////////////////////////////////////
 		drawSegments(context);
 	}
 
@@ -272,19 +295,18 @@ public class Rect extends AbstractSegment {
 		context.stroke();
 	}
 
-
 	@Override
 	public IShape erase(Context2d ct) {
-		//_erase(ct);
-		return (IShape)this;
+		// _erase(ct);
+		return (IShape) this;
 	}
-	
+
 	@Override
 	public IShape render(Context2d ct) {
 		draw(ct);
-		return (IShape)this;
+		return (IShape) this;
 	}
-	
+
 	@Override
 	public IShape drawHandles(Context2d context) {
 		if (context != null) {
@@ -294,7 +316,7 @@ public class Rect extends AbstractSegment {
 			ViewCoords vc = m_convert.geodeticToView(gc);
 			m_startHandle.setCenter(vc.getX(), vc.getY());
 			m_startHandle.draw(context);
-			if(splitter.isSplit()){
+			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
 				m_startHandle.setCenter(x, vc.getY()).draw(context);
@@ -303,21 +325,21 @@ public class Rect extends AbstractSegment {
 			gc = getEndPos();
 			vc = m_convert.geodeticToView(gc);
 			m_endHandle.setCenter(vc.getX(), vc.getY()).draw(context);
-			if(splitter.isSplit()){
+			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
 				m_endHandle.setCenter(x, vc.getY()).draw(context);
 			}
-			int x = m_startHandle.getX()-TRANSLATE_HANDLE_OFFSET_X;
+			int x = m_startHandle.getX() - TRANSLATE_HANDLE_OFFSET_X;
 			int y = m_startHandle.getY();
 			m_translationHandle.setCenter(x, y).draw(context);
-			if(splitter.isSplit()){
+			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(x));
 				x += splitter.getDistance(side);
 				m_translationHandle.setCenter(x, y).draw(context);
 			}
 		}
-		return (IShape)this;
+		return (IShape) this;
 	}
 
 	public GeodeticCoords getEndPos() {
@@ -338,7 +360,7 @@ public class Rect extends AbstractSegment {
 	}
 
 	public void setTlPos(GeodeticCoords pos) {
-		if (m_startTool == null){
+		if (m_startTool == null) {
 			m_startTool = getStartTool();
 		}
 		m_startTool.setGeoPos(pos);
@@ -348,37 +370,34 @@ public class Rect extends AbstractSegment {
 		setTlPos(pos);
 		return this;
 	}
-	
-	protected boolean ptClose(int px, int py, double eps){
+
+	protected boolean ptClose(int px, int py, double eps) {
 		GeodeticCoords tl = m_startTool.getGeoPos();
 		GeodeticCoords br = m_endTool.getGeoPos();
 		GeodeticCoords tr = new GeodeticCoords(br.getLambda(AngleUnit.DEGREES),
-											   tl.getPhi(AngleUnit.DEGREES),
-											   AngleUnit.DEGREES);
+				tl.getPhi(AngleUnit.DEGREES), AngleUnit.DEGREES);
 		GeodeticCoords bl = new GeodeticCoords(tl.getLambda(AngleUnit.DEGREES),
-				   							   br.getPhi(AngleUnit.DEGREES),
-				   							   AngleUnit.DEGREES);
-		
+				br.getPhi(AngleUnit.DEGREES), AngleUnit.DEGREES);
+
 		// Top left to top right
-		if (ptClose(tl,tr,px,py,eps)){
+		if (ptClose(tl, tr, px, py, eps)) {
 			return true;
 		}
-		//top right to bottom right
-		if (ptClose(tr,br,px,py,eps)){
+		// top right to bottom right
+		if (ptClose(tr, br, px, py, eps)) {
 			return true;
 		}
 		// bottom right to bottom left
-		if (ptClose(br,bl,px,py,eps)){
+		if (ptClose(br, bl, px, py, eps)) {
 			return true;
 		}
-		
+
 		// bottom left to top left
-		if (ptClose(bl,tl,px,py,eps)){
+		if (ptClose(bl, tl, px, py, eps)) {
 			return true;
 		}
 		return false;
 	}
-
 
 	@Override
 	public boolean positionTouches(GeodeticCoords position) {
@@ -394,36 +413,35 @@ public class Rect extends AbstractSegment {
 		if (Func.isClose(pix, vc, Func.PIX_SELECT_TOLERANCE)) {
 			return true;
 		}
-		return ptClose( vc.getX(), vc.getY(), Func.PIX_SELECT_TOLERANCE);
+		return ptClose(vc.getX(), vc.getY(), Func.PIX_SELECT_TOLERANCE);
 	}
 
 	@Override
-	
 	public IAnchorTool getAnchorByPosition(GeodeticCoords position) {
 		checkForException();
 		AbstractPosTool tool = getEndTool();
-		if (tool.isSlected(position)){
-			return (IAnchorTool)tool;
+		if (tool.isSlected(position)) {
+			return (IAnchorTool) tool;
 		}
 		tool = getStartTool();
-		if (tool.isSlected(position)){
-			return (IAnchorTool)tool;
+		if (tool.isSlected(position)) {
+			return (IAnchorTool) tool;
 		}
 		tool = getTranslationTool();
-		setPosFromPix(m_translationHandle.getX(),
-					  m_translationHandle.getY(),tool);
-		if (tool.isSlected(position)){
+		setPosFromPix(m_translationHandle.getX(), m_translationHandle.getY(),
+				tool);
+		if (tool.isSlected(position)) {
 			m_X = m_translationHandle.getX();
 			m_Y = m_translationHandle.getY();
-			return (IAnchorTool)tool;
+			return (IAnchorTool) tool;
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-	   	IShapeTool tool = new EditRectTool(se);
-	   	tool.setShape(this);
-	   	return tool;
+		IShapeTool tool = new EditRectTool(se);
+		tool.setShape(this);
+		return tool;
 	}
 }
