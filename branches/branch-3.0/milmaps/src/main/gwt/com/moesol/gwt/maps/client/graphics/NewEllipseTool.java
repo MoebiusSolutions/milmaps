@@ -104,11 +104,6 @@ public class NewEllipseTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public String getType() {
-		return "new_circle_tool";
-	}
-
-	@Override
 	public void setAnchor(IAnchorTool anchor) {
 		// TODO Auto-generated method stub
 	}

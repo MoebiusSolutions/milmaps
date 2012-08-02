@@ -8,7 +8,6 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;

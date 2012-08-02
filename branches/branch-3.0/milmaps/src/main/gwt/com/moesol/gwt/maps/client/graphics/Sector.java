@@ -13,8 +13,6 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
-import com.moesol.gwt.maps.client.units.Distance;
-import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Sector extends AbstractShape {
 	private static final int NUM_SEC_PTS = 36;

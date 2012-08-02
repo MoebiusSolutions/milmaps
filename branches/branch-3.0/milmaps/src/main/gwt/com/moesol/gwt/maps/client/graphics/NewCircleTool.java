@@ -90,9 +90,4 @@ public class NewCircleTool extends  AbstractNewTool {
 	public void done() {
 		m_editor.setShapeTool(null);
 	}
-
-	@Override
-	public String getType() {
-		return "new_circle_tool";
-	}
 }

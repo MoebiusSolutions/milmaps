@@ -98,11 +98,6 @@ public class NewFreeFormTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public String getType() {
-		return "new_freeform_tool";
-	}
-
-	@Override
 	public void setAnchor(IAnchorTool anchor) {
 	}
 

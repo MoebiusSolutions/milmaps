@@ -15,9 +15,6 @@ import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
-import com.moesol.gwt.maps.client.units.Bearing;
-import com.moesol.gwt.maps.client.units.Distance;
-import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class FreeForm extends AbstractShape {
 	protected List<AnchorHandle> m_handleList = new ArrayList<AnchorHandle>();

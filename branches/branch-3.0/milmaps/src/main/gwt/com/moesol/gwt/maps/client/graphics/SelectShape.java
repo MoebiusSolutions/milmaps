@@ -87,11 +87,6 @@ public class SelectShape implements IShapeTool{
 	@Override
 	public void handleMouseOut(Event event) {
 	}
-	
-	@Override
-	public String getType() {
-		return null;
-	}
 
 	@Override
 	public IShape getShape() {
@@ -120,7 +115,6 @@ public class SelectShape implements IShapeTool{
 
 	@Override
 	public void handleKeyDown(Event event) {
-		int x = 0;
 	}
 
 	@Override

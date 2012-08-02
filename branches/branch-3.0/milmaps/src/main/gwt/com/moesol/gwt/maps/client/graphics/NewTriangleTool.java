@@ -107,11 +107,6 @@ public class NewTriangleTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public String getType() {
-		return "new_triangle_tool";
-	}
-
-	@Override
 	public void setAnchor(IAnchorTool anchor) {
 	}
 

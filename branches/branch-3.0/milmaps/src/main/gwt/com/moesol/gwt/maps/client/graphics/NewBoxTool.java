@@ -104,11 +104,6 @@ public class NewBoxTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public String getType() {
-		return "new_box_tool";
-	}
-
-	@Override
 	public void setAnchor(IAnchorTool anchor) {
 		// TODO Auto-generated method stub
 	}
