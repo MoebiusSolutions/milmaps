@@ -42,11 +42,11 @@ public class Box extends AbstractSegment {
 		box.getCenterTool().setGeoPos(center);
 		double deg = brg.bearing().degrees();
 		double rngKm = smj.getDistance(DistanceUnit.KILOMETERS);
-		box.m_smjRngBrg.setRanegKm(rngKm).setBearing(deg);
+		box.m_smjRngBrg.widthRangeKm(rngKm).setBearing(deg);
 		GeodeticCoords pos = m_rb.gcPointFrom(center, deg, rngKm);
 		box.getSmjTool().setGeoPos(pos);
 		rngKm = smn.getDistance(DistanceUnit.KILOMETERS);
-		box.m_smnRngBrg.setRanegKm(rngKm).setBearing(deg - 90);
+		box.m_smnRngBrg.widthRangeKm(rngKm).setBearing(deg - 90);
 		pos = m_rb.gcPointFrom(center, deg - 90, rngKm);
 		box.getSmnTool().setGeoPos(pos);
 
@@ -192,7 +192,7 @@ public class Box extends AbstractSegment {
 			GeodeticCoords cent = m_centerTool.getGeoPos();
 			double rangeKm = m_rb.gcDistanceFromTo(cent, gc);
 			double bearing = m_smnRngBrg.getBearing();
-			m_smnRngBrg.setRanegKm(rangeKm);
+			m_smnRngBrg.setRangeKm(rangeKm);
 			pos = m_rb.gcPointFrom(cent, bearing, rangeKm);
 			m_smnTool.setGeoPos(pos);
 			m_needsUpdate = true;
@@ -207,7 +207,7 @@ public class Box extends AbstractSegment {
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		double rangeKm = m_rb.gcDistanceFromTo(cent, smnPos);
 		double brg = m_rb.gcBearingFromTo(cent, smnPos);
-		m_smnRngBrg.setRanegKm(rangeKm);
+		m_smnRngBrg.setRangeKm(rangeKm);
 		m_smnRngBrg.setBearing(brg);
 		m_needsUpdate = true;
 	}

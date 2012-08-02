@@ -175,7 +175,7 @@ public class EArc extends AbstractShape{
 			double deg = Func.BrgToAngleDeg(smjBrg) + Func.BrgToAngleDeg(brg);
 			double rngKm = compRangeForDeg(deg, m_smjRngBrg.getRanegKm(),
 												m_smnRngBrg.getRanegKm());
-			rb.setRanegKm(rngKm).setBearing(deg);
+			rb.widthRangeKm(rngKm).setBearing(deg);
 			pos = m_rb.gcPointFrom(centGc, brg, rngKm);
 			tool.setGeoPos(pos);
 			m_needsUpdate = true;
@@ -188,7 +188,7 @@ public class EArc extends AbstractShape{
 		double brg = rb.getBearing();
 		double rngKm = compRangeForDeg(brg, m_smjRngBrg.getRanegKm(),
 											m_smnRngBrg.getRanegKm());
-		rb.setRanegKm(rngKm);
+		rb.setRangeKm(rngKm);
 		double deg = m_smjRngBrg.getBearing() - brg;
 		GeodeticCoords pos = m_rb.gcPointFrom(centGc, deg, rngKm);
 		tool.setGeoPos(pos);
@@ -272,7 +272,7 @@ public class EArc extends AbstractShape{
 			GeodeticCoords centGc = m_centerTool.getGeoPos();
 			double rangeKm = m_rb.gcDistanceFromTo(centGc, gc);
 			double bearing = m_smnRngBrg.getBearing();
-			m_smnRngBrg.setRanegKm(rangeKm);
+			m_smnRngBrg.setRangeKm(rangeKm);
 			pos = m_rb.gcPointFrom(centGc, bearing , rangeKm);
 			m_smnTool.setGeoPos(pos);
 			m_needsUpdate = true;
@@ -287,7 +287,7 @@ public class EArc extends AbstractShape{
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		double rangeKm = m_rb.gcDistanceFromTo(cent, smnPos);
 		double brg = m_rb.gcBearingFromTo(cent, smnPos);
-		m_smnRngBrg.setRanegKm(rangeKm);
+		m_smnRngBrg.setRangeKm(rangeKm);
 		m_smnRngBrg.setBearing(brg);
 		m_needsUpdate = true;		
 	}

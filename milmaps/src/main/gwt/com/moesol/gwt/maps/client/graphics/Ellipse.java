@@ -44,11 +44,11 @@ public class Ellipse extends AbstractShape {
 		ellipse.getCenterTool().setGeoPos(center);
 		double deg = brg.bearing().degrees();
 		double rngKm = smj.getDistance(DistanceUnit.KILOMETERS);
-		ellipse.m_smjRngBrg.setRanegKm(rngKm).setBearing(deg);
+		ellipse.m_smjRngBrg.widthRangeKm(rngKm).setBearing(deg);
 		GeodeticCoords pos = m_rb.gcPointFrom(center, deg, rngKm);
 		ellipse.getSmjTool().setGeoPos(pos);
 		rngKm = smn.getDistance(DistanceUnit.KILOMETERS);
-		ellipse.m_smnRngBrg.setRanegKm(rngKm).setBearing(deg - 90);
+		ellipse.m_smnRngBrg.widthRangeKm(rngKm).setBearing(deg - 90);
 		pos = m_rb.gcPointFrom(center, deg - 90, rngKm);
 		ellipse.getSmnTool().setGeoPos(pos);
 
@@ -219,7 +219,7 @@ public class Ellipse extends AbstractShape {
 			GeodeticCoords cent = m_centerTool.getGeoPos();
 			double rangeKm = m_rb.gcDistanceFromTo(cent, gc);
 			double bearing = m_smnRngBrg.getBearing();
-			m_smnRngBrg.setRanegKm(rangeKm);
+			m_smnRngBrg.setRangeKm(rangeKm);
 			pos = m_rb.gcPointFrom(cent, bearing, rangeKm);
 			m_smnTool.setGeoPos(pos);
 			m_needsUpdate = true;
@@ -234,7 +234,7 @@ public class Ellipse extends AbstractShape {
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		double rangeKm = m_rb.gcDistanceFromTo(cent, smnPos);
 		double brg = m_rb.gcBearingFromTo(cent, smnPos);
-		m_smnRngBrg.setRanegKm(rangeKm);
+		m_smnRngBrg.setRangeKm(rangeKm);
 		m_smnRngBrg.setBearing(brg);
 		m_needsUpdate = true;
 	}
