@@ -54,7 +54,7 @@ public class NewFreehandTool extends  AbstractNewTool {
 		if (m_freehand != null){
 			drawHandles();
 			// we are done with initial creation so set the edit tool
-			IShapeTool tool = new EditFreehandTool(m_editor);
+			IShapeTool tool = new FreeXEditTool(m_editor);
 			tool.setShape((IShape)m_freehand);
 			m_editor.setShapeTool(tool);
 			m_editor.renderObjects();
