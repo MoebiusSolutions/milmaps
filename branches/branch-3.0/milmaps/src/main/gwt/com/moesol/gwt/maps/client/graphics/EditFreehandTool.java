@@ -7,7 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Event;
@@ -16,18 +15,11 @@ import com.moesol.gwt.maps.client.ViewCoords;
 
 public class EditFreehandTool extends AbstractEditTool{
 		private Freehand m_freeForm = null;
-		private Canvas m_canvas = null;
-		private boolean m_mouseDown = false;
-		private IAnchorTool m_anchorTool = null;
-		private ICoordConverter m_convert;
-		private IShapeEditor m_editor;
 		private boolean m_cntrlKeydown = false;
 		private boolean m_shiftKeydown = false;
 
 		public EditFreehandTool(IShapeEditor se) {
-			m_editor = se;
-			m_canvas = se.getCanvasTool().canvas();
-			m_convert = se.getCoordinateConverter();
+			super(se);
 		}
 		
 		private void drawHandles() {

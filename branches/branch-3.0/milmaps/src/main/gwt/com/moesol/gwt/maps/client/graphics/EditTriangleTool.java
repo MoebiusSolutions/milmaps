@@ -15,16 +15,9 @@ import com.moesol.gwt.maps.client.ViewCoords;
 
 public class EditTriangleTool extends AbstractEditTool{
 	private Triangle m_triangle = null;
-	private Canvas m_canvas = null;
-	private boolean m_mouseDown = false;
-	private IAnchorTool m_anchorTool = null;
-	private ICoordConverter m_convert;
-	private IShapeEditor m_editor;
 
 	public EditTriangleTool(IShapeEditor se) {
-		m_editor  = se;
-		m_canvas  = se.getCanvasTool().canvas();
-		m_convert = se.getCoordinateConverter();
+		super(se);
 	}
 	
 	private void drawHandles() {
@@ -42,17 +35,7 @@ public class EditTriangleTool extends AbstractEditTool{
 	
 	@Override
 	public void handleMouseDown(Event event) {
-		// Get Selected Anchor
-		int x = event.getClientX();
-		int y = event.getClientY();
-		m_mouseDown = true;
-		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		m_anchorTool = m_triangle.getAnchorByPosition(gc);
-		if(m_anchorTool == null){
-			m_triangle.selected(false);
-			m_editor.clearCanvas().renderObjects();
-			m_editor.setShapeTool(new SelectShape(m_editor));
-		}
+		handleMouseDown(m_triangle,event);
 	}
 
 	@Override
