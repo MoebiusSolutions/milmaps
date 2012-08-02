@@ -97,11 +97,6 @@ public class NewArrowTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public String getType() {
-		return "new_arrow_tool";
-	}
-
-	@Override
 	public void setAnchor(IAnchorTool anchor) {
 	}
 

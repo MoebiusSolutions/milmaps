@@ -91,9 +91,4 @@ public class NewArcTool extends  AbstractNewTool {
 	public void done() {
 		m_editor.setShapeTool(null);
 	}
-
-	@Override
-	public String getType() {
-		return "new_arc_tool";
-	}
 }

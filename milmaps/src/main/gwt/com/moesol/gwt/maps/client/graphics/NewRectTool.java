@@ -91,9 +91,4 @@ public class NewRectTool extends  AbstractNewTool {
 		m_editor.setShapeTool(null);
 	}
 
-	@Override
-	public String getType() {
-		return "new_rect_tool";
-	}
-
 }

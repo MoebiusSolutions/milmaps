@@ -90,9 +90,4 @@ public class NewLineTool extends  AbstractNewTool {
 	public void done() {
 		m_editor.setShapeTool(null);
 	}
-
-	@Override
-	public String getType() {
-		return "new_line_tool";
-	}
 }

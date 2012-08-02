@@ -12,9 +12,7 @@ import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
-import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
-import com.moesol.gwt.maps.client.units.Bearing;
 import com.moesol.gwt.maps.client.units.Distance;
 import com.moesol.gwt.maps.client.units.DistanceUnit;
 

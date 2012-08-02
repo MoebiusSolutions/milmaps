@@ -10,7 +10,6 @@ package com.moesol.gwt.maps.client.graphics;
 
 public interface IShapeTool extends IHandlerTool {
 	public abstract void hilite();
-	public abstract String getType();
 	public abstract void setShape(IShape shape);
 	public abstract void setAnchor(IAnchorTool anchor);
 	public abstract IShape getShape();

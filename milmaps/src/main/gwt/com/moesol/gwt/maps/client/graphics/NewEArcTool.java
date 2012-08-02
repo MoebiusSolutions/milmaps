@@ -104,11 +104,6 @@ public class NewEArcTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public String getType() {
-		return "new_arc_tool";
-	}
-
-	@Override
 	public void setAnchor(IAnchorTool anchor) {
 		// TODO Auto-generated method stub
 	}
