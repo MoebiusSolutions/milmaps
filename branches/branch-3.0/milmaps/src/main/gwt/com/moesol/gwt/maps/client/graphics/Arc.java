@@ -29,9 +29,6 @@ public class Arc extends AbstractShape {
 	private AbstractPosTool m_endBrgTool = null;
 	private AbstractPosTool m_centerTool = null;
 
-	private boolean m_ctrlKeydown = false;
-	private boolean m_shiftKeydown = false;
-
 	public Arc() {
 		m_id = "Arc";
 	}
@@ -132,11 +129,6 @@ public class Arc extends AbstractShape {
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords radPos = m_startBrgTool.getGeoPos();
 		m_startRngBrg = m_rb.gcRngBrgFromTo(cent, radPos);
-	}
-
-	public void setKeyboardFlags(boolean altKey, boolean shiftKey) {
-		m_ctrlKeydown = altKey;
-		m_shiftKeydown = shiftKey;
 	}
 
 	public IAnchorTool getStartBrgAnchorTool() {
@@ -589,7 +581,7 @@ public class Arc extends AbstractShape {
 
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-		IShapeTool tool = new EditArcTool(se);
+		IShapeTool tool = new CommonEditTool(se);
 		tool.setShape(this);
 		return tool;
 	}

@@ -18,8 +18,6 @@ public abstract class AbstractEditTool implements IShapeTool{
 	protected IAnchorTool m_anchorTool = null;
 	protected ICoordConverter m_convert;
 	protected IShapeEditor m_editor;
-	protected boolean m_ctrlKeydown = false;
-	protected boolean m_shiftKeydown = false;
 	
 	public AbstractEditTool(IShapeEditor se) {
 		m_editor  = se;

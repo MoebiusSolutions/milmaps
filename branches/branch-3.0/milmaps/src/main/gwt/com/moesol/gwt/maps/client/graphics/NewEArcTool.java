@@ -90,7 +90,7 @@ public class NewEArcTool extends  AbstractNewTool {
 		m_arc.getSmjAnchorTool().handleMouseUp(event);
 		//drawCenterHandle();
 		// we are done with initial creation so set the edit tool
-		IShapeTool tool = new EditEArcTool(m_editor);
+		IShapeTool tool = new CommonEditTool(m_editor);
 		tool.setShape((IShape)m_arc);
 		m_editor.setShapeTool(tool);
 		m_editor.renderObjects();

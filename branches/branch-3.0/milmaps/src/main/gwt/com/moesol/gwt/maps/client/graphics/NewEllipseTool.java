@@ -90,7 +90,7 @@ public class NewEllipseTool extends  AbstractNewTool {
 		m_ellipse.getSmjAnchorTool().handleMouseUp(event);
 		//drawCenterHandle();
 		// we are done with initial creation so set the edit tool
-		IShapeTool tool = new EditEllipseTool(m_editor);
+		IShapeTool tool = new CommonEditTool(m_editor);
 		tool.setShape((IShape)m_ellipse);
 		m_editor.setShapeTool(tool);
 		m_editor.renderObjects();

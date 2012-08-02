@@ -74,7 +74,7 @@ public class NewRectTool extends  AbstractNewTool {
 		m_rect.getEndAnchorTool().handleMouseUp(event);
 		//drawCenterHandle();
 		// we are done with initial creation so set the edit tool
-		IShapeTool tool = new EditRectTool(m_editor);
+		IShapeTool tool = new CommonEditTool(m_editor);
 		tool.setShape((IShape)m_rect);
 		m_editor.setShapeTool(tool);
 		m_editor.renderObjects();

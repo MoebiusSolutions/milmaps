@@ -472,7 +472,7 @@ public class Ellipse extends AbstractShape {
 
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-		IShapeTool tool = new EditEllipseTool(se);
+		IShapeTool tool = new CommonEditTool(se);
 		tool.setShape(this);
 		return tool;
 	}

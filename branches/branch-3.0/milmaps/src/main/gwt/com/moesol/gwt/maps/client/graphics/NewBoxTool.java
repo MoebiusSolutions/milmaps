@@ -90,7 +90,7 @@ public class NewBoxTool extends  AbstractNewTool {
 		m_box.getSmjAnchorTool().handleMouseUp(event);
 		//drawCenterHandle();
 		// we are done with initial creation so set the edit tool
-		IShapeTool tool = new EditBoxTool(m_editor);
+		IShapeTool tool = new CommonEditTool(m_editor);
 		tool.setShape((IShape)m_box);
 		m_editor.setShapeTool(tool);
 		m_editor.renderObjects();

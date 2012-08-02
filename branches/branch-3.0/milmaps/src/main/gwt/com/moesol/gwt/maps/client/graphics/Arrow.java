@@ -391,7 +391,7 @@ public class Arrow extends AbstractShape {
 	
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-	   	IShapeTool tool = new EditArrowTool(se);
+	   	IShapeTool tool = new CommonEditTool(se);
 	   	tool.setShape(this);
 	   	return tool;
 	}

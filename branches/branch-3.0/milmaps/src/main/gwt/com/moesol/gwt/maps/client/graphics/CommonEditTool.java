@@ -8,15 +8,21 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public abstract class CommonEditTool extends AbstractEditTool {
+public class CommonEditTool extends AbstractEditTool {
 	protected AbstractShape m_abShape = null;
 	
 	public CommonEditTool(IShapeEditor se) {
 		super(se);
+	}
+	
+	@Override
+	public void setShape(IShape shape){
+		m_abShape = (AbstractShape)shape;
 	}
 	
 	@Override
@@ -52,6 +58,7 @@ public abstract class CommonEditTool extends AbstractEditTool {
 			m_abShape.drawHandles(context);
 		}
 	}
+	
 	
 	@Override
 	public void hilite() {
@@ -94,9 +101,27 @@ public abstract class CommonEditTool extends AbstractEditTool {
 
 	@Override
 	public void handleKeyDown(Event event) {
+		boolean ctrlKeydown = false;
+		boolean shiftKeydown = false;
+		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
+			ctrlKeydown = true;
+		}
+		else if (event.getKeyCode() == KeyCodes.KEY_SHIFT){
+			shiftKeydown = true;
+		}
+		m_abShape.setKeyboardFlags(ctrlKeydown, shiftKeydown);
 	}
 
 	@Override
 	public void handleKeyUp(Event event) {
+		boolean ctrlKeydown = false;
+		boolean shiftKeydown = false;
+		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
+			ctrlKeydown = false;
+		}
+		else if (event.getKeyCode() == KeyCodes.KEY_SHIFT){
+			shiftKeydown = false;
+		}
+		m_abShape.setKeyboardFlags(ctrlKeydown, shiftKeydown);
 	}
 }

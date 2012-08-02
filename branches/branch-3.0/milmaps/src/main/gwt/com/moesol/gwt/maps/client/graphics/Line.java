@@ -414,7 +414,7 @@ public class Line extends AbstractSegment {
 	
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-	   	IShapeTool tool = new EditLineTool(se);
+	   	IShapeTool tool = new CommonEditTool(se);
 	   	tool.setShape(this);
 	   	return tool;
 	}

@@ -363,7 +363,7 @@ public class Circle extends AbstractShape {
 
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-		IShapeTool tool = new EditCircleTool(se);
+		IShapeTool tool = new CommonEditTool(se);
 		tool.setShape(this);
 		return tool;
 	}

@@ -92,7 +92,7 @@ public class NewTriangleTool extends  AbstractNewTool {
 		if (m_triangle.size() == 3){
 			drawHandles();
 			// we are done with initial creation so set the edit tool
-			IShapeTool tool = new EditTriangleTool(m_editor);
+			IShapeTool tool = new CommonEditTool(m_editor);
 			tool.setShape((IShape)m_triangle);
 			m_editor.setShapeTool(tool);
 			m_editor.renderObjects();
