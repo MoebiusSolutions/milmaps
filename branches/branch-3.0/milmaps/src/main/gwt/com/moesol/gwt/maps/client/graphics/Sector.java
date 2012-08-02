@@ -76,7 +76,7 @@ public class Sector extends AbstractShape {
 			tool.setGeoPos(m_rb.gcPointFrom(cent, brg, rng));
 			if (toolRngBrg != null) {
 				toolRngBrg.setBearing(brg);
-				toolRngBrg.setRanegKm(rng);
+				toolRngBrg.setRangeKm(rng);
 			}
 		}
 		return;
@@ -408,7 +408,7 @@ public class Sector extends AbstractShape {
 		if (m_endRngBrg == null) {
 			m_endRngBrg = new RngBrg();
 		}
-		m_endRngBrg.setRanegKm(disKm * 0.8).setBearing(brgDeg);
+		m_endRngBrg.widthRangeKm(disKm * 0.8).setBearing(brgDeg);
 		GeodeticCoords pos = m_rb.gcPointFrom(cenPos, brgDeg, disKm);
 		setEndRngBrgPos(pos);
 	}

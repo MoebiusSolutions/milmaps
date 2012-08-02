@@ -15,13 +15,19 @@ public interface ISplit {
 	
 	public abstract void initialize(int adjust);
 	
-	public abstract ISplit setAjustFlag(boolean flag);
+	public abstract void setAjustFlag(boolean flag);
 	
-	public abstract ISplit setSplit(boolean split);
+	public abstract ISplit withAjustFlag(boolean flag);
+	
+	public abstract void setSplit(boolean split);
+	
+	public abstract ISplit withSplit(boolean split);
 	
 	public abstract boolean isSplit();
 	
-	public abstract ISplit setMove(int move);
+	public abstract void setMove(int move);
+	
+	public abstract ISplit withMove(int move);
 	
 	public abstract int getMove();
 	

@@ -84,7 +84,7 @@ public class Arc extends AbstractShape {
 			tool.setGeoPos(m_rb.gcPointFrom(cent, brg, rng));
 			if (toolRngBrg != null) {
 				toolRngBrg.setBearing(brg);
-				toolRngBrg.setRanegKm(rng);
+				toolRngBrg.setRangeKm(rng);
 			}
 		}
 		return;
@@ -92,7 +92,7 @@ public class Arc extends AbstractShape {
 
 	private void moveStartBrgPos(double rngKm) {
 		if (m_startRngBrg != null) {
-			m_startRngBrg.setRanegKm(rngKm);
+			m_startRngBrg.setRangeKm(rngKm);
 			double brg = m_startRngBrg.getBearing();
 			GeodeticCoords cent = m_centerTool.getGeoPos();
 			m_startBrgTool.setGeoPos(m_rb.gcPointFrom(cent, brg, rngKm));
@@ -430,7 +430,7 @@ public class Arc extends AbstractShape {
 		if (m_endRngBrg == null) {
 			m_endRngBrg = new RngBrg();
 		}
-		m_endRngBrg.setRanegKm(disKm).setBearing(brgDeg);
+		m_endRngBrg.widthRangeKm(disKm).setBearing(brgDeg);
 		GeodeticCoords pos = m_rb.gcPointFrom(cenPos, brgDeg, disKm);
 		setEndBrgPos(pos);
 	}
@@ -489,13 +489,13 @@ public class Arc extends AbstractShape {
 		throw new IllegalStateException("Arc: m_convert = null");
 	}
 
-	public Arc setStartBrgPos(GeodeticCoords pos) {
+	public void setStartBrgPos(GeodeticCoords pos) {
 		m_startBrgTool.setGeoPos(pos);
-		return this;
 	}
 
 	public Arc withStartBrgPos(GeodeticCoords pos) {
-		return setStartBrgPos(pos);
+		setStartBrgPos(pos);
+		return this;
 	}
 
 	public GeodeticCoords getStartBrgPos() {
