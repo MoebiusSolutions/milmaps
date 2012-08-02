@@ -507,7 +507,7 @@ public class Box extends AbstractSegment {
 
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-		IShapeTool tool = new EditBoxTool(se);
+		IShapeTool tool = new CommonEditTool(se);
 		tool.setShape(this);
 		return tool;
 	}

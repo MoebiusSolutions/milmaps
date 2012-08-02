@@ -109,7 +109,7 @@ public class NewArrowTool extends  AbstractNewTool {
 		if (m_arrow != null){
 			drawHandles();
 			// we are done with initial creation so set the edit tool
-			IShapeTool tool = new EditArrowTool(m_editor);
+			IShapeTool tool = new CommonEditTool(m_editor);
 			tool.setShape((IShape)m_arrow);
 			m_editor.setShapeTool(tool);
 			m_editor.renderObjects();

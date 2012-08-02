@@ -17,6 +17,9 @@ public abstract class AbstractShape implements IShape{
 	protected boolean m_bSeletected = false;
 	protected boolean m_needsUpdate = false;
 	
+	protected boolean m_ctrlKeydown = false;
+	protected boolean m_shiftKeydown = false;
+	
 	protected static final RangeBearingS m_rb = new RangeBearingS();
 	
 	protected ICoordConverter m_convert;
@@ -24,6 +27,11 @@ public abstract class AbstractShape implements IShape{
 	// Shape interface implementation
 	public void setCoordConverter(ICoordConverter cc) {
 		m_convert = cc;
+	}
+	
+	public void setKeyboardFlags(boolean altKey, boolean shiftKey) {
+		m_ctrlKeydown = altKey;
+		m_shiftKeydown = shiftKey;
 	}
 	
 	@Override
