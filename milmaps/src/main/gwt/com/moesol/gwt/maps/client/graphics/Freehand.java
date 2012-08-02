@@ -33,7 +33,7 @@ public class Freehand extends FreeForm {
 	
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-	   	IShapeTool tool = new EditFreehandTool(se);
+	   	IShapeTool tool = new FreeXEditTool(se);
 	   	tool.setShape(this);
 	   	return tool;
 	}

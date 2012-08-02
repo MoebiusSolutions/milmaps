@@ -13,7 +13,7 @@ import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public abstract class FreeXEditTool extends AbstractEditTool{
+public class FreeXEditTool extends AbstractEditTool{
 	protected FreeForm m_freeForm = null;
 	protected boolean m_cntrlKeydown = false;
 	protected boolean m_shiftKeydown = false;
@@ -27,6 +27,12 @@ public abstract class FreeXEditTool extends AbstractEditTool{
 			Context2d context = m_canvas.getContext2d();
 			m_freeForm.drawHandles(context);
 		}
+	}
+	
+	@Override
+	public void hilite() {
+		m_editor.renderObjects();
+		drawHandles();
 	}
 
 	@Override
@@ -60,6 +66,48 @@ public abstract class FreeXEditTool extends AbstractEditTool{
 				m_anchorTool = null;
 			}
 		}
+	}
+	
+	@Override
+	public void handleMouseMove(Event event) {
+		if (m_mouseDown == true){
+			if (m_anchorTool != null){
+				m_anchorTool.handleMouseMove(event);
+				m_editor.clearCanvas().renderObjects();
+				drawHandles();
+			}
+		}
+	}
+	
+	@Override
+	public void handleMouseUp(Event event) {
+		m_mouseDown = false;
+		if (m_anchorTool != null){
+			m_editor.renderObjects();
+			m_anchorTool.handleMouseUp(event);
+		}	
+	}
+
+	@Override
+	public void handleMouseOut(Event event) {
+		if (m_anchorTool != null){
+			m_anchorTool.handleMouseOut(event);
+		}
+	}
+
+	@Override
+	public void done() {
+		m_editor.clearCanvas().renderObjects();
+	}
+	
+	@Override
+	public void setShape(IShape shape){
+		m_freeForm = (FreeForm)shape; 
+	}
+
+	@Override
+	public IShape getShape() {
+		return (IShape)m_freeForm;
 	}
 	
 	@Override

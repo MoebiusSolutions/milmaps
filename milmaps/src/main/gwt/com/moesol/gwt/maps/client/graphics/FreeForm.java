@@ -329,7 +329,7 @@ public class FreeForm extends AbstractShape {
 
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-		IShapeTool tool = new EditFreeFormTool(se);
+		IShapeTool tool = new FreeXEditTool(se);
 		tool.setShape(this);
 		return tool;
 	}
