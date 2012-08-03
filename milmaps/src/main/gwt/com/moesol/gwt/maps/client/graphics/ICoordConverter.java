@@ -29,5 +29,7 @@ public interface ICoordConverter {
 	
 	public abstract int mapWidth();
 	
+	public abstract void setISplit(ISplit split);
+	
 	public abstract ISplit getISplit();
 }

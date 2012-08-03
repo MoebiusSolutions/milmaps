@@ -27,7 +27,7 @@ public class ShapeEditor implements IShapeEditor{
 	IShapeTool m_shapeTool; 
 	//IAnchorTool m_anchorTool = null;
 	List<IShape> m_objs = new ArrayList<IShape>();
-	ICoordConverter m_converter = new ShortDistConverter();
+	ICoordConverter m_converter = new Converter();
 
 	public ICoordConverter getConverter() {
 		return m_converter;

@@ -96,7 +96,6 @@ public abstract class AbstractSegment extends AbstractShape{
 								   Context2d context){
 		ISplit splitter = m_convert.getISplit();
 		ViewCoords pt, qt;
-		GeodeticCoords gc = p;
 		qt = m_convert.geodeticToView(p);  
 		// set p to null for first point
 		int x = splitter.shift(null, qt);
