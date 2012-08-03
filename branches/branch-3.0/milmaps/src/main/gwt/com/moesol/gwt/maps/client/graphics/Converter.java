@@ -14,23 +14,18 @@ import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.ViewWorker;
 import com.moesol.gwt.maps.client.WorldCoords;
 
-public abstract class ConvertBase implements  ICoordConverter{
-	public static final int DONT_MOVE  = 0;
-	public static final int MOVE_LEFT  = 1;
-	public static final int MOVE_RIGHT = 2;
-	
-	public static final int CENTER = 0;
-	public static final int LEFT   = 1;
-	public static final int RIGHT  = 2;
+public class Converter implements  ICoordConverter{
 	
 	protected MapView m_map;
+	protected ISplit m_splitter = null;
 	
-	public ConvertBase(){
+	public Converter(){
 	}
 	
 	@Override
 	public void setMap(MapView map) {
 		m_map = map;
+		m_splitter = new Splitter(map.getViewport());
 	}
 	
 	// Coordinate conversion
@@ -97,5 +92,16 @@ public abstract class ConvertBase implements  ICoordConverter{
 		}
 		ViewWorker vw = m_map.getViewport().getVpWorker();
 		return vw.viewToWorld(vc);
+	}
+
+	@Override
+	public ISplit getISplit() {
+		return m_splitter;
+	}
+
+	@Override
+	public void setISplit(ISplit split) {
+		m_splitter = split;
+		
 	}
 }

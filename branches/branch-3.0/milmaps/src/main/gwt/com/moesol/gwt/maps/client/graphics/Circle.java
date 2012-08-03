@@ -18,8 +18,6 @@ import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Circle extends AbstractShape {
 	private static final int NUM_CIR_PTS = 36;
-	private final AnchorHandle m_centerHandle = new AnchorHandle();
-	private final AnchorHandle m_radHandle = new AnchorHandle();
 	private RngBrg m_radRngBrg = null;
 	private AbstractPosTool m_radiusTool = null;
 	private AbstractPosTool m_centerTool = null;
@@ -269,21 +267,22 @@ public class Circle extends AbstractShape {
 			// Center Handle
 			GeodeticCoords gc = getCenter();
 			ViewCoords vc = m_convert.geodeticToView(gc);
-			m_centerHandle.setCenter(vc.getX(), vc.getY());
-			m_centerHandle.draw(context);
+			AnchorHandle handle = new AnchorHandle();
+			handle.setCenter(vc.getX(), vc.getY());
+			handle.draw(context);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
-				m_centerHandle.setCenter(x, vc.getY()).draw(context);
+				handle.setCenter(x, vc.getY()).draw(context);
 			}
 			// Radius handle
 			gc = getRadiusPos();
 			vc = m_convert.geodeticToView(gc);
-			m_radHandle.setCenter(vc.getX(), vc.getY()).draw(context);
+			handle.setCenter(vc.getX(), vc.getY()).draw(context);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
-				m_radHandle.setCenter(x, vc.getY()).draw(context);
+				handle.setCenter(x, vc.getY()).draw(context);
 			}
 		}
 		return (IShape) this;
