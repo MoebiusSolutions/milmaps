@@ -37,7 +37,7 @@ public class ShapeEditor implements IShapeEditor{
 		super();
 		m_map = map;
 		m_map.setShapeEditor(this);
-		m_converter.setMap(map);
+		m_converter.setViewPort(map.getViewport());
 		m_canvas = m_map.getDivManager().getCanvasTool();
 		m_map.getViewPanel().add(m_canvas.canvas());
 		m_mapControl = m_map.getController();

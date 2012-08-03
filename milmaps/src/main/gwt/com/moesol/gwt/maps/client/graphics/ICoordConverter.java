@@ -8,12 +8,12 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.moesol.gwt.maps.client.GeodeticCoords;
-import com.moesol.gwt.maps.client.MapView;
 import com.moesol.gwt.maps.client.ViewCoords;
+import com.moesol.gwt.maps.client.ViewPort;
 import com.moesol.gwt.maps.client.WorldCoords;
 
 public interface ICoordConverter {
-	public abstract void setMap(MapView map);
+	public abstract void setViewPort(ViewPort vp);
 	
 	public abstract ViewCoords geodeticToView(GeodeticCoords gc);
 
