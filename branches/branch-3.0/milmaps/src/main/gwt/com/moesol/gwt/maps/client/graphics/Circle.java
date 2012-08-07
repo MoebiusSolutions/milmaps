@@ -61,12 +61,12 @@ public class Circle extends AbstractShape {
 		GeodeticCoords pos = m_radiusTool.getGeoPos();
 		if (pos == null || !pos.equals(gc)) {
 			m_radiusTool.setGeoPos(gc);
-			upDateRngBrg();
+			updateRadisRngBrg();
 			m_needsUpdate = true;
 		}
 	}
 
-	private void upDateRngBrg() {
+	private void updateRadisRngBrg() {
 		checkForException();
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords radPos = m_radiusTool.getGeoPos();
@@ -78,6 +78,15 @@ public class Circle extends AbstractShape {
 			m_radiusTool = getRadiusTool();
 		}
 		return (IAnchorTool) m_radiusTool;
+	}
+	
+	void handleRadiusMouseDown(int x, int y){
+		setRadiusFromPix(x, y);
+	}
+	
+	void handleRadiusMouseUp(int x, int y){
+		setRadiusFromPix(x, y);
+		updateRadisRngBrg();
 	}
 
 	protected AbstractPosTool getRadiusTool() {
@@ -91,20 +100,19 @@ public class Circle extends AbstractShape {
 				public void handleMouseMove(Event event) {
 					int x = event.getClientX();
 					int y = event.getClientY();
-					setRadiusFromPix(x, y);
+					handleRadiusMouseDown(x, y);
 				}
 
 				@Override
 				public void handleMouseUp(Event event) {
 					int x = event.getClientX();
 					int y = event.getClientY();
-					setRadiusFromPix(x, y);
-					upDateRngBrg();
+					handleRadiusMouseUp(x, y);
 				}
 
 				@Override
 				public void handleMouseOut(Event event) {
-					upDateRngBrg();
+					updateRadisRngBrg();
 				}
 
 				@Override
@@ -143,12 +151,13 @@ public class Circle extends AbstractShape {
 	}
 
 	private void moveRadiusPos() {
-		if (m_radRngBrg != null) {
-			double rng = m_radRngBrg.getRanegKm();
-			double brg = m_radRngBrg.getBearing();
-			GeodeticCoords cent = m_centerTool.getGeoPos();
-			m_radiusTool.setGeoPos(m_rb.gcPointFrom(cent, brg, rng));
+		if (m_radRngBrg == null) {
+			updateRadisRngBrg();
 		}
+		double rng = m_radRngBrg.getRanegKm();
+		double brg = m_radRngBrg.getBearing();
+		GeodeticCoords cent = m_centerTool.getGeoPos();
+		m_radiusTool.setGeoPos(m_rb.gcPointFrom(cent, brg, rng));
 	}
 
 	public IAnchorTool getCenterAnchorTool() {
@@ -157,29 +166,36 @@ public class Circle extends AbstractShape {
 		}
 		return (IAnchorTool) m_centerTool;
 	}
+	
+	void handleCenterMouseMove(int x, int y){
+		setCenterFromPix(x, y);
+		moveRadiusPos();
+	}
+	
+	void handleCenterMouseUp(int x, int y){
+		setCenterFromPix(x, y);
+		moveRadiusPos();
+	}
 
 	protected AbstractPosTool getCenterTool() {
 		if (m_centerTool == null) {
 			m_centerTool = new AbstractPosTool() {
 				@Override
 				public void handleMouseDown(Event event) {
-					;
 				}
 
 				@Override
 				public void handleMouseMove(Event event) {
 					int x = event.getClientX();
 					int y = event.getClientY();
-					setCenterFromPix(x, y);
-					moveRadiusPos();
+					handleCenterMouseMove(x, y);
 				}
 
 				@Override
 				public void handleMouseUp(Event event) {
 					int x = event.getClientX();
 					int y = event.getClientY();
-					setCenterFromPix(x, y);
-					moveRadiusPos();
+					handleCenterMouseUp(x, y);
 				}
 
 				@Override
@@ -200,7 +216,7 @@ public class Circle extends AbstractShape {
 		return m_centerTool;
 	}
 
-	private ViewCoords getBoundaryPt(double brg, double distKm) {
+	protected ViewCoords getBoundaryPt(double brg, double distKm) {
 		GeodeticCoords cent = m_centerTool.getGeoPos();
 		GeodeticCoords gc = m_rb.gcPointFrom(cent, brg, distKm);
 		return m_convert.geodeticToView(gc);
@@ -256,6 +272,7 @@ public class Circle extends AbstractShape {
 
 	@Override
 	public IShape render(Context2d ct) {
+		syncColor();
 		draw(ct);
 		return (IShape) this;
 	}
@@ -293,7 +310,9 @@ public class Circle extends AbstractShape {
 	}
 
 	public void setRadiusPos(GeodeticCoords radPos) {
+		m_radiusTool = getRadiusTool();
 		m_radiusTool.setGeoPos(radPos);
+		updateRadisRngBrg();
 	}
 
 	public Circle withRadiusPos(GeodeticCoords radPos) {
