@@ -419,6 +419,7 @@ public class Sector extends AbstractShape {
 
 	@Override
 	public IShape render(Context2d ct) {
+		syncColor();
 		draw(ct);
 		return (IShape) this;
 	}

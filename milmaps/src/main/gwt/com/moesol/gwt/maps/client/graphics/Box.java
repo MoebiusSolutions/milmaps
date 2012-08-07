@@ -357,6 +357,7 @@ public class Box extends AbstractSegment {
 
 	@Override
 	public IShape render(Context2d context) {
+		syncColor();
 		draw(context);
 		return (IShape) this;
 	}

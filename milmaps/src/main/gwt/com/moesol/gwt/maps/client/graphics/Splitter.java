@@ -10,6 +10,8 @@ package com.moesol.gwt.maps.client.graphics;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.ViewPort;
 
+// eCobertura
+
 public class Splitter implements ISplit{
 	public static final int DONT_MOVE  = 0;
 	public static final int MOVE_LEFT  = 1;

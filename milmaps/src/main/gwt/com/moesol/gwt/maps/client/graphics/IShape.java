@@ -9,15 +9,14 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 
 public interface IShape {
 	//public abstract void setCoordConversion(ICoordConversion cc);
     public abstract void setId(String Id);
     public abstract String id();
-	public abstract CssColor getColor();
-	public abstract void setColor(CssColor color);
+	public abstract String getColor();
+	public abstract void setColor(String color);
 
     public abstract IShape selected(boolean selected);
     public abstract IShape erase(Context2d context);

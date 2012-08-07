@@ -358,6 +358,7 @@ public class Arrow extends AbstractShape {
 
 	@Override
 	public IShape render(Context2d context) {
+		syncColor();
 		draw(context);
 		return (IShape)this;
 	}
