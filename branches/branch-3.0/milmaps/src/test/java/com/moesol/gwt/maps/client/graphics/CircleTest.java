@@ -61,7 +61,6 @@ public class CircleTest {//extends GwtTest{
 		IAnchorTool tool = cir.getRadiusAnchorTool();
 		IAnchorTool tool2 = cir.getAnchorByPosition(pos);
 		assertEquals(tool,tool2);
-		assertEquals(true,true);
 		return;
 	}
 
@@ -140,16 +139,29 @@ public class CircleTest {//extends GwtTest{
 		IAnchorTool tool2 = m_cir.getAnchorByPosition(radGc);
 		assertEquals(tool,tool2);
 	}
-
+	
 	@Test
 	public void mouseMoveCenterTest(){
 		GeodeticCoords cent = m_conv.viewToGeodetic(new ViewCoords(300,200));
 		m_cir.setCenter(cent);
 		GeodeticCoords radGc = m_conv.viewToGeodetic(new ViewCoords(350,200));
 		m_cir.setRadiusPos(radGc);
-		m_cir.handleCenterMouseUp(350, 200);
-		GeodeticCoords pos = m_conv.viewToGeodetic(new ViewCoords(350,200));
 		IAnchorTool tool = m_cir.getCenterAnchorTool();
+		tool.handleMouseMove (350, 200);
+		GeodeticCoords pos = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		IAnchorTool tool2 = m_cir.getAnchorByPosition(pos);
+		assertEquals(tool,tool2);
+	}
+
+	@Test
+	public void mouseUpCenterTest(){
+		GeodeticCoords cent = m_conv.viewToGeodetic(new ViewCoords(300,200));
+		m_cir.setCenter(cent);
+		GeodeticCoords radGc = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		m_cir.setRadiusPos(radGc);
+		IAnchorTool tool = m_cir.getCenterAnchorTool();
+		tool.handleMouseUp (350, 200);
+		GeodeticCoords pos = m_conv.viewToGeodetic(new ViewCoords(350,200));
 		IAnchorTool tool2 = m_cir.getAnchorByPosition(pos);
 		assertEquals(tool,tool2);
 	}

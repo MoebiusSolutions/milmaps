@@ -153,16 +153,6 @@ public class Circle extends AbstractShape {
 		}
 		return (IAnchorTool) m_centerTool;
 	}
-	
-	void handleCenterMouseMove(int x, int y){
-		setCenterFromPix(x, y);
-		moveRadiusPos();
-	}
-	
-	void handleCenterMouseUp(int x, int y){
-		setCenterFromPix(x, y);
-		moveRadiusPos();
-	}
 
 	protected AbstractPosTool getCenterTool() {
 		if (m_centerTool == null) {
@@ -173,12 +163,14 @@ public class Circle extends AbstractShape {
 
 				@Override
 				public void handleMouseMove(int x, int y) {
-					handleCenterMouseMove(x, y);
+					setCenterFromPix(x, y);
+					moveRadiusPos();
 				}
 
 				@Override
 				public void handleMouseUp(int x, int y) {
-					handleCenterMouseUp(x, y);
+					setCenterFromPix(x, y);
+					moveRadiusPos();
 				}
 
 				@Override
