@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Distance implements IsSerializable {
 	// would be final, but IsSerializable does not support
-	private double m_dist;
+	private double m_dist; // this is always in meters.
 	
 	public static class Builder {
 		private double m_dist;
@@ -23,13 +23,23 @@ public class Distance implements IsSerializable {
 			if (m_distUnit != null && m_distUnit != DistanceUnit.METERS) {
 				throw new IllegalStateException("Distance unit cannot be changed");
 			}
-			m_distUnit = DistanceUnit.METERS; return this; 
+			m_distUnit = DistanceUnit.METERS; 
+			return this; 
 		}
 		public Builder kilometers() { 
 			if (m_distUnit != null && m_distUnit != DistanceUnit.KILOMETERS) {
-				throw new IllegalStateException("Angle unit cannot be changed");
+				throw new IllegalStateException("Distance unit cannot be changed");
 			}
-			m_distUnit = DistanceUnit.KILOMETERS; return this; 
+			m_distUnit = DistanceUnit.KILOMETERS; 
+			return this; 
+		}
+		
+		public Builder miles() { 
+			if (m_distUnit != null && m_distUnit != DistanceUnit.MILES) {
+				throw new IllegalStateException("Distance unit cannot be changed");
+			}
+			m_distUnit = DistanceUnit.MILES; 
+			return this; 
 		}
 		public Builder value(double d) { return setValue(d); }
 		public Distance build() {
@@ -47,12 +57,6 @@ public class Distance implements IsSerializable {
 		m_dist = 0.0;
 	}
 
-	/**
-	 * @param lambda longitude
-	 * @param phi latitude
-	 * @param angleUnit angular units of lambda and phi
-	 * @param altitude
-	 */
 	public Distance(double dist, DistanceUnit distUnit) {
 		m_dist = distUnit.toMeters(dist);
 	}
@@ -64,11 +68,14 @@ public class Distance implements IsSerializable {
 		public double kilometers() {
 			return getDistance(DistanceUnit.KILOMETERS);
 		}
+		public double miles() {
+			return getDistance(DistanceUnit.MILES);
+		}
 	}
 	
 	/** 
 	 * @param unit angular unit to convert return value to
-	 * @return longitude in the units specified by unit
+	 * @return distance in the units specified by unit
 	 */
 	public double getDistance(DistanceUnit unit) {
 		return unit.fromMeters(m_dist);

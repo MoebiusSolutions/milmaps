@@ -9,7 +9,6 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
@@ -26,13 +25,11 @@ public class CommonEditTool extends AbstractEditTool {
 	}
 	
 	@Override
-	public void handleMouseDown(Event event) {
+	public void handleMouseDown(int x, int y) {
 		if (m_abShape == null) {
 			throw new IllegalStateException("CommonEditTool: m_abShape = null");
 		}
 		// Get Selected Anchor
-		int x = event.getClientX();
-		int y = event.getClientY();
 		m_mouseDown = true;
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
 		m_anchorTool = m_abShape.getAnchorByPosition(gc);
@@ -44,11 +41,11 @@ public class CommonEditTool extends AbstractEditTool {
 	}
 	
 	@Override
-	public void handleMouseUp(Event event) {
+	public void handleMouseUp(int x, int y) {
 		m_mouseDown = false;
 		if (m_anchorTool != null){
 			m_editor.renderObjects();
-			m_anchorTool.handleMouseUp(event);
+			m_anchorTool.handleMouseUp(x,y);
 		}	
 	}
 	
@@ -67,10 +64,10 @@ public class CommonEditTool extends AbstractEditTool {
 	}
 	
 	@Override
-	public void handleMouseMove(Event event) {
+	public void handleMouseMove(int x, int y) {
 		if (m_mouseDown == true){
 			if (m_anchorTool != null){
-				m_anchorTool.handleMouseMove(event);
+				m_anchorTool.handleMouseMove(x,y);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
 			}
@@ -78,9 +75,9 @@ public class CommonEditTool extends AbstractEditTool {
 	}
 	
 	@Override
-	public void handleMouseOut(Event event) {
+	public void handleMouseOut(int x, int y) {
 		if (m_anchorTool != null){
-			m_anchorTool.handleMouseOut(event);
+			m_anchorTool.handleMouseOut(x,y);
 		}
 	}
 
@@ -100,26 +97,26 @@ public class CommonEditTool extends AbstractEditTool {
 	}
 
 	@Override
-	public void handleKeyDown(Event event) {
+	public void handleKeyDown(int keyCode) {
 		boolean ctrlKeydown = false;
 		boolean shiftKeydown = false;
-		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
+		if (keyCode == KeyCodes.KEY_CTRL){
 			ctrlKeydown = true;
 		}
-		else if (event.getKeyCode() == KeyCodes.KEY_SHIFT){
+		else if (keyCode == KeyCodes.KEY_SHIFT){
 			shiftKeydown = true;
 		}
 		m_abShape.setKeyboardFlags(ctrlKeydown, shiftKeydown);
 	}
 
 	@Override
-	public void handleKeyUp(Event event) {
+	public void handleKeyUp(int keyCode) {
 		boolean ctrlKeydown = false;
 		boolean shiftKeydown = false;
-		if (event.getKeyCode() == KeyCodes.KEY_CTRL){
+		if (keyCode == KeyCodes.KEY_CTRL){
 			ctrlKeydown = false;
 		}
-		else if (event.getKeyCode() == KeyCodes.KEY_SHIFT){
+		else if (keyCode == KeyCodes.KEY_SHIFT){
 			shiftKeydown = false;
 		}
 		m_abShape.setKeyboardFlags(ctrlKeydown, shiftKeydown);

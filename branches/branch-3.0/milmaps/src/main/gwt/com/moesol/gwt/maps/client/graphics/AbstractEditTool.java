@@ -8,7 +8,6 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.user.client.Event;
 
 public abstract class AbstractEditTool implements IShapeTool{
 	protected Canvas m_canvas = null;
@@ -24,14 +23,14 @@ public abstract class AbstractEditTool implements IShapeTool{
 	}
 
 	@Override
-	public void handleMouseDblClick(Event event) {
+	public void handleMouseDblClick(int x, int y) {
 	}
 
 	@Override
-	public void handleKeyDown(Event event) {
+	public void handleKeyDown(int keyCode) {
 	}
 
 	@Override
-	public void handleKeyUp(Event event) {
+	public void handleKeyUp(int keyCode) {
 	}
 }

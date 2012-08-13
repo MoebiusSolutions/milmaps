@@ -9,7 +9,6 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
@@ -43,10 +42,8 @@ public class NewArcTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseDown(Event event) {
+	public void handleMouseDown(int x, int y) {
 		m_mouseDown = true;
-		int x = event.getClientX();
-		int y = event.getClientY();
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords center = m_convert.viewToGeodetic(vc);
 		m_arc = new Arc().withCenter(center);
@@ -58,11 +55,11 @@ public class NewArcTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseMove(Event event) {
+	public void handleMouseMove(int x, int y) {
 		if (m_mouseDown) {
 			if (m_arc != null && m_canvas != null) {
 				//m_arc.getStartBrgAnchorTool().handleMouseMove(event);
-				m_arc.initialMouseMove(event);
+				m_arc.initialMouseMove(x,y);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
 			}
@@ -70,9 +67,9 @@ public class NewArcTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseUp(Event event) {
+	public void handleMouseUp(int x, int y) {
 		m_mouseDown = false;
-		m_arc.getStartBrgAnchorTool().handleMouseUp(event);
+		m_arc.getStartBrgAnchorTool().handleMouseUp(x,y);
 		//drawCenterHandle();
 		// we are done with initial creation so set the edit tool
 		IShapeTool tool = new CommonEditTool(m_editor);
@@ -84,7 +81,7 @@ public class NewArcTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseOut(Event event) {
+	public void handleMouseOut(int x, int y) {
 	}
 
 	@Override

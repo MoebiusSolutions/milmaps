@@ -8,10 +8,9 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import java.util.List;
+
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-
-import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
@@ -34,9 +33,7 @@ public class SelectShape implements IShapeTool{
 		return m_convert.viewToGeodetic(vc);
 	}
     
-    private void handleSelect(Event event){
-		int x = event.getClientX();
-		int y = event.getClientY();
+    private void handleSelect(int x, int y){
 		Canvas canvas = m_editor.getCanvasTool().canvas();
 		Context2d context = canvas.getContext2d();
 		int width = canvas.getOffsetWidth();
@@ -72,20 +69,20 @@ public class SelectShape implements IShapeTool{
     }
 	
 	@Override
-	public void handleMouseDown(Event event) {
+	public void handleMouseDown(int x, int y) {
 	}
 
 	@Override
-	public void handleMouseMove(Event event) {
+	public void handleMouseMove(int x, int y) {
 	}
 
 	@Override
-	public void handleMouseUp(Event event) {
-		handleSelect(event);
+	public void handleMouseUp(int x, int y) {
+		handleSelect(x,y);
 	}
 
 	@Override
-	public void handleMouseOut(Event event) {
+	public void handleMouseOut(int x, int y) {
 	}
 
 	@Override
@@ -110,14 +107,14 @@ public class SelectShape implements IShapeTool{
 	}
 
 	@Override
-	public void handleMouseDblClick(Event event) {
+	public void handleMouseDblClick(int x, int y) {
 	}
 
 	@Override
-	public void handleKeyDown(Event event) {
+	public void handleKeyDown(int keyCode) {
 	}
 
 	@Override
-	public void handleKeyUp(Event event) {
+	public void handleKeyUp(int keyCode) {
 	}
 }

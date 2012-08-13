@@ -8,7 +8,6 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
@@ -138,29 +137,25 @@ public class Box extends AbstractSegment {
 		if (m_smjTool == null) {
 			m_smjTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(Event event) {
+				public void handleMouseDown(int x, int y) {
 				}
 
 				@Override
-				public void handleMouseMove(Event event) {
-					;
-					if (event != null) {
-						setSmjFromPix(event.getClientX(), event.getClientY());
+				public void handleMouseMove(int x, int y) {
+					//if (event != null) {
+						setSmjFromPix(x, y);
 						setSmnPosFromSmjBrg();
-					}
+					//}
 				}
 
 				@Override
-				public void handleMouseUp(Event event) {
-					// m_mouseDown = false;
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseUp(int x, int y) {
 					setSmjFromPix(x, y);
 					setSmnPosFromSmjBrg();
 				}
 
 				@Override
-				public void handleMouseOut(Event event) {
+				public void handleMouseOut(int x, int y) {
 				}
 
 				@Override
@@ -174,7 +169,7 @@ public class Box extends AbstractSegment {
 				}
 
 				@Override
-				public void handleMouseDblClick(Event event) {
+				public void handleMouseDblClick(int x, int y) {
 				}
 			};
 		}
@@ -223,26 +218,21 @@ public class Box extends AbstractSegment {
 		if (m_smnTool == null) {
 			m_smnTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(Event event) {
+				public void handleMouseDown(int x, int y) {
 				}
 
 				@Override
-				public void handleMouseMove(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseMove(int x, int y) {
 					setSmnRangePix(x, y);
 				}
 
 				@Override
-				public void handleMouseUp(Event event) {
-					// m_mouseDown = false;
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseUp(int x, int y) {
 					setSmnRangePix(x, y);
 				}
 
 				@Override
-				public void handleMouseOut(Event event) {
+				public void handleMouseOut(int x, int y) {
 				}
 
 				@Override
@@ -256,7 +246,7 @@ public class Box extends AbstractSegment {
 				}
 
 				@Override
-				public void handleMouseDblClick(Event event) {
+				public void handleMouseDblClick(int x, int y) {
 				}
 			};
 		}
@@ -303,27 +293,23 @@ public class Box extends AbstractSegment {
 		if (m_centerTool == null) {
 			m_centerTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(Event event) {
+				public void handleMouseDown(int x, int y) {
 				}
 
 				@Override
-				public void handleMouseMove(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseMove(int x, int y) {
 					setCenterFromPix(x, y);
 					moveAxisPos();
 				}
 
 				@Override
-				public void handleMouseUp(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseUp(int x, int y) {
 					setCenterFromPix(x, y);
 					moveAxisPos();
 				}
 
 				@Override
-				public void handleMouseOut(Event event) {
+				public void handleMouseOut(int x, int y) {
 				}
 
 				@Override
@@ -337,7 +323,7 @@ public class Box extends AbstractSegment {
 				}
 
 				@Override
-				public void handleMouseDblClick(Event event) {
+				public void handleMouseDblClick(int x, int y) {
 				}
 			};
 		}
