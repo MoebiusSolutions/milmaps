@@ -9,7 +9,6 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.ViewCoords;
 
 public class NewTriangleTool extends  AbstractNewTool {
@@ -60,7 +59,7 @@ public class NewTriangleTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseDown(Event event) {
+	public void handleMouseDown(int x, int y) {
 		if (m_triangle == null){
 			m_triangle = new Triangle();
 			m_editor.addShape(m_triangle);
@@ -70,20 +69,16 @@ public class NewTriangleTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseMove(Event event) {
+	public void handleMouseMove(int x, int y) {
 		if (m_triangle != null && m_canvas != null) {
 			m_editor.clearCanvas().renderObjects();
 			drawHandles();
-			int x = event.getClientX();
-			int y = event.getClientY();
 			drawLastLine(x,y);
 		}
 	}
 
 	@Override
-	public void handleMouseUp(Event event) {
-		int x = event.getClientX();
-		int y = event.getClientY();
+	public void handleMouseUp(int x, int y) {
 		if (m_lastX != x || m_lastY != y){
 			m_lastX = x;
 			m_lastY = y;
@@ -115,6 +110,6 @@ public class NewTriangleTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseDblClick(Event event) {
+	public void handleMouseDblClick(int x, int y) {
 	}
 }

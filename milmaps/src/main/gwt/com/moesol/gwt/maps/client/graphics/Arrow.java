@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
@@ -89,29 +88,25 @@ public class Arrow extends AbstractShape {
 		AbstractPosTool tool = new AbstractPosTool(){
 
 			@Override
-			public void handleMouseDown(Event event) {
+			public void handleMouseDown(int x, int y) {
 			}
 
 			@Override
-			public void handleMouseMove(Event event) {
-				int x = event.getClientX();
-				int y = event.getClientY();
+			public void handleMouseMove(int x, int y) {
 				setPosFromPix(x, y, this);
 			}
 
 			@Override
-			public void handleMouseUp(Event event) {
-				int x = event.getClientX();
-				int y = event.getClientY();
+			public void handleMouseUp(int x, int y) {
 				setPosFromPix(x, y, this);
 			}
 
 			@Override
-			public void handleMouseOut(Event event) {
+			public void handleMouseOut(int x, int y) {
 			}
 
 			@Override
-			public void handleMouseDblClick(Event event) {
+			public void handleMouseDblClick(int x, int y) {
 			}
 			
 			@Override
@@ -128,33 +123,29 @@ public class Arrow extends AbstractShape {
 		if (m_translationTool == null){
 			m_translationTool = new AbstractPosTool(){
 				@Override
-				public void handleMouseDown(Event event) {
+				public void handleMouseDown(int x, int y) {
 				}
 	
 				@Override
-				public void handleMouseMove(Event event) {
-					int x = event.getClientX()- m_X;
-					int y = event.getClientY()- m_Y;
-					moveVerticesByOffset(x,y);
-					m_X = event.getClientX();
-					m_Y = event.getClientY();
+				public void handleMouseMove(int x, int y) {
+					moveVerticesByOffset(x - m_X, y - m_Y);
+					m_X = x;
+					m_Y = y;
 				}
 	
 				@Override
-				public void handleMouseUp(Event event) {
-					int x = event.getClientX()- m_X;
-					int y = event.getClientY()- m_Y;
-					moveVerticesByOffset(x,y);
-					m_X = event.getClientX();
-					m_Y = event.getClientY();
+				public void handleMouseUp(int x, int y) {
+					moveVerticesByOffset(x - m_X, y - m_Y);
+					m_X = x;
+					m_Y = y;
 				}
 	
 				@Override
-				public void handleMouseOut(Event event) {
+				public void handleMouseOut(int x, int y) {
 				}
 	
 				@Override
-				public void handleMouseDblClick(Event event) {
+				public void handleMouseDblClick(int x, int y) {
 				}
 				
 				@Override

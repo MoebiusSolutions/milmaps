@@ -8,7 +8,6 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
@@ -79,39 +78,27 @@ public class Circle extends AbstractShape {
 		}
 		return (IAnchorTool) m_radiusTool;
 	}
-	
-	void handleRadiusMouseDown(int x, int y){
-		setRadiusFromPix(x, y);
-	}
-	
-	void handleRadiusMouseUp(int x, int y){
-		setRadiusFromPix(x, y);
-		updateRadisRngBrg();
-	}
 
 	protected AbstractPosTool getRadiusTool() {
 		if (m_radiusTool == null) {
 			m_radiusTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(Event event) {
+				public void handleMouseDown(int x, int y) {
 				}
 
 				@Override
-				public void handleMouseMove(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
-					handleRadiusMouseDown(x, y);
+				public void handleMouseMove(int x, int y) {
+					setRadiusFromPix(x, y);
 				}
 
 				@Override
-				public void handleMouseUp(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
-					handleRadiusMouseUp(x, y);
+				public void handleMouseUp(int x, int y) {
+					setRadiusFromPix(x, y);
+					updateRadisRngBrg();
 				}
 
 				@Override
-				public void handleMouseOut(Event event) {
+				public void handleMouseOut(int x, int y) {
 					updateRadisRngBrg();
 				}
 
@@ -126,15 +113,15 @@ public class Circle extends AbstractShape {
 				}
 
 				@Override
-				public void handleMouseDblClick(Event event) {
+				public void handleMouseDblClick(int x, int y) {
 				}
 
 				@Override
-				public void handleKeyDown(Event event) {
+				public void handleKeyDown(int keyCode) {
 				}
 
 				@Override
-				public void handleKeyUp(Event event) {
+				public void handleKeyUp(int keyCode) {
 				}
 			};
 		}
@@ -181,25 +168,21 @@ public class Circle extends AbstractShape {
 		if (m_centerTool == null) {
 			m_centerTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(Event event) {
+				public void handleMouseDown(int x, int y) {
 				}
 
 				@Override
-				public void handleMouseMove(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseMove(int x, int y) {
 					handleCenterMouseMove(x, y);
 				}
 
 				@Override
-				public void handleMouseUp(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseUp(int x, int y) {
 					handleCenterMouseUp(x, y);
 				}
 
 				@Override
-				public void handleMouseOut(Event event) {
+				public void handleMouseOut(int x, int y) {
 				}
 
 				@Override

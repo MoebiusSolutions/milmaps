@@ -8,21 +8,16 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
-import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Bearing;
 import com.moesol.gwt.maps.client.units.Distance;
 import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Arc extends AbstractShape {
 	private static final int NUM_ARC_PTS = 36;
-	private final AnchorHandle m_centerHandle = new AnchorHandle();
-	private final AnchorHandle m_startBrgHandle = new AnchorHandle();
-	private final AnchorHandle m_endBrgHandle = new AnchorHandle();
 	private RngBrg m_startRngBrg = null;
 	private RngBrg m_endRngBrg = null;
 	private AbstractPosTool m_startBrgTool = null;
@@ -137,32 +132,29 @@ public class Arc extends AbstractShape {
 		}
 		return (IAnchorTool) m_startBrgTool;
 	}
+	
 
 	protected AbstractPosTool getStartBrgTool() {
 		if (m_startBrgTool == null) {
 			m_startBrgTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(Event event) {
+				public void handleMouseDown(int x, int y) {
 				}
 
 				@Override
-				public void handleMouseMove(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseMove(int x, int y) {
 					setStartBrgFromPix(x, y);
 					moveEndBrgPos(m_startRngBrg.getRanegKm());
 				}
 
 				@Override
-				public void handleMouseUp(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseUp(int x, int y) {
 					setStartBrgFromPix(x, y);
 					moveEndBrgPos(m_startRngBrg.getRanegKm());
 				}
 
 				@Override
-				public void handleMouseOut(Event event) {
+				public void handleMouseOut(int x, int y) {
 					updateStartRngBrg();
 				}
 
@@ -177,15 +169,15 @@ public class Arc extends AbstractShape {
 				}
 
 				@Override
-				public void handleMouseDblClick(Event event) {
+				public void handleMouseDblClick(int x, int y) {
 				}
 
 				@Override
-				public void handleKeyDown(Event event) {
+				public void handleKeyDown(int keyCode) {
 				}
 
 				@Override
-				public void handleKeyUp(Event event) {
+				public void handleKeyUp(int keyCode) {
 				}
 			};
 		}
@@ -224,32 +216,29 @@ public class Arc extends AbstractShape {
 		}
 		return (IAnchorTool) m_endBrgTool;
 	}
+	
 
 	protected AbstractPosTool getEndBrgTool() {
 		if (m_endBrgTool == null) {
 			m_endBrgTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(Event event) {
+				public void handleMouseDown(int x, int y) {
 				}
 
 				@Override
-				public void handleMouseMove(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseMove(int x, int y) {
 					setEndBrgFromPix(x, y);
 					moveStartBrgPos(m_endRngBrg.getRanegKm());
 				}
 
 				@Override
-				public void handleMouseUp(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
+				public void handleMouseUp(int x, int y) {
 					setEndBrgFromPix(x, y);
 					moveStartBrgPos(m_endRngBrg.getRanegKm());
 				}
 
 				@Override
-				public void handleMouseOut(Event event) {
+				public void handleMouseOut(int x, int y) {
 					updateEndRngBrg();
 				}
 
@@ -264,15 +253,15 @@ public class Arc extends AbstractShape {
 				}
 
 				@Override
-				public void handleMouseDblClick(Event event) {
+				public void handleMouseDblClick(int x, int y) {
 				}
 
 				@Override
-				public void handleKeyDown(Event event) {
+				public void handleKeyDown(int keyCode) {
 				}
 
 				@Override
-				public void handleKeyUp(Event event) {
+				public void handleKeyUp(int keyCode) {
 				}
 			};
 		}
@@ -309,33 +298,33 @@ public class Arc extends AbstractShape {
 		}
 		return (IAnchorTool) m_centerTool;
 	}
+	
+	void handleCenterToolMouseMove_Up(int x, int y){
+		setCenterFromPix(x, y);
+		moveBrgPos();
+	}
 
 	protected AbstractPosTool getCenterTool() {
 		if (m_centerTool == null) {
 			m_centerTool = new AbstractPosTool() {
 				@Override
-				public void handleMouseDown(Event event) {
-					;
+				public void handleMouseDown(int x, int y) {
 				}
 
 				@Override
-				public void handleMouseMove(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
-					setCenterFromPix(x, y);
-					moveBrgPos();
+				public void handleMouseMove(int x, int y) {
+					handleCenterToolMouseMove_Up(x, y);
 				}
 
 				@Override
-				public void handleMouseUp(Event event) {
-					int x = event.getClientX();
-					int y = event.getClientY();
-					setCenterFromPix(x, y);
-					moveBrgPos();
+				public void handleMouseUp(int x, int y) {
+					//int x = event.getClientX();
+					//int y = event.getClientY();
+					handleCenterToolMouseMove_Up(x, y);
 				}
 
 				@Override
-				public void handleMouseOut(Event event) {
+				public void handleMouseOut(int x, int y) {
 				}
 
 				@Override
@@ -410,9 +399,7 @@ public class Arc extends AbstractShape {
 		context.stroke();
 	}
 
-	public void initialMouseMove(Event event) {
-		int x = event.getClientX();
-		int y = event.getClientY();
+	public void initialMouseMove(int x, int y) {
 		setStartBrgFromPix(x, y);
 		GeodeticCoords startBrgPos = m_startBrgTool.getGeoPos();
 		GeodeticCoords cenPos = getCenter();
@@ -447,42 +434,40 @@ public class Arc extends AbstractShape {
 			// Center Handle
 			GeodeticCoords gc = getCenter();
 			ViewCoords vc = m_convert.geodeticToView(gc);
-			m_centerHandle.setCenter(vc.getX(), vc.getY());
-			m_centerHandle.draw(context);
+			AnchorHandle handle = new AnchorHandle();
+			handle.setCenter(vc.getX(), vc.getY());
+			handle.draw(context);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
-				m_centerHandle.setCenter(x, vc.getY()).draw(context);
+				handle.setCenter(x, vc.getY()).draw(context);
 			}
 			// start Brg handle
 			gc = getStartBrgPos();
 			vc = m_convert.geodeticToView(gc);
-			m_startBrgHandle.setCenter(vc.getX(), vc.getY()).draw(context);
-			m_startBrgHandle.setStrokeColor(0, 200, 0, 1.0);
+			handle.setCenter(vc.getX(), vc.getY()).draw(context);
+			handle.setStrokeColor(0, 200, 0, 1.0);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
-				m_startBrgHandle.setCenter(x, vc.getY()).draw(context);
+				handle.setCenter(x, vc.getY()).draw(context);
 			}
 			// end Brg handle
 			gc = getEndBrgPos();
 			vc = m_convert.geodeticToView(gc);
-			m_endBrgHandle.setCenter(vc.getX(), vc.getY()).draw(context);
-			m_endBrgHandle.setStrokeColor(200, 0, 0, 1.0);
+			handle.setCenter(vc.getX(), vc.getY()).draw(context);
+			handle.setStrokeColor(200, 0, 0, 1.0);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
-				m_endBrgHandle.setCenter(x, vc.getY()).draw(context);
+				handle.setCenter(x, vc.getY()).draw(context);
 			}
 		}
 		return (IShape) this;
 	}
 
-	public Arc setStartBearing(double brg, AngleUnit unit) {
-		throw new IllegalStateException("Arc: m_convert = null");
-	}
-
 	public void setStartBrgPos(GeodeticCoords pos) {
+		getStartBrgTool();
 		m_startBrgTool.setGeoPos(pos);
 	}
 
@@ -496,9 +481,7 @@ public class Arc extends AbstractShape {
 	}
 
 	public Arc setEndBrgPos(GeodeticCoords pos) {
-		if (m_endBrgTool == null) {
-			m_endBrgTool = getEndBrgTool();
-		}
+		getEndBrgTool();
 		m_endBrgTool.setGeoPos(pos);
 		return this;
 	}

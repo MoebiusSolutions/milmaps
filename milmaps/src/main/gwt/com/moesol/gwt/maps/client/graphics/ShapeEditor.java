@@ -182,63 +182,64 @@ public class ShapeEditor implements IShapeEditor{
 	// Handler Events
 	
 	//@Override
-	public boolean handleMouseDown(Event event) {
+	public boolean handleMouseDown(Event e) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleMouseDown(event);
+			m_shapeTool.handleMouseDown(e.getClientX(), e.getClientY());
 			return false;
 		}
 		return true;
 	}
 
 	//@Override
-	public boolean handleMouseMove(Event event) {
+	public boolean handleMouseMove(Event e) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleMouseMove(event);
+			m_shapeTool.handleMouseMove(e.getClientX(),e.getClientY());
 			return false;
 		}
 		return true;
 	}
 
 	//@Override
-	public boolean handleMouseUp(Event event) {
+	public boolean handleMouseUp(Event e) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleMouseUp(event);
+			m_shapeTool.handleMouseUp(e.getClientX(), e.getClientY());
 			return false;
 		}
 		return true;
 	}
 
 	//@Override
-	public boolean handleMouseOut(Event event) {
+	public boolean handleMouseOut(Event e) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleMouseOut(event);
+			m_shapeTool.handleMouseOut(e.getClientX(),e.getClientY());
 			return false;
 		}
 		return true;
 	}
 
 	//@Override
-	public boolean handleMouseDblClick(Event event) {
+	public boolean handleMouseDblClick(Event e) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleMouseDblClick(event);
+			
+			m_shapeTool.handleMouseDblClick(e.getClientX(),e.getClientY());
 			return false;
 		}
 		return true;
 	}
 
 	//@Override
-	public boolean handleKeyDown(Event event) {
+	public boolean handleKeyDown(Event e) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleKeyDown(event);
+			m_shapeTool.handleKeyDown(e.getKeyCode());
 			return false;
 		}
 		return true;
 	}
 
 	//@Override
-	public boolean handleKeyUp(Event event) {
+	public boolean handleKeyUp(Event e) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleKeyUp(event);
+			m_shapeTool.handleKeyUp(e.getKeyCode());
 			return false;
 		}
 		return true;
@@ -246,11 +247,11 @@ public class ShapeEditor implements IShapeEditor{
 	
 	private void keyDownCode(Event event){
 		//DOM.eventGetKeyCode(event) == KeyCodes.KEY_CTRL){
-		m_shapeTool.handleKeyDown(event);
+		m_shapeTool.handleKeyDown(event.getKeyCode());
 	}
 	
 	private void keyUpCode(Event event){
-		m_shapeTool.handleKeyUp(event);
+		m_shapeTool.handleKeyUp(event.getKeyCode());
 	}
 
 	@Override

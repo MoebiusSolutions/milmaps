@@ -9,7 +9,6 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
@@ -43,10 +42,8 @@ public class NewLineTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseDown(Event event) {
+	public void handleMouseDown(int x, int y) {
 		m_mouseDown = true;
-		int x = event.getClientX();
-		int y = event.getClientY();
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords gc = m_convert.viewToGeodetic(vc);
 		m_line = new Line().withStartPos(gc);
@@ -58,10 +55,10 @@ public class NewLineTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseMove(Event event) {
+	public void handleMouseMove(int x, int y) {
 		if (m_mouseDown) {
 			if (m_line != null && m_canvas != null) {
-				m_line.getEndAnchorTool().handleMouseMove(event);
+				m_line.getEndAnchorTool().handleMouseMove(x,y);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
 			}
@@ -69,9 +66,9 @@ public class NewLineTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseUp(Event event) {
+	public void handleMouseUp(int x, int y) {
 		m_mouseDown = false;
-		m_line.getEndAnchorTool().handleMouseUp(event);
+		m_line.getEndAnchorTool().handleMouseUp(x,y);
 		//drawCenterHandle();
 		// we are done with initial creation so set the edit tool
 		IShapeTool tool = new CommonEditTool(m_editor);
@@ -83,7 +80,7 @@ public class NewLineTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseOut(Event event) {
+	public void handleMouseOut(int x, int y) {
 	}
 
 	@Override

@@ -9,7 +9,6 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.user.client.Event;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
@@ -57,10 +56,8 @@ public class NewBoxTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseDown(Event event) {
+	public void handleMouseDown(int x, int y) {
 		m_mouseDown = true;
-		int x = event.getClientX();
-		int y = event.getClientY();
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords center = m_convert.viewToGeodetic(vc);
 		m_box = new Box().withCenter(center);
@@ -73,10 +70,10 @@ public class NewBoxTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseMove(Event event) {
+	public void handleMouseMove(int x, int y) {
 		if (m_mouseDown) {
 			if (m_box != null && m_canvas != null) {
-				m_box.getSmjAnchorTool().handleMouseMove(event);
+				m_box.getSmjAnchorTool().handleMouseMove(x,y);
 				m_editor.clearCanvas().renderObjects();
 				setSmnHandle();
 				drawHandles();
@@ -85,9 +82,9 @@ public class NewBoxTool extends  AbstractNewTool {
 	}
 
 	@Override
-	public void handleMouseUp(Event event) {
+	public void handleMouseUp(int x, int y) {
 		m_mouseDown = false;
-		m_box.getSmjAnchorTool().handleMouseUp(event);
+		m_box.getSmjAnchorTool().handleMouseUp(x,y);
 		//drawCenterHandle();
 		// we are done with initial creation so set the edit tool
 		IShapeTool tool = new CommonEditTool(m_editor);

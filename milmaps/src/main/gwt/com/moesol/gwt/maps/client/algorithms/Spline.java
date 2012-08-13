@@ -7,7 +7,6 @@
  */
 package com.moesol.gwt.maps.client.algorithms;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import com.moesol.gwt.maps.client.GeodeticCoords;
