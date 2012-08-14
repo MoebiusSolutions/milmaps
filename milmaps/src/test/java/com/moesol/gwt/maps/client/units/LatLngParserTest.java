@@ -73,12 +73,18 @@ public class LatLngParserTest {
 		gc = LatLngParser.parse(ll);
 		assertEquals(-45.6,gc.getPhi(AngleUnit.DEGREES), 0.0001);
 		assertEquals(25.7,gc.getLambda(AngleUnit.DEGREES), 0.0001);
+		
+		
+		ll = "45N, 45W";
+		gc = LatLngParser.parse(ll);
+		assertEquals(45,gc.getPhi(AngleUnit.DEGREES), 0.0001);
+		assertEquals(-45,gc.getLambda(AngleUnit.DEGREES), 0.0001);
+		
 		// TEST BAD ENTRIES
 		ll = "45x, 44?";
 		gc = LatLngParser.parse(ll);
 		assertEquals(null,gc);
 		
-		// TEST BAD ENTRIES
 		ll = "45N, 44x";
 		gc = LatLngParser.parse(ll);
 		assertEquals(null,gc);
