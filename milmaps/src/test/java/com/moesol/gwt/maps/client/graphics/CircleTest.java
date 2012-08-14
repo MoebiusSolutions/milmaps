@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.googlecode.gwt.test.GwtTest;
 import com.moesol.gwt.maps.client.CylEquiDistProj;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.IProjection;
