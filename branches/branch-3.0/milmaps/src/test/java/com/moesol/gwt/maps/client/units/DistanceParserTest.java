@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class DistanceParserTest {
-	/*
+
 	@Test
 	public void parserTest() {
 		String dis = "444M";
@@ -23,5 +23,5 @@ public class DistanceParserTest {
 		d = DistanceParser.parse(dis);
 		assertEquals(444,d.getDistance(DistanceUnit.METERS), 0.0001);
 	}
-	*/
+
 }
