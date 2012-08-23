@@ -66,13 +66,29 @@ public class Ellipse extends AbstractShape {
 			throw new IllegalStateException("Ellipse: m_convert = null");
 		}
 	}
-
-	private void setSmjFromPix(int x, int y) {
-		checkForExceptions();
-		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
+	
+	private void checkSmjExist(){
 		if (m_smjTool == null) {
-			m_smjTool = getSmjTool();
+			throw new IllegalStateException("Ellipse: m_smjTool = null");
 		}
+		if (m_smjTool.getGeoPos() == null ){
+			throw new IllegalStateException("Ellipse: m_smjTool geoPos = null");
+		}
+	}
+
+	private void checkCenterExist(){
+		if (m_centerTool == null) {
+			throw new IllegalStateException("Ellipse: m_centerTool = null");
+		}
+		if (m_centerTool.getGeoPos() == null ){
+			throw new IllegalStateException("Ellipse: m_centerTool geoPos = null");
+		}
+	}
+	
+	public void setSmjFromPos(GeodeticCoords gc) {
+		checkForExceptions();
+		checkCenterExist();
+		m_smjTool = getSmjTool();
 		GeodeticCoords pos = m_smjTool.getGeoPos();
 		if (pos == null || !pos.equals(gc)) {
 			m_smjTool.setGeoPos(gc);
@@ -80,6 +96,11 @@ public class Ellipse extends AbstractShape {
 			m_smjRngBrg = m_rb.gcRngBrgFromTo(cent, gc);
 			m_needsUpdate = true;
 		}
+	}
+
+	public void setSmjFromPix(int x, int y) {
+		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
+		setSmjFromPos(gc);
 	}
 
 	private ViewCoords rngBrgToView(double rngKm, double degBrg) {
@@ -168,10 +189,8 @@ public class Ellipse extends AbstractShape {
 
 				@Override
 				public void handleMouseMove(int x, int y) {
-					//if (event != null) {
-						setSmjFromPix(x, y);
-						setSmnPosFromSmjBrg();
-					//}
+					setSmjFromPix(x, y);
+					setSmnPosFromSmjBrg();
 				}
 
 				@Override
@@ -219,20 +238,26 @@ public class Ellipse extends AbstractShape {
 			m_needsUpdate = true;
 		}
 	}
+	
+	// The center position and the  semi-major axis must 
+	// be set before using this method
+	public void setSmnAxis(Distance dis) {
+		checkSmjExist();
+		checkCenterExist();
 
-	public void setSmnAxis(GeodeticCoords smnPos) {
-		if (m_smnTool == null) {
-			m_smnTool = getSmnTool();
-		}
-		m_smnTool.setGeoPos(smnPos);
-		GeodeticCoords cent = m_centerTool.getGeoPos();
-		double rangeKm = m_rb.gcDistanceFromTo(cent, smnPos);
-		double brg = m_rb.gcBearingFromTo(cent, smnPos);
-		m_smnRngBrg.setRangeKm(rangeKm);
-		m_smnRngBrg.setBearing(brg);
+		double brgDeg = m_rb.gcBearingFromTo(m_centerTool.getGeoPos(), 
+											 m_smjTool.getGeoPos());
+		brgDeg = Func.wrap360(brgDeg-90);
+		m_smnTool = getSmnTool();
+		double disKm = dis.getDistance(DistanceUnit.KILOMETERS);
+		GeodeticCoords pos = m_rb.gcPointFrom(m_centerTool.getGeoPos(), brgDeg, disKm);
+		m_smnTool.setGeoPos(pos);
+		m_smnRngBrg.setRangeKm(disKm);
+		m_smnRngBrg.setBearing(brgDeg);
 		m_needsUpdate = true;
 	}
 
+	
 	public IAnchorTool getSmnAnchorTool() {
 		if (m_smnTool == null) {
 			m_smnTool = getSmnTool();
@@ -379,35 +404,18 @@ public class Ellipse extends AbstractShape {
 		return m_smjTool.getGeoPos();
 	}
 
-	public void setSmjPos(GeodeticCoords pos) {
-		if (m_smjTool == null) {
-			m_smnTool = getSmjTool();
-		}
-		m_smjTool.setGeoPos(pos);
-	}
-
-	public Ellipse withSmjPos(GeodeticCoords pos) {
-		setSmjPos(pos);
-		return this;
-	}
-
 	//
 	public GeodeticCoords getSmnPos() {
 		return m_smnTool.getGeoPos();
 	}
 
-	public void setSmnPos(GeodeticCoords pos) {
+	private void setSmnPos(GeodeticCoords pos) {
 		if (m_smnTool == null) {
 			m_smnTool = getSmnTool();
 		}
 		m_smnTool.setGeoPos(pos);
 	}
-
-	public Ellipse withSmnPos(GeodeticCoords pos) {
-		setSmnPos(pos);
-		return this;
-	}
-
+	
 	public GeodeticCoords getCenter() {
 		return m_centerTool.getGeoPos();
 	}

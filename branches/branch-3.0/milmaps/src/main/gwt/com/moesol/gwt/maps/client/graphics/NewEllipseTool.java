@@ -13,6 +13,7 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
+import com.moesol.gwt.maps.client.units.Distance;
 
 public class NewEllipseTool extends  AbstractNewTool {
 	private boolean m_mouseDown = false;
@@ -48,11 +49,8 @@ public class NewEllipseTool extends  AbstractNewTool {
 		GeodeticCoords smjPos = m_ellipse.getSmjPos();
 		GeodeticCoords cenPos = m_ellipse.getCenter();
 		double disKm = m_rb.gcDistanceFromTo(cenPos, smjPos)/4;
-		double brgDeg = m_rb.gcBearingFromTo(cenPos, smjPos);
-		brgDeg = Func.wrap360(brgDeg-90);
-		GeodeticCoords smnPos = m_rb.gcPointFrom(cenPos, brgDeg, disKm);
-		m_ellipse.getSmnAnchorTool();
-		m_ellipse.setSmnAxis(smnPos);
+		Distance dis = Distance.builder().value(disKm).kilometers().build();
+		m_ellipse.setSmnAxis(dis);
 	}
 
 	@Override

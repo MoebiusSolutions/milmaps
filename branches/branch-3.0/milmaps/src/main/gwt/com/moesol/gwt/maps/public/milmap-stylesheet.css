@@ -13,8 +13,8 @@
 	border: 2px outset;
 	background-color: white;
 	z-index: 100;
-	opacity: 0.5;
-	filter: alpha(opacity =50);
+	opacity: 1.0;
+	filter: alpha(opacity = 50);
 }
 
 .gwt-DialogBox .Caption {

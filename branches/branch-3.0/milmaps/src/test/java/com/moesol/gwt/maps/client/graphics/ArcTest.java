@@ -156,6 +156,7 @@ public class ArcTest {
 		
 		// move start bearing
 		IAnchorTool tool = m_arc.getEndBrgAnchorTool();
+		tool.handleMouseMove (400, 200);
 		tool.handleMouseUp (400, 200);
 		GeodeticCoords pos = m_conv.viewToGeodetic(new ViewCoords(300,100));
 		IAnchorTool tool2 = m_arc.getAnchorByPosition(pos);
@@ -174,6 +175,7 @@ public class ArcTest {
 		
 		// move start bearing
 		IAnchorTool tool = m_arc.getStartBrgAnchorTool();
+		tool.handleMouseMove (300, 100);
 		tool.handleMouseUp (300, 100);
 		GeodeticCoords pos = m_conv.viewToGeodetic(new ViewCoords(400,200));
 		IAnchorTool tool2 = m_arc.getAnchorByPosition(pos);

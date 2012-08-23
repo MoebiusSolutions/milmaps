@@ -20,7 +20,6 @@ import com.moesol.gwt.maps.client.units.Distance;
 import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Arrow extends AbstractShape {
-	protected GeoPolygon m_splinedPolygon = null;
 	protected GeoPolygon m_plottedPolygon = null;
 	protected List<AnchorHandle> m_handleList = new ArrayList<AnchorHandle>();
 	protected List<AbstractPosTool> m_vertexList = new ArrayList<AbstractPosTool>();
@@ -50,7 +49,6 @@ public class Arrow extends AbstractShape {
 	
 	public Arrow(){
 		m_id = "Arrow";
-		m_translationHandle.setStrokeColor(255, 0, 0, 1);
 	}
 	
 	protected void checkForExceptions(){
@@ -174,7 +172,7 @@ public class Arrow extends AbstractShape {
 		 h.setCenter(v.getX(),v.getY()); 
 		 m_handleList.add(h);
 	}
-	
+
 	public void addVertex(int x, int y){
 		 AbstractPosTool tool = newVertexTool();
 		 m_vertexList.add(tool);
@@ -188,7 +186,7 @@ public class Arrow extends AbstractShape {
 			 setPosFromPix(x,y,m_translationTool);
 		 }
 	}
-	
+
 	public void insertVertex(int i, int x, int y){
 		AbstractPosTool tool = newVertexTool();
 		 setPosFromPix(x,y,tool);
@@ -197,7 +195,7 @@ public class Arrow extends AbstractShape {
 		h.setCenter(x,y);
 		m_handleList.add(i,h);
 	}
-	
+
 	public IAnchorTool getVertexTool(int i){
 		int n = m_vertexList.size();
 		if (-1 < i && i < n ){
@@ -229,7 +227,7 @@ public class Arrow extends AbstractShape {
 		}
 		return null;
 	}
-	
+	/*
 	public void removeVertex(AbstractPosTool vertex){
 		m_vertexList.remove(vertex);
 	}
@@ -238,7 +236,7 @@ public class Arrow extends AbstractShape {
 		// add assertion for i here
 		m_vertexList.remove(i);
 	}
-	
+	*/
 	private ViewCoords getViewPoint(int i){
 		ViewCoords vc = null;
 		if (0 <= i && i < m_vertexList.size()){
@@ -361,6 +359,7 @@ public class Arrow extends AbstractShape {
 			for (int i = 0; i < m_vertexList.size(); i++){
 				GeodeticCoords gc = m_vertexList.get(i).getGeoPos();
 				ViewCoords v = m_convert.geodeticToView(gc);
+				m_handleList.get(i).setStrokeColor(255, 255, 255, 1);
 				m_handleList.get(i).setCenter(v.getX(),v.getY()).draw(context);
 				if(splitter.isSplit()){
 					int side = splitter.switchMove(splitter.side(v.getX()));
@@ -371,6 +370,7 @@ public class Arrow extends AbstractShape {
 			// translation handle
 			GeodeticCoords gc  = m_translationTool.getGeoPos();
 			ViewCoords v = m_convert.geodeticToView(gc);
+			m_translationHandle.setStrokeColor(255, 0, 0, 1);
 			m_translationHandle.setCenter(v.getX(),v.getY()).draw(context);
 			if(splitter.isSplit()){
 				int side = splitter.switchMove(splitter.side(v.getX()));
@@ -388,7 +388,7 @@ public class Arrow extends AbstractShape {
 	   	return tool;
 	}
 	
-	protected int ptClose(int px, int py, double eps){
+	protected int ptCloseToSpine(int px, int py, double eps){
 		/////////////////////////////////////////
 		ViewCoords p, q = getViewPoint(0);  
 		int n = m_vertexList.size();
@@ -413,15 +413,49 @@ public class Arrow extends AbstractShape {
 		}
 		return n;
 	}
+	
+	protected boolean ptClose(int px, int py, double eps){
+		///////////////////////////////////////// 
+		ViewCoords p, q = m_convert.geodeticToView(m_plottedPolygon.get(0));
+		if (q == null){
+			return false;
+		}
+		ISplit split = m_convert.getISplit();
+		int n = m_plottedPolygon.size();
+		for (int i = 1; i < n; i++){
+			p = q;
+			q = m_convert.geodeticToView(m_plottedPolygon.get(i));
+			if (q != null){
+				int x = split.adjustFirstX(p.getX(), q.getX());
+				double dist = Func.ptLineDist(x, p.getY(), q.getX(), q.getY(), px, py);
+				if (dist < eps) {
+					return true;
+				}
+				// if the x-value changed, then we know we had to shift it
+				// so try shifting one more time and testing. 
+				if (Math.abs(x-p.getX()) > m_convert.mapWidth()/2 ){
+					x =  split.adjustFirstX(q.getX(), p.getX());
+					dist = Func.ptLineDist(p.getX(), p.getY(), x, q.getY(), px, py);
+					if (dist < eps) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 	public boolean ptCloseToEdge(int px, int py, double eps) {
 		/////////////////////////////////////////
-		int j = ptClose(px, py, eps);
-		return (j < m_vertexList.size());
+		int j = ptCloseToSpine(px, py, eps);
+		if (j < m_vertexList.size()){
+			return true;
+		}
+		return ptClose(px,py,eps);
 	}
 	
 	public int pointHitSegment(int px, int py){
-		return ptClose(px, py, Func.PIX_SELECT_TOLERANCE);
+		return ptCloseToSpine(px, py, Func.PIX_SELECT_TOLERANCE);
 	}
 	
 	public int size(){

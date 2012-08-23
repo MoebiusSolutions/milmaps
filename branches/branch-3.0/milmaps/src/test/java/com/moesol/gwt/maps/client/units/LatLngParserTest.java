@@ -18,7 +18,7 @@ public class LatLngParserTest {
 
 	@Test
 	public void parserTest() {
-		String ll = "45º 39'12.52\" N 25º 36'55.57\" E";
+		String ll = "45º 39' 12.52\" N 25º 36' 55.57\" E";
 		GeodeticCoords gc = LatLngParser.parse(ll);
 		assertEquals(45.653477,gc.getPhi(AngleUnit.DEGREES), 0.0001);
 		assertEquals(25.615436,gc.getLambda(AngleUnit.DEGREES), 0.0001);

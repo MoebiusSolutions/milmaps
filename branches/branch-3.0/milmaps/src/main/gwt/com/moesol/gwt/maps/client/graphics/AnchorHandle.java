@@ -16,7 +16,7 @@ public class AnchorHandle {
 	private int m_size = 8;
 	private int m_lineWidth = 2;
 	
-	private CssColor m_color = CssColor.make("rgba(255, 255, 255,1)");
+	private CssColor m_color;
 
 	public CssColor getColor() {
 		return m_color;
@@ -82,6 +82,11 @@ public class AnchorHandle {
 			}
 		}
 		return false;
+	}
+	
+	public AnchorHandle setStrokeColor(String color){
+		m_color = CssColor.make(color);
+		return this;
 	}
 	
 	public AnchorHandle setStrokeColor(int r, int g, int b, double a){
