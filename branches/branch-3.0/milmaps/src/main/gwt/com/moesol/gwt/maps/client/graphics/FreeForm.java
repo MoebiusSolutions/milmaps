@@ -24,7 +24,6 @@ public class FreeForm extends AbstractShape {
 
 	public FreeForm() {
 		m_id = "Freeform";
-		m_translationHandle.setStrokeColor(255, 0, 0, 1);
 	}
 
 	public static IShape create(ICoordConverter conv, GeodeticCoords[] pos) {
@@ -309,6 +308,7 @@ public class FreeForm extends AbstractShape {
 			// translation handle
 			GeodeticCoords gc = m_translationTool.getGeoPos();
 			ViewCoords v = m_convert.geodeticToView(gc);
+			m_translationHandle.setStrokeColor(255, 0, 0, 1);
 			m_translationHandle.setCenter(v.getX(), v.getY()).draw(context);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(v.getX()));

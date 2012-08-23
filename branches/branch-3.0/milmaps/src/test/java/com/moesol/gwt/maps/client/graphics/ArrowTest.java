@@ -27,12 +27,14 @@ public class ArrowTest {
 	private ViewPort viewPort = new ViewPort();
 	private IProjection proj;
 	private Converter m_conv;
+	private Util m_util;
 	
 	@Before
 	public void before() throws Exception {
 		proj = new CylEquiDistProj(512, 180, 180);
 		viewPort.setProjection(proj);
 		m_conv = new Converter(viewPort);
+		m_util = new Util(m_conv,m_rb);
 		m_arrow = new Arrow();
 		m_arrow.setCoordConverter(m_conv);
 		
@@ -57,10 +59,10 @@ public class ArrowTest {
 	@Test
 	public void ptCloseToEdgeTest(){
 		GeodeticCoords[] pos = new GeodeticCoords[4];
-		pos[0] = m_conv.viewToGeodetic(new ViewCoords(300,200));
-		pos[1] = m_conv.viewToGeodetic(new ViewCoords(350,150));
-		pos[2] = m_conv.viewToGeodetic(new ViewCoords(450,200));
-		pos[3] = m_conv.viewToGeodetic(new ViewCoords(500,250));
+		pos[0] = m_util.pixToPos(300,200);
+		pos[1] = m_util.pixToPos(350,150);
+		pos[2] = m_util.pixToPos(450,200);
+		pos[3] = m_util.pixToPos(500,250);
 		for(int i = 0; i < 4; i++){
 			m_arrow.addVertex(pos[i]);
 		}
@@ -116,10 +118,10 @@ public class ArrowTest {
 	@Test
 	public void positionTouchesTest(){
 		GeodeticCoords[] pos = new GeodeticCoords[4];
-		pos[0] = m_conv.viewToGeodetic(new ViewCoords(300,200));
-		pos[1] = m_conv.viewToGeodetic(new ViewCoords(350,150));
-		pos[2] = m_conv.viewToGeodetic(new ViewCoords(450,200));
-		pos[3] = m_conv.viewToGeodetic(new ViewCoords(500,250));
+		pos[0] = m_util.pixToPos(300,200);
+		pos[1] = m_util.pixToPos(350,150);
+		pos[2] = m_util.pixToPos(450,200);
+		pos[3] = m_util.pixToPos(500,250);
 		for(int i = 0; i < 4; i++){
 			m_arrow.addVertex(pos[i]);
 		}
@@ -136,10 +138,10 @@ public class ArrowTest {
 	@Test
 	public void moveArrowTest(){	
 		GeodeticCoords[] pos = new GeodeticCoords[4];
-		pos[0] = m_conv.viewToGeodetic(new ViewCoords(300,200));
-		pos[1] = m_conv.viewToGeodetic(new ViewCoords(350,150));
-		pos[2] = m_conv.viewToGeodetic(new ViewCoords(450,200));
-		pos[3] = m_conv.viewToGeodetic(new ViewCoords(500,250));
+		pos[0] = m_util.pixToPos(300,200);
+		pos[1] = m_util.pixToPos(350,150);
+		pos[2] = m_util.pixToPos(450,200);
+		pos[3] = m_util.pixToPos(500,250);
 		for(int i = 0; i < 4; i++){
 			m_arrow.addVertex(pos[i]);
 		}
@@ -153,10 +155,10 @@ public class ArrowTest {
 		int moveX = 70;
 		int moveY = -50;
 		// create moved positions and check for anchor selections
-		pos[0] = m_conv.viewToGeodetic(new ViewCoords(300+moveX,200+moveY));
-		pos[1] = m_conv.viewToGeodetic(new ViewCoords(350+moveX,150+moveY));
-		pos[2] = m_conv.viewToGeodetic(new ViewCoords(450+moveX,200+moveY));
-		pos[3] = m_conv.viewToGeodetic(new ViewCoords(500+moveX,250+moveY));
+		pos[0] = m_util.pixToPos(300+moveX,200+moveY);
+		pos[1] = m_util.pixToPos(350+moveX,150+moveY);
+		pos[2] = m_util.pixToPos(450+moveX,200+moveY);
+		pos[3] = m_util.pixToPos(500+moveX,250+moveY);
 		for (int i = 0; i < 4; i++){
 			IAnchorTool u = m_arrow.getVertexTool(i);
 			IAnchorTool v = m_arrow.getAnchorByPosition(pos[i]);
