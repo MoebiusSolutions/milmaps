@@ -62,16 +62,32 @@ public class Box extends AbstractSegment {
 
 	private void checkForExceptions() {
 		if (m_convert == null) {
-			throw new IllegalStateException("Ellipse: m_convert = null");
+			throw new IllegalStateException("Box: m_convert = null");
+		}
+	}
+	
+	private void checkSmjExist(){
+		if (m_smjTool == null) {
+			throw new IllegalStateException("Box: m_smjTool = null");
+		}
+		if (m_smjTool.getGeoPos() == null ){
+			throw new IllegalStateException("Box: m_smjTool geoPos = null");
 		}
 	}
 
-	private void setSmjFromPix(int x, int y) {
-		checkForExceptions();
-		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		if (m_smjTool == null) {
-			m_smjTool = getSmjTool();
+	private void checkCenterExist(){
+		if (m_centerTool == null) {
+			throw new IllegalStateException("Box: m_centerTool = null");
 		}
+		if (m_centerTool.getGeoPos() == null ){
+			throw new IllegalStateException("Box: m_centerTool geoPos = null");
+		}
+	}
+
+	public void setSmjFromPos(GeodeticCoords gc) {
+		checkForExceptions();
+		checkCenterExist();
+		m_smjTool = getSmjTool();
 		GeodeticCoords pos = m_smjTool.getGeoPos();
 		if (pos == null || !pos.equals(gc)) {
 			m_smjTool.setGeoPos(gc);
@@ -79,6 +95,11 @@ public class Box extends AbstractSegment {
 			m_smjRngBrg = m_rb.gcRngBrgFromTo(cent, gc);
 			m_needsUpdate = true;
 		}
+	}
+
+	public void setSmjFromPix(int x, int y) {
+		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
+		setSmjFromPos(gc);
 	}
 
 	protected void drawSegments(Context2d context) {
@@ -194,16 +215,19 @@ public class Box extends AbstractSegment {
 		}
 	}
 
-	public void setSmnAxis(GeodeticCoords smnPos) {
-		if (m_smnTool == null) {
-			m_smnTool = getSmnTool();
-		}
-		m_smnTool.setGeoPos(smnPos);
-		GeodeticCoords cent = m_centerTool.getGeoPos();
-		double rangeKm = m_rb.gcDistanceFromTo(cent, smnPos);
-		double brg = m_rb.gcBearingFromTo(cent, smnPos);
-		m_smnRngBrg.setRangeKm(rangeKm);
-		m_smnRngBrg.setBearing(brg);
+	public void setSmnAxis(Distance dis) {
+		checkSmjExist();
+		checkCenterExist();
+
+		double brgDeg = m_rb.gcBearingFromTo(m_centerTool.getGeoPos(), 
+											 m_smjTool.getGeoPos());
+		brgDeg = Func.wrap360(brgDeg-90);
+		m_smnTool = getSmnTool();
+		double disKm = dis.getDistance(DistanceUnit.KILOMETERS);
+		GeodeticCoords pos = m_rb.gcPointFrom(m_centerTool.getGeoPos(), brgDeg, disKm);
+		m_smnTool.setGeoPos(pos);
+		m_smnRngBrg.setRangeKm(disKm);
+		m_smnRngBrg.setBearing(brgDeg);
 		m_needsUpdate = true;
 	}
 
