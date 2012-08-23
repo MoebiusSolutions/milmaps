@@ -16,7 +16,7 @@ public class AnchorHandle {
 	private int m_size = 8;
 	private int m_lineWidth = 2;
 	
-	private CssColor m_color;
+	private CssColor m_color = null;
 
 	public CssColor getColor() {
 		return m_color;
@@ -97,6 +97,9 @@ public class AnchorHandle {
 	
 	
 	public void draw(Context2d context){
+		if( m_color == null ){
+			m_color = null;
+		}
 		if (context != null) {
 			context.setStrokeStyle(m_color);
 			context.setLineWidth(m_lineWidth);

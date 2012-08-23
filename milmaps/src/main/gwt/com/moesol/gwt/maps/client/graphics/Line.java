@@ -14,8 +14,8 @@ import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RngBrg;
 
 public class Line extends AbstractSegment {
-	private final AnchorHandle m_startHandle = new AnchorHandle();
-	private final AnchorHandle m_endHandle = new AnchorHandle();
+	//private final AnchorHandle m_startHandle = new AnchorHandle();
+	//private final AnchorHandle m_endHandle = new AnchorHandle();
 	private RngBrg m_endRngBrg = null;
 	private AbstractPosTool m_startTool = null;
 	private AbstractPosTool m_endTool = null;
@@ -26,7 +26,6 @@ public class Line extends AbstractSegment {
 	
 	public Line(){
 		m_id = "Line";
-		m_translationHandle.setStrokeColor(255, 0, 0, 1);
 	}
 	
 	public static IShape create(ICoordConverter conv, GeodeticCoords start,
@@ -48,6 +47,24 @@ public class Line extends AbstractSegment {
 	private void checkForException() {
 		if (m_convert == null) {
 			throw new IllegalStateException("Line: m_convert = null");
+		}
+	}
+	
+	private void checkStartExist(){
+		if (m_startTool == null) {
+			throw new IllegalStateException("Line: m_startTool = null");
+		}
+		if (m_startTool.getGeoPos() == null ){
+			throw new IllegalStateException("Line: m_startTool geoPos = null");
+		}
+	}
+
+	private void checkEndExist(){
+		if (m_endTool == null) {
+			throw new IllegalStateException("Line: m_endTool = null");
+		}
+		if (m_endTool.getGeoPos() == null ){
+			throw new IllegalStateException("Line: m_endTool geoPos = null");
 		}
 	}
 	
@@ -195,16 +212,15 @@ public class Line extends AbstractSegment {
 	}
 	
 	private void moveLineByOffset(int x, int y){
-		m_startHandle.moveByOffset(x, y);
-		int ix = m_startHandle.getX();
-		int iy = m_startHandle.getY();
-		setPosFromPix(ix,iy,m_startTool);
+		//m_startHandle.moveByOffset(x, y);
+		ViewCoords vc = m_convert.geodeticToView(getStartPos());
+		setPosFromPix(vc.getX()+x,vc.getY()+y,m_startTool);
 		double rngKm = m_endRngBrg.getRanegKm();
 		double brg = m_endRngBrg.getBearing();
 		GeodeticCoords gc = m_rb.gcPointFrom(m_startTool.getGeoPos(), brg, rngKm);
 		m_endTool.setGeoPos(gc);
 		// Update translation handle
-		m_translationHandle.setCenter(x, y);
+		updateTranslationHandle();
 	}
 	
 	protected AbstractPosTool getTranslationTool(){
@@ -297,24 +313,29 @@ public class Line extends AbstractSegment {
 			// Center Handle
 			GeodeticCoords gc = getStartPos();
 			ViewCoords vc = m_convert.geodeticToView(gc);
-			m_startHandle.setCenter(vc.getX(), vc.getY());
-			m_startHandle.draw(context);
+			AnchorHandle startHandle = new AnchorHandle();
+			startHandle.setStrokeColor(255, 255, 255, 1);
+			startHandle.setCenter(vc.getX(), vc.getY());
+			startHandle.draw(context);
 			if(splitter.isSplit()){
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
-				m_startHandle.setCenter(x, vc.getY()).draw(context);
+				startHandle.setCenter(x, vc.getY()).draw(context);
 			}
 
 			gc = getEndPos();
 			vc = m_convert.geodeticToView(gc);
-			m_endHandle.setCenter(vc.getX(), vc.getY()).draw(context);
+			AnchorHandle endHandle = new AnchorHandle();
+			endHandle.setStrokeColor(255, 255, 255, 1);
+			endHandle.setCenter(vc.getX(), vc.getY()).draw(context);
 			if(splitter.isSplit()){
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
-				m_endHandle.setCenter(x, vc.getY()).draw(context);
+				endHandle.setCenter(x, vc.getY()).draw(context);
 			}
-			int x = m_startHandle.getX()-TRANSLATE_HANDLE_OFFSET_X;
-			int y = m_startHandle.getY();
+			int x = startHandle.getX()-TRANSLATE_HANDLE_OFFSET_X;
+			int y = startHandle.getY();
+			m_translationHandle.setStrokeColor(255, 0, 0, 1);
 			m_translationHandle.setCenter(x, y).draw(context);
 			if(splitter.isSplit()){
 				int side = splitter.switchMove(splitter.side(x));
@@ -330,7 +351,10 @@ public class Line extends AbstractSegment {
 	}
 
 	public void setEndPos(GeodeticCoords radPos) {
+		checkStartExist();
+		getEndTool();
 		m_endTool.setGeoPos(radPos);
+		updateRngBrg();
 	}
 
 	public Line withEndPos(GeodeticCoords radPos) {
@@ -343,10 +367,9 @@ public class Line extends AbstractSegment {
 	}
 
 	public void setStartPos(GeodeticCoords pos) {
-		if (m_startTool == null){
-			m_startTool = getStartTool();
-		}
+		getStartTool();
 		m_startTool.setGeoPos(pos);
+		updateTranslationHandle();
 	}
 
 	public Line withStartPos(GeodeticCoords pos) {
@@ -370,7 +393,7 @@ public class Line extends AbstractSegment {
 		if (Func.isClose(pix, vc, Func.PIX_SELECT_TOLERANCE)) {
 			return true;
 		}
-		gc = m_startTool.getGeoPos();
+		gc = m_endTool.getGeoPos();
 		pix = m_convert.geodeticToView(gc);
 		if (Func.isClose(pix, vc, Func.PIX_SELECT_TOLERANCE)) {
 			return true;

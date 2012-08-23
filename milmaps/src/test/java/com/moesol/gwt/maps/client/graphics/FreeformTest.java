@@ -72,19 +72,14 @@ public class FreeformTest {
 		for(int i = 0; i < 4; i++){
 			m_ff.addVertex(pos[i]);
 		}
-		GeodeticCoords p = m_util.pixToPos(325, 175);
-		ViewCoords vc = m_conv.geodeticToView(p);
-		boolean bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+
+		boolean bTouches = m_ff.ptCloseToEdge(325, 175, 1.5);
 		assertEquals(true,bTouches);
 		
-		p = m_util.pixToPos(400, 175);
-		vc = m_conv.geodeticToView(p);
-		bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		bTouches = m_ff.ptCloseToEdge(400, 175, 1.5);
 		assertEquals(true,bTouches);
 		
-		p = m_util.pixToPos(475, 225);
-		vc = m_conv.geodeticToView(p);
-		bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		bTouches = m_ff.ptCloseToEdge(475, 225, 1.5);
 		assertEquals(true,bTouches);
 	}
 	
@@ -98,19 +93,14 @@ public class FreeformTest {
 		for(int i = 0; i < 4; i++){
 			m_ff.addVertex(pts[i].getX(),pts[i].getY());
 		}
-		GeodeticCoords p = m_util.pixToPos(325, 175);
-		ViewCoords vc = m_conv.geodeticToView(p);
-		boolean bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		
+		boolean bTouches = m_ff.ptCloseToEdge(325, 175, 1.5);
 		assertEquals(true,bTouches);
 		
-		p = m_util.pixToPos(400, 175);
-		vc = m_conv.geodeticToView(p);
-		bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		bTouches = m_ff.ptCloseToEdge(400, 175, 1.5);
 		assertEquals(true,bTouches);
 		
-		p = m_util.pixToPos(475, 225);
-		vc = m_conv.geodeticToView(p);
-		bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		bTouches = m_ff.ptCloseToEdge(475, 225, 1.5);
 		assertEquals(true,bTouches);
 	}
 	
@@ -128,19 +118,13 @@ public class FreeformTest {
 		}
 		m_ff.insertVertex(2, pts[2].getX(),pts[2].getY());
 		//
-		GeodeticCoords p = m_util.pixToPos(325, 175);
-		ViewCoords vc = m_conv.geodeticToView(p);
-		boolean bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		boolean bTouches = m_ff.ptCloseToEdge(325, 175, 1.5);
 		assertEquals(true,bTouches);
 		
-		p = m_util.pixToPos(400, 175);
-		vc = m_conv.geodeticToView(p);
-		bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		bTouches = m_ff.ptCloseToEdge(400, 175, 1.5);
 		assertEquals(true,bTouches);
 		
-		p = m_util.pixToPos(475, 225);
-		vc = m_conv.geodeticToView(p);
-		bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		bTouches = m_ff.ptCloseToEdge(475, 225, 1.5);
 		assertEquals(true,bTouches);
 	}
 	
@@ -155,19 +139,13 @@ public class FreeformTest {
 			m_ff.addVertex(pos[i]);
 		}
 
-		GeodeticCoords p = m_util.pixToPos(325, 175);
-		ViewCoords vc = m_conv.geodeticToView(p);
-		boolean bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		boolean bTouches = m_ff.ptCloseToEdge(325, 175, 1.5);
 		assertEquals(true,bTouches);
 		
-		p = m_util.pixToPos(400, 175);
-		vc = m_conv.geodeticToView(p);
-		bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		bTouches = m_ff.ptCloseToEdge(400, 175, 1.5);
 		assertEquals(true,bTouches);
 		
-		p = m_util.pixToPos(475, 225);
-		vc = m_conv.geodeticToView(p);
-		bTouches = m_ff.ptCloseToEdge(vc.getX(), vc.getY(), 1.5);
+		bTouches = m_ff.ptCloseToEdge(475, 225, 1.5);
 		assertEquals(true,bTouches);
 	}
 	

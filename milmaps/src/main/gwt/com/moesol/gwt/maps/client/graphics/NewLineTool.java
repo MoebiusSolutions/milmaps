@@ -46,7 +46,9 @@ public class NewLineTool extends  AbstractNewTool {
 		m_mouseDown = true;
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords gc = m_convert.viewToGeodetic(vc);
-		m_line = new Line().withStartPos(gc);
+		m_line = new Line();
+		m_line.setCoordConverter(m_convert);
+		m_line.withStartPos(gc);
 		m_editor.addShape(m_line);
 		m_line.selected(true);
 		m_line.setCoordConverter(m_editor.getCoordinateConverter());
