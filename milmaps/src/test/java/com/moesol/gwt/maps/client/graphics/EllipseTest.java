@@ -33,8 +33,6 @@ public class EllipseTest {
 	private Converter m_conv;
 	private Util m_util;
 	
-
-	
 	private ViewCoords compViewPt( GeodeticCoords cent, double rotBrg, 
 								   double brgDeg, double a, double b) {
 		double angle = Func.DegToRad(brgDeg);
