@@ -59,6 +59,13 @@ public class EllipseTest {
 	}
 	
 	@Test
+	public void creatEditToolTest(){
+		IShapeEditor se = new ShapeEditorFacade();
+		IShapeTool st = m_ellipse.createEditTool(se);
+		assertEquals(true, st != null);
+	}
+	
+	@Test
 	public void creatIShapeTest(){
 		GeodeticCoords gc = m_conv.viewToGeodetic(new ViewCoords(300,200));
 		RngBrg rb = m_util.pixPointsToRngBrg(300, 200, 400, 200);

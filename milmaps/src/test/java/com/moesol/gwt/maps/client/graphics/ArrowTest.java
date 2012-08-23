@@ -57,6 +57,13 @@ public class ArrowTest {
 	}
 	
 	@Test
+	public void creatEditToolTest(){
+		IShapeEditor se = new ShapeEditorFacade();
+		IShapeTool st = m_arrow.createEditTool(se);
+		assertEquals(true, st != null);
+	}
+	
+	@Test
 	public void ptCloseToEdgeTest(){
 		GeodeticCoords[] pos = new GeodeticCoords[4];
 		pos[0] = m_util.pixToPos(300,200);

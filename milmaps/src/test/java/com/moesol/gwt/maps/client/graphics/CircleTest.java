@@ -62,6 +62,13 @@ public class CircleTest {//extends GwtTest{
 		assertEquals(tool,tool2);
 		return;
 	}
+	
+	@Test
+	public void creatEditToolTest(){
+		IShapeEditor se = new ShapeEditorFacade();
+		IShapeTool st = m_cir.createEditTool(se);
+		assertEquals(true, st != null);
+	}
 
 	@Test
 	public void setGetTest() {

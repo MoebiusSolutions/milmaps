@@ -15,7 +15,7 @@ import com.google.gwt.user.client.Event;
 public interface IShapeEditor {//extends IHandlerTool {
 	public abstract void setEventFocus(boolean on);
 
-	public abstract CanvasTool getCanvasTool();
+	public abstract ICanvasTool getCanvasTool();
 
 	public abstract void addShape(IShape shape);
 
