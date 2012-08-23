@@ -100,6 +100,13 @@ public class BoxTest {
 	}
 	
 	@Test
+	public void creatEditToolTest(){
+		IShapeEditor se = new ShapeEditorFacade();
+		IShapeTool st = m_box.createEditTool(se);
+		assertEquals(true, st != null);
+	}
+	
+	@Test
 	public void positionTouchesTest(){
 		GeodeticCoords cent = m_util.pixToPos(300,200);
 		m_box.setCenter(cent);

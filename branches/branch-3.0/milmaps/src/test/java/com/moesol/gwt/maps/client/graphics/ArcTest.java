@@ -64,6 +64,13 @@ public class ArcTest {
 	}
 	
 	@Test
+	public void creatEditToolTest(){
+		IShapeEditor se = new ShapeEditorFacade();
+		IShapeTool st = m_arc.createEditTool(se);
+		assertEquals(true, st != null);
+	}
+	
+	@Test
 	public void setGetTest() {
 		GeodeticCoords gc = new GeodeticCoords(-120, 33, AngleUnit.DEGREES);
 		m_arc.setCenter(gc);

@@ -9,7 +9,7 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
 
-public class CanvasTool { //implements ResizeHandler {
+public class CanvasTool implements ICanvasTool { //implements ResizeHandler {
 	protected final Canvas m_canvas = Canvas.createIfSupported();
 	
 	public CanvasTool(){
@@ -32,8 +32,10 @@ public class CanvasTool { //implements ResizeHandler {
 	//	setSize(w,h);
 	//}
 	
+	@Override
 	public Canvas canvas(){ return m_canvas; }
 	
+	@Override
 	public void setSize(int width, int height){
 		if(m_canvas != null){
 			m_canvas.setWidth(width+"px");
