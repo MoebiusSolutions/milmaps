@@ -46,7 +46,9 @@ public class NewRectTool extends  AbstractNewTool {
 		m_mouseDown = true;
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords gc = m_convert.viewToGeodetic(vc);
-		m_rect = new Rect().withStartPos(gc);
+		m_rect = new Rect();
+		m_rect.setCoordConverter(m_convert);
+		m_rect.withStartPos(gc);
 		m_editor.addShape(m_rect);
 		m_rect.selected(true);
 		m_rect.setCoordConverter(m_editor.getCoordinateConverter());

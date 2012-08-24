@@ -98,7 +98,7 @@ public class AnchorHandle {
 	
 	public void draw(Context2d context){
 		if( m_color == null ){
-			m_color = null;
+			return;
 		}
 		if (context != null) {
 			context.setStrokeStyle(m_color);
