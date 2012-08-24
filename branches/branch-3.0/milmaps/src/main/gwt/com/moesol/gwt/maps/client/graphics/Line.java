@@ -69,10 +69,10 @@ public class Line extends AbstractSegment {
 	}
 	
 	public void setEndPts(GeodeticCoords start, GeodeticCoords end) {
-		AbstractPosTool tool = getStartTool();
-		tool.setGeoPos(start);
-		tool = getEndTool();
-		tool.setGeoPos(end);
+		getStartTool().setGeoPos(start);
+		updateTranslationHandle();
+		getEndTool().setGeoPos(end);
+		updateRngBrg();
 	}
 
 	

@@ -298,6 +298,7 @@ public class FreeForm extends AbstractShape {
 			for (int i = 0; i < m_vertexList.size(); i++) {
 				GeodeticCoords gc = m_vertexList.get(i).getGeoPos();
 				ViewCoords v = m_convert.geodeticToView(gc);
+				m_handleList.get(i).setStrokeColor(255, 255, 255, 1);
 				m_handleList.get(i).setCenter(v.getX(), v.getY()).draw(context);
 				if (splitter.isSplit()) {
 					int side = splitter.switchMove(splitter.side(v.getX()));
