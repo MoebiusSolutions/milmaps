@@ -19,7 +19,7 @@ import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.ViewPort;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
-import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.algorithms.SRngBrg;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Bearing;
 import com.moesol.gwt.maps.client.units.Distance;
@@ -68,7 +68,7 @@ public class EllipseTest {
 	@Test
 	public void creatIShapeTest(){
 		GeodeticCoords gc = m_conv.viewToGeodetic(new ViewCoords(300,200));
-		RngBrg rb = m_util.pixPointsToRngBrg(300, 200, 400, 200);
+		SRngBrg rb = m_util.pixPointsToRngBrg(300, 200, 400, 200);
 		Bearing brg = Bearing.builder(). value(rb.getBearing()).degrees().build();
 		Distance smj = Distance.builder().value(rb.getRanegKm()).kilometers().build();
 		Distance smn = Distance.builder().value(rb.getRanegKm()/2).kilometers().build();
@@ -99,7 +99,7 @@ public class EllipseTest {
 		m_ellipse.setCenter(cent);
 		m_ellipse.setSmjFromPix(400, 200);
 		GeodeticCoords gc = m_ellipse.getSmjPos();
-		double disKm = m_rb.gcDistanceFromTo(cent,gc);
+		double disKm = m_rb.gcRangeFromTo(cent,gc);
 		double rotBrg = m_rb.gcBearingFromTo(cent,gc);
 		
 		Distance dis = Distance.builder().value(disKm/2).kilometers().build();
@@ -116,7 +116,7 @@ public class EllipseTest {
 		m_ellipse.setCenter(cent);
 		m_ellipse.setSmjFromPix(400, 200);
 		GeodeticCoords pos = m_util.pixToPos(300, 150);
-		double disKm = m_rb.gcDistanceFromTo(cent,pos);
+		double disKm = m_rb.gcRangeFromTo(cent,pos);
 		Distance dis = Distance.builder().value(disKm).kilometers().build();
 		m_ellipse.setSmnAxis(dis);
 		
@@ -138,7 +138,7 @@ public class EllipseTest {
 		m_ellipse.setCenter(cent);
 		m_ellipse.setSmjFromPix(400, 200);
 		GeodeticCoords gc = m_ellipse.getSmjPos();
-		double disKm = m_rb.gcDistanceFromTo(cent,gc);
+		double disKm = m_rb.gcRangeFromTo(cent,gc);
 		Distance dis = Distance.builder().value(disKm/2).kilometers().build();
 		m_ellipse.setSmnAxis(dis);
 		
@@ -148,7 +148,7 @@ public class EllipseTest {
 		tool.handleMouseUp( 300 + len, 200-len);
 		//Test for semi-minor movement
 		GeodeticCoords pos = m_ellipse.getSmjPos();
-		RngBrg rb = m_rb.gcRngBrgFromTo(cent, pos);
+		SRngBrg rb = m_rb.gcRngBrgFromTo(cent, pos);
 		double brg = Func.wrap360(rb.getBearing()- 90);
 		gc = m_rb.gcPointFrom(cent, brg, disKm/2);
 		tool = m_ellipse.getSmnAnchorTool();
@@ -163,7 +163,7 @@ public class EllipseTest {
 		m_ellipse.setCenter(cent);
 		m_ellipse.setSmjFromPix(400, 200);
 		GeodeticCoords gc = m_ellipse.getSmjPos();
-		double disKm = m_rb.gcDistanceFromTo(cent,gc)/2;
+		double disKm = m_rb.gcRangeFromTo(cent,gc)/2;
 		Distance dis = Distance.builder().value(disKm).kilometers().build();
 		m_ellipse.setSmnAxis(dis);
 		IAnchorTool tool = m_ellipse.getCenterAnchorTool();

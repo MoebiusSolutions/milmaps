@@ -45,7 +45,7 @@ public class OtmArrow extends AbstractShape {
 		GeodeticCoords pnts[] = m_polygon.toArray(new GeodeticCoords[0]);
 		//
 		if (pnts.length >= 2) {
-			double rng = m_rb.gcDistanceFromTo(pnts[0],pnts[1]);
+			double rng = m_rb.gcRangeFromTo(pnts[0],pnts[1]);
 			double width = rng/6;
 			if (width>0.0)
 				return (width);
@@ -107,7 +107,7 @@ public class OtmArrow extends AbstractShape {
 		//
 		double width = getWidth();
 		if (width <= 0) {
-			double rng = m_rb.gcDistanceFromTo(pnts[0], pnts[1]);
+			double rng = m_rb.gcRangeFromTo(pnts[0], pnts[1]);
 			width = rng/6;
 		}
 		if (width <= 0) {

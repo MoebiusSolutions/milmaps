@@ -12,7 +12,7 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
-import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.algorithms.SRngBrg;
 
 public class EArc extends AbstractShape{
 	private static final int NUM_ARC_PTS = 36;
@@ -25,10 +25,10 @@ public class EArc extends AbstractShape{
 	private final AnchorHandle m_startBrgHandle = new AnchorHandle();
 	private final AnchorHandle m_endBrgHandle = new AnchorHandle();
 	
-	protected RngBrg m_smjRngBrg = null;
-	protected RngBrg m_smnRngBrg = null;
-	protected RngBrg m_startRngDeg = null;
-	protected RngBrg m_endRngDeg   = null;
+	protected SRngBrg m_smjRngBrg = null;
+	protected SRngBrg m_smnRngBrg = null;
+	protected SRngBrg m_startRngDeg = null;
+	protected SRngBrg m_endRngDeg   = null;
 	// private boolean m_mouseDown = true;
 	protected AbstractPosTool m_centerTool = null;
 	protected AbstractPosTool m_smjTool = null;
@@ -38,10 +38,10 @@ public class EArc extends AbstractShape{
 
 	public EArc() {
 		m_id = "EllipseArc";
-		m_smjRngBrg   = new RngBrg(0,0);
-		m_smnRngBrg   = new RngBrg(0,0);
-		m_startRngDeg = new RngBrg(0,0);
-		m_endRngDeg   = new RngBrg(0,90);
+		m_smjRngBrg   = new SRngBrg(0,0);
+		m_smnRngBrg   = new SRngBrg(0,0);
+		m_startRngDeg = new SRngBrg(0,0);
+		m_endRngDeg   = new SRngBrg(0,90);
 	}
 
 	private void checkForExceptions() {
@@ -162,7 +162,7 @@ public class EArc extends AbstractShape{
 		setSmnPos(smnPos);	
 	}
 	
-	private void setStartEndBrgFromPix(int x, int y, RngBrg rb, AbstractPosTool tool) {
+	private void setStartEndBrgFromPix(int x, int y, SRngBrg rb, AbstractPosTool tool) {
 		checkForExceptions();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
 		GeodeticCoords pos = tool.getGeoPos();
@@ -180,7 +180,7 @@ public class EArc extends AbstractShape{
 		}	
 	}
 	
-	private void updateStartEndDeg(RngBrg rb, AbstractPosTool tool) {
+	private void updateStartEndDeg(SRngBrg rb, AbstractPosTool tool) {
 		checkForExceptions();
 		GeodeticCoords centGc = m_centerTool.getGeoPos();
 		double brg = rb.getBearing();
@@ -265,7 +265,7 @@ public class EArc extends AbstractShape{
 		GeodeticCoords pos = m_smjTool.getGeoPos();
 		if (pos == null || !pos.equals(gc)){
 			GeodeticCoords centGc = m_centerTool.getGeoPos();
-			double rangeKm = m_rb.gcDistanceFromTo(centGc, gc);
+			double rangeKm = m_rb.gcRangeFromTo(centGc, gc);
 			double bearing = m_smnRngBrg.getBearing();
 			m_smnRngBrg.setRangeKm(rangeKm);
 			pos = m_rb.gcPointFrom(centGc, bearing , rangeKm);
@@ -280,7 +280,7 @@ public class EArc extends AbstractShape{
 		}
 		m_smnTool.setGeoPos(smnPos);
 		GeodeticCoords cent = m_centerTool.getGeoPos();
-		double rangeKm = m_rb.gcDistanceFromTo(cent, smnPos);
+		double rangeKm = m_rb.gcRangeFromTo(cent, smnPos);
 		double brg = m_rb.gcBearingFromTo(cent, smnPos);
 		m_smnRngBrg.setRangeKm(rangeKm);
 		m_smnRngBrg.setBearing(brg);

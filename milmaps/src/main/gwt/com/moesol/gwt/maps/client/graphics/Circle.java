@@ -11,13 +11,13 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
-import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.algorithms.SRngBrg;
 import com.moesol.gwt.maps.client.units.Distance;
 import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Circle extends AbstractShape {
 	private static final int NUM_CIR_PTS = 36;
-	private RngBrg m_radRngBrg = null;
+	private SRngBrg m_radRngBrg = null;
 	private AbstractPosTool m_radiusTool = null;
 	private AbstractPosTool m_centerTool = null;
 
@@ -33,7 +33,7 @@ public class Circle extends AbstractShape {
 		double rngKm = radius.getDistance(DistanceUnit.KILOMETERS);
 		GeodeticCoords pos = m_rb.gcPointFrom(center, 90, rngKm);
 		circle.getRadiusTool().setGeoPos(pos);
-		circle.m_radRngBrg = new RngBrg(rngKm, 90);
+		circle.m_radRngBrg = new SRngBrg(rngKm, 90);
 		return (IShape) circle;
 	}
 
@@ -260,6 +260,7 @@ public class Circle extends AbstractShape {
 			GeodeticCoords gc = getCenter();
 			ViewCoords vc = m_convert.geodeticToView(gc);
 			AnchorHandle handle = new AnchorHandle();
+			handle.setStrokeColor(255, 255, 255, 1);
 			handle.setCenter(vc.getX(), vc.getY());
 			handle.draw(context);
 			if (splitter.isSplit()) {
@@ -270,6 +271,7 @@ public class Circle extends AbstractShape {
 			// Radius handle
 			gc = getRadiusPos();
 			vc = m_convert.geodeticToView(gc);
+			handle.setStrokeColor(255, 0, 0, 1);
 			handle.setCenter(vc.getX(), vc.getY()).draw(context);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));

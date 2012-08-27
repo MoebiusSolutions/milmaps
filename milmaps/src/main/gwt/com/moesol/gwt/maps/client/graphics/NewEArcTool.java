@@ -47,7 +47,7 @@ public class NewEArcTool extends  AbstractNewTool {
 		// this initial value is a default.
 		GeodeticCoords smjPos = m_arc.getSmjPos();
 		GeodeticCoords cenPos = m_arc.getCenter();
-		double disKm = m_rb.gcDistanceFromTo(cenPos, smjPos)/4;
+		double disKm = m_rb.gcRangeFromTo(cenPos, smjPos)/4;
 		double brgDeg = m_rb.gcBearingFromTo(cenPos, smjPos);
 		brgDeg = Func.wrap360(brgDeg-90);
 		GeodeticCoords smnPos = m_rb.gcPointFrom(cenPos, brgDeg, disKm);

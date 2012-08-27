@@ -11,15 +11,15 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
-import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.algorithms.SRngBrg;
 import com.moesol.gwt.maps.client.units.Bearing;
 import com.moesol.gwt.maps.client.units.Distance;
 import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Arc extends AbstractShape {
 	private static final int NUM_ARC_PTS = 36;
-	private RngBrg m_startRngBrg = null;
-	private RngBrg m_endRngBrg = null;
+	private SRngBrg m_startRngBrg = null;
+	private SRngBrg m_endRngBrg = null;
 	private AbstractPosTool m_startBrgTool = null;
 	private AbstractPosTool m_endBrgTool = null;
 	private AbstractPosTool m_centerTool = null;
@@ -60,11 +60,11 @@ public class Arc extends AbstractShape {
 	}
 
 	private void moveRngBrgPos( AbstractPosTool tool, 
-								RngBrg toolRngBrg,
+								SRngBrg toolRngBrg,
 							    GeodeticCoords pos ) {
 		if (!m_ctrlKeydown || !m_shiftKeydown) {
 			GeodeticCoords cent = m_centerTool.getGeoPos();
-			double rng = m_rb.gcDistanceFromTo(cent, pos);
+			double rng = m_rb.gcRangeFromTo(cent, pos);
 			double brg = m_rb.gcBearingFromTo(cent, pos);
 			if (toolRngBrg != null) {
 				if (m_ctrlKeydown && !m_shiftKeydown) {
@@ -407,7 +407,7 @@ public class Arc extends AbstractShape {
 		brgDeg = Func.wrap360(brgDeg - 90);
 		double disKm = m_startRngBrg.getRanegKm();
 		if (m_endRngBrg == null) {
-			m_endRngBrg = new RngBrg();
+			m_endRngBrg = new SRngBrg();
 		}
 		m_endRngBrg.widthRangeKm(disKm).setBearing(brgDeg);
 		GeodeticCoords pos = m_rb.gcPointFrom(cenPos, brgDeg, disKm);

@@ -50,7 +50,7 @@ public class RangeBearingS {
 	 * @param {Number} R: Earth Radius in Km. Enter 0 to use default
 	 * @returns {Number} Distance in km between this point and destination point
 	 */
-	public double gcDistanceFromTo(GeodeticCoords p, GeodeticCoords q) {
+	public double gcRangeFromTo(GeodeticCoords p, GeodeticCoords q) {
 		double R = m_radius;
 		double lat1 = p.getPhi(AngleUnit.RADIANS);
 		double lon1 = p.getLambda(AngleUnit.RADIANS);
@@ -195,7 +195,7 @@ public class RangeBearingS {
 	 * @param {Number} R: Earth Radius in Km. Enter 0 to use default
 	 * @returns {Number} Distance in km between this point and destination point
 	 */
-	public double rlDistFromTo(GeodeticCoords p, GeodeticCoords q) {
+	public double rlRangeFromTo(GeodeticCoords p, GeodeticCoords q) {
 		double R = m_radius;
 		double lat1 = p.getPhi(AngleUnit.RADIANS);
 		double lon1 = p.getLambda(AngleUnit.RADIANS);
@@ -284,9 +284,9 @@ public class RangeBearingS {
 		return new GeodeticCoords(lon2, lat2, AngleUnit.RADIANS);
 	}
 	// new code
-	public RngBrg gcRngBrgFromTo(GeodeticCoords p, GeodeticCoords q){
-		double rngKm = gcDistanceFromTo(p,q);
+	public SRngBrg gcRngBrgFromTo(GeodeticCoords p, GeodeticCoords q){
+		double rngKm = gcRangeFromTo(p,q);
 		double brgDeg = gcBearingFromTo(p,q);
-		return new RngBrg(rngKm, brgDeg);
+		return new SRngBrg(rngKm, brgDeg);
 	}
 }

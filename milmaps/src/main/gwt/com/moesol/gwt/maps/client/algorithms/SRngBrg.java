@@ -7,15 +7,15 @@
  */
 package com.moesol.gwt.maps.client.algorithms;
 
-public class RngBrg {
+public class SRngBrg {
 	private double m_ranegKm; // Distance in kilometers
 	private double m_bearing; // Bearing in degrees
 	
-	public RngBrg(){
+	public SRngBrg(){
 
 	}
 	
-	public RngBrg(double rngKm, double brgDeg){
+	public SRngBrg(double rngKm, double brgDeg){
 		m_ranegKm = rngKm;
 		m_bearing = brgDeg;
 	}
@@ -24,7 +24,7 @@ public class RngBrg {
 		m_ranegKm = rangeKm;
 	}
 	
-	public RngBrg widthRangeKm(double rangeKm){
+	public SRngBrg widthRangeKm(double rangeKm){
 		setRangeKm(rangeKm);
 		return this;
 	}
@@ -37,7 +37,7 @@ public class RngBrg {
 		m_bearing = bearing;
 	}
 	
-	public RngBrg widthBearing(double bearing) {
+	public SRngBrg widthBearing(double bearing) {
 		setBearing(bearing);
 		return this;
 	}

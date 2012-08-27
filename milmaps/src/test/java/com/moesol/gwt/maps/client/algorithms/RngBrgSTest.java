@@ -26,7 +26,7 @@ public class RngBrgSTest {
 		GeodeticCoords p = new GeodeticCoords(45,45,AngleUnit.DEGREES);
 		GeodeticCoords q = new GeodeticCoords(90,-45,AngleUnit.DEGREES);
 		
-		double dist = m_rb.gcDistanceFromTo(p, q);
+		double dist = m_rb.gcRangeFromTo(p, q);
 		double brg  = m_rb.gcBearingFromTo(p, q);
 		GeodeticCoords gc = m_rb.gcPointFrom(p, brg, dist);
 		assertEquals(gc.getPhi(AngleUnit.DEGREES),q.getPhi(AngleUnit.DEGREES),0.0001);
@@ -37,7 +37,7 @@ public class RngBrgSTest {
 		GeodeticCoords p = new GeodeticCoords(45,45,AngleUnit.DEGREES);
 		GeodeticCoords q = new GeodeticCoords(90,-45,AngleUnit.DEGREES);
 		
-		double dist = m_rb.rlDistFromTo(p, q);
+		double dist = m_rb.rlRangeFromTo(p, q);
 		double brg  = m_rb.rlBearingFromTo(p, q);
 		
 		GeodeticCoords gc = m_rb.rlPointFrom(p, brg, dist);
@@ -53,7 +53,7 @@ public class RngBrgSTest {
 		for(int i = 0; i < 36; i++){
 			double brg = i*inc;
 			GeodeticCoords q = m_rb.gcPointFrom(p, brg, disKm);
-			double dis = m_rb.gcDistanceFromTo(p, q);
+			double dis = m_rb.gcRangeFromTo(p, q);
 			assertEquals(disKm, dis, 0.0001);
 		}
 	}	

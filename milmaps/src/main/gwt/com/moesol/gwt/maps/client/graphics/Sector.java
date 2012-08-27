@@ -11,15 +11,12 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
-import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.algorithms.SRngBrg;
 
 public class Sector extends AbstractShape {
 	private static final int NUM_SEC_PTS = 36;
-	private final AnchorHandle m_centerHandle = new AnchorHandle();
-	private final AnchorHandle m_startRngBrgHandle = new AnchorHandle();
-	private final AnchorHandle m_endRngBrgHandle = new AnchorHandle();
-	private RngBrg m_startRngBrg = null;
-	private RngBrg m_endRngBrg = null;
+	private SRngBrg m_startRngBrg = null;
+	private SRngBrg m_endRngBrg = null;
 	private AbstractPosTool m_startRngBrgTool = null;
 	private AbstractPosTool m_endRngBrgTool = null;
 	private AbstractPosTool m_centerTool = null;
@@ -53,15 +50,42 @@ public class Sector extends AbstractShape {
 
 	private void checkForException() {
 		if (m_convert == null) {
-			throw new IllegalStateException("Arc: m_convert = null");
+			throw new IllegalStateException("Sector: m_convert = null");
+		}
+	}
+	
+	private void checkStartRngBrgToolExist(){
+		if (m_startRngBrgTool == null) {
+			throw new IllegalStateException("Sector: m_startRngBrgTool = null");
+		}
+		if (m_startRngBrgTool.getGeoPos() == null ){
+			throw new IllegalStateException("Sector: m_startRngBrgTool geoPos = null");
+		}
+	}
+	
+	private void checkEndRngBrgToolExist(){
+		if (m_endRngBrgTool == null) {
+			throw new IllegalStateException("Sector: m_endRngBrgTool = null");
+		}
+		if (m_endRngBrgTool.getGeoPos() == null ){
+			throw new IllegalStateException("Sector: m_endRngBrgTool geoPos = null");
 		}
 	}
 
-	private void moveRngBrgPos(AbstractPosTool tool, RngBrg toolRngBrg,
+	private void checkCenterExist(){
+		if (m_centerTool == null) {
+			throw new IllegalStateException("Sector: m_centerTool = null");
+		}
+		if (m_centerTool.getGeoPos() == null ){
+			throw new IllegalStateException("Sector: m_centerTool geoPos = null");
+		}
+	}
+
+	private void moveRngBrgPos(AbstractPosTool tool, SRngBrg toolRngBrg,
 			GeodeticCoords pos) {
 		if (!m_ctrlKeydown || !m_shiftKeydown) {
 			GeodeticCoords cent = m_centerTool.getGeoPos();
-			double rng = m_rb.gcDistanceFromTo(cent, pos);
+			double rng = m_rb.gcRangeFromTo(cent, pos);
 			double brg = m_rb.gcBearingFromTo(cent, pos);
 			if (toolRngBrg != null) {
 				if (m_ctrlKeydown && !m_shiftKeydown) {
@@ -82,9 +106,7 @@ public class Sector extends AbstractShape {
 	private void setStartRngBrgFromPix(int x, int y) {
 		checkForException();
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		if (m_startRngBrgTool == null) {
-			m_startRngBrgTool = getStartRngBrgTool();
-		}
+		m_startRngBrgTool = getStartRngBrgTool();
 		GeodeticCoords pos = m_startRngBrgTool.getGeoPos();
 		if (pos == null || !pos.equals(gc)) {
 			moveRngBrgPos(m_startRngBrgTool, m_startRngBrg, gc);
@@ -388,10 +410,10 @@ public class Sector extends AbstractShape {
 		brgDeg = Func.wrap360(brgDeg - 90);
 		double disKm = m_startRngBrg.getRanegKm();
 		if (m_endRngBrg == null) {
-			m_endRngBrg = new RngBrg();
+			m_endRngBrg = new SRngBrg();
 		}
 		m_endRngBrg.widthRangeKm(disKm * 0.8).setBearing(brgDeg);
-		GeodeticCoords pos = m_rb.gcPointFrom(cenPos, brgDeg, disKm);
+		GeodeticCoords pos = m_rb.gcPointFrom(cenPos, brgDeg, disKm*0.8);
 		setEndRngBrgPos(pos);
 	}
 
@@ -415,43 +437,48 @@ public class Sector extends AbstractShape {
 			// Center Handle
 			GeodeticCoords gc = getCenter();
 			ViewCoords vc = m_convert.geodeticToView(gc);
-			m_centerHandle.setCenter(vc.getX(), vc.getY());
-			m_centerHandle.draw(context);
+			AnchorHandle handle = new AnchorHandle();
+			handle.setStrokeColor(255, 255, 255, 1.0);
+			handle.setCenter(vc.getX(), vc.getY()).draw(context);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
-				m_centerHandle.setCenter(x, vc.getY()).draw(context);
+				handle.setCenter(x, vc.getY()).draw(context);
 			}
 			// start Brg handle
 			gc = getStartRngBrgPos();
 			vc = m_convert.geodeticToView(gc);
-			m_startRngBrgHandle.setCenter(vc.getX(), vc.getY()).draw(context);
-			m_startRngBrgHandle.setStrokeColor(0, 200, 0, 1.0);
+			handle.setStrokeColor(0, 200, 0, 1.0);
+			handle.setCenter(vc.getX(), vc.getY()).draw(context);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
-				m_startRngBrgHandle.setCenter(x, vc.getY()).draw(context);
+				handle.setCenter(x, vc.getY()).draw(context);
 			}
 			// end Brg handle
 			gc = getEndRngBrgPos();
 			vc = m_convert.geodeticToView(gc);
-			m_endRngBrgHandle.setCenter(vc.getX(), vc.getY()).draw(context);
-			m_endRngBrgHandle.setStrokeColor(200, 0, 0, 1.0);
+			handle.setStrokeColor(200, 0, 0, 1.0);
+			handle.setCenter(vc.getX(), vc.getY()).draw(context);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
-				m_endRngBrgHandle.setCenter(x, vc.getY()).draw(context);
+				handle.setCenter(x, vc.getY()).draw(context);
 			}
 		}
 		return (IShape) this;
 	}
 
 	public GeodeticCoords getStartRngBrgPos() {
+		checkStartRngBrgToolExist();
 		return m_startRngBrgTool.getGeoPos();
 	}
 
 	public void setStartRngBrgPos(GeodeticCoords radPos) {
+		checkCenterExist();
+		getStartRngBrgAnchorTool();
 		m_startRngBrgTool.setGeoPos(radPos);
+		updateStartRngBrg();
 	}
 
 	public Sector withStartRngBrgPos(GeodeticCoords radPos) {
@@ -460,14 +487,15 @@ public class Sector extends AbstractShape {
 	}
 
 	public GeodeticCoords getEndRngBrgPos() {
+		checkEndRngBrgToolExist();
 		return m_endRngBrgTool.getGeoPos();
 	}
 
-	private void setEndRngBrgPos(GeodeticCoords pos) {
-		if (m_endRngBrgTool == null) {
-			m_endRngBrgTool = getEndRngBrgTool();
-		}
+	public void setEndRngBrgPos(GeodeticCoords pos) {
+		checkCenterExist();
+		getEndRngBrgTool();
 		m_endRngBrgTool.setGeoPos(pos);
+		updateEndRngBrg();
 	}
 
 	public Sector withEndRngBrgPos(GeodeticCoords pos) {
