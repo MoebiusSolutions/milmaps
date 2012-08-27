@@ -11,18 +11,14 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
-import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.algorithms.SRngBrg;
 import com.moesol.gwt.maps.client.units.Bearing;
 import com.moesol.gwt.maps.client.units.Distance;
 import com.moesol.gwt.maps.client.units.DistanceUnit;
 
 public class Box extends AbstractSegment {
-	private final AnchorHandle m_centerHandle = new AnchorHandle();
-	private final AnchorHandle m_smjHandle = new AnchorHandle();
-	private final AnchorHandle m_smnHandle = new AnchorHandle();
-
-	protected RngBrg m_smjRngBrg = null;
-	protected RngBrg m_smnRngBrg = null;
+	protected SRngBrg m_smjRngBrg = null;
+	protected SRngBrg m_smnRngBrg = null;
 	// private boolean m_mouseDown = true;
 	protected AbstractPosTool m_centerTool = null;
 	protected AbstractPosTool m_smjTool = null;
@@ -30,8 +26,8 @@ public class Box extends AbstractSegment {
 
 	public Box() {
 		m_id = "Box";
-		m_smjRngBrg = new RngBrg(0, 0);
-		m_smnRngBrg = new RngBrg(0, 0);
+		m_smjRngBrg = new SRngBrg(0, 0);
+		m_smnRngBrg = new SRngBrg(0, 0);
 	}
 
 	public static IShape create(ICoordConverter conv, GeodeticCoords center,
@@ -206,7 +202,7 @@ public class Box extends AbstractSegment {
 		GeodeticCoords pos = m_smjTool.getGeoPos();
 		if (pos == null || !pos.equals(gc)) {
 			GeodeticCoords cent = m_centerTool.getGeoPos();
-			double rangeKm = m_rb.gcDistanceFromTo(cent, gc);
+			double rangeKm = m_rb.gcRangeFromTo(cent, gc);
 			double bearing = m_smnRngBrg.getBearing();
 			m_smnRngBrg.setRangeKm(rangeKm);
 			pos = m_rb.gcPointFrom(cent, bearing, rangeKm);
@@ -438,19 +434,23 @@ public class Box extends AbstractSegment {
 			// Center Handle
 			GeodeticCoords gc = getCenter();
 			ViewCoords vc = m_convert.geodeticToView(gc);
-			m_centerHandle.setCenter(vc.getX(), vc.getY());
-			m_centerHandle.draw(context);
-			moveHandles(m_centerHandle, vc, context);
+			AnchorHandle handle = new AnchorHandle();
+			handle.setStrokeColor(255, 255, 255, 1);
+			handle.setCenter(vc.getX(), vc.getY());
+			handle.draw(context);
+			moveHandles(handle, vc, context);
 			// semi-major handle
 			gc = getSmjPos();
 			vc = m_convert.geodeticToView(gc);
-			m_smjHandle.setCenter(vc.getX(), vc.getY()).draw(context);
-			moveHandles(m_smjHandle, vc, context);
+			handle.setStrokeColor(255, 0, 0, 1);
+			handle.setCenter(vc.getX(), vc.getY()).draw(context);
+			moveHandles(handle, vc, context);
 			// semi-minor handle
 			gc = getSmnPos();
 			vc = m_convert.geodeticToView(gc);
-			m_smnHandle.setCenter(vc.getX(), vc.getY()).draw(context);
-			moveHandles(m_smnHandle, vc, context);
+			handle.setStrokeColor(255, 255, 255, 1);
+			handle.setCenter(vc.getX(), vc.getY()).draw(context);
+			moveHandles(handle, vc, context);
 		}
 		return (IShape) this;
 	}

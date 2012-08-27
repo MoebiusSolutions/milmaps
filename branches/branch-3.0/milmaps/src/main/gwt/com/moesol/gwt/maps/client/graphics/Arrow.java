@@ -264,7 +264,7 @@ public class Arrow extends AbstractShape {
 		if (m_vertexList.size() >= 2) {
 			GeodeticCoords p = m_vertexList.get(0).getGeoPos();
 			GeodeticCoords q = m_vertexList.get(1).getGeoPos();
-			double rng = m_rb.gcDistanceFromTo(p,q);
+			double rng = m_rb.gcRangeFromTo(p,q);
 			double width = rng/6;
 			if (width>0.0)
 				return (width);

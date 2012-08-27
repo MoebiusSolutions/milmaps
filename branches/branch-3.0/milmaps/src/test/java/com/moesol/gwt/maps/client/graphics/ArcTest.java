@@ -30,12 +30,14 @@ public class ArcTest {
 	private ViewPort viewPort = new ViewPort();
 	private IProjection proj;
 	private Converter m_conv;
+	private Util m_util;
 	@Before
 	public void before() throws Exception {
 		JvmMapScale.init();
 		proj = new CylEquiDistProj(512, 180, 180);
 		viewPort.setProjection(proj);
 		m_conv = new Converter(viewPort);
+		m_util = new Util(m_conv,m_rb);
 		m_arc = new Arc();
 		m_arc.setCoordConverter(m_conv);
 	}
@@ -106,11 +108,11 @@ public class ArcTest {
 	
 	@Test
 	public void ptCloseToEdgeTest(){
-		GeodeticCoords cent = m_conv.viewToGeodetic(new ViewCoords(300,200));
+		GeodeticCoords cent = m_util.pixToPos(300,200);
 		m_arc.setCenter(cent);
-		GeodeticCoords startBrgPos = m_conv.viewToGeodetic(new ViewCoords(300,150));
+		GeodeticCoords startBrgPos = m_util.pixToPos(300,150);
 		m_arc.setStartBearingPos(startBrgPos);
-		GeodeticCoords endBrgPos = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		GeodeticCoords endBrgPos = m_util.pixToPos(350,200);
 		m_arc.setEndBearingPos(endBrgPos);	
 		int x = 300 + (int)(50*Math.cos(Math.PI/4));
 		int y = 200 - (int)(50*Math.sin(Math.PI/4));
@@ -120,26 +122,26 @@ public class ArcTest {
 	
 	@Test
 	public void positionTouchesTest(){
-		GeodeticCoords cent = m_conv.viewToGeodetic(new ViewCoords(300,200));
+		GeodeticCoords cent = m_util.pixToPos(300,200);
 		m_arc.setCenter(cent);
-		GeodeticCoords startBrgPos = m_conv.viewToGeodetic(new ViewCoords(300,150));
+		GeodeticCoords startBrgPos = m_util.pixToPos(300,150);
 		m_arc.setStartBearingPos(startBrgPos);
-		GeodeticCoords endBrgPos = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		GeodeticCoords endBrgPos = m_util.pixToPos(350,200);
 		m_arc.setEndBearingPos(endBrgPos);
 		int x = 300 + (int)(50*Math.cos(Math.PI/4));
 		int y = 200 - (int)(50*Math.sin(Math.PI/4));
-		GeodeticCoords pos = m_conv.viewToGeodetic(new ViewCoords(x,y));
+		GeodeticCoords pos = m_util.pixToPos(x,y);
 		boolean bTouches = m_arc.positionTouches(pos);
 		assertEquals(true,bTouches);
 	}
 	
 	@Test
 	public void getAnchorByPositionTest(){
-		GeodeticCoords cent = m_conv.viewToGeodetic(new ViewCoords(300,200));
+		GeodeticCoords cent = m_util.pixToPos(300,200);
 		m_arc.setCenter(cent);
-		GeodeticCoords startBrgPos = m_conv.viewToGeodetic(new ViewCoords(300,150));
+		GeodeticCoords startBrgPos = m_util.pixToPos(300,150);
 		m_arc.setStartBearingPos(startBrgPos);
-		GeodeticCoords endBrgPos = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		GeodeticCoords endBrgPos = m_util.pixToPos(350,200);
 		m_arc.setEndBearingPos(endBrgPos);
 		IAnchorTool tool = m_arc.getCenterAnchorTool();
 		IAnchorTool tool2 = m_arc.getAnchorByPosition(cent);
@@ -154,18 +156,18 @@ public class ArcTest {
 	
 	@Test
 	public void moveEndBrgTest(){
-		GeodeticCoords cent = m_conv.viewToGeodetic(new ViewCoords(300,200));
+		GeodeticCoords cent = m_util.pixToPos(300,200);
 		m_arc.setCenter(cent);
-		GeodeticCoords startBrgPos = m_conv.viewToGeodetic(new ViewCoords(300,150));
+		GeodeticCoords startBrgPos = m_util.pixToPos(300,150);
 		m_arc.setStartBearingPos(startBrgPos);
-		GeodeticCoords endBrgPos = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		GeodeticCoords endBrgPos = m_util.pixToPos(350,200);
 		m_arc.setEndBearingPos(endBrgPos);
 		
 		// move start bearing
 		IAnchorTool tool = m_arc.getEndBrgAnchorTool();
 		tool.handleMouseMove (400, 200);
 		tool.handleMouseUp (400, 200);
-		GeodeticCoords pos = m_conv.viewToGeodetic(new ViewCoords(300,100));
+		GeodeticCoords pos = m_util.pixToPos(300,100);
 		IAnchorTool tool2 = m_arc.getAnchorByPosition(pos);
 		tool = m_arc.getStartBrgAnchorTool();
 		assertEquals(tool,tool2);
@@ -173,18 +175,18 @@ public class ArcTest {
 	
 	@Test
 	public void moveStartBrgTest(){
-		GeodeticCoords cent = m_conv.viewToGeodetic(new ViewCoords(300,200));
+		GeodeticCoords cent = m_util.pixToPos(300,200);
 		m_arc.setCenter(cent);
-		GeodeticCoords startBrgPos = m_conv.viewToGeodetic(new ViewCoords(300,150));
+		GeodeticCoords startBrgPos = m_util.pixToPos(300,150);
 		m_arc.setStartBearingPos(startBrgPos);
-		GeodeticCoords endBrgPos = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		GeodeticCoords endBrgPos = m_util.pixToPos(350,200);
 		m_arc.setEndBearingPos(endBrgPos);
 		
 		// move start bearing
 		IAnchorTool tool = m_arc.getStartBrgAnchorTool();
 		tool.handleMouseMove (300, 100);
 		tool.handleMouseUp (300, 100);
-		GeodeticCoords pos = m_conv.viewToGeodetic(new ViewCoords(400,200));
+		GeodeticCoords pos = m_util.pixToPos(400,200);
 		IAnchorTool tool2 = m_arc.getAnchorByPosition(pos);
 		tool = m_arc.getEndBrgAnchorTool();
 		assertEquals(tool,tool2);
@@ -192,27 +194,27 @@ public class ArcTest {
 
 	@Test
 	public void mouseMoveCenterTest(){
-		GeodeticCoords cent = m_conv.viewToGeodetic(new ViewCoords(300,200));
+		GeodeticCoords cent = m_util.pixToPos(300,200);
 		m_arc.setCenter(cent);
-		GeodeticCoords startBrgPos = m_conv.viewToGeodetic(new ViewCoords(300,150));
+		GeodeticCoords startBrgPos = m_util.pixToPos(300,150);
 		m_arc.setStartBearingPos(startBrgPos);
-		GeodeticCoords endBrgPos = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		GeodeticCoords endBrgPos = m_util.pixToPos(350,200);
 		m_arc.setEndBearingPos(endBrgPos);
 		// move center
 		IAnchorTool tool = m_arc.getCenterAnchorTool();
 		tool.handleMouseUp (350, 200);
 		// check center at new position
-		GeodeticCoords pos = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		GeodeticCoords pos = m_util.pixToPos(350,200);
 		IAnchorTool tool2 = m_arc.getAnchorByPosition(pos);
 		assertEquals(tool,tool2);
 		// check start bearing tool selection
 		tool = m_arc.getStartBrgAnchorTool();
-		pos = m_conv.viewToGeodetic(new ViewCoords(350,150));
+		pos = m_util.pixToPos(350,150);
 		tool2 = m_arc.getAnchorByPosition(pos);
 		assertEquals(tool,tool2);
 		// check end bearing tool selection
 		tool = m_arc.getEndBrgAnchorTool();
-		pos = m_conv.viewToGeodetic(new ViewCoords(400,200));
+		pos = m_util.pixToPos(400,200);
 		tool2 = m_arc.getAnchorByPosition(pos);
 		assertEquals(tool,tool2);
 		

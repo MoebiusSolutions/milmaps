@@ -186,7 +186,7 @@ public class RectTest {
 	}
 	
 	@Test
-	public void moveWholeLineTest(){	
+	public void moveWholeRectTest(){	
 		
 		// move whole line
 		GeodeticCoords gc = m_util.pixToPos(280,200);

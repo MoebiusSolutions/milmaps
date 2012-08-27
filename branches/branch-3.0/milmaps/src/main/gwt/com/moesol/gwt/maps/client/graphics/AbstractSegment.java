@@ -18,7 +18,7 @@ public abstract class AbstractSegment extends AbstractShape{
 	protected void drawSegment(GeodeticCoords p, 
 			   				   GeodeticCoords q,
 			   				   Context2d context){
-		double length = m_rb.gcDistanceFromTo(p, q);
+		double length = m_rb.gcRangeFromTo(p, q);
 		double brng = m_rb.gcBearingFromTo(p,q);
 		double lenInc = length/NUM_LINESEG_PTS;
 		ISplit splitter = m_convert.getISplit();
@@ -45,7 +45,7 @@ public abstract class AbstractSegment extends AbstractShape{
 	protected boolean ptClose(GeodeticCoords p,
 			  				  GeodeticCoords q,
 			  				  int px, int py, double eps){
-		double length = m_rb.gcDistanceFromTo(p, q);
+		double length = m_rb.gcRangeFromTo(p, q);
 		double brng = m_rb.gcBearingFromTo(p,q);
 		double lenInc = length/NUM_LINESEG_PTS;
 		GeodeticCoords gc = p;
@@ -75,7 +75,7 @@ public abstract class AbstractSegment extends AbstractShape{
 							 ViewCoords qt, Context2d context){
 		ISplit splitter = m_convert.getISplit();
 		ViewCoords pt;
-		double length = m_rb.gcDistanceFromTo(p, q);
+		double length = m_rb.gcRangeFromTo(p, q);
 		double brng = m_rb.gcBearingFromTo(p,q);
 		double lenInc = length/NUM_LINESEG_PTS;
 		GeodeticCoords gc = p;

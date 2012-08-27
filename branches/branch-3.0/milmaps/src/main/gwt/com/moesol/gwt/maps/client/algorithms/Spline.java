@@ -131,7 +131,7 @@ public class Spline {
 		double d = Double.MAX_VALUE;
 		int index = -1;
 		for (int i=start;i<pnts.length;i++) {
-			double distKm = rb.gcDistanceFromTo(p,pnts[i]);
+			double distKm = rb.gcRangeFromTo(p,pnts[i]);
 			if (distKm < d) {
 				d = distKm;
 				index = i;
@@ -153,7 +153,7 @@ public class Spline {
 		for (int i=start, ii=start+1;ii<end;i++,ii++) {
 			// Skip identical points
 			if (!pnts[i].equals(pnts[ii])) {
-				double rng = rb.gcDistanceFromTo(pnts[i],pnts[ii]);
+				double rng = rb.gcRangeFromTo(pnts[i],pnts[ii]);
 				length += rng;
 			}
 		}
@@ -168,7 +168,7 @@ public class Spline {
 		double total = 0.0;
 		GeodeticCoords result;
 		for (int i=0,ii=1; ii<pnts.length; i++,ii++) {
-			RngBrg BR = rb.gcRngBrgFromTo(pnts[i],pnts[ii]);
+			SRngBrg BR = rb.gcRngBrgFromTo(pnts[i],pnts[ii]);
 			
 			if (total + BR.getRanegKm() > dist) {
 				double diff = (dist-total);
@@ -188,7 +188,7 @@ public class Spline {
 		GeodeticCoords q
 		) {
 		double brg = rb.gcBearingFromTo(p, q);
-		double rng = rb.gcDistanceFromTo(p, q)/2.0;
+		double rng = rb.gcRangeFromTo(p, q)/2.0;
 		return rb.gcPointFrom(p, brg, rng);
 	}
 	

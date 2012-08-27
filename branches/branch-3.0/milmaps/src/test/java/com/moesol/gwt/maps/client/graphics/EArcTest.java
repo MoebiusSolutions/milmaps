@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
-import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.algorithms.SRngBrg;
 
 
 public class EArcTest {
@@ -41,12 +41,12 @@ public class EArcTest {
 		return Math.sqrt(x2+y2);
 	}
 	
-	private RngBrg compRngBrg(double brgDeg, double a, double b){
+	private SRngBrg compRngBrg(double brgDeg, double a, double b){
 		double rngKm = compRangeForDeg(brgDeg, a, b);
-		return new RngBrg(rngKm, brgDeg);
+		return new SRngBrg(rngKm, brgDeg);
 	}
 	
-	private RngBrg compRngBrg2(double t, double a, double b){
+	private SRngBrg compRngBrg2(double t, double a, double b){
 		double angle = Func.DegToRad(t);
 		double x = (a * Math.cos(angle));
 		double y = (b * Math.sin(angle));
@@ -54,7 +54,7 @@ public class EArcTest {
 			angle = Math.atan2(y, x);
 		}
 		double rngKm = Math.sqrt(x*x + y*y);
-		return new RngBrg(rngKm,Func.RadToDeg(angle));	
+		return new SRngBrg(rngKm,Func.RadToDeg(angle));	
 	}
 	
 	@Test
@@ -63,8 +63,8 @@ public class EArcTest {
 		double b = 850;
 		double inc = 10;
 		for(int i = 0; i < 36; i++){
-			RngBrg rb2 = compRngBrg2(i*inc, a, b);
-			RngBrg rb  = compRngBrg(rb2.getBearing(), a, b);
+			SRngBrg rb2 = compRngBrg2(i*inc, a, b);
+			SRngBrg rb  = compRngBrg(rb2.getBearing(), a, b);
 			assertEquals(rb2.getRanegKm(), rb.getRanegKm(), 0.001);
 		}
 	}

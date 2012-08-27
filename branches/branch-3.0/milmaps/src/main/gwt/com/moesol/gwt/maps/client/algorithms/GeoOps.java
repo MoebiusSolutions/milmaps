@@ -53,7 +53,7 @@ public class GeoOps {
 		for (int i = 0, ii = 1; ii < pnts.length; i++, ii++) {
 			// Skip identical points
 			if (!pnts[i].equals(pnts[ii])) {
-				double rng = rb.gcDistanceFromTo(pnts[i], pnts[ii]);
+				double rng = rb.gcRangeFromTo(pnts[i], pnts[ii]);
 				length += rng;
 			}
 		}
@@ -70,7 +70,7 @@ public class GeoOps {
 		for (int i = start, ii = start + 1; ii < end; i++, ii++) {
 			// Skip identical points
 			if (!pnts[i].equals(pnts[ii])) {
-				double rng = rb.gcDistanceFromTo(pnts[i], pnts[ii]);
+				double rng = rb.gcRangeFromTo(pnts[i], pnts[ii]);
 				length += rng;
 			}
 		}
@@ -80,7 +80,7 @@ public class GeoOps {
 	//
 	public static GeodeticCoords getMidPoint(RangeBearingS rb,
 			GeodeticCoords p, GeodeticCoords q) {
-		double rng = rb.gcDistanceFromTo(p, q) / 2;
+		double rng = rb.gcRangeFromTo(p, q) / 2;
 		double brg = rb.gcBearingFromTo(p, q);
 		GeodeticCoords result = rb.gcPointFrom(p, brg, rng);
 		return (result);
@@ -94,12 +94,12 @@ public class GeoOps {
 			GeodeticCoords pnts[], double dist, GeodeticCoords[] p) {
 		double total = 0.0;
 		for (int i = 0, ii = 1; ii < pnts.length; i++, ii++) {
-			double rngKm = rb.gcDistanceFromTo(pnts[i], pnts[ii]);
+			double rngKm = rb.gcRangeFromTo(pnts[i], pnts[ii]);
 			double brg = rb.gcBearingFromTo(pnts[i], pnts[ii]);
 			if (total + rngKm > dist) {
 				double diff = (dist - total);
 				GeodeticCoords result = rb.gcPointFrom(pnts[i], brg, diff);
-				rngKm = rb.gcDistanceFromTo(result, pnts[ii]);
+				rngKm = rb.gcRangeFromTo(result, pnts[ii]);
 				p[0] = result;
 				return (ii);
 			} else {
@@ -120,7 +120,7 @@ public class GeoOps {
 		LinkedList<GeodeticCoords> list = new LinkedList<GeodeticCoords>();
 		list.add(pnts[0]);
 		for (int i = 0, ii = 1; ii < pnts.length; ii++) {
-			double rngKm = rb.gcDistanceFromTo(pnts[i], pnts[ii]);
+			double rngKm = rb.gcRangeFromTo(pnts[i], pnts[ii]);
 			if (rngKm >= width / 50) {
 				list.add(pnts[ii]);
 				i = ii;
@@ -236,7 +236,7 @@ public class GeoOps {
 			// Skip identical points
 			if (!backbone[i].equals(backbone[ii])) {
 				double brg = rb.gcBearingFromTo(backbone[i], backbone[ii]);
-				double rng = rb.gcDistanceFromTo(backbone[i], backbone[ii]);
+				double rng = rb.gcRangeFromTo(backbone[i], backbone[ii]);
 				if ((len + rng) > arrowLength) {
 					double diff = (len + rng - arrowLength);
 					arrowBase = rb.gcPointFrom(backbone[i], brg, diff);
@@ -284,7 +284,7 @@ public class GeoOps {
 			if (backbone[i].equals(backbone[ii]))
 				continue;
 			double brg = rb.gcBearingFromTo(backbone[ii], backbone[i]);
-			double rng = rb.gcDistanceFromTo(backbone[ii], backbone[i]);
+			double rng = rb.gcRangeFromTo(backbone[ii], backbone[i]);
 			if (rng != 0) {
 				double newWidth = width * (1 - m * diffWidth);
 				if (newWidth < 0.0) {
@@ -330,7 +330,7 @@ public class GeoOps {
 					GeodeticCoords p = pnts[i];
 					GeodeticCoords q = pnts[i + 1];
 					double brg = rb.gcBearingFromTo(p, q);
-					double rng = rb.gcDistanceFromTo(p, q);
+					double rng = rb.gcRangeFromTo(p, q);
 					double diff = Math.max(inc, rng / 10);
 					double total = 0;
 					pntList.add(p);

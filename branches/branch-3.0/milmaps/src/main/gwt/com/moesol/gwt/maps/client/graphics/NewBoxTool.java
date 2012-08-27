@@ -47,7 +47,7 @@ public class NewBoxTool extends  AbstractNewTool {
 		// this initial value is a default.
 		GeodeticCoords smjPos = m_box.getSmjPos();
 		GeodeticCoords cenPos = m_box.getCenter();
-		double disKm = m_rb.gcDistanceFromTo(cenPos, smjPos)/4;
+		double disKm = m_rb.gcRangeFromTo(cenPos, smjPos)/4;
 		Distance dis = Distance.builder().value(disKm).kilometers().build();
 		m_box.setSmnAxis(dis);
 	}

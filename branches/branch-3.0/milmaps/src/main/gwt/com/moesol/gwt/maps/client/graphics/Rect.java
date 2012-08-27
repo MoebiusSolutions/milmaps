@@ -11,11 +11,11 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
-import com.moesol.gwt.maps.client.algorithms.RngBrg;
+import com.moesol.gwt.maps.client.algorithms.SRngBrg;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class Rect extends AbstractSegment {
-	private RngBrg m_diagRngBrg = null;
+	private SRngBrg m_diagRngBrg = null;
 	private AbstractPosTool m_startTool = null;
 	private AbstractPosTool m_endTool = null;
 	protected AbstractPosTool m_translationTool = null;

@@ -20,7 +20,6 @@ public class Triangle extends AbstractShape {
 	private int m_X, m_Y;
 	public Triangle(){
 		m_id = "Triangle";
-		m_translationHandle.setStrokeColor(255, 0, 0, 1);
 		for(int i = 0; i < 3; i++){
 			m_vertexList[i] = null;
 		}
@@ -142,7 +141,17 @@ public class Triangle extends AbstractShape {
 		return m_translationTool;
 	}
 	
-	private void addVertex(GeodeticCoords pos){
+	public void addVerteces(GeodeticCoords[] pos){
+		int n = pos.length;
+		if (n != 3) {
+			throw new IllegalArgumentException("Triangle:addVerteces bar array");
+		}
+		for (int i = 0; i < 3; i++){
+			addVertex(pos[i]);
+		}
+	}
+	
+	public void addVertex(GeodeticCoords pos){
 		AbstractPosTool tool = newVertexTool();
 		int i = addVertex(tool);
 		if (i < 3){
@@ -292,6 +301,7 @@ public class Triangle extends AbstractShape {
 			for (int i = 0; i < size(); i++){
 				GeodeticCoords gc = m_vertexList[i].getGeoPos();
 				ViewCoords v = m_convert.geodeticToView(gc);
+				m_handleList[i].setStrokeColor(255, 255, 255, 1);
 				m_handleList[i].setCenter(v.getX(),v.getY()).draw(context);
 				if(splitter.isSplit()){
 					int side = splitter.switchMove(splitter.side(v.getX()));
@@ -300,6 +310,7 @@ public class Triangle extends AbstractShape {
 				}
 			}
 			// translation handle
+			m_translationHandle.setStrokeColor(255, 0, 0, 1);
 			int x = m_handleList[0].getX()-TRANSLATE_HANDLE_OFFSET_X;
 			int y = m_handleList[0].getY();
 			m_translationHandle.setCenter(x, y).draw(context);

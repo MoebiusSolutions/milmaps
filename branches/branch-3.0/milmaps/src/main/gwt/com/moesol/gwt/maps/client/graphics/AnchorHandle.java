@@ -15,6 +15,7 @@ public class AnchorHandle {
 	private int m_y;
 	private int m_size = 8;
 	private int m_lineWidth = 2;
+	private String m_strColor = null;
 	
 	private CssColor m_color = null;
 
@@ -84,15 +85,17 @@ public class AnchorHandle {
 		return false;
 	}
 	
-	public AnchorHandle setStrokeColor(String color){
+	public void setStrokeColor(String color){
 		m_color = CssColor.make(color);
-		return this;
+		return;
 	}
 	
-	public AnchorHandle setStrokeColor(int r, int g, int b, double a){
+	public void setStrokeColor(int r, int g, int b, double a){
 		String stColor = "rgba(" + r + "," + g + "," + b + "," + a +")";
-		m_color = CssColor.make(stColor);
-		return this;
+		if ( m_strColor == null || !stColor.equalsIgnoreCase(m_strColor)){
+			m_color = CssColor.make(stColor);
+		}
+		return;
 	}
 	
 	
