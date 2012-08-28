@@ -7,7 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
@@ -118,7 +117,7 @@ public class Ellipse extends AbstractShape {
 		return rngBrgToView(rngKm, rotBrg + Func.RadToDeg(angle));
 	}
 
-	protected void drawSegments(Context2d context) {
+	protected void drawSegments(IContext context) {
 		double a = m_smjRngBrg.getRanegKm();
 		double b = m_smnRngBrg.getRanegKm();
 		double rotBrg = m_smjRngBrg.getBearing();
@@ -136,7 +135,7 @@ public class Ellipse extends AbstractShape {
 		}
 	}
 
-	private void drawBoundary(Context2d context) {
+	private void drawBoundary(IContext context) {
 		ISplit splitter = m_convert.getISplit();
 		// MUST first initialize
 		splitter.initialize(ISplit.NO_ADJUST);
@@ -150,7 +149,7 @@ public class Ellipse extends AbstractShape {
 		}
 	}
 
-	private void draw(Context2d context) {
+	private void draw(IContext context) {
 		context.beginPath();
 		context.setStrokeStyle(m_color);
 		context.setLineWidth(2);
@@ -385,12 +384,12 @@ public class Ellipse extends AbstractShape {
 	}
 
 	@Override
-	public IShape erase(Context2d context) {
+	public IShape erase(IContext context) {
 		return null;
 	}
 
 	@Override
-	public IShape render(Context2d context) {
+	public IShape render(IContext context) {
 		syncColor();
 		draw(context);
 		return (IShape) this;
@@ -430,7 +429,7 @@ public class Ellipse extends AbstractShape {
 	}
 
 	private void moveHandles(AnchorHandle handle, ViewCoords vc,
-			Context2d context) {
+			IContext context) {
 		ISplit splitter = m_convert.getISplit();
 		if (splitter.isSplit()) {
 			int side = splitter.switchMove(splitter.side(vc.getX()));
@@ -440,7 +439,7 @@ public class Ellipse extends AbstractShape {
 	}
 
 	@Override
-	public IShape drawHandles(Context2d context) {
+	public IShape drawHandles(IContext context) {
 		if (context != null) {
 			// Center Handle
 			GeodeticCoords gc = getCenter();

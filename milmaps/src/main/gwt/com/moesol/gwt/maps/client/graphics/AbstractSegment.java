@@ -7,7 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
@@ -17,7 +16,7 @@ public abstract class AbstractSegment extends AbstractShape{
 	
 	protected void drawSegment(GeodeticCoords p, 
 			   				   GeodeticCoords q,
-			   				   Context2d context){
+			   				   IContext context){
 		double length = m_rb.gcRangeFromTo(p, q);
 		double brng = m_rb.gcBearingFromTo(p,q);
 		double lenInc = length/NUM_LINESEG_PTS;
@@ -72,7 +71,7 @@ public abstract class AbstractSegment extends AbstractShape{
 	}
 	
 	private ViewCoords loopAndDraw(GeodeticCoords p, GeodeticCoords q, 
-							 ViewCoords qt, Context2d context){
+							 ViewCoords qt, IContext context){
 		ISplit splitter = m_convert.getISplit();
 		ViewCoords pt;
 		double length = m_rb.gcRangeFromTo(p, q);
@@ -93,7 +92,7 @@ public abstract class AbstractSegment extends AbstractShape{
 	
 	protected void drawBoxSides(GeodeticCoords p, GeodeticCoords q,
 								   GeodeticCoords r, GeodeticCoords s,
-								   Context2d context){
+								   IContext context){
 		ISplit splitter = m_convert.getISplit();
 		ViewCoords pt, qt;
 		qt = m_convert.geodeticToView(p);  

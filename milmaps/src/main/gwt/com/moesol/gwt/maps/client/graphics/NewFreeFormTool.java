@@ -12,7 +12,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.ViewCoords;
 
 public class NewFreeFormTool extends  AbstractNewTool {
-	private Canvas m_canvas = null;
+	private ICanvasTool m_canvas = null;
 	private FreeForm m_freeForm = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
@@ -23,7 +23,7 @@ public class NewFreeFormTool extends  AbstractNewTool {
 	public NewFreeFormTool(IShapeEditor editor) {
 		m_lastX = m_lastY = -10000;
 		m_editor = editor;
-		m_canvas = editor.getCanvasTool().canvas();
+		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
 	}
 
@@ -33,7 +33,7 @@ public class NewFreeFormTool extends  AbstractNewTool {
 		if (tool == null){
 			return;
 		}
-		Context2d context = m_canvas.getContext2d();
+		IContext context = m_canvas.getContext();
 		context.beginPath();
 		context.setStrokeStyle(m_freeForm.getColor());
 		context.setLineWidth(2);
@@ -45,7 +45,7 @@ public class NewFreeFormTool extends  AbstractNewTool {
 	}
 	
 	private void drawHandles(){
-		Context2d context = m_canvas.getContext2d();
+		IContext context = m_canvas.getContext();
 		m_freeForm.drawHandles(context);
 	}
 	

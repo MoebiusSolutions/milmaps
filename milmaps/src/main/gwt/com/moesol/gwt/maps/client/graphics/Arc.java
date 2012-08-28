@@ -357,7 +357,7 @@ public class Arc extends AbstractShape {
 		return degLen;
 	}
 
-	protected void drawSegments(Context2d context) {
+	protected void drawSegments(IContext context) {
 		double degInc = brgSpan() / (NUM_ARC_PTS - 1);
 		double distKm = m_startRngBrg.getRanegKm();
 		ISplit splitter = m_convert.getISplit();
@@ -376,7 +376,7 @@ public class Arc extends AbstractShape {
 		}
 	}
 
-	private void drawBoundary(Context2d context) {
+	private void drawBoundary(IContext context) {
 		checkForException();
 		ISplit splitter = m_convert.getISplit();
 		// MUST initialize
@@ -391,7 +391,7 @@ public class Arc extends AbstractShape {
 		}
 	}
 
-	private void draw(Context2d context) {
+	private void draw(IContext context) {
 		context.beginPath();
 		context.setStrokeStyle(m_color);
 		context.setLineWidth(2);
@@ -415,26 +415,27 @@ public class Arc extends AbstractShape {
 	}
 
 	@Override
-	public IShape erase(Context2d ct) {
+	public IShape erase(IContext ct) {
 		// _erase(ct);
 		return (IShape) this;
 	}
 
 	@Override
-	public IShape render(Context2d ct) {
+	public IShape render(IContext ct) {
 		syncColor();
 		draw(ct);
 		return (IShape) this;
 	}
 
 	@Override
-	public IShape drawHandles(Context2d context) {
+	public IShape drawHandles(IContext context) {
 		if (context != null) {
 			ISplit splitter = m_convert.getISplit();
 			// Center Handle
 			GeodeticCoords gc = getCenter();
 			ViewCoords vc = m_convert.geodeticToView(gc);
 			AnchorHandle handle = new AnchorHandle();
+			handle.setStrokeColor(255, 255, 255, 1.0);
 			handle.setCenter(vc.getX(), vc.getY());
 			handle.draw(context);
 			if (splitter.isSplit()) {
@@ -445,8 +446,8 @@ public class Arc extends AbstractShape {
 			// start Brg handle
 			gc = getStartBrgPos();
 			vc = m_convert.geodeticToView(gc);
+			handle.setStrokeColor(0, 220, 0, 1.0);
 			handle.setCenter(vc.getX(), vc.getY()).draw(context);
-			handle.setStrokeColor(0, 200, 0, 1.0);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);
@@ -455,8 +456,8 @@ public class Arc extends AbstractShape {
 			// end Brg handle
 			gc = getEndBrgPos();
 			vc = m_convert.geodeticToView(gc);
+			handle.setStrokeColor(250, 0, 0, 1.0);
 			handle.setCenter(vc.getX(), vc.getY()).draw(context);
-			handle.setStrokeColor(200, 0, 0, 1.0);
 			if (splitter.isSplit()) {
 				int side = splitter.switchMove(splitter.side(vc.getX()));
 				int x = vc.getX() + splitter.getDistance(side);

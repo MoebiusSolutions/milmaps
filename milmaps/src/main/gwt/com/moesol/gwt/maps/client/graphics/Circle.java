@@ -7,7 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
@@ -197,7 +196,7 @@ public class Circle extends AbstractShape {
 		return m_convert.geodeticToView(gc);
 	}
 
-	protected void drawSegments(Context2d context) {
+	protected void drawSegments(IContext context) {
 		double degInc = 360.0 / (NUM_CIR_PTS - 1);
 		double distKm = m_radRngBrg.getRanegKm();
 		ISplit splitter = m_convert.getISplit();
@@ -215,7 +214,7 @@ public class Circle extends AbstractShape {
 		}
 	}
 
-	private void drawBoundary(Context2d context) {
+	private void drawBoundary(IContext context) {
 		checkForException();
 		ISplit splitter = m_convert.getISplit();
 		// MUST first initialize
@@ -230,7 +229,7 @@ public class Circle extends AbstractShape {
 		}
 	}
 
-	private void draw(Context2d context) {
+	private void draw(IContext context) {
 		context.beginPath();
 		context.setStrokeStyle(m_color);
 		context.setLineWidth(2);
@@ -240,20 +239,20 @@ public class Circle extends AbstractShape {
 	}
 
 	@Override
-	public IShape erase(Context2d ct) {
+	public IShape erase(IContext ct) {
 		// _erase(ct);
 		return (IShape) this;
 	}
 
 	@Override
-	public IShape render(Context2d ct) {
+	public IShape render(IContext ct) {
 		syncColor();
 		draw(ct);
 		return (IShape) this;
 	}
 
 	@Override
-	public IShape drawHandles(Context2d context) {
+	public IShape drawHandles(IContext context) {
 		if (context != null) {
 			ISplit splitter = m_convert.getISplit();
 			// Center Handle

@@ -15,18 +15,18 @@ public class AnchorHandle {
 	private int m_y;
 	private int m_size = 8;
 	private int m_lineWidth = 2;
-	private String m_strColor = null;
+	private String m_color = null;
 	
-	private CssColor m_color = null;
+	//private CssColor m_color = null;
 
-	public CssColor getColor() {
-		return m_color;
-	}
+	//public CssColor getColor() {
+	//	return m_color;
+	//}
 
-	public AnchorHandle setColor(CssColor color) {
-		m_color = color;
-		return this;
-	}
+	//public AnchorHandle setColor(CssColor color) {
+		//m_color = color;
+		//return this;
+	//}
 	
 	public int getX() {
 		return m_x;
@@ -86,20 +86,20 @@ public class AnchorHandle {
 	}
 	
 	public void setStrokeColor(String color){
-		m_color = CssColor.make(color);
+		m_color = color;
 		return;
 	}
 	
 	public void setStrokeColor(int r, int g, int b, double a){
 		String stColor = "rgba(" + r + "," + g + "," + b + "," + a +")";
-		if ( m_strColor == null || !stColor.equalsIgnoreCase(m_strColor)){
-			m_color = CssColor.make(stColor);
+		if ( m_color == null || !stColor.equalsIgnoreCase(m_color)){
+			m_color = stColor;
 		}
 		return;
 	}
 	
 	
-	public void draw(Context2d context){
+	public void draw(IContext context){
 		if( m_color == null ){
 			return;
 		}

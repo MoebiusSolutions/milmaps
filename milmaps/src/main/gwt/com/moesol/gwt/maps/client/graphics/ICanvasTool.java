@@ -7,11 +7,9 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.client.Canvas;
-
 public interface ICanvasTool {
-	
-	public abstract Canvas canvas();
-	
+	public abstract IContext getContext();
+	public abstract int getOffsetWidth();
+	public abstract int getOffsetHeight();
 	public abstract void setSize(int width, int height);
 }

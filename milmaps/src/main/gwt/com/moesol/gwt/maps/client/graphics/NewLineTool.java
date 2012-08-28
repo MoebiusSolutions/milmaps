@@ -14,19 +14,19 @@ import com.moesol.gwt.maps.client.ViewCoords;
 
 public class NewLineTool extends  AbstractNewTool {
 	private boolean m_mouseDown = false;
-	private Canvas m_canvas = null;
+	private ICanvasTool m_canvas = null;
 	private Line m_line = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
 
 	public NewLineTool(IShapeEditor editor) {
 		m_editor = editor;
-		m_canvas = editor.getCanvasTool().canvas();
+		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
 	}
 	
 	private void drawHandles(){
-		Context2d context = m_canvas.getContext2d();
+		IContext context = m_canvas.getContext();
 		//m_circle.erase(context);
 		m_line.drawHandles(context);
 	}

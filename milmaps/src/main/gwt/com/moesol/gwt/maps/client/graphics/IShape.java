@@ -8,7 +8,6 @@
 
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 
 public interface IShape {
@@ -19,9 +18,9 @@ public interface IShape {
 	public abstract void setColor(String color);
 
     public abstract IShape selected(boolean selected);
-    public abstract IShape erase(Context2d context);
-    public abstract IShape render(Context2d context);
-    public abstract IShape drawHandles(Context2d context);
+    public abstract IShape erase(IContext context);
+    public abstract IShape render(IContext context);
+    public abstract IShape drawHandles(IContext context);
     public abstract IShapeTool createEditTool(IShapeEditor se);
     public abstract boolean isSelected();
     public abstract boolean needsUpdate();

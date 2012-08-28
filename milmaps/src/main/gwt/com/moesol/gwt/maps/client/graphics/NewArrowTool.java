@@ -12,7 +12,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.ViewCoords;
 
 public class NewArrowTool extends  AbstractNewTool {
-	private Canvas m_canvas = null;
+	private ICanvasTool m_canvas = null;
 	private Arrow m_arrow = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
@@ -23,7 +23,7 @@ public class NewArrowTool extends  AbstractNewTool {
 	public NewArrowTool(IShapeEditor editor) {
 		m_lastX = m_lastY = -10000;
 		m_editor = editor;
-		m_canvas = editor.getCanvasTool().canvas();
+		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
 	}
 	
@@ -32,7 +32,7 @@ public class NewArrowTool extends  AbstractNewTool {
 		if (tool == null){
 			return;
 		}
-		Context2d context = m_canvas.getContext2d();
+		IContext context = m_canvas.getContext();
 		context.beginPath();
 		context.setStrokeStyle(m_arrow.getColor());
 		context.setLineWidth(2);
@@ -44,7 +44,7 @@ public class NewArrowTool extends  AbstractNewTool {
 	}
 	
 	private void drawHandles(){
-		Context2d context = m_canvas.getContext2d();
+		IContext context = m_canvas.getContext();
 		m_arrow.drawHandles(context);
 	}
 	

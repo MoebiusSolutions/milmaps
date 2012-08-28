@@ -7,26 +7,24 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
 public class NewRectTool extends  AbstractNewTool {
 	private boolean m_mouseDown = false;
-	private Canvas m_canvas = null;
+	private ICanvasTool m_canvas = null;
 	private Rect m_rect = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
 
 	public NewRectTool(IShapeEditor editor) {
 		m_editor = editor;
-		m_canvas = editor.getCanvasTool().canvas();
+		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
 	}
 	
 	private void drawHandles(){
-		Context2d context = m_canvas.getContext2d();
+		IContext context = m_canvas.getContext();
 		//m_circle.erase(context);
 		m_rect.drawHandles(context);
 	}
