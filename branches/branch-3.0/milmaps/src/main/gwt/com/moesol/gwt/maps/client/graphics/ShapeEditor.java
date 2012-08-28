@@ -143,7 +143,7 @@ public class ShapeEditor implements IShapeEditor{
 	@Override
 	public IShapeEditor renderObjects() {
 		checkForException();
-		Context2d context = m_canvas.canvas().getContext2d();
+		IContext context = m_canvas.getContext();
 		for (IShape obj : m_objs){
 			obj.render(context);
 		}

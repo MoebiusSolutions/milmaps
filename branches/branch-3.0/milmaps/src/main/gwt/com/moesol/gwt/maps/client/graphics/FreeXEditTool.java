@@ -7,7 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
@@ -23,7 +22,7 @@ public class FreeXEditTool extends AbstractEditTool{
 	
 	protected void drawHandles() {
 		if (m_freeForm != null && m_canvas != null) {
-			Context2d context = m_canvas.getContext2d();
+			IContext context = m_canvas.getContext();
 			m_freeForm.drawHandles(context);
 		}
 	}

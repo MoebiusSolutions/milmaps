@@ -7,7 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
@@ -239,7 +238,7 @@ public class Triangle extends AbstractShape {
 		return 3;
 	}
 	
-	protected void drawSegments(Context2d context){
+	protected void drawSegments(IContext context){
 		ViewCoords p, q = getViewPoint(0);
 		if (q == null){
 			return;
@@ -259,7 +258,7 @@ public class Triangle extends AbstractShape {
 		}	
 	}
 
-	private void drawBoundary(Context2d context) {
+	private void drawBoundary(IContext context) {
 		ISplit splitter = m_convert.getISplit();
 		// MUST first initialize
 		splitter.initialize(ISplit.NO_ADJUST);
@@ -273,7 +272,7 @@ public class Triangle extends AbstractShape {
 		}
 	}
 
-	private void draw(Context2d context) {
+	private void draw(IContext context) {
 		context.beginPath();
 		context.setStrokeStyle(m_color);
 		context.setLineWidth(2);
@@ -282,20 +281,20 @@ public class Triangle extends AbstractShape {
 	}
 	
 	@Override
-	public IShape erase(Context2d context) {
+	public IShape erase(IContext context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IShape render(Context2d context) {
+	public IShape render(IContext context) {
 		syncColor();
 		draw(context);
 		return (IShape)this;
 	}
 
 	@Override
-	public IShape drawHandles(Context2d context) {
+	public IShape drawHandles(IContext context) {
 		if (context != null &&  size() > 0) {
 			ISplit splitter = m_convert.getISplit();
 			for (int i = 0; i < size(); i++){

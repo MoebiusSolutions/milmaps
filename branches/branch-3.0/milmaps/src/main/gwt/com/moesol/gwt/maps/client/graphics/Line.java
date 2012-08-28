@@ -263,13 +263,13 @@ public class Line extends AbstractSegment {
 		return m_translationTool;
 	}
 	
-	protected void drawSegments(Context2d context){
+	protected void drawSegments(IContext context){
 		GeodeticCoords p = m_startTool.getGeoPos();
 		GeodeticCoords q = m_endTool.getGeoPos();
 		drawSegment(p,q,context);
 	}
 
-	private void drawBoundary(Context2d context) {
+	private void drawBoundary(IContext context) {
 		checkForException();
 		ISplit splitter = m_convert.getISplit();
 		// MUST first initialize
@@ -284,7 +284,7 @@ public class Line extends AbstractSegment {
 		}
 	}
 
-	private void draw(Context2d context) {
+	private void draw(IContext context) {
 		context.beginPath();
 		context.setStrokeStyle(m_color);
 		context.setLineWidth(2);
@@ -294,20 +294,20 @@ public class Line extends AbstractSegment {
 
 
 	@Override
-	public IShape erase(Context2d ct) {
+	public IShape erase(IContext ct) {
 		//_erase(ct);
 		return (IShape)this;
 	}
 	
 	@Override
-	public IShape render(Context2d ct) {
+	public IShape render(IContext ct) {
 		syncColor();
 		draw(ct);
 		return (IShape)this;
 	}
 	
 	@Override
-	public IShape drawHandles(Context2d context) {
+	public IShape drawHandles(IContext context) {
 		if (context != null) {
 			ISplit splitter = m_convert.getISplit();
 			// Center Handle

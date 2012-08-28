@@ -15,7 +15,6 @@ import org.junit.Test;
 import com.moesol.gwt.maps.client.CylEquiDistProj;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.IProjection;
-import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.ViewPort;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 import com.moesol.gwt.maps.client.units.AngleUnit;

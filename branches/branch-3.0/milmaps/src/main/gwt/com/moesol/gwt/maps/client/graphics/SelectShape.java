@@ -9,8 +9,6 @@ package com.moesol.gwt.maps.client.graphics;
 
 import java.util.List;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
@@ -34,8 +32,8 @@ public class SelectShape implements IShapeTool{
 	}
     
     private void handleSelect(int x, int y){
-		Canvas canvas = m_editor.getCanvasTool().canvas();
-		Context2d context = canvas.getContext2d();
+		ICanvasTool canvas = m_editor.getCanvasTool();
+		IContext context = canvas.getContext();
 		int width = canvas.getOffsetWidth();
 		int height = canvas.getOffsetHeight();
 		context.clearRect(0, 0, width, height);

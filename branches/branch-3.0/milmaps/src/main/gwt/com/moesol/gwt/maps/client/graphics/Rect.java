@@ -7,7 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
@@ -261,7 +260,7 @@ public class Rect extends AbstractSegment {
 		return m_translationTool;
 	}
 
-	private void drawSegments(Context2d context) {
+	private void drawSegments(IContext context) {
 		GeodeticCoords tl = m_startTool.getGeoPos();
 		GeodeticCoords br = m_endTool.getGeoPos();
 		GeodeticCoords tr = new GeodeticCoords(br.getLambda(AngleUnit.DEGREES),
@@ -279,13 +278,13 @@ public class Rect extends AbstractSegment {
 		}
 	}
 
-	private void drawBoundary(Context2d context) {
+	private void drawBoundary(IContext context) {
 		checkForException();
 		// ///////////////////////////////////////
 		drawSegments(context);
 	}
 
-	private void draw(Context2d context) {
+	private void draw(IContext context) {
 		context.beginPath();
 		context.setStrokeStyle(m_color);
 		context.setLineWidth(2);
@@ -294,20 +293,20 @@ public class Rect extends AbstractSegment {
 	}
 
 	@Override
-	public IShape erase(Context2d ct) {
+	public IShape erase(IContext ct) {
 		// _erase(ct);
 		return (IShape) this;
 	}
 
 	@Override
-	public IShape render(Context2d ct) {
+	public IShape render(IContext ct) {
 		syncColor();
 		draw(ct);
 		return (IShape) this;
 	}
 
 	@Override
-	public IShape drawHandles(Context2d context) {
+	public IShape drawHandles(IContext context) {
 		if (context != null) {
 			ISplit splitter = m_convert.getISplit();
 			// Center Handle

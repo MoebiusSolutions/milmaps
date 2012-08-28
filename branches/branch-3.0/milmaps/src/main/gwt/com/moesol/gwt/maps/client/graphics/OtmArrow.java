@@ -146,17 +146,17 @@ public class OtmArrow extends AbstractShape {
 		return(m_plottedPolygon.toArray(new GeodeticCoords[0]));
 	}
 	@Override
-	public IShape erase(Context2d context) {
+	public IShape erase(IContext context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public IShape render(Context2d context) {
+	public IShape render(IContext context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public IShape drawHandles(Context2d context) {
+	public IShape drawHandles(IContext context) {
 		// TODO Auto-generated method stub
 		return null;
 	}

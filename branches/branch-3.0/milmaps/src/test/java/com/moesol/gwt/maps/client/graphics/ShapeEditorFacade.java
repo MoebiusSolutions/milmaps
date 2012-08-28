@@ -28,12 +28,25 @@ public class ShapeEditorFacade implements IShapeEditor{
 		return new ICanvasTool(){
 
 			@Override
-			public Canvas canvas() {
+			public void setSize(int width, int height) {
+			}
+
+			@Override
+			public IContext getContext() {
+				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public void setSize(int width, int height) {
+			public int getOffsetWidth() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public int getOffsetHeight() {
+				// TODO Auto-generated method stub
+				return 0;
 			}
 			
 		};

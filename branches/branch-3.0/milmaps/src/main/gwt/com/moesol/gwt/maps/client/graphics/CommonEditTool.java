@@ -51,7 +51,7 @@ public class CommonEditTool extends AbstractEditTool {
 	
 	protected void drawHandles() {
 		if (m_abShape != null && m_canvas != null) {
-			Context2d context = m_canvas.getContext2d();
+			IContext context = m_canvas.getContext();
 			m_abShape.drawHandles(context);
 		}
 	}
