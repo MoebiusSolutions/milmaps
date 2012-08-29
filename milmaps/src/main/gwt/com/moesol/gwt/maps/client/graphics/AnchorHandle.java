@@ -7,9 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
-
 public class AnchorHandle {
 	private int m_x;
 	private int m_y;
@@ -17,16 +14,6 @@ public class AnchorHandle {
 	private int m_lineWidth = 2;
 	private String m_color = null;
 	
-	//private CssColor m_color = null;
-
-	//public CssColor getColor() {
-	//	return m_color;
-	//}
-
-	//public AnchorHandle setColor(CssColor color) {
-		//m_color = color;
-		//return this;
-	//}
 	
 	public int getX() {
 		return m_x;

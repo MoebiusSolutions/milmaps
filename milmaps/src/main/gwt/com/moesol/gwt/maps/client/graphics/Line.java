@@ -301,7 +301,6 @@ public class Line extends AbstractSegment {
 	
 	@Override
 	public IShape render(IContext ct) {
-		syncColor();
 		draw(ct);
 		return (IShape)this;
 	}

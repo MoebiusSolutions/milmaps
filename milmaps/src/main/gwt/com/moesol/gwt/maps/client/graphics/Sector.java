@@ -424,7 +424,6 @@ public class Sector extends AbstractShape {
 
 	@Override
 	public IShape render(IContext ct) {
-		syncColor();
 		draw(ct);
 		return (IShape) this;
 	}

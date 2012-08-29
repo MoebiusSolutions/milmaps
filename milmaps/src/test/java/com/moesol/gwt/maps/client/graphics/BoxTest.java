@@ -8,6 +8,10 @@
 package com.moesol.gwt.maps.client.graphics;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,8 +40,8 @@ public class BoxTest {
 	private IProjection proj;
 	private Converter m_conv;
 	private Util m_util;
-	
-
+	private ICanvasTool m_canvas = new CanvasToolMock();
+	private List<Point> m_list = new ArrayList<Point>();
 	
 	private ViewCoords compViewPt( GeodeticCoords cent, double rotBrg, 
 								   double a, double b, int tlbr) {
@@ -101,7 +105,7 @@ public class BoxTest {
 	
 	@Test
 	public void creatEditToolTest(){
-		IShapeEditor se = new ShapeEditorFacade();
+		IShapeEditor se = new ShapeEditorMock();
 		IShapeTool st = m_box.createEditTool(se);
 		assertEquals(true, st != null);
 	}
@@ -214,5 +218,79 @@ public class BoxTest {
 		pos = m_conv.viewToGeodetic(new ViewCoords(450,200));
 		tool2 = m_box.getAnchorByPosition(pos);
 		assertEquals(tool,tool2);
+	}
+	
+	protected void copyList(List<Point> list){
+		int n = list.size();
+		for (int i = 0; i < n; i++){
+			Point p = list.get(i);
+			p = new Point(p.x,p.y);
+			m_list.add(p);
+		}
+	}
+	
+	protected void writeFile(){
+		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
+		ctm.setWriteFlag(true);
+		ctm.createFile("box");
+		IContext ct = m_canvas.getContext();
+		m_box.render(ct);
+		ctm.closeFile();
+	}
+	
+	protected void compareToFile(){
+		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
+		ctm.setWriteFlag(false);
+		ctm.readFile("box");
+		copyList(ctm.getList());
+		ctm.clearList();
+		IContext ct = m_canvas.getContext();
+		m_box.render(ct);
+		List<Point> list = ctm.getList();
+		int n = list.size();
+		int m = m_list.size();
+		assertEquals(m,n);
+		for (int i = 0; i < n; i++){
+			Point p = list.get(i);
+			Point q = m_list.get(i);
+			assertEquals(q.x, p.x);
+			assertEquals(q.y, p.y);
+		}
+		m_list.clear();
+		ctm.clearList();
+	}
+	
+	@Test
+	public void drawObjectTest(){
+		GeodeticCoords cent = m_util.pixToPos(300,200);
+		m_box.setCenter(cent);
+		m_box.setSmjFromPix(400, 200);
+		GeodeticCoords gc = m_box.getSmjPos();
+		double disKm = m_rb.gcRangeFromTo(cent,gc);
+		Distance dis = Distance.builder().value(disKm/2).kilometers().build();
+		m_box.setSmnAxis(dis);
+		
+		boolean bWrite = false;
+		if (bWrite){
+			writeFile();
+		}else{
+			compareToFile();
+		}
+	}
+	
+	@Test
+	public void drawHandleTest(){
+		GeodeticCoords cent = m_util.pixToPos(300,200);
+		m_box.setCenter(cent);
+		m_box.setSmjFromPix(400, 200);
+		GeodeticCoords gc = m_box.getSmjPos();
+		double disKm = m_rb.gcRangeFromTo(cent,gc);
+		Distance dis = Distance.builder().value(disKm/2).kilometers().build();
+		m_box.setSmnAxis(dis);
+		
+		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
+		ctm.setWriteFlag(false);
+		IContext ct = m_canvas.getContext();
+		m_box.drawHandles(ct);
 	}
 }

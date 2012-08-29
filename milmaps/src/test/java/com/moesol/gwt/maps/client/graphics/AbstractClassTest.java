@@ -53,7 +53,7 @@ public class AbstractClassTest {
 	
 	@Test
 	public void AbstarctEditTest(){
-		IShapeEditor se = new ShapeEditorFacade();
+		IShapeEditor se = new ShapeEditorMock();
 		assertEquals(true, se != null);
 		AbstractEditTool t = new AbstractEditTool(se){
 			@Override

@@ -9,6 +9,9 @@ package com.moesol.gwt.maps.client.graphics;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,6 +29,8 @@ public class RectTest {
 	private IProjection proj;
 	private Converter m_conv;
 	private Util m_util;
+	private ICanvasTool m_canvas = new CanvasToolMock();
+	private List<Point> m_list = new ArrayList<Point>();
 	
 	@Before
 	public void before() throws Exception {
@@ -63,7 +68,7 @@ public class RectTest {
 
 	@Test
 	public void creatEditToolTest(){
-		IShapeEditor se = new ShapeEditorFacade();
+		IShapeEditor se = new ShapeEditorMock();
 		IShapeTool st = m_rect.createEditTool(se);
 		assertEquals(true, st != null);
 	}
@@ -209,5 +214,64 @@ public class RectTest {
 		//assertEquals(u,v);
 
 		return;
+	}
+	
+	protected void copyList(List<Point> list){
+		int n = list.size();
+		for (int i = 0; i < n; i++){
+			Point p = list.get(i);
+			p = new Point(p.x,p.y);
+			m_list.add(p);
+		}
+	}
+	
+	protected void writeFile(){
+		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
+		ctm.setWriteFlag(true);
+		ctm.createFile("rect");
+		IContext ct = m_canvas.getContext();
+		m_rect.render(ct);
+		ctm.closeFile();
+	}
+	
+	protected void compareToFile(){
+		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
+		ctm.setWriteFlag(false);
+		ctm.readFile("rect");
+		copyList(ctm.getList());
+		ctm.clearList();
+		IContext ct = m_canvas.getContext();
+		m_rect.render(ct);
+		List<Point> list = ctm.getList();
+		int n = list.size();
+		int m = m_list.size();
+		assertEquals(m,n);
+		for (int i = 0; i < n; i++){
+			Point p = list.get(i);
+			Point q = m_list.get(i);
+			assertEquals(q.x, p.x);
+			assertEquals(q.y, p.y);
+		}
+		m_list.clear();
+		ctm.clearList();
+	}
+	
+	@Test
+	public void drawObjectTest(){
+		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
+		ctm.createFile("rect");
+		IContext ct = m_canvas.getContext();
+		m_rect.render(ct);
+		ctm.closeFile();
+		m_rect.drawHandles(ct);
+	}
+	
+	@Test
+	public void drawHandleTest(){
+		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
+		ctm.setWriteFlag(false);
+		
+		IContext ct = m_canvas.getContext();
+		m_rect.drawHandles(ct);
 	}
 }

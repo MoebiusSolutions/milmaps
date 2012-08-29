@@ -15,49 +15,38 @@ import org.junit.Test;
 import com.moesol.gwt.maps.client.CylEquiDistProj;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.IProjection;
-import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.ViewPort;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.server.units.JvmMapScale;
 
-public class FreehandTest {
+public class NewArcToolTest {
 	protected static final RangeBearingS m_rb = new RangeBearingS();
-	protected Freehand m_fh;
 	private ViewPort viewPort = new ViewPort();
 	private IProjection proj;
 	private Converter m_conv;
 	private Util m_util;
-	
+	private ICanvasTool m_canvas = new CanvasToolMock();
+	private NewArcTool m_tool;
 	@Before
 	public void before() throws Exception {
+		JvmMapScale.init();
 		proj = new CylEquiDistProj(512, 180, 180);
 		viewPort.setProjection(proj);
 		m_conv = new Converter(viewPort);
 		m_util = new Util(m_conv,m_rb);
-		m_fh = new Freehand();
-		m_fh.setCoordConverter(m_conv);
+		IShapeEditor se = new ShapeEditorMock();	
+		se.setCoordConverter(m_conv);
+		m_tool = new NewArcTool(se);
 		
 	}
 	
 	@Test
-	public void creatIShapeTest(){
-		GeodeticCoords[] pos = new GeodeticCoords[4];
-		for ( int i = 0; i < 4; i++){
-			pos[i] = new GeodeticCoords(-120 + 4*i, 34 - 4*i, AngleUnit.DEGREES); 
-		}
-		Freehand fh = (Freehand)Freehand.create(m_conv, pos);
-		for (int i = 0; i < 4; i++){
-			IAnchorTool u = fh.getVertexTool(i);
-			IAnchorTool v = fh.getAnchorByPosition(pos[i]);
-			assertEquals(u,v);
-		}
-		return;
-	}
-	
-	@Test
-	public void creatEditToolTest(){
-		IShapeEditor se = new ShapeEditorMock();
-		IShapeTool st = m_fh.createEditTool(se);
-		assertEquals(true, st != null);
+	public void handleMouseDownTest(){
+		m_tool.handleMouseDown(300, 200);
+		Arc arc  = (Arc)(m_tool.getShape());
+		GeodeticCoords  gc = arc.getCenterTool().getGeoPos();
+		assertEquals(0.0,gc.getPhi(AngleUnit.DEGREES),0.5);
+		assertEquals(0.0,gc.getLambda(AngleUnit.DEGREES),0.5);
 	}
 }

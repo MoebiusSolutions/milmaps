@@ -390,7 +390,6 @@ public class Ellipse extends AbstractShape {
 
 	@Override
 	public IShape render(IContext context) {
-		syncColor();
 		draw(context);
 		return (IShape) this;
 	}

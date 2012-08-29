@@ -388,6 +388,7 @@
                     <excludes>
                         <exclude>**/*.html</exclude>
                         <exclude>**/*.apt</exclude>
+                        <exclude>src/test/resources/expectedObjects/*.txt</exclude>
                     </excludes>
                     <useDefaultExcludes>true</useDefaultExcludes>
                     <encoding>UTF-8</encoding>

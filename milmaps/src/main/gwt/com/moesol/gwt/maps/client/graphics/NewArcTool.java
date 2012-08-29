@@ -47,7 +47,7 @@ public class NewArcTool extends  AbstractNewTool {
 		m_arc = new Arc().withCenter(center);
 		m_editor.addShape(m_arc);
 		m_arc.selected(true);
-		m_arc.setCoordConverter(m_editor.getCoordinateConverter());
+		m_arc.setCoordConverter(m_convert);
 		IAnchorTool tool = m_arc.getStartBrgAnchorTool();
 		m_editor.setAnchorTool(tool);
 	}
@@ -56,7 +56,6 @@ public class NewArcTool extends  AbstractNewTool {
 	public void handleMouseMove(int x, int y) {
 		if (m_mouseDown) {
 			if (m_arc != null && m_canvas != null) {
-				//m_arc.getStartBrgAnchorTool().handleMouseMove(event);
 				m_arc.initialMouseMove(x,y);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();

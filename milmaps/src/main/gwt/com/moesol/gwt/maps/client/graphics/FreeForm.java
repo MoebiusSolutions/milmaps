@@ -285,7 +285,6 @@ public class FreeForm extends AbstractShape {
 
 	@Override
 	public IShape render(IContext context) {
-		syncColor();
 		draw(context);
 		return (IShape) this;
 	}

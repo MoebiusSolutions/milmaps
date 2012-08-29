@@ -9,6 +9,9 @@ package com.moesol.gwt.maps.client.graphics;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +37,8 @@ public class CircleTest {//extends GwtTest{
 	private ViewPort viewPort = new ViewPort();
 	private IProjection proj;
 	private Converter m_conv;
+	private ICanvasTool m_canvas = new CanvasToolMock();
+	private List<Point> m_list = new ArrayList<Point>();
 	
 	//@Override
 	//public String getModuleName() {
@@ -65,7 +70,7 @@ public class CircleTest {//extends GwtTest{
 	
 	@Test
 	public void creatEditToolTest(){
-		IShapeEditor se = new ShapeEditorFacade();
+		IShapeEditor se = new ShapeEditorMock();
 		IShapeTool st = m_cir.createEditTool(se);
 		assertEquals(true, st != null);
 	}
@@ -170,5 +175,75 @@ public class CircleTest {//extends GwtTest{
 		GeodeticCoords pos = m_conv.viewToGeodetic(new ViewCoords(350,200));
 		IAnchorTool tool2 = m_cir.getAnchorByPosition(pos);
 		assertEquals(tool,tool2);
+	}
+	
+	
+	protected void copyList(List<Point> list){
+		int n = list.size();
+		for (int i = 0; i < n; i++){
+			Point p = list.get(i);
+			p = new Point(p.x,p.y);
+			m_list.add(p);
+		}
+	}
+	
+	protected void writeFile(){
+		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
+		ctm.setWriteFlag(true);
+		ctm.createFile("circle");
+		IContext ct = m_canvas.getContext();
+		m_cir.render(ct);
+		ctm.closeFile();
+	}
+	
+	protected void compareToFile(){
+		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
+		ctm.setWriteFlag(false);
+		ctm.readFile("circle");
+		copyList(ctm.getList());
+		ctm.clearList();
+		IContext ct = m_canvas.getContext();
+		m_cir.render(ct);
+		List<Point> list = ctm.getList();
+		int n = list.size();
+		int m = m_list.size();
+		assertEquals(m,n);
+		for (int i = 0; i < n; i++){
+			Point p = list.get(i);
+			Point q = m_list.get(i);
+			assertEquals(q.x, p.x);
+			assertEquals(q.y, p.y);
+		}
+		m_list.clear();
+		ctm.clearList();
+	}
+	
+	@Test
+	public void drawObjectTest(){
+		GeodeticCoords cent = m_conv.viewToGeodetic(new ViewCoords(300,200));
+		m_cir.setCenter(cent);
+		GeodeticCoords radGc = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		m_cir.setRadiusPos(radGc);
+		
+		boolean bWrite = false;
+		if (bWrite){
+			writeFile();
+		}else{
+			compareToFile();
+		}
+		
+	}
+	
+	@Test
+	public void drawHandleTest(){
+		GeodeticCoords cent = m_conv.viewToGeodetic(new ViewCoords(300,200));
+		m_cir.setCenter(cent);
+		GeodeticCoords radGc = m_conv.viewToGeodetic(new ViewCoords(350,200));
+		m_cir.setRadiusPos(radGc);
+		
+		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
+		ctm.setWriteFlag(false);
+		IContext ct = m_canvas.getContext();
+		m_cir.drawHandles(ct);
 	}
 }

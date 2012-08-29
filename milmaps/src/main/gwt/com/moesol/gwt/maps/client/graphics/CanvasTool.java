@@ -13,7 +13,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 public class CanvasTool implements ICanvasTool { //implements ResizeHandler {
 	protected final Canvas m_canvas = Canvas.createIfSupported();
 	
-	protected final IContext m_context = new IContext(){
+	protected final IContext m_icontext = new IContext(){
 		Context2d m_context = m_canvas.getContext2d();
 		
 		@Override
@@ -85,7 +85,7 @@ public class CanvasTool implements ICanvasTool { //implements ResizeHandler {
 	
 	@Override
 	public IContext getContext(){ 
-		return m_context; 
+		return m_icontext; 
 	}
 	
 	@Override

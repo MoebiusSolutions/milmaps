@@ -282,13 +282,11 @@ public class Triangle extends AbstractShape {
 	
 	@Override
 	public IShape erase(IContext context) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public IShape render(IContext context) {
-		syncColor();
 		draw(context);
 		return (IShape)this;
 	}
