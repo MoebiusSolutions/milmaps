@@ -60,7 +60,7 @@ public class ShapeEditor implements IShapeEditor{
 	}
 	
 	@Override
-	public CanvasTool getCanvasTool() {
+	public ICanvasTool getCanvasTool() {
 		return m_canvas;
 	}
 	

@@ -7,14 +7,12 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.CssColor;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 
 public abstract class AbstractShape implements IShape{
 	protected static int TRANSLATE_HANDLE_OFFSET_X = 20;
 	protected String m_id;
 	protected String m_color = "rgb(255, 255, 255)";
-	protected CssColor m_cssColor = null;
 	protected boolean m_bSeletected = false;
 	protected boolean m_needsUpdate = false;
 	
@@ -35,12 +33,6 @@ public abstract class AbstractShape implements IShape{
 		m_shiftKeydown = shiftKey;
 	}
 	
-	protected void syncColor(){
-		if (m_cssColor == null){
-			m_cssColor = CssColor.make(m_color);
-		}
-	}
-	
 	@Override
 	public String getColor() {
 		return m_color;
@@ -48,9 +40,6 @@ public abstract class AbstractShape implements IShape{
 
 	@Override
 	public void setColor(String color) {
-		if (!m_color.equalsIgnoreCase(color)){
-			m_cssColor = null;
-		}
 		m_color = color;
 	}
 	
