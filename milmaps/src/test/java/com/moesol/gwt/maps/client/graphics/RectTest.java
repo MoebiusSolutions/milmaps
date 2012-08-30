@@ -24,7 +24,7 @@ import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class RectTest {
 	protected static final RangeBearingS m_rb = new RangeBearingS();
-	protected Rect m_rect;
+	protected Rectangle m_rect;
 	private ViewPort viewPort = new ViewPort();
 	private IProjection proj;
 	private Converter m_conv;
@@ -38,7 +38,7 @@ public class RectTest {
 		viewPort.setProjection(proj);
 		m_conv = new Converter(viewPort);
 		m_util = new Util(m_conv,m_rb);
-		m_rect = new Rect();
+		m_rect = new Rectangle();
 		m_rect.setCoordConverter(m_conv);
 		
 		GeodeticCoords start = m_util.pixToPos(300,200);

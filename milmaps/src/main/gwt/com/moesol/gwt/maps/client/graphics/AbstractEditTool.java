@@ -19,6 +19,8 @@ public abstract class AbstractEditTool implements IShapeTool{
 		m_canvas  = se.getCanvasTool();
 		m_convert = se.getCoordinateConverter();
 	}
+	
+	public IAnchorTool getAnchorTool(){ return m_anchorTool; }
 
 	@Override
 	public void handleMouseDblClick(int x, int y) {

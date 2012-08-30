@@ -10,7 +10,6 @@ package com.moesol.gwt.maps.client.graphics;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.user.client.Event;
 
 public class ShapeEditorMock implements IShapeEditor{
@@ -58,6 +57,11 @@ public class ShapeEditorMock implements IShapeEditor{
 	public void setShapeTool(IShapeTool shape) {
 		m_shapeTool = shape;
 	}
+	
+	@Override
+	public IShapeTool getShapeTool() {
+		return m_shapeTool;
+	}
 
 	@Override
 	public void setAnchorTool(IAnchorTool tool) {
@@ -69,7 +73,7 @@ public class ShapeEditorMock implements IShapeEditor{
 
 	@Override
 	public List<IShape> getShapes() {
-		return null;
+		return m_objs;
 	}
 
 	@Override
@@ -100,17 +104,17 @@ public class ShapeEditorMock implements IShapeEditor{
 
 	@Override
 	public IShapeEditor clearCanvas() {
-		return null;
+		return this;
 	}
 
 	@Override
 	public IShapeEditor clearExistingObjs() {
-		return null;
+		return this;
 	}
 
 	@Override
 	public IShapeEditor renderObjects() {
-		return null;
+		return this;
 	}
 
 	@Override

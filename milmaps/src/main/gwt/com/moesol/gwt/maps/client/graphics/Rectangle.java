@@ -13,7 +13,7 @@ import com.moesol.gwt.maps.client.algorithms.Func;
 import com.moesol.gwt.maps.client.algorithms.SRngBrg;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
-public class Rect extends AbstractSegment {
+public class Rectangle extends AbstractSegment {
 	private SRngBrg m_diagRngBrg = null;
 	private AbstractPosTool m_startTool = null;
 	private AbstractPosTool m_endTool = null;
@@ -22,13 +22,13 @@ public class Rect extends AbstractSegment {
 
 	private int m_X, m_Y;
 
-	public Rect() {
+	public Rectangle() {
 		m_id = "Rectangle";
 	}
 
 	public static IShape create(ICoordConverter conv, GeodeticCoords start,
 													  GeodeticCoords end) {
-		Rect rect = new Rect();
+		Rectangle rect = new Rectangle();
 		rect.setCoordConverter(conv);
 		rect.setCornerPts(start, end);
 		return (IShape) rect;
@@ -355,7 +355,7 @@ public class Rect extends AbstractSegment {
 		updateRngBrg();
 	}
 
-	public Rect withEndPos(GeodeticCoords radPos) {
+	public Rectangle withEndPos(GeodeticCoords radPos) {
 		setEndPos(radPos);
 		return this;
 	}
@@ -372,7 +372,7 @@ public class Rect extends AbstractSegment {
 		}
 	}
 
-	public Rect withStartPos(GeodeticCoords pos) {
+	public Rectangle withStartPos(GeodeticCoords pos) {
 		setStartPos(pos);
 		return this;
 	}

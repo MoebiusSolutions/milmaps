@@ -14,7 +14,7 @@ import com.moesol.gwt.maps.client.algorithms.GeoOps;
 import com.moesol.gwt.maps.client.algorithms.Spline;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
-public class OtmArrow extends AbstractShape {
+public class OtmArrow {/*extends AbstractShape {
 	public static final int INTERPOLATE_GC     = 0;
 	public static final int INTERPOLATE_RL     = 1;
 	public static final int INTERPOLATE_SPLINE = 2;
@@ -175,4 +175,5 @@ public class OtmArrow extends AbstractShape {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	*/
 }

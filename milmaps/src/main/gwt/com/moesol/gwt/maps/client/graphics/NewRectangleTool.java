@@ -10,14 +10,14 @@ package com.moesol.gwt.maps.client.graphics;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public class NewRectTool extends  AbstractNewTool {
+public class NewRectangleTool extends  AbstractNewTool {
 	private boolean m_mouseDown = false;
 	private ICanvasTool m_canvas = null;
-	private Rect m_rect = null;
+	private Rectangle m_rect = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
 
-	public NewRectTool(IShapeEditor editor) {
+	public NewRectangleTool(IShapeEditor editor) {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
@@ -31,7 +31,7 @@ public class NewRectTool extends  AbstractNewTool {
 	
 	@Override
 	public void setShape(IShape shape) {
-		m_rect = (Rect)shape;
+		m_rect = (Rectangle)shape;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class NewRectTool extends  AbstractNewTool {
 		m_mouseDown = true;
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords gc = m_convert.viewToGeodetic(vc);
-		m_rect = new Rect();
+		m_rect = new Rectangle();
 		m_rect.setCoordConverter(m_convert);
 		m_rect.withStartPos(gc);
 		m_editor.addShape(m_rect);
