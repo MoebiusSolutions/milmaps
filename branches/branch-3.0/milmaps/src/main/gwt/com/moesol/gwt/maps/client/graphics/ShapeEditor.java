@@ -76,6 +76,11 @@ public class ShapeEditor implements IShapeEditor{
 	}
 	
 	@Override
+	public IShapeTool getShapeTool() {
+		return m_shapeTool;
+	}
+	
+	@Override
 	public void setAnchorTool(IAnchorTool tool) {
 		//m_anchorTool = tool;
 	}

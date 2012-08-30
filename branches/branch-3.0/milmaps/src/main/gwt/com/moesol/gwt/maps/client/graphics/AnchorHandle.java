@@ -61,7 +61,7 @@ public class AnchorHandle {
 		m_y = y;
 		return this;
 	}
-	
+	/*
 	public boolean isSelected(int x, int y){
 		int hw = m_size/2;
 		if (m_x - hw <= x && x <= m_x + hw){
@@ -71,7 +71,7 @@ public class AnchorHandle {
 		}
 		return false;
 	}
-	
+	*/
 	public void setStrokeColor(String color){
 		m_color = color;
 		return;

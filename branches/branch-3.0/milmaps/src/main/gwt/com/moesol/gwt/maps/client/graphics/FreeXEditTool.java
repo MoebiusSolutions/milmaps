@@ -130,4 +130,14 @@ public class FreeXEditTool extends AbstractEditTool{
 			m_shiftKeydown = false;
 		}
 	}
+	
+	public boolean getKeyDownFlag(int keyCode){
+		if(keyCode == KeyCodes.KEY_CTRL){
+			return m_cntrlKeydown;
+		}
+		else if(keyCode == KeyCodes.KEY_SHIFT){
+			return m_shiftKeydown;
+		}
+		return false;
+	}
 }

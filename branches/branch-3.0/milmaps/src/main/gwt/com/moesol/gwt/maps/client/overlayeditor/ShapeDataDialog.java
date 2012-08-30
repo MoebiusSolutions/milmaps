@@ -32,10 +32,10 @@ import com.moesol.gwt.maps.client.graphics.NewEllipseTool;
 import com.moesol.gwt.maps.client.graphics.NewFreeFormTool;
 import com.moesol.gwt.maps.client.graphics.NewFreehandTool;
 import com.moesol.gwt.maps.client.graphics.NewLineTool;
-import com.moesol.gwt.maps.client.graphics.NewRectTool;
+import com.moesol.gwt.maps.client.graphics.NewRectangleTool;
 import com.moesol.gwt.maps.client.graphics.NewSectorTool;
 import com.moesol.gwt.maps.client.graphics.NewTriangleTool;
-import com.moesol.gwt.maps.client.graphics.Rect;
+import com.moesol.gwt.maps.client.graphics.Rectangle;
 import com.moesol.gwt.maps.client.graphics.Sector;
 import com.moesol.gwt.maps.client.graphics.SelectShape;
 import com.moesol.gwt.maps.client.graphics.Triangle;
@@ -160,7 +160,7 @@ public class ShapeDataDialog extends DialogBox {
 	protected IShapeTool createRect(){
 		GeodeticCoords start = new GeodeticCoords(-120,30,AngleUnit.DEGREES);
 		GeodeticCoords end = new GeodeticCoords(-100,10,AngleUnit.DEGREES);
-		return Rect.create(m_shapeEditor, start,end);
+		return Rectangle.create(m_shapeEditor, start,end);
 	}
 	
 	protected IShapeTool createSector(){

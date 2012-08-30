@@ -47,7 +47,7 @@ public class SelectShape implements IShapeTool{
 				break;
 			}
 		}
-		if (selectedShape != null){
+		if (selectedShape != null){ 
 			selectedShape.selected(true);
 			tool = selectedShape.createEditTool(m_editor);
 			m_editor.setShapeTool(tool);

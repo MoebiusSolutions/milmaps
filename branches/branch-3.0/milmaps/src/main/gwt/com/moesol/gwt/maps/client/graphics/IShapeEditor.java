@@ -26,6 +26,8 @@ public interface IShapeEditor {//extends IHandlerTool {
 	public abstract void deselectAllShapes();
 
 	public abstract void setShapeTool(IShapeTool tool);
+	
+	public abstract IShapeTool getShapeTool();
 
 	public abstract void setAnchorTool(IAnchorTool tool);
 

@@ -7,6 +7,7 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 
 public abstract class AbstractShape implements IShape{
@@ -31,6 +32,16 @@ public abstract class AbstractShape implements IShape{
 	public void setKeyboardFlags(boolean altKey, boolean shiftKey) {
 		m_ctrlKeydown = altKey;
 		m_shiftKeydown = shiftKey;
+	}
+	
+	public boolean getKeyDownFlag(int keyCode){
+		if(keyCode == KeyCodes.KEY_CTRL){
+			return m_ctrlKeydown;
+		}
+		else if(keyCode == KeyCodes.KEY_SHIFT){
+			return m_shiftKeydown;
+		}
+		return false;
 	}
 	
 	@Override
