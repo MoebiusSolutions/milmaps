@@ -15,44 +15,41 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.moesol.gwt.maps.client.IMapView;
 import com.moesol.gwt.maps.client.MapView;
 
 public class ShapeEditor implements IShapeEditor{
 	protected static final boolean PASS_EVENT = true;
 	protected static final boolean CAPTURE_EVENT = false;
 	
-	private MapView m_map = null;
-	private CanvasTool m_canvas = null;//new CanvasTool();
-	IActiveTool m_mapControl = null;
+	private IMapView m_map = null;
+	private ICanvasTool m_canvas = null;//new CanvasTool();
 	IShapeTool m_shapeTool; 
 	//IAnchorTool m_anchorTool = null;
 	List<IShape> m_objs = new ArrayList<IShape>();
-	ICoordConverter m_converter = new Converter();
+	ICoordConverter m_converter;
 
 	public ICoordConverter getConverter() {
 		return m_converter;
 	}
 
-	public ShapeEditor(MapView map) {
+	public ShapeEditor(IMapView map) {
 		super();
 		m_map = map;
-		m_map.setShapeEditor(this);
+		map.setShapeEditor(this);
+		setCoordConverter(new Converter());
 		m_converter.setViewPort(map.getViewport());
-		m_canvas = m_map.getDivManager().getCanvasTool();
-		m_map.getViewPanel().add(m_canvas.canvas());
-		m_mapControl = m_map.getController();
+		m_canvas = map.getICanvasTool();
+		map.attachCanvas();
 	}
-
+	/*
 	public Canvas getCanvas() {
 		return m_canvas.canvas();
 	}
-	
+	*/
 	private void checkForException() {
 		if (m_canvas == null) {
 			throw new IllegalStateException("ShapeEditor: m_canvas = null");
-		}
-		if (m_mapControl == null) {
-			throw new IllegalStateException("Shapeeditor: m_mapControl = null");
 		}
 		if (m_map == null) {
 			throw new IllegalStateException("Shapeeditor: m_map = null");
@@ -65,8 +62,8 @@ public class ShapeEditor implements IShapeEditor{
 	}
 	
 	@Override
-	public void setEventFocus(boolean on){
-		m_mapControl.setEditor((on ? this : null));
+	public void setEventFocus(boolean focus){
+		m_map.setEditorFocus(focus);
 		
 	}
 	
@@ -89,10 +86,20 @@ public class ShapeEditor implements IShapeEditor{
 	public void addShape(IShape shape) {
 		m_objs.add(shape);
 	}
+	
+	@Override
+	public void deleteSelectedShapes(){
+		int size = m_objs.size();
+		for (int i = size-1; i > -1; i--){
+			IShape s = m_objs.get(i);
+			if (s.isSelected()){
+				m_objs.remove(i);
+			}
+		}
+	}
 
 	@Override
 	public void removeShape(String id) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -129,9 +136,9 @@ public class ShapeEditor implements IShapeEditor{
 	
 	@Override
 	public IShapeEditor clearCanvas(){
-		Context2d context = m_canvas.canvas().getContext2d();
-		int w = m_canvas.canvas().getOffsetWidth();
-		int h = m_canvas.canvas().getOffsetHeight();
+		IContext context = m_canvas.getContext();
+		int w = m_canvas.getOffsetWidth();
+		int h = m_canvas.getOffsetHeight();
 		context.clearRect(0, 0, w, h);	
 		return (IShapeEditor)this;
 	}
@@ -187,46 +194,46 @@ public class ShapeEditor implements IShapeEditor{
 	// Handler Events
 	
 	//@Override
-	public boolean handleMouseDown(Event e) {
+	public boolean handleMouseDown(int x, int y) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleMouseDown(e.getClientX(), e.getClientY());
+			m_shapeTool.handleMouseDown(x, y);
 			return false;
 		}
 		return true;
 	}
 
 	//@Override
-	public boolean handleMouseMove(Event e) {
+	public boolean handleMouseMove(int x, int y) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleMouseMove(e.getClientX(),e.getClientY());
+			m_shapeTool.handleMouseMove(x, y);
 			return false;
 		}
 		return true;
 	}
 
 	//@Override
-	public boolean handleMouseUp(Event e) {
+	public boolean handleMouseUp(int x, int y) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleMouseUp(e.getClientX(), e.getClientY());
+			m_shapeTool.handleMouseUp(x, y);
 			return false;
 		}
 		return true;
 	}
 
 	//@Override
-	public boolean handleMouseOut(Event e) {
+	public boolean handleMouseOut(int x, int y) {
 		if (m_shapeTool != null){
-			m_shapeTool.handleMouseOut(e.getClientX(),e.getClientY());
+			m_shapeTool.handleMouseOut(x, y);
 			return false;
 		}
 		return true;
 	}
 
 	//@Override
-	public boolean handleMouseDblClick(Event e) {
+	public boolean handleMouseDblClick(int x, int y) {
 		if (m_shapeTool != null){
 			
-			m_shapeTool.handleMouseDblClick(e.getClientX(),e.getClientY());
+			m_shapeTool.handleMouseDblClick(x, y);
 			return false;
 		}
 		return true;
@@ -250,39 +257,41 @@ public class ShapeEditor implements IShapeEditor{
 		return true;
 	}
 	
-	private void keyDownCode(Event event){
+	private void keyDownCode(int keyCode){
 		//DOM.eventGetKeyCode(event) == KeyCodes.KEY_CTRL){
-		m_shapeTool.handleKeyDown(event.getKeyCode());
+		m_shapeTool.handleKeyDown(keyCode);
 	}
 	
-	private void keyUpCode(Event event){
-		m_shapeTool.handleKeyUp(event.getKeyCode());
+	private void keyUpCode(int keyCode){
+		m_shapeTool.handleKeyUp(keyCode);
 	}
 
 	@Override
 	public void onEventPreview(Event event) {
 		//DOM.eventPreventDefault(event);
+		int x = event.getClientX();
+		int y = event.getClientY();
 		switch (DOM.eventGetType(event)) {
 		case Event.ONMOUSEDOWN:
-			handleMouseDown(event);
+			handleMouseDown(x, y);
 			break;
 		case Event.ONMOUSEUP:
-			handleMouseUp(event);
+			handleMouseUp(x, y);
 			break;
 		case Event.ONMOUSEMOVE:
-			handleMouseMove(event);
+			handleMouseMove(x, y);
 			break;
 		case Event.ONMOUSEOUT:
-			handleMouseOut(event);
+			handleMouseOut(x, y);
 			break;
 		case Event.ONDBLCLICK:
-			handleMouseDblClick(event);
+			handleMouseDblClick(x, y);
 			break;
 		case Event.ONKEYDOWN:
-			keyDownCode(event);
+			keyDownCode(event.getKeyCode());
 			break;
 		case Event.ONKEYUP:
-			keyUpCode(event);
+			keyUpCode(event.getKeyCode());
 			break;
 		}
 		return;

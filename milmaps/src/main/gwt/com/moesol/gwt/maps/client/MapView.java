@@ -9,6 +9,7 @@ package com.moesol.gwt.maps.client;
 
 import java.util.Date;
 
+import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -25,6 +26,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.moesol.gwt.maps.client.graphics.CanvasTool;
+import com.moesol.gwt.maps.client.graphics.ICanvasTool;
 import com.moesol.gwt.maps.client.graphics.IShapeEditor;
 import com.moesol.gwt.maps.client.stats.Sample;
 import com.moesol.gwt.maps.client.units.AngleUnit;
@@ -145,6 +148,17 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		m_shapeEditor = shapeEditor;
 	}
 	
+	public void attachCanvas(){
+		Canvas canvas = m_divMgr.getCanvasTool().canvas();
+		if ( canvas.isAttached() == false){
+			m_viewPanel.add(canvas);
+		}
+	}
+	
+	public ICanvasTool getICanvasTool(){
+		return m_divMgr.getCanvasTool();
+	}
+	
 	private void renderShapes(){
 		if(m_shapeEditor != null){
 			m_shapeEditor.clearExistingObjs().renderObjects();
@@ -207,6 +221,15 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 
 	public MapController getController() {
 		return m_mapEventListener;
+	}
+	
+	public void setEditorFocus(boolean focus){
+		if (!focus){
+			m_mapEventListener.setEditor(null);
+		}
+		else {
+			m_mapEventListener.setEditor(m_shapeEditor);
+		}
 	}
 
 	public ViewPort getViewport() {

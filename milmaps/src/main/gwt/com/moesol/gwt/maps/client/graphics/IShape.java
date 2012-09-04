@@ -25,6 +25,6 @@ public interface IShape {
     public abstract boolean isSelected();
     public abstract boolean needsUpdate();
     public abstract boolean positionTouches(GeodeticCoords position);
-	IAnchorTool getAnchorByPosition(GeodeticCoords position);
+	public abstract IAnchorTool getAnchorByPosition(GeodeticCoords position);
 }
 

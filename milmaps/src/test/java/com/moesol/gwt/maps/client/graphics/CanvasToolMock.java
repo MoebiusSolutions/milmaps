@@ -84,6 +84,7 @@ public class CanvasToolMock implements ICanvasTool { //implements ResizeHandler 
 		}
 		m_out = null;
 	}
+	
 	protected final IContext m_icontext = new IContext(){
 		protected void write(String line){
 			if (m_out == null){

@@ -7,8 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.ViewCoords;
 
 public class NewArrowTool extends  AbstractNewTool {

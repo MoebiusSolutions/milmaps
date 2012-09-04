@@ -125,4 +125,8 @@ public class ShapeEditorMock implements IShapeEditor{
 	public void done() {
 	}
 
+	@Override
+	public void deleteSelectedShapes() {
+	}
+
 }

@@ -128,6 +128,21 @@ public class ArrowTest {
 	}
 	
 	@Test
+	public void abstractPosToolTest(){
+		ViewCoords[] vc = new ViewCoords[4];
+		vc[0] = new ViewCoords(300,200);
+		vc[1] = new ViewCoords(350,150);
+		vc[2] = new ViewCoords(450,200);
+		vc[3] = new ViewCoords(500,250);
+		for(int i = 0; i < 4; i++){
+			m_arrow.addVertex(vc[i].getX(),vc[i].getY());
+		}
+		AbstractPosTool t1 = m_arrow.getAbstractPosTool(3);
+		AbstractPosTool t2 = m_arrow.getLastPosTool();
+		assertEquals(t1,t2);
+	}
+	
+	@Test
 	public void positionTouchesTest(){
 		GeodeticCoords[] pos = new GeodeticCoords[4];
 		pos[0] = m_util.pixToPos(300,200);
