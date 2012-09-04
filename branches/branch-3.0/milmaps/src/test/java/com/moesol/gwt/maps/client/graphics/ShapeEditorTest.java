@@ -12,15 +12,12 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.moesol.gwt.maps.client.IMapView;
-import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
+import com.google.gwt.event.dom.client.KeyCodes;
 
 public class ShapeEditorTest {
-	protected static final RangeBearingS m_rb = new RangeBearingS();
-	protected Circle m_cir;
 	MapViewMock m_map = new MapViewMock();
 	ShapeEditor m_se;
-	//IShapeEditor m_ise;
+	private Util m_util = new Util(m_map.m_conv,MapViewMock.m_rb);
 	
 	@Before
 	public void before() throws Exception {
@@ -104,5 +101,52 @@ public class ShapeEditorTest {
 		AbstractPosTool abTool =  s.getLastPosTool();
 
 		assertEquals(iat,abTool);
+	}
+	
+	@Test
+	public void keyDownUpTest(){
+		NewFreeFormTool tool = new NewFreeFormTool(m_se);
+		tool.handleMouseDown(300, 200);
+		tool.handleMouseUp(300, 200);
+		FreeForm ff  = (FreeForm)(tool.getShape());
+
+		tool.handleMouseDown(300,50);
+		tool.handleMouseUp(300,50);
+		
+		tool.handleMouseDown(350,50);
+		tool.handleMouseUp(350,50);
+		
+		tool.handleMouseDown(400,200);
+		tool.handleMouseUp(400,200);
+		tool.handleMouseDblClick(400, 200);
+		// Select objects vertex
+		m_se.handleMouseDown(300,50);
+		
+		// Check for vertex Anchor tool
+		m_se.handleMouseDown(300, 50);
+		boolean bSelected = m_se.getShapes().get(0).isSelected();
+		assertEquals(true,bSelected);
+		
+		m_se.keyDownCode(KeyCodes.KEY_CTRL);
+		 
+		
+		// write test for deleting and inserting points
+		// Insert Object between vertex 0 and 1
+		m_se.keyDownCode(KeyCodes.KEY_CTRL);
+		m_se.handleMouseDown(300,100);
+		m_se.handleMouseUp(300,100);
+		IAnchorTool t = ff.getVertexTool(1);
+		IAnchorTool t2 = ff.getAnchorByPosition(m_util.pixToPos(300, 100));
+		assertEquals(t,t2);
+		// Delete vertex 1.
+		m_se.keyDownCode(KeyCodes.KEY_SHIFT);
+		m_se.handleMouseDown(300,100);
+		m_se.handleMouseUp(300,100);
+		t = ff.getVertexTool(1);
+		t2 = ff.getAnchorByPosition(m_util.pixToPos(300,50));
+		assertEquals(t,t2);
+		
+		m_se.keyUpCode(KeyCodes.KEY_CTRL);
+		m_se.keyUpCode(KeyCodes.KEY_SHIFT);
 	}
 }

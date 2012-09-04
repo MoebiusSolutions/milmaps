@@ -25,12 +25,12 @@ import com.moesol.gwt.maps.client.WidgetPositioner;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 
 public class MapViewMock implements IMapView {
-	protected static final RangeBearingS m_rb = new RangeBearingS();
+	public static RangeBearingS m_rb = new RangeBearingS();
 	protected Arrow m_arrow;
 	private ViewPort m_viewPort = new ViewPort();
 	private IProjection proj;
-	private Converter m_conv;
-	private Util m_util;
+	public Converter m_conv;
+	public Util m_util;
 	private ICanvasTool m_canvas = new CanvasToolMock();
 	public boolean m_editorEventFocus = false;
 	

@@ -25,15 +25,13 @@ public class FreehandTest {
 	protected Freehand m_fh;
 	private ViewPort viewPort = new ViewPort();
 	private IProjection proj;
-	private Converter m_conv;
-	private Util m_util;
+	private Converter m_conv = new Converter(viewPort);
+	//private Util m_util = new Util(m_conv,m_rb);
 	
 	@Before
 	public void before() throws Exception {
 		proj = new CylEquiDistProj(512, 180, 180);
 		viewPort.setProjection(proj);
-		m_conv = new Converter(viewPort);
-		m_util = new Util(m_conv,m_rb);
 		m_fh = new Freehand();
 		m_fh.setCoordConverter(m_conv);
 		
