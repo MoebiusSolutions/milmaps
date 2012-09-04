@@ -62,15 +62,20 @@ public class NewObjectToolTest {
 	public void arrowToolHandleMouseTest(){
 		NewArrowTool tool = new NewArrowTool(m_se);
 		tool.handleMouseDown(300, 200);
+		tool.handleMouseUp(300, 200);
 		Arrow s  = (Arrow)(tool.getShape());
 
 		tool.handleMouseMove(300,50);
 		tool.handleMouseDown(300,50);
+		tool.handleMouseUp(300,50);
 		
 		tool.handleMouseMove(350,50);
 		tool.handleMouseDown(350,50);
+		tool.handleMouseUp(350,50);
 		
 		tool.handleMouseMove(400,200);
+		tool.handleMouseDown(400,200);
+		tool.handleMouseUp(400,200);
 		tool.handleMouseDblClick(400, 200);
 
 		IShape iShape = s;

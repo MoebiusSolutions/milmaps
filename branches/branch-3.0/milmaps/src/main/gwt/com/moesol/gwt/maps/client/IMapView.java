@@ -7,6 +7,9 @@
  */
 package com.moesol.gwt.maps.client;
 
+import com.moesol.gwt.maps.client.graphics.ICanvasTool;
+import com.moesol.gwt.maps.client.graphics.IShapeEditor;
+
 
 
 public interface IMapView {
@@ -25,4 +28,9 @@ public interface IMapView {
 	boolean isMapActionSuspended();
 	IconLayer getIconLayer();
 	WidgetPositioner getWidgetPositioner();
+	void setShapeEditor(IShapeEditor shapeEditor);
+	ICanvasTool getICanvasTool();
+	void attachCanvas();
+	MapController getController();
+	void setEditorFocus(boolean focus);
 }

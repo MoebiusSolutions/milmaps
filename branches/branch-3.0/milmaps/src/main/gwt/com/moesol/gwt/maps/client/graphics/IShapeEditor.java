@@ -34,6 +34,8 @@ public interface IShapeEditor {//extends IHandlerTool {
 	public abstract void clearActiveTool();
 
 	public abstract List<IShape> getShapes();
+	
+	public abstract void deleteSelectedShapes();
 
 	public abstract IShape findById(String id);
 

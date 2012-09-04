@@ -51,9 +51,8 @@ public class AnchorHandle {
 		return this;
 	}
 
-	public AnchorHandle setSize(int size) {
+	public void setSize(int size) {
 		m_size = size;
-		return this;
 	}
 	
 	public AnchorHandle setCenter(int x, int y){
@@ -83,6 +82,10 @@ public class AnchorHandle {
 			m_color = stColor;
 		}
 		return;
+	}
+	
+	public String getStrokeColor(){
+		return m_color;
 	}
 	
 	
