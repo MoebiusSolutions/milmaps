@@ -238,31 +238,13 @@ public class ShapeEditor implements IShapeEditor{
 		}
 		return true;
 	}
-
-	//@Override
-	public boolean handleKeyDown(Event e) {
-		if (m_shapeTool != null){
-			m_shapeTool.handleKeyDown(e.getKeyCode());
-			return false;
-		}
-		return true;
-	}
-
-	//@Override
-	public boolean handleKeyUp(Event e) {
-		if (m_shapeTool != null){
-			m_shapeTool.handleKeyUp(e.getKeyCode());
-			return false;
-		}
-		return true;
-	}
 	
-	private void keyDownCode(int keyCode){
+	void keyDownCode(int keyCode){
 		//DOM.eventGetKeyCode(event) == KeyCodes.KEY_CTRL){
 		m_shapeTool.handleKeyDown(keyCode);
 	}
 	
-	private void keyUpCode(int keyCode){
+	void keyUpCode(int keyCode){
 		m_shapeTool.handleKeyUp(keyCode);
 	}
 
