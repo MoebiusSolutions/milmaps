@@ -42,7 +42,6 @@ public class Arrow extends AbstractShape {
 									GeodeticCoords[] pos) {
 		ICoordConverter conv = editor.getCoordinateConverter();
 		IShape shape = create(conv,width,pos);
-		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}
 	

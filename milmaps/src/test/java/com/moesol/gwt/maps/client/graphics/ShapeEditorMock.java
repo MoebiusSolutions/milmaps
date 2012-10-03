@@ -34,6 +34,17 @@ public class ShapeEditorMock implements IShapeEditor{
 	public void addShape(IShape shape) {
 		m_objs.add(shape);
 	}
+	
+	@Override
+	public void removeShape(IShape shape) {
+		int size = m_objs.size();
+		for (int i = size-1; i > -1; i--){
+			IShape s = m_objs.get(i);
+			if (s == shape){
+				m_objs.remove(i);
+			}
+		}
+	}
 
 	@Override
 	public void removeShape(String id) {

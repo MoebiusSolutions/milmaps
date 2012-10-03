@@ -51,7 +51,6 @@ public class Box extends AbstractSegment {
 									Bearing brg, Distance smj, Distance smn) {
 		ICoordConverter conv = editor.getCoordinateConverter();
 		IShape shape = create(conv,center,brg,smj,smn);
-		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}
 

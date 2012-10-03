@@ -40,7 +40,6 @@ public class Circle extends AbstractShape {
 									Distance radius) {
 		ICoordConverter conv = editor.getCoordinateConverter();
 		IShape shape = create(conv,center,radius);
-		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}
 

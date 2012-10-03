@@ -18,6 +18,8 @@ public interface IShapeEditor {//extends IHandlerTool {
 	public abstract ICanvasTool getCanvasTool();
 
 	public abstract void addShape(IShape shape);
+	
+	public abstract void removeShape(IShape shape);
 
 	public abstract void removeShape(String id);
 

@@ -9,10 +9,15 @@ package com.moesol.gwt.maps.client.graphics;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.moesol.gwt.maps.client.GeodeticCoords;
+import com.moesol.gwt.maps.client.units.AngleUnit;
+import com.moesol.gwt.maps.client.units.Distance;
 
 public class ShapeEditorTest {
 	MapViewMock m_map = new MapViewMock();
@@ -47,6 +52,24 @@ public class ShapeEditorTest {
 		IShape shape = st.getShape();
 		IShape shape1 = m_se.getShapes().get(0);
 		assertEquals(shape,shape1);
+	}
+	
+	protected IShapeTool createCircle(){
+		GeodeticCoords cent = new GeodeticCoords(10,10,AngleUnit.DEGREES);
+		Distance rad = Distance.builder().value(2000).kilometers().build();
+		return Circle.create(m_se, cent, rad);
+	}
+	
+	@Test
+	public void add_RemoveShapeTest(){
+		IShapeTool st = createCircle();
+		m_se.addShape(st.getShape());
+		IShape shape = st.getShape();
+		IShape shape1 = m_se.getShapes().get(0);
+		assertEquals(shape,shape1);
+		m_se.removeShape(shape);
+		List<IShape> s = m_se.getShapes();
+		assertEquals(0,s.size());
 	}
 	
 	@Test

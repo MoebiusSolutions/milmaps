@@ -36,7 +36,6 @@ public class Triangle extends AbstractShape {
 	public static IShapeTool create(IShapeEditor editor, GeodeticCoords[] pos) {
 		ICoordConverter conv = editor.getCoordinateConverter();
 		IShape shape = create(conv, pos);
-		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}
 	
