@@ -88,6 +88,17 @@ public class ShapeEditor implements IShapeEditor{
 	}
 	
 	@Override
+	public void removeShape(IShape shape) {
+		int size = m_objs.size();
+		for (int i = size-1; i > -1; i--){
+			IShape s = m_objs.get(i);
+			if (s == shape){
+				m_objs.remove(i);
+			}
+		}
+	}
+	
+	@Override
 	public void deleteSelectedShapes(){
 		int size = m_objs.size();
 		for (int i = size-1; i > -1; i--){

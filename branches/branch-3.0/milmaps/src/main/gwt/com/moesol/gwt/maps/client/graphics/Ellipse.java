@@ -53,7 +53,6 @@ public class Ellipse extends AbstractShape {
 									Bearing brg, Distance smj, Distance smn) {
 		ICoordConverter conv = editor.getCoordinateConverter();
 		IShape shape = create(conv, center, brg, smj, smn);
-		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}
 

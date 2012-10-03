@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.moesol.gwt.maps.client.graphics.CanvasTool;
 
 public class DivManager {
-	private static int LEVEL_RANGE = 1;
+	public static int LEVEL_RANGE = 1;
 	public static final int NUMDIVS = 20;
 	private int m_currentLevel = 0;
 	private int m_oldLevel = 0;

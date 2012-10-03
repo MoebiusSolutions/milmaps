@@ -38,7 +38,6 @@ public class Rectangle extends AbstractSegment {
 														 GeodeticCoords end) {
 		ICoordConverter conv = editor.getCoordinateConverter();
 		IShape shape = create(conv, start, end);
-		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}
 

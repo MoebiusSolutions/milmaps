@@ -43,7 +43,6 @@ public class Sector extends AbstractShape {
 									GeodeticCoords startRB, GeodeticCoords endRB){
 		ICoordConverter conv = editor.getCoordinateConverter();
 		IShape shape = create(conv, center, startRB, endRB);
-		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}
 

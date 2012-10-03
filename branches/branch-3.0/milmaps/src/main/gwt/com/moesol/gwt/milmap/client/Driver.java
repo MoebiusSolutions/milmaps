@@ -87,7 +87,7 @@ public class Driver implements EntryPoint {
 	private final Grid m_tiles = new Grid(TILE_DY, TILE_DX);
 	private SuggestBox m_levelBox;
 	TextControl m_textControl = null;
-	OverlayEditor m_ovlEditor = null;
+	//OverlayEditor m_ovlEditor = null;
 	
 	private Place defaultPlace = new TileMapServicePlace(new String[]{"BMNG@EPSG:4326@png"}, 0, 0);
 	

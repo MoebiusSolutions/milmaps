@@ -7,7 +7,6 @@
  */
 package com.moesol.gwt.maps.client.graphics;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
@@ -27,7 +26,17 @@ public class Arc extends AbstractShape {
 	public Arc() {
 		m_id = "Arc";
 	}
-	
+	/**
+	 * create: creates an Arc shape object and returns an IShape interface
+	 * pointer.
+	 * @param conv: ICoordinateConverter, used by the new object to convert
+	 * 		  from geodetic coordinates to (x,y) pixels and back.
+	 * @param center: GeodeticCoords, the lat/lng center of the arc
+	 * @param startBrg: Bearing, start bearing of the arc 
+	 * @param endBrg: Bearing, end bearing of the arc
+	 * @param radius: Distance, the radius in Km of the arc.
+	 * @return IShape pointer
+	 */
 	public static IShape create(ICoordConverter conv, GeodeticCoords center,
 									Bearing startBrg, Bearing endBrg, 
 									Distance radius) {
@@ -43,13 +52,22 @@ public class Arc extends AbstractShape {
 		arc.setEndBearingPos(gc);
 		return (IShape) arc;
 	}
-
+	
+	/**
+	 * create: creates an Arc shape object and and the edit tool for
+	 * the arc shape.
+	 * @param editor: IShapeEditor, used to manage the graphic object.
+	 * @param center: GeodeticCoords, the lat/lng center of the arc
+	 * @param startBrg: Bearing, start bearing of the arc 
+	 * @param endBrg: Bearing, end bearing of the arc
+	 * @param radius: Distance, the radius in Km of the arc.
+	 * @return IShapeTool pointer
+	 */
 	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
 									Bearing startBrg, Bearing endBrg, 
 									Distance radius) {
 		ICoordConverter conv = editor.getCoordinateConverter();
 		IShape shape = create(conv,center,startBrg,endBrg,radius);
-		editor.addShape(shape);
 		return shape.createEditTool(editor);
 	}
 
