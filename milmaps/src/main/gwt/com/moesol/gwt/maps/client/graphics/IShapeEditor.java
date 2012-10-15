@@ -56,4 +56,10 @@ public interface IShapeEditor {//extends IHandlerTool {
 	public abstract void onEventPreview(Event event);
 	
 	public abstract void done();
+	
+	//public abstract void onHandlersEventPreview(Event event);
+	
+	public abstract void addGraphicChangedHandler(IGraphicChanged handler);
+	
+	public abstract void removeGraphicChangedHandler(IGraphicChanged handler);
 }

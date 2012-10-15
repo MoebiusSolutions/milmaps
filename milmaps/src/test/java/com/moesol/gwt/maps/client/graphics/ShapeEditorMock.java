@@ -140,4 +140,15 @@ public class ShapeEditorMock implements IShapeEditor{
 	public void deleteSelectedShapes() {
 	}
 
+	@Override
+	public void addGraphicChangedHandler(IGraphicChanged handler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeGraphicChangedHandler(IGraphicChanged handler) {
+		// TODO Auto-generated method stub
+		
+	}
 }
