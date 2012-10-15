@@ -19,13 +19,14 @@ import com.moesol.gwt.maps.client.IMapView;
 import com.moesol.gwt.maps.client.MapView;
 
 public class ShapeEditor implements IShapeEditor{
-	protected static final boolean PASS_EVENT = true;
-	protected static final boolean CAPTURE_EVENT = false;
+	//protected static final boolean PASS_EVENT = true;
+	//protected static final boolean CAPTURE_EVENT = false;
 	
 	private IMapView m_map = null;
 	private ICanvasTool m_canvas = null;//new CanvasTool();
-	IShapeTool m_shapeTool; 
+	private IShapeTool m_shapeTool; 
 	//IAnchorTool m_anchorTool = null;
+	List<IGraphicChanged> m_handlers = new ArrayList<IGraphicChanged>();
 	List<IShape> m_objs = new ArrayList<IShape>();
 	ICoordConverter m_converter;
 
@@ -287,6 +288,74 @@ public class ShapeEditor implements IShapeEditor{
 			keyUpCode(event.getKeyCode());
 			break;
 		}
+		//onHandlersEventPreview(event);
 		return;
+	}
+	
+	/*
+	@Override
+	public void onHandlersEventPreview(Event event) {
+		//DOM.eventPreventDefault(event);
+		int x = event.getClientX();
+		int y = event.getClientY();
+		int n = m_handlers.size();	
+		if (n > 0){
+			switch (DOM.eventGetType(event)) {
+			case Event.ONMOUSEDOWN:
+				for (int i = 0; i < n; i++)
+					m_handlers.get(i).handleMouseDown(x, y);
+				break;
+			case Event.ONMOUSEUP:
+				for (int i = 0; i < n; i++)
+					m_handlers.get(i).handleMouseUp(x, y);
+				break;
+			case Event.ONMOUSEMOVE:
+				for (int i = 0; i < n; i++)
+					m_handlers.get(i).handleMouseMove(x, y);
+				break;
+			case Event.ONMOUSEOUT:
+				for (int i = 0; i < n; i++)
+					m_handlers.get(i).handleMouseOut(x, y);
+				break;
+			case Event.ONDBLCLICK:
+				for (int i = 0; i < n; i++)
+					m_handlers.get(i).handleMouseDblClick(x, y);
+				break;
+			case Event.ONKEYDOWN:
+				for (int i = 0; i < n; i++)
+					m_handlers.get(i).handleKeyDown(event.getKeyCode());
+				break;
+			case Event.ONKEYUP:
+				for (int i = 0; i < n; i++)
+					m_handlers.get(i).handleKeyUp(event.getKeyCode());
+				break;
+			}
+		}
+		return;
+	}
+	*/
+	@Override
+	public void addGraphicChangedHandler(IGraphicChanged handler) {
+		int n = m_handlers.size();
+		boolean found = false;
+		for (int i = 0; i < n; i++){
+			if (m_handlers.get(i) == handler){
+				found = true;
+				break;
+			}
+		}
+		if (!found){
+			m_handlers.add(handler);
+		}
+	}
+
+	@Override
+	public void removeGraphicChangedHandler(IGraphicChanged handler) {
+		int n = m_handlers.size();
+		for (int i = n-1; i > -1; i--){
+			if (m_handlers.get(i) == handler){
+				m_handlers.remove(i);
+			}
+		}
 	}
 }
