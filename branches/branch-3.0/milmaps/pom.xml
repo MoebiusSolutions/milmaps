@@ -9,7 +9,7 @@
     </parent>
     <artifactId>milmaps</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <name>milmaps</name>
 	<!-- Description and URL are critical to "maven site" generation -->
     <url>https://www.moesol.com/software-docs/releases/${project.artifactId}/${project.version}</url>
