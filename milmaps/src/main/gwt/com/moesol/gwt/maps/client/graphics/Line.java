@@ -25,7 +25,7 @@ public class Line extends AbstractSegment {
 	private int m_X, m_Y;
 	
 	public Line(){
-		m_id = "Line";
+		m_type = "Line";
 	}
 	
 	public static IShape create(ICoordConverter conv, GeodeticCoords start,

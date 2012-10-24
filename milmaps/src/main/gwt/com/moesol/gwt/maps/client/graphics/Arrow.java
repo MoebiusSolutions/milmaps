@@ -46,7 +46,7 @@ public class Arrow extends AbstractShape {
 	}
 	
 	public Arrow(){
-		m_id = "Arrow";
+		m_type = "Arrow";
 	}
 	
 	protected void checkForExceptions(){

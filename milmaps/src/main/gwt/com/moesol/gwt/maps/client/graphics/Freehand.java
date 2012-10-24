@@ -12,7 +12,7 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 public class Freehand extends FreeForm {
 	
 	public Freehand(){
-		m_id = "Freehand";
+		m_type = "Freehand";
 	}
 	
 	public static IShape create(ICoordConverter conv, GeodeticCoords[] pos) {

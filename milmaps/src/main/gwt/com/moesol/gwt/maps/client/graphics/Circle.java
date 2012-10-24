@@ -21,11 +21,11 @@ public class Circle extends AbstractShape {
 	private AbstractPosTool m_centerTool = null;
 
 	public Circle() {
-		m_id = "Circle";
+		m_type = "Circle";
 	}
 
-	public static IShape create(ICoordConverter conv, GeodeticCoords center,
-								Distance radius) {
+	public static IShape create(ICoordConverter conv,
+								GeodeticCoords center, Distance radius) {
 		Circle circle = new Circle();
 		circle.setCoordConverter(conv);
 		circle.getCenterTool().setGeoPos(center);
@@ -36,8 +36,8 @@ public class Circle extends AbstractShape {
 		return (IShape) circle;
 	}
 
-	public static IShapeTool create(IShapeEditor editor, GeodeticCoords center,
-									Distance radius) {
+	public static IShapeTool create(IShapeEditor editor, 
+									GeodeticCoords center, Distance radius) {
 		ICoordConverter conv = editor.getCoordinateConverter();
 		IShape shape = create(conv,center,radius);
 		return shape.createEditTool(editor);

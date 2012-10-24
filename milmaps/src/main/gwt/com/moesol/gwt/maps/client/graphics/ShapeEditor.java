@@ -15,6 +15,7 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.moesol.gwt.maps.client.IMapView;
 import com.moesol.gwt.maps.client.MapView;
 
@@ -43,11 +44,7 @@ public class ShapeEditor implements IShapeEditor{
 		m_canvas = map.getICanvasTool();
 		map.attachCanvas();
 	}
-	/*
-	public Canvas getCanvas() {
-		return m_canvas.canvas();
-	}
-	*/
+
 	private void checkForException() {
 		if (m_canvas == null) {
 			throw new IllegalStateException("ShapeEditor: m_canvas = null");
@@ -265,12 +262,14 @@ public class ShapeEditor implements IShapeEditor{
 		//DOM.eventPreventDefault(event);
 		int x = event.getClientX();
 		int y = event.getClientY();
+		boolean mouseUp = false;
 		switch (DOM.eventGetType(event)) {
 		case Event.ONMOUSEDOWN:
 			handleMouseDown(x, y);
 			break;
 		case Event.ONMOUSEUP:
 			handleMouseUp(x, y);
+			mouseUp = true;
 			break;
 		case Event.ONMOUSEMOVE:
 			handleMouseMove(x, y);
@@ -288,54 +287,23 @@ public class ShapeEditor implements IShapeEditor{
 			keyUpCode(event.getKeyCode());
 			break;
 		}
-		//onHandlersEventPreview(event);
+		fireGraphicChanged(mouseUp);
 		return;
 	}
 	
-	/*
-	@Override
-	public void onHandlersEventPreview(Event event) {
-		//DOM.eventPreventDefault(event);
-		int x = event.getClientX();
-		int y = event.getClientY();
-		int n = m_handlers.size();	
-		if (n > 0){
-			switch (DOM.eventGetType(event)) {
-			case Event.ONMOUSEDOWN:
-				for (int i = 0; i < n; i++)
-					m_handlers.get(i).handleMouseDown(x, y);
-				break;
-			case Event.ONMOUSEUP:
-				for (int i = 0; i < n; i++)
-					m_handlers.get(i).handleMouseUp(x, y);
-				break;
-			case Event.ONMOUSEMOVE:
-				for (int i = 0; i < n; i++)
-					m_handlers.get(i).handleMouseMove(x, y);
-				break;
-			case Event.ONMOUSEOUT:
-				for (int i = 0; i < n; i++)
-					m_handlers.get(i).handleMouseOut(x, y);
-				break;
-			case Event.ONDBLCLICK:
-				for (int i = 0; i < n; i++)
-					m_handlers.get(i).handleMouseDblClick(x, y);
-				break;
-			case Event.ONKEYDOWN:
-				for (int i = 0; i < n; i++)
-					m_handlers.get(i).handleKeyDown(event.getKeyCode());
-				break;
-			case Event.ONKEYUP:
-				for (int i = 0; i < n; i++)
-					m_handlers.get(i).handleKeyUp(event.getKeyCode());
-				break;
+	protected void fireGraphicChanged(boolean fire){
+		if (fire && m_shapeTool != null){
+			IShape shape = m_shapeTool.getShape();
+			int n = m_handlers.size();
+			//Window.alert("fireGraphicChanged: n = " + n);
+			for (int i = 0; i < n; i++){
+				m_handlers.get(i).onChange(m_shapeTool.getShape());
 			}
 		}
-		return;
 	}
-	*/
+	
 	@Override
-	public void addGraphicChangedHandler(IGraphicChanged handler) {
+	public IGraphicChanged addGraphicChangedHandler(IGraphicChanged handler) {
 		int n = m_handlers.size();
 		boolean found = false;
 		for (int i = 0; i < n; i++){
@@ -347,6 +315,7 @@ public class ShapeEditor implements IShapeEditor{
 		if (!found){
 			m_handlers.add(handler);
 		}
+		return handler;
 	}
 
 	@Override

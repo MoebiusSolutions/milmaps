@@ -24,7 +24,7 @@ public class Box extends AbstractSegment {
 	protected AbstractPosTool m_smnTool = null;
 
 	public Box() {
-		m_id = "Box";
+		m_type = "Box";
 		m_smjRngBrg = new SRngBrg(0, 0);
 		m_smnRngBrg = new SRngBrg(0, 0);
 	}
