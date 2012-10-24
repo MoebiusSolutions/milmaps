@@ -141,9 +141,9 @@ public class ShapeEditorMock implements IShapeEditor{
 	}
 
 	@Override
-	public void addGraphicChangedHandler(IGraphicChanged handler) {
+	public IGraphicChanged addGraphicChangedHandler(IGraphicChanged handler) {
 		// TODO Auto-generated method stub
-		
+		return handler;
 	}
 
 	@Override

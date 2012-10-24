@@ -187,6 +187,7 @@ public class AbstractClassTest {
 				return null;
 			}
 		};
+	
 		s.erase(null);
 		s.render(null);
 		s.drawHandles(null);
@@ -198,8 +199,10 @@ public class AbstractClassTest {
 		s.setKeyboardFlags(false,false);
 		s.getColor();
 		s.setColor(null);
-		s.setId("id");
-		s.id();
+		s.setGuid("guid");
+		s.getGuid();
+		s.setType("type");
+		s.getType();
 		s.selected(true);
 		s.isSelected();
 		s.needsUpdate();
