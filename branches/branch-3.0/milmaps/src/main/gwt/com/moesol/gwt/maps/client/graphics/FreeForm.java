@@ -22,7 +22,7 @@ public class FreeForm extends AbstractShape {
 	private int m_X, m_Y;
 
 	public FreeForm() {
-		m_id = "Freeform";
+		m_type = "Freeform";
 	}
 
 	public static IShape create(ICoordConverter conv, GeodeticCoords[] pos) {

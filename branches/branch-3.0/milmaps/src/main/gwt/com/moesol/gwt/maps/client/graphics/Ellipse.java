@@ -26,7 +26,7 @@ public class Ellipse extends AbstractShape {
 	protected AbstractPosTool m_smnTool = null;
 
 	public Ellipse() {
-		m_id = "Ellipse";
+		m_type = "Ellipse";
 		m_smjRngBrg = new SRngBrg(0, 0);
 		m_smnRngBrg = new SRngBrg(0, 0);
 	}

@@ -23,7 +23,7 @@ public class Rectangle extends AbstractSegment {
 	private int m_X, m_Y;
 
 	public Rectangle() {
-		m_id = "Rectangle";
+		m_type = "Rectangle";
 	}
 
 	public static IShape create(ICoordConverter conv, GeodeticCoords start,

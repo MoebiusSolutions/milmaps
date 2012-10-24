@@ -12,8 +12,12 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 
 public interface IShape {
 	//public abstract void setCoordConversion(ICoordConversion cc);
-    public abstract void setId(String Id);
-    public abstract String id();
+    public abstract void setGuid(String guid);
+    public abstract String getGuid();
+    
+    public abstract void setType(String type);
+    public abstract String getType();
+    
 	public abstract String getColor();
 	public abstract void setColor(String color);
 

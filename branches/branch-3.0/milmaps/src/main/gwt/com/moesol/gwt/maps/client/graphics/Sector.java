@@ -24,7 +24,7 @@ public class Sector extends AbstractShape {
 	private boolean m_shiftKeydown = false;
 
 	public Sector() {
-		m_id = "Sector";
+		m_type = "Sector";
 	}
 
 	public static IShape create(ICoordConverter conv, GeodeticCoords center,

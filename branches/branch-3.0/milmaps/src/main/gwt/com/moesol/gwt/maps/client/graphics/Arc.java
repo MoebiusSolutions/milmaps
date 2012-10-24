@@ -24,7 +24,7 @@ public class Arc extends AbstractShape {
 	private AbstractPosTool m_centerTool = null;
 
 	public Arc() {
-		m_id = "Arc";
+		m_type = "Arc";
 	}
 	/**
 	 * create: creates an Arc shape object and returns an IShape interface

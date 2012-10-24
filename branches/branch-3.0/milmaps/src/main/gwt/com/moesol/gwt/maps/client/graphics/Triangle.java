@@ -18,7 +18,7 @@ public class Triangle extends AbstractShape {
 	private final AnchorHandle m_translationHandle = new AnchorHandle();
 	private int m_X, m_Y;
 	public Triangle(){
-		m_id = "Triangle";
+		m_type = "Triangle";
 		for(int i = 0; i < 3; i++){
 			m_vertexList[i] = null;
 		}
