@@ -79,7 +79,9 @@ public class ShapeDataDialog extends DialogBox {
 				if (m_selectedItem > 0) {
 					IShapeTool st = createShapeTool(m_shapeEditor,
 							Obj.name[m_selectedItem]);
-					m_shapeEditor.addShape(st.getShape());
+					IShape shape = st.getShape();
+					shape.selected(true);
+					m_shapeEditor.addShape(shape);
 					m_shapeEditor.setShapeTool(st);
 					m_shapeEditor.setEventFocus(true);
 				} else {

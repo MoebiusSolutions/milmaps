@@ -441,6 +441,9 @@ public class Arc extends AbstractShape {
 	@Override
 	public IShape render(IContext ct) {
 		draw(ct);
+		if (isSelected()){
+			drawHandles(ct);
+		}
 		return (IShape) this;
 	}
 

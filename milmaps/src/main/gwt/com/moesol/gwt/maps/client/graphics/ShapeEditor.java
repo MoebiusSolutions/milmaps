@@ -293,9 +293,7 @@ public class ShapeEditor implements IShapeEditor{
 	
 	protected void fireGraphicChanged(boolean fire){
 		if (fire && m_shapeTool != null){
-			IShape shape = m_shapeTool.getShape();
 			int n = m_handlers.size();
-			//Window.alert("fireGraphicChanged: n = " + n);
 			for (int i = 0; i < n; i++){
 				m_handlers.get(i).onChange(m_shapeTool.getShape());
 			}
