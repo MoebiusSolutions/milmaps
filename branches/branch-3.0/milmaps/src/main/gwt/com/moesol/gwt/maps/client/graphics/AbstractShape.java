@@ -12,6 +12,7 @@ import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 
 public abstract class AbstractShape implements IShape{
 	protected static int TRANSLATE_HANDLE_OFFSET_X = 20;
+	protected String m_parentGuid;
 	protected String m_guid;
 	protected String m_type;
 	protected String m_color = "rgb(255, 255, 255)";
@@ -53,6 +54,16 @@ public abstract class AbstractShape implements IShape{
 	@Override
 	public void setColor(String color) {
 		m_color = color;
+	}
+	
+	@Override
+	public void setParentGuid(String guid) {
+		m_parentGuid = guid;
+	}
+	
+	@Override
+	public String getParentGuid() {
+		return m_parentGuid;
 	}
 	
 	@Override

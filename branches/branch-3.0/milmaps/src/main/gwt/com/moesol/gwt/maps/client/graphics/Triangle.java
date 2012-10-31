@@ -287,6 +287,9 @@ public class Triangle extends AbstractShape {
 	@Override
 	public IShape render(IContext context) {
 		draw(context);
+		if (isSelected()){
+			drawHandles(context);
+		}
 		return (IShape)this;
 	}
 

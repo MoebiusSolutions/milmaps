@@ -301,6 +301,9 @@ public class Line extends AbstractSegment {
 	@Override
 	public IShape render(IContext ct) {
 		draw(ct);
+		if (isSelected()){
+			drawHandles(ct);
+		}
 		return (IShape)this;
 	}
 	
