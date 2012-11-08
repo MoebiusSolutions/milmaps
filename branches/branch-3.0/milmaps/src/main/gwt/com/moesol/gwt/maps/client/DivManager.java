@@ -38,10 +38,10 @@ public class DivManager {
 			m_dpArray[i] = new DivPanel(i);
 			lp.add(m_dpArray[i]);
 		}
-		//int width = m_map.getViewport().getWidth();
-		//int height = m_map.getViewport().getHeight();
-		m_canvasTool = new CanvasTool();//(width,height);
-		lp.add(m_canvasTool.canvas());
+		m_canvasTool = new CanvasTool();
+		if (m_canvasTool != null){
+			lp.add(m_canvasTool.canvas());
+		}
 		// we will initialize the projection, but the projection
 		// may change when the layer sets are loaded.
 		initProjections( 512, 512,180,180,IProjection.T.CylEquiDist);

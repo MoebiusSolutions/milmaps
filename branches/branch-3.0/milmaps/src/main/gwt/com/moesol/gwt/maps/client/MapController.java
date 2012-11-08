@@ -48,6 +48,7 @@ public class MapController implements
 	private int m_wheelAccum = 0;
 	private int m_keyVelocity = 1;
 	private boolean m_bUseDragTracker = true;
+	private boolean b_altKeyDown = false;
 	WorldCoords m_wc = new WorldCoords();
 	IShapeEditor m_editor = null;
 	
@@ -115,9 +116,24 @@ public class MapController implements
 		m_bUseDragTracker = bUseDragTracker;
 	}
 	
-	protected boolean blockEvent(){
-		return (m_editor != null);
+	private void altKeyDown(Event event){
+		if (DOM.eventGetType(event) == Event.ONKEYDOWN){
+			if (event.getKeyCode() == KeyCodes.KEY_ALT){
+				b_altKeyDown = true;
+			}
+		}
+		else if (DOM.eventGetType(event) == Event.ONKEYUP){
+			if (event.getKeyCode() == KeyCodes.KEY_ALT){
+				b_altKeyDown = false;
+			}
+		}
 	}
+	
+	private boolean blockEvent(){
+		return (m_editor != null && b_altKeyDown == false);
+	}
+	
+	
 
 	@Override
 	public void onMouseDown(MouseDownEvent event) {
@@ -265,7 +281,8 @@ public class MapController implements
 
 	@Override
 	public boolean onEventPreview(Event event) {
-		if (m_editor != null){
+		altKeyDown(event);
+		if (blockEvent()){
 			m_editor.onEventPreview(event);
 		}
 		Element target = DOM.eventGetTarget(event);
