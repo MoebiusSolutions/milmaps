@@ -24,6 +24,7 @@ public class NewBoxTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_box = new Box();
 	}
 	
 	private void drawHandles(){
@@ -55,7 +56,7 @@ public class NewBoxTool extends  AbstractNewTool {
 		m_mouseDown = true;
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords center = m_convert.viewToGeodetic(vc);
-		m_box = new Box().withCenter(center);
+		m_box.withCenter(center);
 		m_editor.addShape(m_box);
 		m_box.selected(true);
 		m_box.setCoordConverter(m_editor.getCoordinateConverter());

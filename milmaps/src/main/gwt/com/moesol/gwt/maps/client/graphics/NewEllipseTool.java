@@ -24,6 +24,7 @@ public class NewEllipseTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_ellipse = new Ellipse();
 	}
 	
 	private void drawHandles(){
@@ -55,7 +56,7 @@ public class NewEllipseTool extends  AbstractNewTool {
 		m_mouseDown = true;
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords center = m_convert.viewToGeodetic(vc);
-		m_ellipse = new Ellipse().withCenter(center);
+		m_ellipse.withCenter(center);
 		m_editor.addShape(m_ellipse);
 		m_ellipse.selected(true);
 		m_ellipse.setCoordConverter(m_editor.getCoordinateConverter());

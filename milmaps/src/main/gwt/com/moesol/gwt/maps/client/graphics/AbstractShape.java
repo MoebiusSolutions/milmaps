@@ -12,8 +12,8 @@ import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 
 public abstract class AbstractShape implements IShape{
 	protected static int TRANSLATE_HANDLE_OFFSET_X = 20;
-	protected String m_parentGuid;
-	protected String m_guid;
+	protected String m_parentGuid = "NO_GUID";
+	protected String m_guid = "NO_GUID";
 	protected String m_type;
 	protected String m_color = "rgb(255, 255, 255)";
 	protected boolean m_bSeletected = false;
@@ -21,6 +21,7 @@ public abstract class AbstractShape implements IShape{
 	
 	protected boolean m_ctrlKeydown = false;
 	protected boolean m_shiftKeydown = false;
+	protected boolean m_newShape = true;
 	
 	protected static final RangeBearingS m_rb = new RangeBearingS();
 	
@@ -45,6 +46,14 @@ public abstract class AbstractShape implements IShape{
 		}
 		return false;
 	}
+	
+	@Override
+	public void setNew(boolean newShape){
+		m_newShape = newShape;
+	}
+	
+	@Override
+    public boolean isNew(){ return m_newShape; }
 	
 	@Override
 	public String getColor() {

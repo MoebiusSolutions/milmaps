@@ -21,6 +21,7 @@ public class NewArcTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_arc = new Arc();
 	}
 	
 	private void drawHandles(){
@@ -44,7 +45,7 @@ public class NewArcTool extends  AbstractNewTool {
 		m_mouseDown = true;
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords center = m_convert.viewToGeodetic(vc);
-		m_arc = new Arc().withCenter(center);
+		m_arc.withCenter(center);
 		m_editor.addShape(m_arc);
 		m_arc.selected(true);
 		m_arc.setCoordConverter(m_convert);

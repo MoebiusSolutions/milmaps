@@ -14,7 +14,7 @@ public class NewFreeFormTool extends  AbstractNewTool {
 	private FreeForm m_freeForm = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
-	
+	private boolean m_firstMouseDown = false;
 	private int m_lastX;
 	private int m_lastY;
 
@@ -23,6 +23,7 @@ public class NewFreeFormTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_freeForm = new FreeForm();
 	}
 
 	
@@ -59,8 +60,8 @@ public class NewFreeFormTool extends  AbstractNewTool {
 
 	@Override
 	public void handleMouseDown(int x, int y) {
-		if (m_freeForm == null){
-			m_freeForm = new FreeForm();
+		if (m_firstMouseDown == false){
+			m_firstMouseDown = true;
 			m_editor.addShape(m_freeForm);
 			m_freeForm.selected(true);
 			m_freeForm.setCoordConverter(m_editor.getCoordinateConverter());

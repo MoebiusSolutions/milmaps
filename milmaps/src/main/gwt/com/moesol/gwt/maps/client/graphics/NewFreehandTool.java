@@ -18,6 +18,7 @@ public class NewFreehandTool extends  AbstractNewTool {
 	private ICoordConverter m_convert;
 	private int m_count = 0;
 	private boolean m_mouseDown = false;
+	private boolean m_firstMouseDown = false;
 	private int m_lastX;
 	private int m_lastY;
 
@@ -26,6 +27,7 @@ public class NewFreehandTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_freehand = new Freehand();
 	}
 	
 	private void drawLastLine(int x, int y) {
@@ -87,8 +89,8 @@ public class NewFreehandTool extends  AbstractNewTool {
 	@Override
 	public void handleMouseDown(int x, int y) {
 		m_mouseDown = true;
-		if (m_freehand == null){
-			m_freehand = new Freehand();
+		if (m_firstMouseDown == false){
+			m_firstMouseDown = true;
 			m_editor.addShape(m_freehand);
 			m_freehand.selected(true);
 			m_freehand.setCoordConverter(m_editor.getCoordinateConverter());
