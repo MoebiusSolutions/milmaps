@@ -21,6 +21,7 @@ public class NewCircleTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_circle = new Circle();
 	}
 	
 	private void drawHandles(){
@@ -44,7 +45,7 @@ public class NewCircleTool extends  AbstractNewTool {
 		m_mouseDown = true;
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords center = m_convert.viewToGeodetic(vc);
-		m_circle = new Circle().withCenter(center);
+		m_circle.withCenter(center);
 		m_editor.addShape(m_circle);
 		m_circle.selected(true);
 		m_circle.setCoordConverter(m_editor.getCoordinateConverter());

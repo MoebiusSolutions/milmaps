@@ -23,6 +23,7 @@ public class NewLineTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_line = new Line();
 	}
 	
 	private void drawHandles(){
@@ -46,7 +47,6 @@ public class NewLineTool extends  AbstractNewTool {
 		m_mouseDown = true;
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords gc = m_convert.viewToGeodetic(vc);
-		m_line = new Line();
 		m_line.setCoordConverter(m_convert);
 		m_line.withStartPos(gc);
 		m_editor.addShape(m_line);

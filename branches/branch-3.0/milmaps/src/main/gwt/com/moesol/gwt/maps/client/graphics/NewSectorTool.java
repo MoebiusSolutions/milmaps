@@ -21,6 +21,7 @@ public class NewSectorTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_sector = new Sector();
 	}
 	
 	private void drawHandles(){
@@ -44,7 +45,7 @@ public class NewSectorTool extends  AbstractNewTool {
 		m_mouseDown = true;
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords center = m_convert.viewToGeodetic(vc);
-		m_sector = new Sector().withCenter(center);
+		m_sector.withCenter(center);
 		m_editor.addShape(m_sector);
 		m_sector.selected(true);
 		m_sector.setCoordConverter(m_editor.getCoordinateConverter());

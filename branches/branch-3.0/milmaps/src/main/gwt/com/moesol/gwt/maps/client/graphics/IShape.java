@@ -21,6 +21,9 @@ public interface IShape {
     public abstract void setType(String type);
     public abstract String getType();
     
+    public abstract void setNew(boolean newShape);
+    public abstract boolean isNew();
+    
 	public abstract String getColor();
 	public abstract void setColor(String color);
 

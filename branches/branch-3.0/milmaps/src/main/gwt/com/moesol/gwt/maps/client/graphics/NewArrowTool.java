@@ -14,7 +14,7 @@ public class NewArrowTool extends  AbstractNewTool {
 	private Arrow m_arrow = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
-	
+	private boolean m_firstMouseDown = false;
 	private int m_lastX;
 	private int m_lastY;
 
@@ -23,6 +23,7 @@ public class NewArrowTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_arrow = new Arrow();
 	}
 	
 	private void drawLastLine(int x, int y) {
@@ -58,8 +59,8 @@ public class NewArrowTool extends  AbstractNewTool {
 
 	@Override
 	public void handleMouseDown(int x, int y) {
-		if (m_arrow == null){
-			m_arrow = new Arrow();
+		if (m_firstMouseDown == false){
+			m_firstMouseDown = true;
 			m_editor.addShape(m_arrow);
 			m_arrow.selected(true);
 			m_arrow.setCoordConverter(m_editor.getCoordinateConverter());
@@ -105,7 +106,7 @@ public class NewArrowTool extends  AbstractNewTool {
 			IShapeTool tool = new CommonEditTool(m_editor);
 			tool.setShape((IShape)m_arrow);
 			m_editor.setShapeTool(tool);
-			m_editor.renderObjects();
+			m_editor.clearCanvas().renderObjects();
 			drawHandles();
 			m_arrow = null;
 		}

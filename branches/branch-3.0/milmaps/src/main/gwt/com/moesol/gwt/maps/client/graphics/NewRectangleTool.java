@@ -21,6 +21,7 @@ public class NewRectangleTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_rect = new Rectangle();
 	}
 	
 	private void drawHandles(){
@@ -44,7 +45,6 @@ public class NewRectangleTool extends  AbstractNewTool {
 		m_mouseDown = true;
 		ViewCoords vc = new ViewCoords(x, y);
 		GeodeticCoords gc = m_convert.viewToGeodetic(vc);
-		m_rect = new Rectangle();
 		m_rect.setCoordConverter(m_convert);
 		m_rect.withStartPos(gc);
 		m_editor.addShape(m_rect);

@@ -14,7 +14,7 @@ public class NewTriangleTool extends  AbstractNewTool {
 	private Triangle m_triangle = null;
 	private IShapeEditor m_editor = null;
 	private ICoordConverter m_convert;
-	
+	private boolean m_firstMouseDown = false;
 	private int m_lastX;
 	private int m_lastY;
 
@@ -23,6 +23,7 @@ public class NewTriangleTool extends  AbstractNewTool {
 		m_editor = editor;
 		m_canvas = editor.getCanvasTool();
 		m_convert = editor.getCoordinateConverter();
+		m_triangle = new Triangle();
 	}
 	
 	private void drawLastLine(int x, int y) {
@@ -58,8 +59,8 @@ public class NewTriangleTool extends  AbstractNewTool {
 
 	@Override
 	public void handleMouseDown(int x, int y) {
-		if (m_triangle == null){
-			m_triangle = new Triangle();
+		if (m_firstMouseDown == false){
+			m_firstMouseDown = true;
 			m_editor.addShape(m_triangle);
 			m_triangle.selected(true);
 			m_triangle.setCoordConverter(m_editor.getCoordinateConverter());
