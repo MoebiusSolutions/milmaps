@@ -1,0 +1,297 @@
+/**
+ * (c) Copyright, Moebius Solutions, Inc., 2012
+ *
+ *                        All Rights Reserved
+ *
+ * LICENSE: GPLv3
+ */
+.gwt-Image { /*  border: 1px inset; */
+	
+}
+
+.gwt-DialogBox {
+	border: 2px outset;
+	background-color: white;
+	z-index: 100;
+	opacity: 1.0;
+	filter: alpha(opacity = 50);
+}
+
+.gwt-DialogBox .Caption {
+	background-color: #C3D9FF;
+	padding: 3px;
+	margin: 2px;
+	font-weight: bold;
+	cursor: default;
+}
+
+.moesol-MapView {
+	background: #000040;
+}
+
+.map-BubbleControl {
+	z-index: 10000;
+	border: 2px outset;
+	padding: 4px;
+	background-color: #808080;
+}
+.map-BubbleControl a {
+	color: yellow;
+}
+
+.map-PositionControl {
+	font-family: arial;
+	font-size: 13px;
+	z-index: 10000;
+	right: 0px;
+}
+
+.map-PositionControl .map-OutlinedLabelText {
+	color: white;
+}
+
+.map-PositionControl .map-OutlinedLabelOutline {
+	color: black;
+}
+
+.map-TextControl {
+	font-family: arial;
+	font-size: 13px;
+	z-index: 10000;
+	right: 0px;
+}
+
+.map-TextControl .map-OutlinedLabelText {
+	color: white;
+}
+
+.map-TextControl .map-OutlinedLabelOutline {
+	color: black;
+}
+
+
+.map-SearchControl {
+	margin-top: 2px;
+	z-index: 10000;
+}
+
+.map-DimmerControl {
+	margin-top: 2px;
+	z-index: 10000;
+}
+
+.map-TagControl {
+	margin-top: 2px;
+	z-index: 10000;
+}
+
+.map-OverlayEditor {
+	margin-top: 2px;
+	z-index: 10000;
+}
+
+.map-SmallButton {
+	height: 15px;
+	width: 15px;
+	background: url('images/tool-sprites.png') repeat scroll 15px -270px;
+	cursor: pointer;
+	opacity: 0.4;
+	filter: alpha(opacity =40);
+}
+
+.map-SmallButtonMouseOver {
+	opacity: 1.0;
+	filter: alpha(opacity =100);
+}
+
+.map-SearchControlButton {
+	background-position: 15px -270px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+.map-SearchControl .map-SmallButtonMouseDown {
+	background-position: 0px -270px;
+	opacity: 1.0;
+}
+
+.map-DimmerControlDimButton {
+	background-position: 15px -255px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+.map-DimmerControlDimButton.map-SmallButtonMouseDown {
+	background-position: 0px -255px;
+	opacity: 1.0;
+}
+
+.map-DimmerControlBrightenButton {
+	background-position: 15px -240px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+.map-DimmerControlBrightenButton.map-SmallButtonMouseDown {
+	background-position: 0px -240px;
+	opacity: 1.0;
+}
+
+.map-TagControlPositionOffButton {
+	background-position: 15px -255px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+.map-TagControlPositionOnButton {
+	background-position: 15px -240px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+.map-OverlayContolOffButton {
+	background-position: 15px -255px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+.map-OverlayContolOnButton {
+	background-position: 15px -240px;
+	float: right;
+	margin: 4px 2px 4px 0px;
+}
+
+
+.map-SearchControlInput {
+	float: right;
+	width: 140px;
+}
+
+.map-SearchControlTextBox {
+	width: 95%;
+	display: none;
+}
+
+.map-PanZoomControl {
+	background-image: url('images/map_round2.png');
+	background-repeat: no-repeat;
+	height: 121px;
+	width: 67px;
+}
+
+.map-PanZoomControlPanButton {
+	margin: 5px auto;
+	height: 45px;
+	width: 45px;
+	cursor: pointer;
+}
+
+.map-PanZoomControlPanClickHighlight {
+	height: 30px;
+	width: 30px;
+	background: url('images/click_highlight.png');
+	position: absolute;
+	z-index: 5000;
+	display: none;
+	margin-left: 6px;
+}
+
+.map-PanZoomControlZoom {
+	height: 45px;
+	padding-top: 9px;
+}
+
+.map-PanZoomControlZoom div {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+
+.map-PanZoomControlZoomInButton {
+	margin-left: 24px;
+	background-image: url('images/map_roundbtn1.png');
+}
+
+.map-PanZoomControlZoomInButtonMouseOver {
+	margin-left: 24px;
+	background-image: url('images/map_roundbtn1_o.png');
+}
+
+.map-PanZoomControlZoomOutButton {
+	margin: 7px auto;
+	margin-left: 24px;
+	background-image: url('images/map_roundbtn2.png');
+}
+
+.map-PanZoomControlZoomOutButtonMouseOver {
+	margin: 7px auto;
+	margin-left: 24px;
+	background-image: url('images/map_roundbtn2_o.png');
+}
+
+.map-DimmerControl2 {
+}
+
+.map-DimmerControl2Panel {
+	background-image: url('images/map_control_bg.png');
+}
+
+.map-ControlTransparent {
+	opacity: 0.5;
+}
+
+.map-ControlPanel2 {
+	background-repeat: no-repeat;
+    position: absolute;
+	bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+	width: 67px;
+	height: 42px;
+}
+
+.map-ControlButton2 {
+	background-repeat: no-repeat;
+    position: absolute;
+	bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+	width: 20px;
+	height: 20px;
+}
+
+.map-DimmerControl2Dim {
+    margin-left: 10px;
+    margin-top: 9px;
+}
+
+.map-DimmerControl2DimButton {
+	background-image: url('images/map_dark.png');
+}
+
+.map-DimmerControl2DimButtonOver {
+	background-image: url('images/map_dark_o.png');
+}
+
+.map-DimmerControl2Brighten {
+    margin-left: 36px;
+    margin-top: 9px;
+}
+
+.map-DimmerControl2BrightenButton {
+	background-image: url('images/map_light.png');
+}
+
+.map-DimmerControl2BrightenButtonOver {
+	background-image: url('images/map_light_o.png');
+}
+
+/*Graphics styles*/
+.milmaps-canvas {
+	position: absolute;
+	backgroundColor: transparent;
+	/*border: 1px solid blue;*/
+	z-index: 4000;
+}
