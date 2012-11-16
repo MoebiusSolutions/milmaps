@@ -135,11 +135,11 @@ public class NewObjectToolTest {
 	}
 	
 	@Test
-	public void freeformToolHandleMouseTest(){
-		NewFreeFormTool tool = new NewFreeFormTool(m_se);
+	public void polygonToolHandleMouseTest(){
+		NewPolygonTool tool = new NewPolygonTool(m_se);
 		tool.handleMouseDown(300, 200);
 		tool.handleMouseUp(300, 200);
-		FreeForm s  = (FreeForm)(tool.getShape());
+		Polygon s  = (Polygon)(tool.getShape());
 
 		tool.handleMouseMove(300,50);
 		tool.handleMouseDown(300,50);

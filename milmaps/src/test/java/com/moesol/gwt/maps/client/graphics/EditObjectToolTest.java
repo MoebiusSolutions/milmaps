@@ -99,10 +99,10 @@ public class EditObjectToolTest {
 	
 	@Test
 	public void FreeXEditToolTest(){
-		NewFreeFormTool tool = new NewFreeFormTool(m_se);
+		NewPolygonTool tool = new NewPolygonTool(m_se);
 		tool.handleMouseDown(300, 200);
 		tool.handleMouseUp(300, 200);
-		FreeForm ff  = (FreeForm)(tool.getShape());
+		Polygon ff  = (Polygon)(tool.getShape());
 
 		tool.handleMouseDown(300,50);
 		tool.handleMouseUp(300,50);
@@ -114,7 +114,7 @@ public class EditObjectToolTest {
 		tool.handleMouseUp(400,200);
 		tool.handleMouseDblClick(400, 200);
 		
-		FreeXEditTool editTool = (FreeXEditTool) m_se.getShapeTool();
+		PolygonEditTool editTool = (PolygonEditTool) m_se.getShapeTool();
 		IShape shape = editTool.getShape();
 		IShape s = editTool.getShape();
 		assertEquals(s,shape);

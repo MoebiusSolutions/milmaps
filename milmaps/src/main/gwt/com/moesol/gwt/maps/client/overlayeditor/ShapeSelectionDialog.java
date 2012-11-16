@@ -19,7 +19,7 @@ import com.moesol.gwt.maps.client.graphics.NewArrowTool;
 import com.moesol.gwt.maps.client.graphics.NewBoxTool;
 import com.moesol.gwt.maps.client.graphics.NewCircleTool;
 import com.moesol.gwt.maps.client.graphics.NewEllipseTool;
-import com.moesol.gwt.maps.client.graphics.NewFreeFormTool;
+import com.moesol.gwt.maps.client.graphics.NewPolygonTool;
 import com.moesol.gwt.maps.client.graphics.NewFreehandTool;
 import com.moesol.gwt.maps.client.graphics.NewLineTool;
 import com.moesol.gwt.maps.client.graphics.NewRectangleTool;
@@ -99,7 +99,7 @@ public class ShapeSelectionDialog extends DialogBox {
         }
         
         if(strShape.compareTo(Obj.name[6]) == 0){
-        	return new NewFreeFormTool(editor);
+        	return new NewPolygonTool(editor);
         }
         
         if(strShape.compareTo(Obj.name[7]) == 0){

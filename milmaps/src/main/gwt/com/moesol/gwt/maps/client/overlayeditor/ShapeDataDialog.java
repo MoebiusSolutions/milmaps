@@ -18,7 +18,7 @@ import com.moesol.gwt.maps.client.graphics.Arrow;
 import com.moesol.gwt.maps.client.graphics.Box;
 import com.moesol.gwt.maps.client.graphics.Circle;
 import com.moesol.gwt.maps.client.graphics.Ellipse;
-import com.moesol.gwt.maps.client.graphics.FreeForm;
+import com.moesol.gwt.maps.client.graphics.Polygon;
 import com.moesol.gwt.maps.client.graphics.Freehand;
 import com.moesol.gwt.maps.client.graphics.IShape;
 import com.moesol.gwt.maps.client.graphics.IShapeEditor;
@@ -29,7 +29,7 @@ import com.moesol.gwt.maps.client.graphics.NewArrowTool;
 import com.moesol.gwt.maps.client.graphics.NewBoxTool;
 import com.moesol.gwt.maps.client.graphics.NewCircleTool;
 import com.moesol.gwt.maps.client.graphics.NewEllipseTool;
-import com.moesol.gwt.maps.client.graphics.NewFreeFormTool;
+import com.moesol.gwt.maps.client.graphics.NewPolygonTool;
 import com.moesol.gwt.maps.client.graphics.NewFreehandTool;
 import com.moesol.gwt.maps.client.graphics.NewLineTool;
 import com.moesol.gwt.maps.client.graphics.NewRectangleTool;
@@ -138,12 +138,12 @@ public class ShapeDataDialog extends DialogBox {
 		return Ellipse.create(m_shapeEditor, cent, brg, smj, smn);
 	}
 	
-	protected IShapeTool createFreeForm(){
+	protected IShapeTool createPolygon(){
 		GeodeticCoords[] pos = new GeodeticCoords[4];
 		for ( int i = 0; i < 4; i++){
 			pos[i] = new GeodeticCoords(-120 + 4*i, 34 - 4*i, AngleUnit.DEGREES); 
 		}
-		return FreeForm.create(m_shapeEditor, pos);
+		return Polygon.create(m_shapeEditor, pos);
 	}
 
 	protected IShapeTool createFreehand(){
@@ -205,7 +205,7 @@ public class ShapeDataDialog extends DialogBox {
 		}
 
 		if (strShape.compareTo(Obj.name[6]) == 0) {
-			return createFreeForm();
+			return createPolygon();
 		}
 
 		if (strShape.compareTo(Obj.name[7]) == 0) {

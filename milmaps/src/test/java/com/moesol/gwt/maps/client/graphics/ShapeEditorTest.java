@@ -96,11 +96,11 @@ public class ShapeEditorTest {
 	
 	@Test
 	public void dblClickHandleMouseTest(){
-		NewFreeFormTool tool = new NewFreeFormTool(m_se);
+		NewPolygonTool tool = new NewPolygonTool(m_se);
 		m_se.setShapeTool(tool);
 		m_se.handleMouseDown(300, 200);
 		tool.handleMouseUp(300, 200);
-		FreeForm s  = (FreeForm)(m_se.getShapes().get(0));
+		Polygon s  = (Polygon)(m_se.getShapes().get(0));
 
 		m_se.handleMouseMove(300,50);
 		m_se.handleMouseDown(300,50);
@@ -128,10 +128,10 @@ public class ShapeEditorTest {
 	
 	@Test
 	public void keyDownUpTest(){
-		NewFreeFormTool tool = new NewFreeFormTool(m_se);
+		NewPolygonTool tool = new NewPolygonTool(m_se);
 		tool.handleMouseDown(300, 200);
 		tool.handleMouseUp(300, 200);
-		FreeForm ff  = (FreeForm)(tool.getShape());
+		Polygon ff  = (Polygon)(tool.getShape());
 
 		tool.handleMouseDown(300,50);
 		tool.handleMouseUp(300,50);

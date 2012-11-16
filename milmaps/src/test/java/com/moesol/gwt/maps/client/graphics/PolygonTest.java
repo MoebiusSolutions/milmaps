@@ -24,9 +24,9 @@ import com.moesol.gwt.maps.client.ViewPort;
 import com.moesol.gwt.maps.client.algorithms.RangeBearingS;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
-public class FreeformTest {
+public class PolygonTest {
 	protected static final RangeBearingS m_rb = new RangeBearingS();
-	protected FreeForm m_ff;
+	protected Polygon m_ff;
 	private ViewPort viewPort = new ViewPort();
 	private IProjection proj;
 	private Converter m_conv;
@@ -40,7 +40,7 @@ public class FreeformTest {
 		viewPort.setProjection(proj);
 		m_conv = new Converter(viewPort);
 		m_util = new Util(m_conv,m_rb);
-		m_ff = new FreeForm();
+		m_ff = new Polygon();
 		m_ff.setCoordConverter(m_conv);
 		
 	}
@@ -51,7 +51,7 @@ public class FreeformTest {
 		for ( int i = 0; i < 4; i++){
 			pos[i] = new GeodeticCoords(-120 + 4*i, 34 - 4*i, AngleUnit.DEGREES); 
 		}
-		FreeForm ff = (FreeForm)FreeForm.create(m_conv, pos);
+		Polygon ff = (Polygon)Polygon.create(m_conv, pos);
 		for (int i = 0; i < 4; i++){
 			IAnchorTool u = ff.getVertexTool(i);
 			IAnchorTool v = ff.getAnchorByPosition(pos[i]);
@@ -219,7 +219,7 @@ public class FreeformTest {
 	}
 	
 	@Test
-	public void moveFreeformTest(){	
+	public void movePolygonTest(){	
 		GeodeticCoords[] pos = new GeodeticCoords[4];
 		pos[0] = m_util.pixToPos(300,200);
 		pos[1] = m_util.pixToPos(350,150);
@@ -262,7 +262,7 @@ public class FreeformTest {
 	protected void writeFile(){
 		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
 		ctm.setWriteFlag(true);
-		ctm.createFile("freeform");
+		ctm.createFile("polygon");
 		IContext ct = m_canvas.getContext();
 		m_ff.render(ct);
 		ctm.closeFile();
@@ -271,7 +271,7 @@ public class FreeformTest {
 	protected void compareToFile(){
 		CanvasToolMock ctm = (CanvasToolMock)m_canvas;
 		ctm.setWriteFlag(false);
-		ctm.readFile("freeform");
+		ctm.readFile("polygon");
 		copyList(ctm.getList());
 		ctm.clearList();
 		IContext ct = m_canvas.getContext();
