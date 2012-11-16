@@ -24,7 +24,7 @@ public class SelectShapeTest {
 	
 	@Test
 	public void selectShapeTest(){
-		NewFreeFormTool tool = new NewFreeFormTool(m_se);
+		NewPolygonTool tool = new NewPolygonTool(m_se);
 		tool.handleMouseDown(300, 200);
 		tool.handleMouseUp(300, 200);
 

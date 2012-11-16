@@ -11,19 +11,19 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 
-public class FreeXEditTool extends AbstractEditTool{
-	protected FreeForm m_freeForm = null;
+public class PolygonEditTool extends AbstractEditTool{
+	protected Polygon m_polygon = null;
 	protected boolean m_cntrlKeydown = false;
 	protected boolean m_shiftKeydown = false;
 	
-	public FreeXEditTool(IShapeEditor se) {
+	public PolygonEditTool(IShapeEditor se) {
 		super(se);
 	}
 	
 	protected void drawHandles() {
-		if (m_freeForm != null && m_canvas != null) {
+		if (m_polygon != null && m_canvas != null) {
 			IContext context = m_canvas.getContext();
-			m_freeForm.drawHandles(context);
+			m_polygon.drawHandles(context);
 		}
 	}
 	
@@ -38,25 +38,25 @@ public class FreeXEditTool extends AbstractEditTool{
 		// Get Selected Anchor
 		m_mouseDown = true;
 		GeodeticCoords gc = m_convert.viewToGeodetic(new ViewCoords(x, y));
-		m_anchorTool = m_freeForm.getAnchorByPosition(gc);
+		m_anchorTool = m_polygon.getAnchorByPosition(gc);
 		if(m_anchorTool == null){
 			if (m_cntrlKeydown && !m_shiftKeydown){
-				int j = m_freeForm.pointHitSegment(x,y);
-				if (j < m_freeForm.size()){
-					m_freeForm.insertVertex(j, x, y);
+				int j = m_polygon.pointHitSegment(x,y);
+				if (j < m_polygon.size()){
+					m_polygon.insertVertex(j, x, y);
 					m_editor.clearCanvas().renderObjects();
 					drawHandles();
 				}
 			}
 			else{
-				m_freeForm.selected(false);
+				m_polygon.selected(false);
 				m_editor.clearCanvas().renderObjects();
 				m_editor.setShapeTool(new SelectShape(m_editor));
 			}
 		}
 		else{
 			if (m_cntrlKeydown && m_shiftKeydown){
-				m_freeForm.removeVertex((AbstractPosTool)m_anchorTool);
+				m_polygon.removeVertex((AbstractPosTool)m_anchorTool);
 				m_editor.clearCanvas().renderObjects();
 				drawHandles();
 				m_anchorTool = null;
@@ -98,12 +98,12 @@ public class FreeXEditTool extends AbstractEditTool{
 	
 	@Override
 	public void setShape(IShape shape){
-		m_freeForm = (FreeForm)shape; 
+		m_polygon = (Polygon)shape; 
 	}
 
 	@Override
 	public IShape getShape() {
-		return (IShape)m_freeForm;
+		return (IShape)m_polygon;
 	}
 	
 	@Override

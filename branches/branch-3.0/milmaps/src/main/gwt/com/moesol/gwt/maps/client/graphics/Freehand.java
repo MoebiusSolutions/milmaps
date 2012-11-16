@@ -9,7 +9,7 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.moesol.gwt.maps.client.GeodeticCoords;
 
-public class Freehand extends FreeForm {
+public class Freehand extends Polygon {
 	
 	public Freehand(){
 		m_type = "Freehand";
@@ -26,7 +26,7 @@ public class Freehand extends FreeForm {
 	
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-	   	IShapeTool tool = new FreeXEditTool(se);
+	   	IShapeTool tool = new PolygonEditTool(se);
 	   	tool.setShape(this);
 	   	return tool;
 	}

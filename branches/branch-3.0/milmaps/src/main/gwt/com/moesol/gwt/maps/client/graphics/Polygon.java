@@ -14,19 +14,19 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 import com.moesol.gwt.maps.client.ViewCoords;
 import com.moesol.gwt.maps.client.algorithms.Func;
 
-public class FreeForm extends AbstractShape {
+public class Polygon extends AbstractShape {
 	protected List<AnchorHandle> m_handleList = new ArrayList<AnchorHandle>();
 	protected List<AbstractPosTool> m_vertexList = new ArrayList<AbstractPosTool>();
 	protected AbstractPosTool m_translationTool = null;
 	protected final AnchorHandle m_translationHandle = new AnchorHandle();
 	private int m_X, m_Y;
 
-	public FreeForm() {
-		m_type = "Freeform";
+	public Polygon() {
+		m_type = "Polygon";
 	}
 
 	public static IShape create(ICoordConverter conv, GeodeticCoords[] pos) {
-		FreeForm ff = new FreeForm();
+		Polygon ff = new Polygon();
 		ff.setCoordConverter(conv);
 		for (int i = 0; i < pos.length; i++) {
 			ff.addVertex(pos[i]);
@@ -322,7 +322,7 @@ public class FreeForm extends AbstractShape {
 
 	@Override
 	public IShapeTool createEditTool(IShapeEditor se) {
-		IShapeTool tool = new FreeXEditTool(se);
+		IShapeTool tool = new PolygonEditTool(se);
 		tool.setShape(this);
 		return tool;
 	}

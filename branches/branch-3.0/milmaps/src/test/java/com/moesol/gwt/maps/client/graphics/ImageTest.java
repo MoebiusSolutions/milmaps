@@ -26,7 +26,7 @@ public class ImageTest {
 			DrawObject.draw("box",count,true);
 			DrawObject.draw("circle",count,true);
 			DrawObject.draw("ellipse",count,true);
-			DrawObject.draw("freeform",count,false);
+			DrawObject.draw("polygon",count,false);
 			DrawObject.draw("line",count,false);
 			DrawObject.draw("rect",count,true);
 			DrawObject.draw("sector",count,true);
