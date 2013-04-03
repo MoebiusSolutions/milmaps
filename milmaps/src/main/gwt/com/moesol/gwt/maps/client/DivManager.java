@@ -39,9 +39,8 @@ public class DivManager {
 			lp.add(m_dpArray[i]);
 		}
 		m_canvasTool = new CanvasTool();
-		if (m_canvasTool != null){
-			lp.add(m_canvasTool.canvas());
-		}
+		m_canvasTool.safeAddCanvasTo(lp);
+		
 		// we will initialize the projection, but the projection
 		// may change when the layer sets are loaded.
 		initProjections( 512, 512,180,180,IProjection.T.CylEquiDist);

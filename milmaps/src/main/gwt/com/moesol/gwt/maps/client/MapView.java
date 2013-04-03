@@ -148,11 +148,8 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		m_shapeEditor = shapeEditor;
 	}
 	
-	public void attachCanvas(){
-		Canvas canvas = m_divMgr.getCanvasTool().canvas();
-		if ( canvas.isAttached() == false){
-			m_viewPanel.add(canvas);
-		}
+	public void attachCanvas() {
+		m_divMgr.getCanvasTool().safeAddCanvasTo(m_viewPanel);
 	}
 	
 	public ICanvasTool getICanvasTool(){
