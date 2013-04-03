@@ -9,6 +9,7 @@ package com.moesol.gwt.maps.client.graphics;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 
 public class CanvasTool implements ICanvasTool { //implements ResizeHandler {
 	protected final Canvas m_canvas = Canvas.createIfSupported();
@@ -79,7 +80,11 @@ public class CanvasTool implements ICanvasTool { //implements ResizeHandler {
 	//	setSize(w,h);
 	//}
 	
-	public Canvas canvas(){ return m_canvas; }
+	public void safeAddCanvasTo(AbsolutePanel target) {
+		if (m_canvas == null) { return; }
+		if (m_canvas.isAttached()) { return; }
+		target.add(m_canvas);
+	}
 	
 	@Override
 	public IContext getContext(){ 
