@@ -12,6 +12,7 @@ public class DragTracker {
 	private ViewCoords m_deltaPort = new ViewCoords();
 	private WorldCoords m_origWorld = new WorldCoords();
 	private boolean m_sameAsLast = false;
+	private boolean m_mouseDownMoved = false;
 	
 	public DragTracker(int x, int y, WorldCoords center) {
 		m_origPort = new ViewCoords(x, y);
@@ -21,6 +22,7 @@ public class DragTracker {
 	public void set(int x, int y, ViewCoords center){
 		m_origPort = new ViewCoords(x, y);
 		m_origWorld = new WorldCoords(center.getX(), center.getY());
+		m_mouseDownMoved = false;
 	}
 	
 	public WorldCoords update(int x, int y) {
@@ -42,13 +44,19 @@ public class DragTracker {
 	private void computeSameAsLast(int newDeltaPortX, int newDeltaPortY) {
 		if (newDeltaPortX != m_deltaPort.getX()) {
 			m_sameAsLast = false;
+			m_mouseDownMoved = true;
 			return;
 		}
 		if (newDeltaPortY != m_deltaPort.getY()) {
 			m_sameAsLast = false;
+			m_mouseDownMoved = true;
 			return;
 		}
 		m_sameAsLast = true;
+	}
+	
+	public boolean mouseDownMoved(){
+		return m_mouseDownMoved;
 	}
 
 	public boolean isSameAsLast() {
