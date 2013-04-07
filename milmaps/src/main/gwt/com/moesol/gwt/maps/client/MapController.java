@@ -187,7 +187,9 @@ public class MapController implements
 			int y = event.getY();
 			maybeDragMap(x, y);
 			if (m_dragTracker != null) {
-				m_map.dumbUpdateView();
+				if ( m_dragTracker.mouseDownMoved()){
+					m_map.dumbUpdateView();
+				}
 			}
 			m_map.setFocus(true);
 		} finally {

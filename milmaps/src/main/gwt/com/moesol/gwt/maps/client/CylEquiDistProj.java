@@ -52,7 +52,8 @@ public class CylEquiDistProj extends AbstractProjection {
 		proj.copyFrom(this);
 		return proj;
 	}
-
+	
+	// Convert Longitude in degrees to Map Coordinate X
 	protected double lngDegToMcX( double deg ){
 		deg = clip(deg, getDegreeBoundingBox().left(), getDegreeBoundingBox().right());
 		double x = (deg/360) + 0.5;
@@ -60,12 +61,14 @@ public class CylEquiDistProj extends AbstractProjection {
 		return (x*mapSize);	
 	}
 
+	// Convert Longitude in degrees to Map Pixel X
 	@Override
 	public int lngDegToPixX( double deg ){
 		// add 0.5 for roundoff error
 		return (int)(lngDegToMcX(deg)+0.5);
 	}
 
+	// Convert map pixel X to Longitude in degrees
 	@Override
 	public double xPixToDegLng( double pix  )
 	{
@@ -74,6 +77,8 @@ public class CylEquiDistProj extends AbstractProjection {
         return (x*360);                 
 	} 
 	
+	// Convert Latitude in degrees to Map Coordinate Y
+	// Here the y axis is positive up and -90 degrees is y = 0
 	protected double latDegToMcY( double deg ){
 		deg = clip(deg, getDegreeBoundingBox().bottom(), getDegreeBoundingBox().top());
 		double y = (deg + 90)/180;
@@ -81,11 +86,13 @@ public class CylEquiDistProj extends AbstractProjection {
 		return (y * mapHeightSize);		
 	}
 	
+	// Convert Longitude in degrees to Map Pixel X
 	@Override
 	public int latDegToPixY( double deg ){
 		return (int)(latDegToMcY( deg )+0.5);
 	}
 	
+	// Convert map pixel Y to Latitude in degrees
 	@Override
 	public double yPixToDegLat( double pix  )
 	{

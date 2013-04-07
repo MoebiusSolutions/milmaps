@@ -64,11 +64,11 @@ public class DivPanel extends AbsolutePanel {
 		this.remove(m_nonDimPanel);
 	}
 
-	public void initialize(int level, IMapView map, IProjection.T type, double eqScale) {
+	public void initialize(int level, IMapView map, IProjection.T type, double scale) {
 		m_map = map;
 		m_divProj = Projection.createProj(type);
-		m_divProj.setBaseEquatorialScale(eqScale);
-		m_divProj.setEquatorialScale(eqScale);
+		m_divProj.setBaseEquatorialScale(scale);
+		m_divProj.setEquatorialScale(scale);
 		m_divWorker.setProjection(m_divProj);
 		m_tileBuilder.setProjection(m_divProj);
 		m_tileBuilder.setDivLevel(level);
@@ -217,21 +217,9 @@ public class DivPanel extends AbsolutePanel {
 		panel.setWidgetPosition(this, tl.getX(), tl.getY());
 	}
 	
-	// TODO unit test
+
 	public void resize(int w, int h) {
-		DivDimensions dd = m_divWorker.getDivBaseDimensions();
-		int dW = dd.getWidth();
-		int dH = dd.getHeight();
-		if ( dW < w ){
-			int f = (w/dW) + 1;
-			dW *= f; 
-		}
-		if ( dH < h ){
-			int f = (h/dH) + 1;
-			dH *= f;
-		}
-		m_divWorker.setDivBaseDimensions( dW, dH);
-		m_divWorker.updateDivWithCurrentGeoCenter();
+		m_divWorker.resize(w,h);
 	}
 	
 	public void positionIcons() {

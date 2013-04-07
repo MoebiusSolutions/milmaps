@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import com.moesol.gwt.maps.client.units.AngleUnit;
 
 public class TileBuilder {
-	private int m_leftTiles;
-	private int m_topTiles;
-	private int m_cxTiles;
-	private int m_cyTiles;
+	int m_leftTiles;
+	int m_topTiles;
+	int m_cxTiles;
+	int m_cyTiles;
 	
 	private double m_tileDegWidth;
 	private double m_tileDegHeight;
@@ -56,11 +56,13 @@ public class TileBuilder {
 		m_tileViewWorker.setProjection(proj);
 	}
 	
-	public void setViewCenterWc( WorldCoords wc ) {
-		m_tileViewWorker.setCenterInWc(wc);
-	}
+	//public void setViewCenterWc( WorldCoords wc ) {
+	//	m_tileViewWorker.setCenterInWc(wc);
+	//}
 	
 	public IProjection getProjection() { return m_divProj; }
+	
+	public ViewWorker getTileViewWorker(){ return m_tileViewWorker;}
 	
 	public void setDivLevel(int divLevel) {
 		this.m_divLevel = divLevel;
@@ -104,9 +106,8 @@ public class TileBuilder {
 		
 	// Note, in all these routines Use the div projection that has a 
 	// fixed scale and is designed to be used at the level natural scale.
-	private void computeHowManyXTiles(int dimWidth) {
-		int tileWidth = m_centerTile.getTileWidth();
-		int wcX = m_divWorker.divToWorldX( m_centerTile.getOffsetX());
+	void computeHowManyXTiles(int dimWidth, int tileWidth, int offsetX) {
+		int wcX = m_divWorker.divToWorldX( offsetX);
 		int leftDist = m_tileViewWorker.wcXtoVcX(wcX);
 		int rightDist = dimWidth - (leftDist + tileWidth);
 		
@@ -115,19 +116,13 @@ public class TileBuilder {
 		m_cxTiles = 1 + m_leftTiles + rightTiles;
 	}
 
-	private void computeHowManyYTiles(int dimHeight) {
-		int tileHeight = m_centerTile.getTileHeight();
-		int wcY = m_divWorker.divToWorldY( m_centerTile.getOffsetY());
+	void computeHowManyYTiles(int vwHeight, int tileHeight, int offsetY ) {
+		int wcY = m_divWorker.divToWorldY( offsetY);
 		int topDist = m_tileViewWorker.wcYtoVcY(wcY);
-		int bottomDist = dimHeight - (topDist + tileHeight);
-		WorldDimension wd = m_divWorker.getProjection().getWorldDimension();
-		int bottomTiles = 0;
-		m_topTiles = 0;
-		int vpHeight = m_mapViewWorker.getDimension().getHeight();
-		if ( vpHeight < wd.getHeight() + 1){
-			m_topTiles = topDist <= 0 ? 0:(topDist + tileHeight-1)/tileHeight;
-			bottomTiles = bottomDist <= 0 ? 0:(bottomDist + tileHeight-1)/tileHeight;
-		}
+		int bottomDist = vwHeight - (topDist + tileHeight);
+		
+		m_topTiles = topDist <= 0 ? 0:(topDist + tileHeight-1)/tileHeight;
+		int bottomTiles = bottomDist <= 0 ? 0:(bottomDist + tileHeight-1)/tileHeight;
 		m_cyTiles = 1 + m_topTiles + bottomTiles;
 	}
 	
@@ -268,11 +263,10 @@ public class TileBuilder {
 		return tc;
 	}
 	
-	private void positionTileOffsetForDiv(TileCoords tc) {
-	    // This routine positions the center tile relative to the view it sits in.
+	void positionTileOffsetForDiv(TileCoords tc) {
 		int wcX = tc.getOffsetX();
 		int wcY = tc.getOffsetY();
-		DivCoords dc = worldToDiv((int)(wcX), (int)(wcY));
+		DivCoords dc = worldToDiv(wcX, wcY);
 		tc.setOffsetY(dc.getY());
 		tc.setOffsetX(dc.getX());
 	}
@@ -356,8 +350,12 @@ public class TileBuilder {
 		//TODO
 		// we should probably use the view dimensions here to keep
 		// the number of tile down to a reasonable value.
-		computeHowManyXTiles(m_scaledViewDims.getWidth());
-		computeHowManyYTiles(m_scaledViewDims.getHeight());
+		int tileWidth = m_centerTile.getTileHeight();
+		int offsetX = m_centerTile.getOffsetX();
+		computeHowManyXTiles(m_scaledViewDims.getWidth(),tileWidth, offsetX);
+		int tileHeight = m_centerTile.getTileHeight();
+		int offsetY = m_centerTile.getOffsetY();
+		computeHowManyYTiles(m_scaledViewDims.getHeight(),tileHeight,offsetY);
 		
 		TileCoords[] r = makeTilesResult();
 		buildTilesRelativeToCenter( r, ls.isZeroTop() );
@@ -503,4 +501,13 @@ public class TileBuilder {
 	}
 	
 	public String getBestLayerData(){ return m_bestLayerData; }
+	
+	@Override
+	public String toString(){
+		String rtn = "[ m_leftTiles : " + m_leftTiles + " ,  m_topTiles : " + m_topTiles + " ; " +
+	                 "m_cxTiles : " + m_cxTiles + " ,  m_cyTiles : " + m_cyTiles + " ; " +
+	                 "m_tileDegWidth : " + m_tileDegWidth + " ,  m_tileDegHeight : " + m_tileDegHeight 
+	                  +" ]";
+		return rtn;
+	}
 }

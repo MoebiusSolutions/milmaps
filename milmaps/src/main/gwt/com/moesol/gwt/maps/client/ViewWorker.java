@@ -182,7 +182,7 @@ public class ViewWorker implements ProjectionChangedHandler {
 						 .right(gbr.longitude().degrees())
 						 .factor(f)
 						 .width(dimWidth).height(dimHeight)
-						 .degrees().build();
+						 .degrees().build(); 
 		return vb;
 	}
 	
@@ -198,5 +198,17 @@ public class ViewWorker implements ProjectionChangedHandler {
 	@Override
 	public void onProjectionChanged(ProjectionChangedEvent event) {
 		computeOffsets(getVpCenterInWc());
+	}
+	
+	@Override
+	public String toString(){
+		int width  = m_dims.getWidth();
+		int height = m_dims.getHeight();
+		double lat = m_geoCenter.getPhi(AngleUnit.DEGREES);
+		double lng = m_geoCenter.getLambda(AngleUnit.DEGREES);
+		String rtn = "[ m_dims : " + width + " , " + height +" ; " +
+	                 "m_geoCenter : " + lat + " , " + lng +" ; " +
+	                 "Offset Wc : " + m_offsetInWcX + " , " + m_offsetInWcY +" ]";
+		return rtn;
 	}
 }

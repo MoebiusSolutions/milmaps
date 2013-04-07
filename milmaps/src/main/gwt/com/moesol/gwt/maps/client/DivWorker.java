@@ -241,6 +241,21 @@ public class DivWorker implements ProjectionChangedHandler {
 		return new DivDimensions(width,height);
 	}
 	
+	public void resize(int w, int h) {
+		int dW = m_baseDims.getWidth();
+		int dH = m_baseDims.getHeight();
+		if ( dW < w ){
+			int f = (w/dW) + 1;
+			dW *= f; 
+		}
+		if ( dH < h ){
+			int f = (h/dH) + 1;
+			dH *= f;
+		}
+		setDivBaseDimensions( dW, dH);
+		updateDivWithCurrentGeoCenter();
+	}
+	
 	public int wcYtoVcY( int wcY ){
 		// Normally we would have vY = wc.getY() - m_offsetInWcY.
 		// But for the view y axis we want the y values changed to be relative to the 
