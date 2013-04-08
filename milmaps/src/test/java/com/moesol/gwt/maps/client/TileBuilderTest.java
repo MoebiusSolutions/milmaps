@@ -9,8 +9,12 @@ package com.moesol.gwt.maps.client;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.gwt.event.shared.HandlerManager;
 
 public class TileBuilderTest {
 	private DivWorker m_dw;
@@ -22,6 +26,10 @@ public class TileBuilderTest {
 	private TileBuilder m_tb;
 	
 	int m_dpi = AbstractProjection.DOTS_PER_INCH;
+	protected double m_scrnMpp = 2.54/m_dpi*100.0;
+																  // map size
+	public double EarthCirMeters  = 2.0*Math.PI*IProjection.EARTH_RADIUS_METERS;
+	public double MeterPerDeg  = EarthCirMeters/360.0;
 	
 	@Before
 	public void before(){}
@@ -47,12 +55,22 @@ public class TileBuilderTest {
 		m_vp.setSize(600,400);
 	}
 	
+	protected double computeScale(double deg, int pix) {
+		double mpp = deg*(MeterPerDeg / pix);
+		return (m_scrnMpp / mpp);
+	}
+	
+	
 	void initializeDivStuf(int level, int vwWidth, int vwHeight) {
 		// Simulate div for given level
 		double eqScale = m_proj.getBaseEquatorialScale();
 		double scale = eqScale*(1 << level);
 		m_divProj = Projection.createProj(IProjection.T.CylEquiDist);
 		m_divProj.setBaseEquatorialScale(scale);
+		if (level == 3){
+			// for level 3 we will force the scale to match 36 degree tiles
+			scale = computeScale(36, 512);
+		}
 		m_divProj.setEquatorialScale(scale);
 		////////////////////////////////////////////////////////
 		// Simulate new DivPanel DivWorker
@@ -148,12 +166,39 @@ public class TileBuilderTest {
 		}
 	}
 	
+	@Test
+	public void testFindBestLayerSet(){
+		testFindBestLayerSet(0,0);
+		testFindBestLayerSet(3,2);
+	}
+	
+	protected void testFindBestLayerSet(int level, int index){
+		before(512, 180);
+		initializeDivStuf(level,1200,520);
+		ArrayList<TiledImageLayer> array = createTiledImageLayerList();
+		LayerSetWorker lw = new LayerSetWorker();
+		m_tb.setTileImageLayers(array);
+		lw.setDivProjection(m_divProj);
+		m_tb.setLayerBestSuitedForScale();
+		assertEquals(array.get(index).getLayerSet().getData(),m_tb.getBestLayerData());	
+	}
+	
+	protected ArrayList<TiledImageLayer> createTiledImageLayerList(){
+		ArrayList<TiledImageLayer> imageLayers = new ArrayList<TiledImageLayer>();
+		for (int i = 0; i < 3; i++){
+			LayerSet ls = createLayerSet(i);
+			TiledImageLayer til = new TiledImageLayer(null,null,null, m_dw, ls);
+			imageLayers.add(til);
+		}
+		return imageLayers;
+	}
+	
 	// Simulate map layers
 	protected LayerSet createLayerSet( int j ){
 		LayerSet ls = new LayerSet();
 		if ( j == 0 ){
 	  	    ls.setServer("http://TestServer");
-	  	    ls.setData("cylendrical");
+	  	    ls.setData("Test0");
 	  	    ls.setUrlPattern("{server}/{data}/{quadkey}");
 	  	    ls.setAutoRefreshOnTimer(false);
 			ls.setPixelWidth(512);
@@ -165,7 +210,7 @@ public class TileBuilderTest {
 		}
 		else if ( j == 1 ){
 	  	    ls.setServer("http://TestServer");
-	  	    ls.setData("cylendrical");
+	  	    ls.setData("Test1");
 	  	    ls.setUrlPattern("{server}/{data}/{quadkey}");
 	  	    ls.setAutoRefreshOnTimer(false);
 			ls.setPixelWidth(256);
@@ -177,7 +222,7 @@ public class TileBuilderTest {
 		}
 		else if ( j == 2 ){
 			ls.setServer("http://bv.moesol.com/rpf-ww-server"); 
-			ls.setData("BMNG (Shaded %2B Bathymetry) Tiled - 5.2004");
+			ls.setData("Test2");
 			ls.setUrlPattern("{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}");
 			ls.setSrs("EPSG:4326");
        	    ls.setZeroTop(false);

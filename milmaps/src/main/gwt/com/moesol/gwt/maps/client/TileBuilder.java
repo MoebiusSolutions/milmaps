@@ -453,6 +453,7 @@ public class TileBuilder {
 		TiledImageLayer bestLayerSoFar = null;
 		int LevelWithBestScaleSoFar = -10000;
 		double bestScaleSoFar = 0.0;
+		int pixSize = 0;
 		for (TiledImageLayer layer : m_tiledImageLayers) {
 			if (!layer.getLayerSet().isActive()) {
 				continue;
@@ -463,6 +464,7 @@ public class TileBuilder {
 			layer.setPriority(false);
 			
 			int level = layer.findLevel(dpi, projScale);
+			pixSize = layer.getLayerSet().getPixelWidth();
 			if (!isLayerCandidateForScale(layer, level)) {
 				layer.setPriority(false);
 				continue;
@@ -474,17 +476,22 @@ public class TileBuilder {
 				LevelWithBestScaleSoFar = level;
 				continue;
 			}
-			if (bestScaleSoFar == layerScale) {
-				if (level >= 0 && level < LevelWithBestScaleSoFar) {
-					bestLayerSoFar = layer;
-					bestScaleSoFar = layerScale;
-					LevelWithBestScaleSoFar = level;
+			if (bestLayerSoFar != null && bestScaleSoFar == layerScale) {
+				if (level >= 0 ){
+					int bestLayerPixSize = bestLayerSoFar.getLayerSet().getPixelWidth();
+					if ( level < LevelWithBestScaleSoFar || pixSize > bestLayerPixSize) {
+						bestLayerSoFar.setPriority(false);
+						bestLayerSoFar = layer;
+						bestScaleSoFar = layerScale;
+						LevelWithBestScaleSoFar = level;
+					}
 				}
 				continue;
 			}
 			double oldDistance = Math.abs(projScale - bestScaleSoFar);
 			double newDistance = Math.abs(projScale - layerScale);
 			if (newDistance < oldDistance) {
+				bestLayerSoFar.setPriority(false);
 				bestLayerSoFar = layer;
 				bestScaleSoFar = layerScale;
 				LevelWithBestScaleSoFar = level;

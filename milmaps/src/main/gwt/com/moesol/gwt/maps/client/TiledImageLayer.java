@@ -82,12 +82,13 @@ public class TiledImageLayer {
 	public int getImgBoundTop(){ return m_imgBounds.top; }
 	public int getImgBoundBottom(){ return m_imgBounds.bottom; }
 
-	public TiledImageLayer( DivPanel divPanel, LayerSet layerSet ) {
+	public TiledImageLayer( DivPanel divPanel, Panel dimPanel, Panel nonDimPanel, 
+						    DivWorker divWorker, LayerSet layerSet ) {
 		m_divPanel = divPanel;
 		m_layerSet = layerSet;
-		m_divWorker = divPanel.getDivWorker();
-		m_dimLayoutPanel = divPanel.getTileLayerPanel();
-		m_nonDimLayoutPanel = divPanel.getNonDimTileLayerPanel();
+		m_divWorker = divWorker;
+		m_dimLayoutPanel = dimPanel;//divPanel.getTileLayerPanel();
+		m_nonDimLayoutPanel = nonDimPanel;//divPanel.getNonDimTileLayerPanel();
 		m_tileImageLoadListener.setTileImageEngine(m_tileImageMgr);
 	}
 	
