@@ -27,14 +27,14 @@
         // https://otm.moesol.com/kh?xcopZone=demo&t=ts
         //
         var myOrigin = window.location.protocol + '//' + window.location.host;
-        var myServerOrigin = "http://192.168.1.104:8080";
+        var myServerOrigin = "http://localhost:8080";
         var moesolOrigin = "https://otm.moesol.com";
 		
         var layerSets = [
             // MilmapsCache uses 256 x 256 with degree width of 90.
             {  
                 server: myServerOrigin + "/milmapsCache/rs/mapcache",
-                data: "I3_Imagery_Prime_World_2D",
+                data: "ESRI_Imagery_World_2D",
                 urlPattern: "{server}/{data}/{srs}/{imgSize}/{level}/{x}/{y}",
                 srs: "EPSG:4326",
                 zeroTop: true,
@@ -48,11 +48,11 @@
             , // MilmapsCache uses 512x512 with deg width of 180.
             {  
                 server: myServerOrigin + "/milmapsCache/rs/mapcache",
-                data: "I3_Imagery_Prime_World_2D",
+                data: "ESRI_Imagery_World_2D",
                 urlPattern: "{server}/{data}/{srs}/{imgSize}/{level}/{x}/{y}",
                 srs: "EPSG:4326",
                 zeroTop: true,
-                maxLevel:3,
+                maxLevel:18,
                 autoRefreshOnTimer: false,
                 startLevelTileWidthInDeg:180,
                 startLevelTileHeightInDeg:180,
