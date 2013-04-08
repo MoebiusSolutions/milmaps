@@ -161,7 +161,9 @@ public class DivPanel extends AbsolutePanel {
 	}
 	
 	public void addLayer(LayerSet layerSet) {
-		TiledImageLayer tiledImageLayer = new TiledImageLayer(this, layerSet);
+		TiledImageLayer tiledImageLayer = new TiledImageLayer(this, m_dimPanel,
+															  m_nonDimPanel, 
+															  m_divWorker, layerSet);
 		m_tiledImageLayers.add(tiledImageLayer);
 	}
 	
