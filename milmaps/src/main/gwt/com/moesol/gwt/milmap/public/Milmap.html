@@ -31,7 +31,36 @@
         var moesolOrigin = "https://otm.moesol.com";
 		
         var layerSets = [
-            // MilmapsCache uses 256 x 256 with degree width of 90.
+             // MilmapsCache uses 256 x 256 with degree width of 90.
+            {  
+                server: myServerOrigin + "/milmapsCache/rs/mapcache",
+                data: "solidColor",
+                urlPattern: "{server}/{data}/{srs}/{imgSize}/{level}/{x}/{y}",
+                srs: "EPSG:4326",
+                zeroTop: true,
+                minLevel: 2,
+                autoRefreshOnTimer: false,
+                startLevelTileWidthInDeg:90,
+                startLevelTileHeightInDeg:90,
+                pixelWidth:256,
+                pixelHeight:256,
+                active: true
+            }
+            , // MilmapsCache uses 512x512 with deg width of 180.
+            {  
+                server: myServerOrigin + "/milmapsCache/rs/mapcache",
+                data: "solidColor",
+                urlPattern: "{server}/{data}/{srs}/{imgSize}/{level}/{x}/{y}",
+                srs: "EPSG:4326",
+                zeroTop: true,
+                maxLevel:2,
+                autoRefreshOnTimer: false,
+                startLevelTileWidthInDeg:180,
+                startLevelTileHeightInDeg:180,
+                pixelWidth: 512,
+                active: true
+            }
+            , // MilmapsCache uses 256 x 256 with degree width of 90.
             {  
                 server: myServerOrigin + "/milmapsCache/rs/mapcache",
                 data: "ESRI_Imagery_World_2D",
@@ -102,7 +131,7 @@
                 startLevelTileHeightInDeg:180,
                 pixelHeight: 512,
                 pixelWidth: 512,
-                active: true
+                active: false
             }
             ,   // MGRS -- Mercator Tiles version
             { 

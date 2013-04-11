@@ -449,7 +449,6 @@ public class TileBuilder {
 	public void setLayerBestSuitedForScale() {
 		int dpi = m_divProj.getScrnDpi();
 		double projScale = m_divProj.getEquatorialScale();
-		TiledImageLayer activeLayer = null;
 		TiledImageLayer bestLayerSoFar = null;
 		int LevelWithBestScaleSoFar = -10000;
 		double bestScaleSoFar = 0.0;
@@ -458,9 +457,7 @@ public class TileBuilder {
 			if (!layer.getLayerSet().isActive()) {
 				continue;
 			}
-			if (!layer.getLayerSet().isAlwaysDraw()){
-				activeLayer = layer;
-			}
+
 			layer.setPriority(false);
 			
 			int level = layer.findLevel(dpi, projScale);
@@ -501,9 +498,6 @@ public class TileBuilder {
 			bestLayerSoFar.setPriority(true);
 			LayerSet ls = bestLayerSoFar.getLayerSet();
 			m_bestLayerData = new String(ls.getData());
-		}
-		if (activeLayer != null){
-			activeLayer.setPriority(true);
 		}
 	}
 	

@@ -61,15 +61,17 @@ public class TileBuilderTest {
 	}
 	
 	
-	void initializeDivStuf(int level, int vwWidth, int vwHeight) {
+	void initializeDivStuf(int level, boolean forceScale, int vwWidth, int vwHeight) {
 		// Simulate div for given level
 		double eqScale = m_proj.getBaseEquatorialScale();
 		double scale = eqScale*(1 << level);
 		m_divProj = Projection.createProj(IProjection.T.CylEquiDist);
 		m_divProj.setBaseEquatorialScale(scale);
-		if (level == 3){
-			// for level 3 we will force the scale to match 36 degree tiles
+		if (forceScale){
+			// we will force the scale to match 36 degree tiles
 			scale = computeScale(36, 512);
+			m_divProj.setBaseEquatorialScale(scale);
+			scale = scale*(1 << level);
 		}
 		m_divProj.setEquatorialScale(scale);
 		////////////////////////////////////////////////////////
@@ -116,7 +118,7 @@ public class TileBuilderTest {
 			m_vp.setSize(1200,height[i]);
 
 			for ( int level = 0; level < 2; level++){
-				initializeDivStuf(level,1200,height[i]);
+				initializeDivStuf(level,false,1200,height[i]);
 				lw.setDivProjection(m_divProj);
 				double degFactor = ( level < 1 ? 1 : Math.pow(2, level) );
 				double degWidth = ls.getStartLevelTileWidthInDeg()/degFactor;
@@ -153,7 +155,7 @@ public class TileBuilderTest {
 			m_vp.setSize(1200,height[i]);
 			//ViewDimension vd = new ViewDimension(600,height[i]);
 			for ( int level = 0; level < 2; level++){
-				initializeDivStuf(level,1200,height[i]);
+				initializeDivStuf(level,false,1200,height[i]);
 				lw.setDivProjection(m_divProj);
 				double degFactor = ( level < 1 ? 1 : Math.pow(2, level) );
 				double degWidth = ls.getStartLevelTileWidthInDeg()/degFactor;
@@ -168,19 +170,32 @@ public class TileBuilderTest {
 	
 	@Test
 	public void testFindBestLayerSet(){
-		testFindBestLayerSet(0,0);
-		testFindBestLayerSet(3,2);
+		testFindBestLayerSet(0,0,false);
+		testFindBestLayerSet(3,2,true);
+		testFindBestLayerSet(3,1,false);
 	}
 	
-	protected void testFindBestLayerSet(int level, int index){
+	protected void assertOnlyOnePriorityImageLayer(ArrayList<TiledImageLayer> array){
+		int n = array.size();
+		int count = 0;
+		for (int i = 0; i < n; i++){
+			if ( array.get(i).isPriority()){
+				count ++;
+			}
+		}
+		assertEquals(1,count);
+	}
+	
+	protected void testFindBestLayerSet(int level, int j, boolean forceScale){
 		before(512, 180);
-		initializeDivStuf(level,1200,520);
+		initializeDivStuf(level,forceScale,1200,520);
 		ArrayList<TiledImageLayer> array = createTiledImageLayerList();
 		LayerSetWorker lw = new LayerSetWorker();
 		m_tb.setTileImageLayers(array);
 		lw.setDivProjection(m_divProj);
 		m_tb.setLayerBestSuitedForScale();
-		assertEquals(array.get(index).getLayerSet().getData(),m_tb.getBestLayerData());	
+		assertEquals(array.get(j).getLayerSet().getData(),m_tb.getBestLayerData());	
+		assertOnlyOnePriorityImageLayer(array);
 	}
 	
 	protected ArrayList<TiledImageLayer> createTiledImageLayerList(){
@@ -198,31 +213,33 @@ public class TileBuilderTest {
 		LayerSet ls = new LayerSet();
 		if ( j == 0 ){
 	  	    ls.setServer("http://TestServer");
-	  	    ls.setData("Test0");
+	  	    ls.setData("Test512-180");
 	  	    ls.setUrlPattern("{server}/{data}/{quadkey}");
 	  	    ls.setAutoRefreshOnTimer(false);
 			ls.setPixelWidth(512);
 			ls.setPixelHeight(512);
 			ls.setStartLevel(0);
+			ls.setMaxLevel(2);
 			ls.setStartLevelTileHeightInDeg(180);
 			ls.setStartLevelTileWidthInDeg(180);
 			ls.setZeroTop(true);
 		}
 		else if ( j == 1 ){
 	  	    ls.setServer("http://TestServer");
-	  	    ls.setData("Test1");
+	  	    ls.setData("Test256-90");
 	  	    ls.setUrlPattern("{server}/{data}/{quadkey}");
 	  	    ls.setAutoRefreshOnTimer(false);
 			ls.setPixelWidth(256);
 			ls.setPixelHeight(256);
 			ls.setStartLevel(0);
+			ls.setMinLevel(2);
 			ls.setStartLevelTileHeightInDeg(90);
 			ls.setStartLevelTileWidthInDeg(90);
 			ls.setZeroTop(true);
 		}
 		else if ( j == 2 ){
 			ls.setServer("http://bv.moesol.com/rpf-ww-server"); 
-			ls.setData("Test2");
+			ls.setData("Test512-36");
 			ls.setUrlPattern("{server}/tileset/BMNG/{data}/level/{level}/x/{x}/y/{y}");
 			ls.setSrs("EPSG:4326");
        	    ls.setZeroTop(false);
