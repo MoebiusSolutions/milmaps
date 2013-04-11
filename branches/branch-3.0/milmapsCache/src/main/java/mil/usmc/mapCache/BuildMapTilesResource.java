@@ -245,7 +245,7 @@ public class BuildMapTilesResource {
 		
 		for (int i = 0; i < 3; i++) {
 			new BuildMapTilesResource().buildTiles("https", "otm.moesol.com", 
-					"ww-tile-server", "BlueMarbleNG_200412", 36, "EPSG:4326", 512, i, "C:/");
+					"ww-tile-server", "BlueMarbleNG_200412", 36, "EPSG:4326", 512, i, "E:/");
 		}
     }
 }
