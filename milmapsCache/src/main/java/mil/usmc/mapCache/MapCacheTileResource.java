@@ -1,6 +1,10 @@
 package mil.usmc.mapCache;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,7 +22,7 @@ import javax.ws.rs.core.Response;
 @Path("mapcache")
 public class MapCacheTileResource {
 	
-	private String m_csBase = "/var/lib/milmapsCache";
+	private String m_csBase = "E:/var/lib/milmapsCache";
 	private String m_data = "bmng";
 	
 	private boolean m_skipRealDownload = Boolean.getBoolean("skip.download");
@@ -27,7 +31,6 @@ public class MapCacheTileResource {
 	private String m_imageFormat = "png";
 	private Split m_split = new Split();
 	private Split.ImgInfo m_inf = m_split.createInfObj();
-	
 	public MapCacheTileResource(){
 		m_split.setBase(m_csBase);
 	}
@@ -76,8 +79,19 @@ public class MapCacheTileResource {
 		m_inf.y = y;
 		m_split.splitImage(m_inf, img);		
 	}
-
+	
 	BufferedImage buildMapTile( String server, String urlPatern, String data,
+			String srs, int size, int level, int xTile, int yTile,
+			String imageFormat ) throws FileNotFoundException, MalformedURLException, IOException {
+		if (data.equalsIgnoreCase("solidColor")){
+			BufferedImage img = solidImages(level, size, xTile, yTile);
+			return img;
+		}
+		return _buildMapTile(server, urlPatern, data, srs, 
+							 size, level, xTile, yTile, imageFormat);
+	}
+
+	BufferedImage _buildMapTile( String server, String urlPatern, String data,
 								String srs, int size, int level, int xTile, int yTile,
 								String imageFormat ) throws FileNotFoundException, MalformedURLException, IOException {
 		
@@ -103,7 +117,9 @@ public class MapCacheTileResource {
 				String url = Utils.buildUrl( "mapcache", server, urlPatern, data, 
 											 srs, size, level, xTile, yTile );
 				img = Utils.getAndSaveImageFromURL(url,file,m_skipRealDownload);
-				splitFile(level, xTile, yTile, img );
+				if (img != null){
+					splitFile(level, xTile, yTile, img );
+				}
 			}
 		}
 		/* we will add this when I can lock the files.
@@ -126,6 +142,21 @@ public class MapCacheTileResource {
 		*/
 		return img;
 	}
+	
+    public BufferedImage solidImages(int level, int size, int x, int y)throws IOException {  
+    	Color color = (size == 256 ? new Color(240,0,0) : new Color(250,250,0));
+    	String label = "level: " + level +" , size: " + size + ", X: " + x + ", Y: " + y;
+        BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB); 
+            // draws the image chunk  
+            Graphics2D gr = img.createGraphics();  
+            gr.setColor (color);
+            gr.fillRect (0, 0, size, size);
+            
+            gr.setColor(new Color(0,0,0));
+            gr.drawRect(0, 0, size, size);
+            gr.drawString(label, 40, size/2);
+        return img; 
+    }
 	
 	/*
 	private void writeSuccessFile(String url, InputStream is, File outFile) throws IOException {
