@@ -27,7 +27,7 @@ public class LayerSet implements IsSerializable {
 	private boolean m_tiled = true;
 	private boolean m_dimmable = true;
 	private boolean m_zeroTop = false;
-	private boolean m_alwaysDraw = false; 
+	private boolean m_alwaysDraw = false;
 	private boolean m_autoRefreshOnTimer = false;
 	private String m_srs = "EPSG:4326";
 	private int m_minLevel = 0;
@@ -43,6 +43,8 @@ public class LayerSet implements IsSerializable {
 	private double m_startLevelTileWidthInDeg = 180.0;
 	private double m_startLevelTileHeightInDeg = 180.0;
 	private Map<String, Object> m_properties;
+    private String m_affiliation;
+    private String m_dimension;
 
 	public String getStyleName() {
 		return m_styleName;
@@ -62,22 +64,22 @@ public class LayerSet implements IsSerializable {
 	public void setStartLevelTileWidthInDeg(double deg) {
 		m_startLevelTileWidthInDeg = deg;
 	}
-	
+
 	public double getStartLevelTileHeightInDeg() {
 		return m_startLevelTileHeightInDeg;
 	}
-	
+
 	public void setStartLevelTileHeightInDeg(double deg) {
 		m_startLevelTileHeightInDeg = deg;
 	}
-	
-	public void setStartLevelTileDimensionsInDeg( 
+
+	public void setStartLevelTileDimensionsInDeg(
 			double degWidth, double degHeight ){
 		m_startLevelTileWidthInDeg = degWidth;
 		m_startLevelTileHeightInDeg = degHeight;
 	}
-	
-	
+
+
 	public String getSrs() {
 		return m_srs;
 	}
@@ -85,13 +87,13 @@ public class LayerSet implements IsSerializable {
 	public void setSrs(String srs) {
 		m_srs = srs;
 	}
-	
+
 	public LayerSet withSrs(String srs) {
 		setSrs(srs);
 		return this;
 	}
 
-	
+
 	public int getStartLevel() {
 		return m_startLevel;
 	}
@@ -110,15 +112,15 @@ public class LayerSet implements IsSerializable {
 	public int getZIndex(){
 		return m_zIndex;
 	}
-	
+
 	public boolean levelIsInRange( int level ){
 		return ( m_minLevel <= level && level <= m_maxLevel );
 	}
-	
+
 	public double getLevelDeg( int level ){
 		return m_startLevelTileWidthInDeg/(Math.pow(2, (level-m_startLevel)));
 	}
-	
+
 	public void setAlwaysDraw(boolean flag) {
 		m_alwaysDraw = flag;
 	}
@@ -137,20 +139,20 @@ public class LayerSet implements IsSerializable {
 	public void setData(String data) {
 		m_data = data;
 	}
-	
+
 	public LayerSet withData(String data) {
 		m_data = data;
 		return this;
 	}
-    
+
     public String  getId() {
         return m_id;
     }
-    
+
     public void setId(String id) {
         m_id = id;
     }
-    
+
     public LayerSet withId(String id) {
         m_id = id;
         return this;
@@ -208,7 +210,7 @@ public class LayerSet implements IsSerializable {
 	public LayerSet withActive(boolean active) {
 		setActive(active); return this;
 	}
-	
+
 	/**
 	 * return true if each layer requires multiple tiles
 	 * @return
@@ -223,7 +225,7 @@ public class LayerSet implements IsSerializable {
 		setTiled(t);
 		return this;
 	}
-	
+
 	/**
 	 * return true if each layer requires multiple tiles
 	 * @return
@@ -317,7 +319,7 @@ public class LayerSet implements IsSerializable {
 		m_origPixHeight = dy;
 		return this;
 	}
-	
+
 
 	/**
 	 * @return true if this layer set should be refreshed periodically. For
@@ -334,7 +336,7 @@ public class LayerSet implements IsSerializable {
 		setAutoRefreshOnTimer(refresh);
 		return this;
 	}
-	
+
 
 	@Override
 	public String toString() {
@@ -345,7 +347,7 @@ public class LayerSet implements IsSerializable {
 	/**
 	 * After setting all the properties for this layer set call
 	 * build to check validity.
-	 * 
+	 *
 	 * @return this
 	 */
 	public LayerSet build() {
@@ -380,7 +382,7 @@ public class LayerSet implements IsSerializable {
 		m_minLevel = min;
 		m_maxLevel = max;
 	}
-	
+
 	public int getMinLevel() {
 		return m_minLevel;
 	}
@@ -390,7 +392,7 @@ public class LayerSet implements IsSerializable {
 	public LayerSet withMinLevel(int l) {
 		setMinLevel(l); return this;
 	}
-	
+
 	public int getMaxLevel() {
 		return m_maxLevel;
 	}
@@ -400,7 +402,7 @@ public class LayerSet implements IsSerializable {
 	public LayerSet withMaxLevel(int l) {
 		setMaxLevel(l); return this;
 	}
-	
+
 	/**
 	 * @return Custom properties map for this layer set. Lazy created if null.
 	 * These properties are used in the URL pattern. There are some predefine
@@ -436,5 +438,31 @@ public class LayerSet implements IsSerializable {
 		setProperties(properties);
 		return this;
 	}
+
+    public void setAffiliation(String affiliation) {
+        m_affiliation = affiliation;
+    }
+
+    public String getAffiliation(){
+        return m_affiliation;
+    }
+
+    public LayerSet withAffiliation(String aff){
+        setAffiliation(aff);
+        return this;
+    }
+
+    public void setDimension(String dimension) {
+        m_dimension = dimension;
+    }
+
+    public String getDimension(){
+        return m_dimension;
+    }
+
+    public LayerSet withDimension(String aff){
+        setDimension(aff);
+        return this;
+    }
 
 }
