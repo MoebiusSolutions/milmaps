@@ -39,10 +39,10 @@ public class RangeBearingS {
 	/**
 	 * Returns the distance from this point to the supplied point, in km (using
 	 * Haversine formula)
-	 * 
+	 *
 	 * from: Haversine formula - R. W. Sinnott, "Virtues of the Haversine", Sky
 	 * and Telescope, vol 68, no 2, 1984
-	 * 
+	 *
 	 * @param GeodeticCoords
 	 *            p: start point
 	 * @param GeodeticCoords
@@ -69,7 +69,7 @@ public class RangeBearingS {
 	/**
 	 * Returns the (initial) bearing from this point to the supplied point, in
 	 * degrees see http://williams.best.vwh.net/avform.htm#Crs
-	 * 
+	 *
 	 * @param GeodeticCoords
 	 *            p: start point
 	 * @param GeodeticCoords
@@ -95,7 +95,7 @@ public class RangeBearingS {
 	 * Returns final bearing arriving at supplied destination point from this
 	 * point; the final bearing will differ from the initial bearing by varying
 	 * degrees according to distance and latitude
-	 * 
+	 *
 	 * @param GeodeticCoords
 	 *            p: start point
 	 * @param GeodeticCoords
@@ -115,14 +115,14 @@ public class RangeBearingS {
 				* Math.cos(lat2) * Math.cos(dLon);
 		double brg = Math.atan2(y, x);
 
-		// ... & reverse it by adding 180°
+		// ... & reverse it by adding 180 (deg)
 		return (Func.RadToDeg(brg) + 180) % 360;
 	}
 
 	/**
 	 * Returns the midpoint between this point and the supplied point. see
 	 * http://mathforum.org/library/drmath/view/51822.html for derivation
-	 * 
+	 *
 	 * @param GeodeticCoords
 	 *            p: start point
 	 * @param GeodeticCoords
@@ -145,7 +145,7 @@ public class RangeBearingS {
 						* By));
 		double lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
 		lon3 = (lon3 + 3 * Math.PI) % (2 * Math.PI) - Math.PI; // normalise to
-																// -180..+180º
+																// -180..+180 (deg)
 
 		return new GeodeticCoords(lon3, lat3, AngleUnit.RADIANS);
 	}
@@ -154,9 +154,9 @@ public class RangeBearingS {
 	 * Returns the destination point from this point having travelled the given
 	 * distance (in km) on the given initial bearing (bearing may vary before
 	 * destination is reached)
-	 * 
+	 *
 	 * see http://williams.best.vwh.net/avform.htm#LL
-	 * 
+	 *
 	 * @param GeodeticCoords
 	 *            p: start point
 	 * @param {Number} brng: Initial bearing in degrees
@@ -177,7 +177,7 @@ public class RangeBearingS {
 						Math.sin(brng) * Math.sin(distKm) * Math.cos(lat1),
 						Math.cos(distKm) - Math.sin(lat1) * Math.sin(lat2));
 		lon2 = (lon2 + 3 * Math.PI) % (2 * Math.PI) - Math.PI; // normalise to
-																// -180..+180º
+																// -180..+180ï¿½
 
 		return new GeodeticCoords(lon2, lat2, AngleUnit.RADIANS);
 	}
@@ -185,9 +185,9 @@ public class RangeBearingS {
 	/**
 	 * Returns the distance from this point to the supplied point, in km,
 	 * travelling along a rhumb line
-	 * 
+	 *
 	 * see http://williams.best.vwh.net/avform.htm#Rhumb
-	 * 
+	 *
 	 * @param GeodeticCoords
 	 *            p: start point
 	 * @param GeodeticCoords
@@ -210,7 +210,7 @@ public class RangeBearingS {
 																				// line
 																				// gives
 																				// dPhi=0
-		// if dLon over 180° take shorter rhumb across 180° meridian:
+		// if dLon over 180 (deg) take shorter rhumb across 180 (deg) meridian:
 		if (dLon > Math.PI) {
 			dLon = 2 * Math.PI - dLon;
 		}
@@ -223,7 +223,7 @@ public class RangeBearingS {
 	/**
 	 * Returns the bearing from this point to the supplied point along a rhumb
 	 * line, in degrees
-	 * 
+	 *
 	 * @param GeodeticCoords
 	 *            p: start point
 	 * @param GeodeticCoords
@@ -250,7 +250,7 @@ public class RangeBearingS {
 	/**
 	 * Returns the destination point from this point having travelled the given
 	 * distance (in km) on the given bearing along a rhumb line
-	 * 
+	 *
 	 * @param GeodeticCoords
 	 *            p: start point
 	 * @param {Number} brng: Bearing in degrees from North
