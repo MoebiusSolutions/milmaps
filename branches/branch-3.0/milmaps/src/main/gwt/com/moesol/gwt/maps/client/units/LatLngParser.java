@@ -11,14 +11,14 @@ import com.moesol.gwt.maps.client.GeodeticCoords;
 
 public class LatLngParser {
 	private static double INVALID = -99999.0;
-	private static char[] m_delim = {'º', '\'', '\"', ' ' };
+	private static char[] m_delim = {'\u00B0', '\'', '\"', ' ' };
 	protected static class SignIndex {
 		public int sign;
 		public int n;
 	};
-	
-	
-	
+
+
+
 	public static String stripNonDigits(final String input){
 	    final StringBuilder sb = new StringBuilder();
 	    for(int i = 0; i < input.length(); i++){
@@ -29,7 +29,7 @@ public class LatLngParser {
 	    }
 	    return sb.toString();
 	}
-	
+
 	public static GeodeticCoords parse(String input){
 		GeodeticCoords gc = parseStr(input);
 		if (gc == null){
@@ -40,7 +40,7 @@ public class LatLngParser {
 		}
 		return gc;
 	}
-	
+
 	private static double parseDouble(String val){
 		if (!val.matches(".*[a-zA-Z!@#$%*~_=?]+.*")){
 			return Double.valueOf(val);
@@ -49,11 +49,11 @@ public class LatLngParser {
 			return INVALID;
 		}
 	}
-	
+
 	public static void testNewParse(String inputStr){
 		parseLatorLng(inputStr, m_delim );
 	}
-	
+
 	private static String replace(String value, char[] c){
 		for ( int i = 0; i < c.length; i++){
 			value = value.replace(c[i], ',');
@@ -62,7 +62,7 @@ public class LatLngParser {
 		value = value.replace(",,", ",");
 		return value;
 	}
-	
+
 	public static double parseLatorLng(String inputStr, char[] delim ){
 		int n = inputStr.indexOf('.');
 		if (-1 < n && n < 4){
@@ -79,7 +79,7 @@ public class LatLngParser {
 				substr[j] = inputStr.substring(0,i);
 				inputStr = inputStr.substring(i+1);
 			}
-				
+
 		}
 
 		double dd = INVALID;
@@ -93,7 +93,7 @@ public class LatLngParser {
 		}
 		return dd;
 	}
-	
+
 	/*
 	public static double parseLatorLng(String inputStr, String pattern ){
 		int n = inputStr.indexOf('.');
@@ -120,7 +120,7 @@ public class LatLngParser {
 		return dd;
 	}
 	*/
-	
+
 	private static SignIndex nsIndex(String str){
 		SignIndex si = new LatLngParser.SignIndex();
 	    si.n = str.indexOf("n");
@@ -131,7 +131,7 @@ public class LatLngParser {
 	   }
 	   return si;
 	}
-	
+
 	private static SignIndex ewIndex(String str){
 		SignIndex si = new LatLngParser.SignIndex();
 	    si.n = str.indexOf("e");
@@ -142,7 +142,7 @@ public class LatLngParser {
 	   }
 	   return si;
 	}
-	
+
 	private static GeodeticCoords parseStr(String input){
 		int length = input.length();
 		String lowerStr = input.toLowerCase();
@@ -162,7 +162,7 @@ public class LatLngParser {
 		if (latVal == INVALID){
 			return null;
 		}
-		
+
 		String lngStr = lowerStr.substring(n+1,length).trim();
 		lngStr = correctSpace(lngStr);
 		double lngVal = parseLatorLng(lngStr, m_delim )*ewJ.sign;
@@ -177,7 +177,7 @@ public class LatLngParser {
 		}
 		return new GeodeticCoords(lngVal,latVal,AngleUnit.DEGREES);
 	}
-	
+
 	private static String correctSpace(String str){
 		int n = str.length();
 		char c = str.charAt(n-1);
@@ -189,7 +189,7 @@ public class LatLngParser {
 		}
 		return str;
 	}
-	
+
 	private static GeodeticCoords parseDegStr(String input){
 		String lowerStr = input.toLowerCase();
 		SignIndex nsJ = nsIndex(lowerStr);
@@ -207,21 +207,21 @@ public class LatLngParser {
 		lat = parseDouble(s)*nsJ.sign;
 		s = stripNonDigits(lowerStr.substring(n+1,ewJ.n));
 		lng = parseDouble(s)*ewJ.sign;
-		
+
 		if (lat < -90 || 90 < lat){
 			return null;
 		}
 		if (lng < -180 || 180 < lng){
 			return null;
 		}
-		
+
 		return new GeodeticCoords(lng,lat,AngleUnit.DEGREES);
 	}
-	
+
 	private static GeodeticCoords parseDecimalDegStr(String input){
 		int len = input.length();
 		int n = input.indexOf(',');
-		
+
 		if (n == -1){
 			n = input.indexOf(' ');
 		}
