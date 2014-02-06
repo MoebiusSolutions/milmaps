@@ -9,7 +9,6 @@ package com.moesol.gwt.maps.client;
 
 import java.util.Date;
 
-import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -26,7 +25,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.moesol.gwt.maps.client.graphics.CanvasTool;
 import com.moesol.gwt.maps.client.graphics.ICanvasTool;
 import com.moesol.gwt.maps.client.graphics.IShapeEditor;
 import com.moesol.gwt.maps.client.stats.Sample;
@@ -34,10 +32,11 @@ import com.moesol.gwt.maps.client.units.AngleUnit;
 import com.moesol.gwt.maps.client.units.Degrees;
 import com.moesol.gwt.maps.client.units.MapScale;
 import com.moesol.gwt.maps.shared.BoundingBox;
+import java.util.List;
 
 public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	private static final long ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
-	
+
 	private final AbsolutePanel m_viewPanel = new AbsolutePanel();
 	private final FocusPanel m_focusPanel = new FocusPanel();
 	private final MapController m_mapEventListener;
@@ -45,7 +44,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	private IProjection m_mapProj = null;
 	private final ViewPort m_viewPort = new ViewPort();
 	private final DivManager m_divMgr = new DivManager(this);
-	
+
 	private final AnimationEngine m_animateEngine = new AnimationEngine(this);
 	// private final IFlyTo m_flyToEngine = new FlyToEngine(this); TODO
 	private final IFlyTo m_flyToEngine = new FlyToSimple(this);
@@ -64,7 +63,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	private double m_previousEqScale;
 	private final EventBus m_eventBus;
 	private final DynamicUpdateEngine m_dynamicUpdateEngine;
-	
+
 	private IShapeEditor m_shapeEditor;
 
 	public MapView() {
@@ -94,24 +93,24 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		 NativeEvent nativeEvent = Document.get().createChangeEvent();
 		 ChangeEvent.fireNativeEvent(nativeEvent, this);
 	 }
-	
+
 	private void initialize(GeodeticCoords defaultCenter) {
 		ProjectionValues.readCookies(m_mapProj);
-		
+
 		setCenter(recoverCenter(defaultCenter.getLambda(AngleUnit.DEGREES), defaultCenter.getPhi(AngleUnit.DEGREES)));
 		updateSize(m_viewPort.getWidth(), m_viewPort.getHeight());
-	
+
 		m_dynamicUpdateEngine.initDynamicRefreshTimer();
 
 		m_focusPanel.setStyleName("moesol-MapView");
 		m_focusPanel.getElement().setId("FocusPanelId");
 		m_mapEventListener.bindHandlers(m_focusPanel);
-		
+
 		ViewDimension v = m_viewPort.getVpWorker().getDimension();
 		m_viewPanel.setPixelSize(v.getWidth(), v.getHeight());
 		m_viewPanel.getElement().getStyle().setZIndex(2000);
 		m_viewPanel.getElement().setId("ViewPanelId");
-		
+
 		m_divMgr.setViewWorker(m_viewPort.getVpWorker());
 		m_divMgr.attachDivsTo(m_viewPanel);
 		m_focusPanel.setWidget(m_viewPanel);
@@ -119,17 +118,17 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		initWidget(m_focusPanel);
 		//doUpdateView();
 	}
-	
+
 	public AbsolutePanel getViewPanel(){
 		return m_viewPanel;
 	}
-	
+
 	public IconEngine getIconEngine() { return m_iconEngine; }
-	
+
 	public EventBus getEventBus() {
 		return m_eventBus;
 	}
-	
+
 	public DivManager getDivManager() {
 		return m_divMgr;
 	}
@@ -139,29 +138,29 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		m_previousEqScale = proj.getEquatorialScale();
 		m_viewPort.setProjection(proj);
 	}
-	
+
 	public IShapeEditor getShapeEditor() {
 		return m_shapeEditor;
 	}
-	
+
 	public void setShapeEditor(IShapeEditor shapeEditor) {
 		m_shapeEditor = shapeEditor;
 	}
-	
+
 	public void attachCanvas() {
 		m_divMgr.getCanvasTool().safeAddCanvasTo(m_viewPanel);
 	}
-	
+
 	public ICanvasTool getICanvasTool(){
 		return m_divMgr.getCanvasTool();
 	}
-	
+
 	private void renderShapes(){
 		if(m_shapeEditor != null){
 			m_shapeEditor.clearExistingObjs().renderObjects();
 		}
 	}
-	
+
 	private boolean setProjFromLayerSet(LayerSet ls) {
 		if (!ls.isActive()) {
 			return false;
@@ -193,7 +192,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	public boolean isMapActionSuspended() {
 		return this.m_bSuspendMapAction;
 	}
-	
+
 	/**
 	 * @return true when label declutter is enabled.
 	 */
@@ -208,7 +207,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	public void setDeclutterLabels(boolean bDeclutterLabels) {
 		m_bDeclutterLabels = bDeclutterLabels;
 	}
-	
+
 	public DeclutterEngine getDeclutterEngine() {
 		if (m_declutterEngine == null) {
 			m_declutterEngine = new DeclutterEngine(this);
@@ -219,7 +218,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	public MapController getController() {
 		return m_mapEventListener;
 	}
-	
+
 	public void setEditorFocus(boolean focus){
 		if (!focus){
 			m_mapEventListener.setEditor(null);
@@ -240,7 +239,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	public int getDpi() {
 		return m_dpi;
 	}
-	
+
 	private GeodeticCoords recoverCenter(double defLng, double defLat) {
 		String centerLng = Cookies.getCookie("centerLng");
 		String centerLat = Cookies.getCookie("centerLat");
@@ -255,21 +254,21 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 			return new GeodeticCoords(defLng, defLat, AngleUnit.DEGREES);
 		}
 	}
-	
+
 	/**
 	 * Called when map changed and idle, when this method is called onIdle is not called.
 	 */
 	void onChangeAndIdle() {
 		// Map went idle force suspend flag to off, work around bug in IE
 		setSuspendFlag(false);
-		
+
 		// Things changed, save cookies
 		recordCenter();
 		ProjectionValues.writeCookies(getProjection());
 
 		doDeclutterView();
 	}
-	
+
 	/**
 	 * Called when map goes idle. When this method is called onChangeAndIdle is not called.
 	 */
@@ -277,7 +276,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	void onIdle() {
 		// Map went idle force suspend flag to off, work around bug in IE
 		setSuspendFlag(false);
-		
+
 		if (!isDeclutterLabels()) {
 			return;
 		}
@@ -285,19 +284,19 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 			return;
 		}
 		m_oldIconVersion = getIconLayer().getVersion();
-		
+
 		doDeclutterView();
 	}
-	
+
 	private void doDeclutterView() {
 		if (isDeclutterLabels()) {
 			getDeclutterEngine().incrementalDeclutter(
-					getIconLayer().getIcons(), 
-					m_iconEngine, 
+					getIconLayer().getIcons(),
+					m_iconEngine,
 					m_divMgr.getCurrentDiv().getDivWorker());
 		}
 	}
-	
+
 	private void recordCenter() {
 		String centerLng = Double.toString(getCenter().getLambda(
 				AngleUnit.DEGREES));
@@ -342,7 +341,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 			addLayer(layers[i]);
 		}
 	}
-	
+
 	public void removeLayer(LayerSet layerSet) {
 		m_divMgr.removeLayer(layerSet);
 	}
@@ -447,11 +446,11 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		m_updateTimer.schedule(1000/30);
 		m_isUpdateTimerScheduled = true;
 	}
-	
+
 	public void declutterView() {
 		doDeclutterView();
 	}
-	
+
 	public void cancelAnimations() {
 		m_animateEngine.cancel();
 		m_flyToEngine.getAnimation().cancel();
@@ -464,12 +463,12 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		m_previousEqScale = m_mapProj.getEquatorialScale();
 		return (prevLevel != currentLevel);
 	}
-	
-	
+
+
 	public void dumbUpdateView() {
 		boolean updateWorkAround = true;
-		if (updateWorkAround 
-				|| m_resized 
+		if (updateWorkAround
+				|| m_resized
 				|| m_dynamicUpdateEngine.isDynamicUpdateNeeded()
 				|| hasLevelChanged()
 				|| m_divMgr.hasDivMovedToFar()) {
@@ -479,15 +478,15 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		} else {
 			partialUpdateView();
 		}
-		
+
 		m_mapEventListener.fireMapViewChangeEventWithMinElapsedInterval(500);
 		fireChange();
-		
+
 // TODO move to idle handling...
 //		recordCenter();
 //		ProjectionValues.writeCookies(m_proj);
 	}
-	
+
 	public void fullUpdateView() {
 		Sample.MAP_FULL_UPDATE.beginSample();
 		// Do Not change the order of the next two
@@ -499,14 +498,14 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		renderShapes();
 		Sample.MAP_FULL_UPDATE.endSample();
 	}
-	
+
 	public void partialUpdateView() {
 		Sample.MAP_PARTIAL_UPDATE.beginSample();
 		m_divMgr.placeDivsInViewPanel( m_viewPanel );
 		renderShapes();
 		Sample.MAP_PARTIAL_UPDATE.endSample();
 	}
-	
+
 	public boolean hasAutoRefreshOnTimerLayers() {
 		return m_divMgr.hasAutoRefreshOnTimerLayers();
 	}
@@ -541,7 +540,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		m_focusPanel.setPixelSize(width, height);
 	}
 
-	
+
 	// /////////////////////////////////////////////////////////////////
 	// / User action calls /////////////////////////////////////////////
 	/**
@@ -567,13 +566,13 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	 */
 	public void moveMapByPixels(int dx, int dy) {
 		cancelAnimations();
-		
+
 		ViewWorker vpWorker = this.getViewport().getVpWorker();
 		WorldCoords centerInWc = vpWorker.getVpCenterInWc();
 		setWorldCenter(centerInWc.translate(dx, dy));
 		updateView();
 	}
-	
+
 	public boolean zoomToNextLevelOnPixel(int x, int y, boolean bIn) {
 		if (m_bSuspendMapAction == false) {
 			int level = m_divMgr.getCurrentLevel() + (bIn ? 1 : -1);
@@ -585,9 +584,9 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		}
 		return (m_bSuspendMapAction == false);
 	}
-	
+
 	/**
-	 * Animate zoom map, but keep the latitude and longitude under x, y 
+	 * Animate zoom map, but keep the latitude and longitude under x, y
 	 * during the zoom and after its completion.
 	 *
 	 * @param x
@@ -619,7 +618,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		m_mapProj.setEquatorialScale(dScale);
 		updateView();
 	}
-	
+
 	public void animateZoomToNextLevel(boolean bIn) {
 		ViewDimension v = m_viewPort.getVpWorker().getDimension();
 		int x = v.getWidth() / 2;
@@ -642,7 +641,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	public void flyTo(GeodeticCoords center, MapScale scale) {
 		m_flyToEngine.flyTo(center, scale.asDouble());
 	}
-	
+
 	/**
 	 * Clients will call this routine to fly to a center lat, lng and scale
 	 * based on a bounding box.
@@ -651,7 +650,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	 */
 	public void flyTo(BoundingBox box) {
 		GeodeticCoords gc = new GeodeticCoords( box.getCenterLng(),
-												box.getCenterLat(), 
+												box.getCenterLat(),
 												AngleUnit.DEGREES);
 		m_flyToEngine.flyTo(gc, Projections.findScaleFor(getViewport(), box));
 	}
@@ -697,18 +696,23 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	public FocusPanel getFocusPanel() {
 		return m_focusPanel;
 	}
-	
+
 	@Override
 	public IProjection getTempProjection() {
 		return m_mapProj.cloneProj();
 	}
-	
+
 	public WidgetPositioner getWidgetPositioner() {
 		return m_divMgr.getWidgetPositioner();
 	}
-	
+
 	@Override
 	public HandlerRegistration addChangeHandler(ChangeHandler handler) {
 		return addDomHandler(handler, ChangeEvent.getType());
 	}
+
+    public List<LayerSet> getLayerSets() {
+        return m_divMgr.getLayerSets();
+    }
+
 }
