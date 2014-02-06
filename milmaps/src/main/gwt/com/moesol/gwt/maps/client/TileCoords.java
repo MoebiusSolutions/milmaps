@@ -15,7 +15,7 @@ import com.google.gwt.http.client.URL;
 
 // This is a tile
 public class TileCoords {
-	
+
 	private int m_level;
 	private int m_tileX;
 	private int m_tileY;
@@ -30,7 +30,7 @@ public class TileCoords {
 	private boolean m_bZeroTop = false;
 	private double m_degWidth = 180.0;
 	private double m_degHeight = 180.0;
-	
+
 	private static URLProvider s_urlProvider = new URLProvider() {
 		@Override
 		public String encodeComponent(String decodedURLComponent) {
@@ -46,18 +46,18 @@ public class TileCoords {
 		m_tileX = x;
 		m_tileY = y;
 	}
-	
+
 	public static void setGlobalURLProvider(URLProvider urlProvider) {
 		s_urlProvider = urlProvider;
 	}
-	
+
 	public TileCoords(int ox, int oy, int x, int y) {
 		m_tileX = x;
 		m_tileY = y;
 		m_offsetX = ox;
 		m_offsetY = oy;
 	}
-	
+
 	public boolean isZeroTop() {
 		return m_bZeroTop;
 	}
@@ -65,7 +65,7 @@ public class TileCoords {
 	public void setZeroTop( boolean bZeroTop) {
 		m_bZeroTop = bZeroTop;
 	}
-	
+
 	public int getOffsetX() {
 		return m_offsetX;
 	}
@@ -81,7 +81,7 @@ public class TileCoords {
 	public void setOffsetY(int offsetY) {
 		m_offsetY = offsetY;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[l="+ m_level +",ox=" + getOffsetX() + ",oy=" + getOffsetY()
@@ -121,8 +121,8 @@ public class TileCoords {
 	public void setTileHeight(int height) {
 		m_tileHeight = height;
 	}
-	
-	
+
+
 	public int getDrawTileWidth() {
 		return m_drawTileWidth;
 	}
@@ -130,7 +130,7 @@ public class TileCoords {
 	public void setDrawTileWidth(int width ) {
 		m_drawTileWidth = width;
 	}
-	
+
 	public int getDrawTileHeight() {
 		return m_drawTileHeight;
 	}
@@ -138,7 +138,7 @@ public class TileCoords {
 	public void setDrawTileHeight(int height ) {
 		m_drawTileHeight = height;
 	}
-	
+
 	public void setDegWidth( double deg ){m_degWidth = deg;}
 	public double getDegWidth(){ return m_degWidth; }
 	public void setDegHeight( double deg ){m_degHeight = deg;}
@@ -165,7 +165,7 @@ public class TileCoords {
 			return false;
 		if (!(obj instanceof TileCoords))
 			return false;
-		
+
 		final TileCoords other = (TileCoords) obj;
 		if (m_level != other.m_level) {
 			return false;
@@ -190,7 +190,7 @@ public class TileCoords {
 		}
 		return true;
 	}
-	
+
 	public boolean isTiled() {
 		return m_tiled;
 	}
@@ -215,18 +215,18 @@ public class TileCoords {
 		m_level = Math.max(0,level);
 	}
 
-	public String makeTileURL(ViewBox vb,LayerSet layerSet, 
+	public String makeTileURL(ViewBox vb,LayerSet layerSet,
 							  int level, long dynamicCounter) {
 		if (level < 0) {
 			level = 0;
 		}
-		return doMakeTileURL(vb, layerSet, 
-							 computeLevelFromSkipLevel(layerSet, level), 
+		return doMakeTileURL(vb, layerSet,
+							 computeLevelFromSkipLevel(layerSet, level),
 							 dynamicCounter);
 	}
-	
 
-	String doMakeTileURL(ViewBox vb, LayerSet layerSet, 
+
+	String doMakeTileURL(ViewBox vb, LayerSet layerSet,
 						 int levelInUrl, long dynamicCounter ) {
 		Map<String, Object> replacements = new HashMap<String, Object>(layerSet.getProperties());
 		int width;
@@ -245,10 +245,10 @@ public class TileCoords {
 		else {
 			if (vb == null) {
 				throw new IllegalArgumentException("ViewBox shouldn't be null");
-			}	
+			}
 			width   = vb.getWidth();
 			height  = vb.getHeight();
-			bBoxStr = vb.getWmsString();			
+			bBoxStr = vb.getWmsString();
 		}
 		replacements.put("width", Integer.toString(width));
 		replacements.put("height", Integer.toString(height));
@@ -257,9 +257,14 @@ public class TileCoords {
 		replacements.put("bbox", bBoxStr);
 		replacements.put("quadkey", computeQuadKey(layerSet, levelInUrl));
 		replacements.put("quad", computeQuad(layerSet, levelInUrl));
-		
+        replacements.put("affiliation", layerSet.getAffiliation());
+        replacements.put("dimension", layerSet.getDimension());
+
 		String returnStr = layerSet.getUrlPattern();
 		for (Entry<String, Object> e : replacements.entrySet()) {
+            if(e.getValue() == null){
+                continue;
+            }
 			returnStr = returnStr.replaceAll("\\{" + e.getKey() + "\\}", e.getValue().toString());
 		}
 		return maybeAppendDynamicCounter(layerSet, returnStr, dynamicCounter);
@@ -274,7 +279,7 @@ public class TileCoords {
 		double top =   (getY() + 1) * getDegHeight() - 90.0;
 		return left + "," + bottom + "," + right + "," + top;
 	}
-	
+
 	private String computeQuadKey(LayerSet layerSet, int levelInUrl) {
 		return QuadKey.tileXYToKey(getX(), getY(), levelInUrl);
 	}
@@ -284,14 +289,14 @@ public class TileCoords {
 		String r = q.replace('1', 'r');
 		String s = r.replace('2', 't');
 		String t = s.replace('3', 's');
-		
+
 		return t;
 	}
 
 	/**
 	 * Appends the query parameter '_' with a value of the current dynamic
 	 * counter to force the browser to reload the tiles for dynamic layers.
-	 * 
+	 *
 	 * @param layerSet
 	 * @param returnStr
 	 * @param dynamicCounter
