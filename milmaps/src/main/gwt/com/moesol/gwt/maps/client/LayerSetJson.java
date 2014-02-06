@@ -15,7 +15,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 public class LayerSetJson extends JavaScriptObject {
 	// Overlay types always have protected, zero-arg ctors
 	protected LayerSetJson() { }
-	
+
 	public final native String getServer(String def) /*-{ return this.server || def; }-*/;
     public final native String getId(String def) /*-{ return this.id || def; }-*/;
 	public final native String getData(String def) /*-{ return this.data || def; }-*/;
@@ -39,7 +39,9 @@ public class LayerSetJson extends JavaScriptObject {
 		return this.startLevelTileWidthInDeg || def; }-*/;
 	public final native double getStartLevelTileHeightInDeg(double def) /*-{
 		return this.startLevelTileHeightInDeg || def; }-*/;
-	
+	public final native String getAffiliation(String def) /*-{ return this.affiliation || def; }-*/;
+	public final native String getDimension(String def) /*-{ return this.dimension || def; }-*/;
+
 	public final LayerSet toLayerSet() {
 		LayerSet layerSet = new LayerSet();
 		layerSet
@@ -61,6 +63,8 @@ public class LayerSetJson extends JavaScriptObject {
 			.withPixelHeight(getPixelHeight(layerSet.getPixelHeight()))
 			.withStartLevelTileWidthInDeg(getStartLevelTileWidthInDeg(layerSet.getStartLevelTileWidthInDeg()))
 			.withStartLevelTileHeightInDeg(getStartLevelTileHeightInDeg(layerSet.getStartLevelTileHeightInDeg()))
+            .withAffiliation(getAffiliation(layerSet.getAffiliation()))
+            .withDimension(getDimension(layerSet.getDimension()))
 			.setLevelRange(getMinLevel(layerSet.getMinLevel()), getMaxLevel(layerSet.getMaxLevel()));
 		return layerSet;
 	}
