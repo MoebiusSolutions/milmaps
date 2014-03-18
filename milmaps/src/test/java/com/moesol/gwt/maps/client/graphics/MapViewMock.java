@@ -33,7 +33,7 @@ public class MapViewMock implements IMapView {
 	public Util m_util;
 	private ICanvasTool m_canvas = new CanvasToolMock();
 	public boolean m_editorEventFocus = false;
-	
+
 
 	public MapViewMock(){
 		proj = new CylEquiDistProj(512, 180, 180);
@@ -42,9 +42,9 @@ public class MapViewMock implements IMapView {
 		m_util = new Util(m_conv,m_rb);
 		m_arrow = new Arrow();
 		m_arrow.setCoordConverter(m_conv);
-		
+
 	}
-	
+
 	@Override
 	public IProjection getProjection() {
 		return null;
@@ -84,6 +84,16 @@ public class MapViewMock implements IMapView {
 	@Override
 	public void setCenter(GeodeticCoords geodeticCoords) {
 	}
+
+    @Override
+    public void setZoom(double zoom){
+
+    }
+
+    @Override
+    public double getZoom(){
+        return 0.0;
+    }
 
 	@Override
 	public DivManager getDivManager() {

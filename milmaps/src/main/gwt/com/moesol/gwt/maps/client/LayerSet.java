@@ -17,6 +17,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * @see MapView.addLayer
  */
 public class LayerSet implements IsSerializable {
+    private String id;
 	private String m_styleName = "moesol-MapTile";
     private String m_id;
 	private String m_server;
