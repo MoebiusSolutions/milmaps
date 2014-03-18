@@ -614,10 +614,14 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 		dumbUpdateView();
 	}
 
-	public void zoom(double dScale) {
+	public void setZoom(double dScale) {
 		m_mapProj.setEquatorialScale(dScale);
 		updateView();
 	}
+
+    public double getZoom(){
+        return m_mapProj.getEquatorialScale();
+    }
 
 	public void animateZoomToNextLevel(boolean bIn) {
 		ViewDimension v = m_viewPort.getVpWorker().getDimension();

@@ -22,6 +22,8 @@ public interface IMapView {
 	void dumbUpdateView();
 	void partialUpdateView();
 	void setCenter(GeodeticCoords geodeticCoords);
+    void setZoom(double equatorFactor);
+    double getZoom();
 	DivManager getDivManager();
 	long getDynamicCounter();
 	double getMapBrightness();
