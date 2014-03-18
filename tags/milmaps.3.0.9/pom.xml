@@ -6,7 +6,7 @@
     <groupId>com.moesol.maps</groupId>
     <artifactId>milmaps</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.10-SNAPSHOT</version>
+    <version>3.0.9</version>
     <name>milmaps</name>
 	<!-- Description and URL are critical to "maven site" generation -->
     <url>https://www.moesol.com/software-docs/releases/${project.artifactId}/${project.version}</url>
