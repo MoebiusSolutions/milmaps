@@ -16,7 +16,7 @@
         <gwt.style>OBF</gwt.style>
 		<!-- <gwt.style>PRETTY</gwt.style> -->
 		<!-- gwt.compiler.skip -->
-        <gwt.version>2.5.1</gwt.version>
+        <gwt.version>2.6.0</gwt.version>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

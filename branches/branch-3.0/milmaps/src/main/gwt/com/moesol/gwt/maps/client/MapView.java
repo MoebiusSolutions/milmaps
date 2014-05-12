@@ -465,6 +465,7 @@ public class MapView extends Composite implements IMapView, HasChangeHandlers {
 	}
 
 
+    @Override
 	public void dumbUpdateView() {
 		boolean updateWorkAround = true;
 		if (updateWorkAround
