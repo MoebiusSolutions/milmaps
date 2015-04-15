@@ -2,11 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+	<inceptionYear>2015</inceptionYear>
+	
     <groupId>com.moesol.maps</groupId>
     <artifactId>milmaps</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.10-SNAPSHOT</version>
+    <version>3.0.10</version>
     <name>milmaps</name>
 	<!-- Description and URL are critical to "maven site" generation -->
     <url>https://www.moesol.com/software-docs/releases/${project.artifactId}/${project.version}</url>
@@ -29,7 +30,7 @@
         <developerConnection>scm:svn:https://milmaps.googlecode.com/svn/trunk/milmaps</developerConnection>
     </scm>
 
-	<!-- Software license This is used by "maven site" -->
+	<!-- Software license This is used by "maven site"
     <licenses>
         <license>
             <name>GNU General Public License Version 3</name>
@@ -40,7 +41,7 @@
             </comments>
         </license>
     </licenses>
-
+	-->
 	<!-- Comany info This is used by "maven site" -->
     <organization>
         <name>Moebius Solutions, Inc.</name>
@@ -372,14 +373,13 @@
                     </filesets>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>com.google.code.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.4.0</version>
-                <configuration>
-                    <basedir>${basedir}</basedir>
-                    <header>${basedir}/license-header.txt</header>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.8</version>
+				<configuration>
+					<licenseName>ap_license</licenseName>
+					<licenseResolver>${project.baseUri}/src/license</licenseResolver>
                     <includes>
                         <include>src/**</include>
                     </includes>
@@ -388,17 +388,17 @@
                         <exclude>**/*.apt</exclude>
                         <exclude>src/test/resources/expectedObjects/*.txt</exclude>
                     </excludes>
-                    <useDefaultExcludes>true</useDefaultExcludes>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+				</configuration>
+				<executions>
+					<execution>
+						<id>first</id>
+						<goals>
+							<goal>update-file-header</goal>
+						</goals>
+						<phase>process-sources</phase>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
     </build>
 </project>
