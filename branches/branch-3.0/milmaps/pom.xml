@@ -380,9 +380,6 @@
 				<configuration>
 					<licenseName>ap_license</licenseName>
 					<licenseResolver>${project.baseUri}/src/license</licenseResolver>
-                    <includes>
-                        <include>src/**</include>
-                    </includes>
                     <excludes>
                         <exclude>**/*.html</exclude>
                         <exclude>**/*.apt</exclude>
